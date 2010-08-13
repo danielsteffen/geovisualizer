@@ -1,0 +1,7 @@
+# .gitignore file
+VS08/
+.metadata
+.classpath
+.path
+.settings/
+.project
