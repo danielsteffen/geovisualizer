@@ -6,3 +6,4 @@ VS08/
 .settings/
 .project
 .test
+target/
