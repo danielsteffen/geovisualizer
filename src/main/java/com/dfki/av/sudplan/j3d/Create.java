@@ -1,6 +1,6 @@
 package com.dfki.av.sudplan.j3d;
 
-import com.dfki.av.sudplan.Import;
+import com.dfki.av.sudplan.io.Import;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.media.j3d.Appearance;
@@ -21,9 +21,9 @@ import javax.vecmath.Point3f;
  */
 public class Create {
 
-    public static Shape3D Points() throws FileNotFoundException, IOException {
+    public static Shape3D Points(String filename) throws FileNotFoundException, IOException {
         ColoringAttributes ca2 = new ColoringAttributes(0.0f, 0.0f, 0.0f, ColoringAttributes.SHADE_FLAT);
-        double array[][] = Import.einlesen();
+        double array[][] = Import.einlesen(filename);
         double koordinaten[][] = Import.arrayaufnull(array);
         System.out.println("array length : array[" + koordinaten.length + "][" + koordinaten[0].length + "]");
         int AnzahlKoords = koordinaten.length * koordinaten[0].length;
@@ -54,9 +54,9 @@ public class Create {
         return punktShape;
     }   //end of Points
 
-    public static Shape3D Dreieck() throws FileNotFoundException, IOException {
+    public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException {
 
-        double array[][] = Import.einlesen();
+        double array[][] = Import.einlesen(filename);
         double koordinaten[][] = Import.arrayaufnull(array);
         int AnzahlKoords = koordinaten.length * koordinaten[0].length;
 

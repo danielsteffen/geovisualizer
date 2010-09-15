@@ -1,14 +1,11 @@
-
-package com.dfki.av.sudplan.ui;
+package com.dfki.av.sudplan.javax.swing;
 
 import com.dfki.av.sudplan.j3d.Create;
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
-import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
 import com.sun.j3d.utils.universe.SimpleUniverse;
-import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
 import java.io.FileNotFoundException;
@@ -16,7 +13,6 @@ import java.io.IOException;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
@@ -28,11 +24,24 @@ import javax.vecmath.Vector3f;
 
 /**
  *
- * @author Martin Weller
+ * @author steffen
  */
-public class SudplanVis extends Applet {
+public class JPanel3D extends javax.swing.JPanel {
 
-    public SudplanVis() throws FileNotFoundException, IOException {
+    private String geoFileName;
+
+    public JPanel3D() throws FileNotFoundException, IOException {
+        this("test.txt");
+    }
+
+    public JPanel3D(String fileName) throws FileNotFoundException, IOException {
+        super();
+        this.geoFileName = fileName;
+
+        initComponents();
+    }
+
+    private void initComponents() throws FileNotFoundException, IOException {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas3D = new Canvas3D(config);
@@ -43,7 +52,6 @@ public class SudplanVis extends Applet {
         SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
         simpleU.getViewingPlatform().setNominalViewingTransform();
         simpleU.addBranchGraph(scene);
-
     }
 
     private BranchGroup createSceneGraph() throws FileNotFoundException, IOException {
@@ -109,7 +117,7 @@ public class SudplanVis extends Applet {
         // Set up the directional lights
         Color3f light1Color = new Color3f(1.0f, 1.0f, 1.0f);
         Vector3f light1Direction = new Vector3f(0.5f, 0.5f, 0.5f);
-        DirectionalLight light1 = new DirectionalLight(light1Color,light1Direction);
+        DirectionalLight light1 = new DirectionalLight(light1Color, light1Direction);
         light1.setInfluencingBounds(bounds);
         objRoot.addChild(light1);
 
@@ -121,13 +129,8 @@ public class SudplanVis extends Applet {
         objTrans.addChild(objDreh);
         objDreh.addChild(objDreh2);
         objDreh2.addChild(verschiebenGroup);
-        verschiebenGroup.addChild(Create.Dreieck());
-//        verschiebenGroup.addChild(Create.Points());
+        verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
+//        verschiebenGroup.addChild(Create.Points(this.geoFileName));
         return objRoot;
     }
-
-    private Bounds getApplicationBounds() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
 }

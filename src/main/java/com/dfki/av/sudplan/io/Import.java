@@ -1,4 +1,4 @@
-package com.dfki.av.sudplan;
+package com.dfki.av.sudplan.io;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,11 +14,12 @@ import java.util.StringTokenizer;
  */
 public class Import {
 
-    public static double[][] einlesen() throws FileNotFoundException, IOException {
+    public static double[][] einlesen(String filename) throws FileNotFoundException, IOException {
         String komplett = "", tmp = "";
         double[][] koordinaten = new double[301][601];
         int spalte = 0;
-        FileReader fileReader = new FileReader(new File("test.txt"));
+
+        FileReader fileReader = new FileReader(new File(filename));
         BufferedReader in = new BufferedReader(fileReader);
 
         while ((tmp = in.readLine()) != null) {
