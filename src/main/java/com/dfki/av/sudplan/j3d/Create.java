@@ -1,5 +1,6 @@
 package com.dfki.av.sudplan.j3d;
 
+import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +24,10 @@ public class Create {
 
     public static Shape3D Points(String filename) throws FileNotFoundException, IOException {
         ColoringAttributes ca2 = new ColoringAttributes(0.0f, 0.0f, 0.0f, ColoringAttributes.SHADE_FLAT);
-        double array[][] = Import.einlesen(filename);
+        GeoData data = new GeoData(filename);
+        double array[][] = data.getPoints();
+//        double array[][] = Import.einlesen(filename);
+
         double koordinaten[][] = Import.arrayaufnull(array);
         System.out.println("array length : array[" + koordinaten.length + "][" + koordinaten[0].length + "]");
         int AnzahlKoords = koordinaten.length * koordinaten[0].length;
@@ -56,12 +60,15 @@ public class Create {
 
     public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException {
 
-        double array[][] = Import.einlesen(filename);
+        GeoData data = new GeoData(filename);
+        double array[][] = data.getPoints();
+
+//        double array[][] = Import.einlesen(filename);
         double koordinaten[][] = Import.arrayaufnull(array);
         int AnzahlKoords = koordinaten.length * koordinaten[0].length;
 
         int NUM_Triangles = 360000;
-        int NUM_INDICES = NUM_Triangles * 3;    // für jedes Dreieck 3 Indices
+        int NUM_INDICES = NUM_Triangles * 3;    // fï¿½r jedes Dreieck 3 Indices
         IndexedTriangleArray plane = new IndexedTriangleArray(AnzahlKoords, GeometryArray.COORDINATES | GeometryArray.COLOR_3, NUM_INDICES);
         System.out.println("AnzahlKoords: " + AnzahlKoords);
 
@@ -114,7 +121,7 @@ public class Create {
         float[] col_tmp2 = new float[3];
         int min = 0;
         int max = 111;
-        // 240° because we want the area beetwen 0° and 240° (red to green)
+        // 240ï¿½ because we want the area beetwen 0ï¿½ and 240ï¿½ (red to green)
         for (int i = 0; i < AnzahlKoords; i++) {
             col_tmp2 = Convert.HLStoRGB((240 - (240 * (((Farbwert[i] * 300 - min) / (max - min))))) / 360, 0.5f, 0.5f);
             cols[i] = (new Color3f(col_tmp2[0], col_tmp2[1], col_tmp2[2]));

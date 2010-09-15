@@ -25,7 +25,11 @@
 			<version>1.5.2</version>
 		</dependency>
   </dependencies>
-  
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sudplan.main>com.dfki.av.sudplan.test.SudplanApp</sudplan.main>
+	</properties>
+
   <!-- More Project Information -->
 	<organization>
 		<name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
@@ -45,7 +49,34 @@
 		<organization>DFKI GmbH</organization>
 	  </developer>	
 	</developers>
-	
+
+	<!-- Build Settings -->
+	<build>
+		<!-- For annotations and other Java5 stuff -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>${sudplan.main}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+                        </plugins>
+	</build>
+
 	<!-- Environment Settings -->
     <repositories>
       <repository>
