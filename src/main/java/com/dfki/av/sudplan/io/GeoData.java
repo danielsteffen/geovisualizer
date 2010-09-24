@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,31 +31,37 @@ public class GeoData {
         this.filename = filename;
     }
 
-    public double[][] getPoints() throws FileNotFoundException, IOException, URISyntaxException {
-        String komplett = "", tmp = "";
+    public double[][] getPoints()  {
+        String komplett = "";
+        String tmp = "";
         double[][] koordinaten = new double[301][601];
         int spalte = 0;
-        URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+        try {
 
-//        File f = new File(url.toURI());
-//        System.out.println(f.toString());
-//        ClassLoader cl = this.getClass().getClassLoader();
-//        URL url = cl.getResource(filename);
-//        File f = new File(filename);
-//        FileReader fr = new FileReader(f);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-        while ((tmp = br.readLine()) != null) {
-            int zeile = 0;
-            StringTokenizer st = new StringTokenizer(tmp);
-            while (st.hasMoreTokens()) {
-                koordinaten[spalte][zeile] = Double.parseDouble(st.nextToken());
-                zeile++;
+            URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+            //        File f = new File(url.toURI());
+            //        System.out.println(f.toString());
+            //        ClassLoader cl = this.getClass().getClassLoader();
+            //        URL url = cl.getResource(filename);
+            //        File f = new File(filename);
+            //        FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            while ((tmp = br.readLine()) != null) {
+                int zeile = 0;
+                StringTokenizer st = new StringTokenizer(tmp);
+                while (st.hasMoreTokens()) {
+                    koordinaten[spalte][zeile] = Double.parseDouble(st.nextToken());
+                    zeile++;
+                }
+                spalte++;
             }
-            spalte++;
-        }
+
+        } catch (IOException ex) {
+            Logger.getLogger(GeoData.class.getName()).log(Level.SEVERE, null, ex);
+        }            
         return koordinaten;
+
     }
     
 }

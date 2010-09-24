@@ -70,7 +70,7 @@ public static int scalefactor = 1200;
         return punktShape;
     }   //end of Points
 
-    public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException, URISyntaxException {
+    public static Shape3D Dreieck(String filename)  {
 
         GeoData data = new GeoData(filename);
         double array[][] = data.getPoints();
@@ -94,8 +94,8 @@ public static int scalefactor = 1200;
                 pts[zaehler] = new Point3f(
                         (float) spalte / 300 - 1,
                         (float) zeile / 300 - 1,
-<<<<<<< HEAD:src/main/java/com/dfki/av/sudplan/j3d/Create.java
-                        (float) ((koordinaten[spalte][zeile]) / 1200));
+
+                        (float) ((koordinaten[spalte][zeile]) / scalefactor));
 
                 texCoords[zaehler] = new TexCoord2f(
                         (float) spalte / koordinaten.length ,
@@ -103,9 +103,9 @@ public static int scalefactor = 1200;
                 //System.out.println(texCoords[zaehler]);
 //                textureIndices[zaehler] = zaehler;
 
-=======
-                        (float) ((koordinaten[spalte][zeile]) / scalefactor));
->>>>>>> Minor bug fixes / first gui:src/main/java/com/dfki/av/sudplan/j3d/Create.java
+
+                        
+
                 zaehler++;
             }
         }

@@ -41,18 +41,18 @@ public class JPanel3D extends javax.swing.JPanel {
     private MouseRotate mr;
 
 
-    public JPanel3D() throws FileNotFoundException, IOException, URISyntaxException {
+    public JPanel3D() {
         this("test.txt");
     }
 
-    public JPanel3D(String fileName) throws FileNotFoundException, IOException, URISyntaxException {
+    public JPanel3D(String fileName) {
         super();
         this.geoFileName = fileName;
 
         initComponents();
     }
 
-    private void initComponents() throws FileNotFoundException, IOException, URISyntaxException {
+    private void initComponents()  {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas3D = new Canvas3D(config);
@@ -68,7 +68,7 @@ public class JPanel3D extends javax.swing.JPanel {
 
 
 
-    public BranchGroup createSceneGraph() throws FileNotFoundException, IOException, URISyntaxException {
+    public BranchGroup createSceneGraph() {
         // Create the root of the branchgroup
         BranchGroup objRoot = new BranchGroup();
 
@@ -110,8 +110,6 @@ public class JPanel3D extends javax.swing.JPanel {
         mr.setFactor(0.0, 0.007);
         mr.setEnable(false);
         objTrans.addChild(mr);
-
-        
 
         // set up the mouse translate
         mt = new MouseTranslate();
@@ -156,6 +154,7 @@ public class JPanel3D extends javax.swing.JPanel {
         objDreh.addChild(objDreh2);
         objDreh2.addChild(verschiebenGroup);
         verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
+        setGeomApp(app);
         //((Shape3D)verschiebenGroup.getChild(0)).setAppearance(kl_air) ;
 //        verschiebenGroup.addChild(Create.Points(this.geoFileName));
 
