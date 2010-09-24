@@ -24,6 +24,11 @@
 			<artifactId>vecmath</artifactId>
 			<version>1.5.2</version>
 		</dependency>
+    <dependency>
+      <groupId>org.jdesktop</groupId>
+      <artifactId>beansbinding</artifactId>
+      <version>1.2.1</version>
+    </dependency>
   </dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,11 +48,11 @@
 	  <developer>
 		<name>Martin Weller</name>
 		<organization>DFKI GmbH</organization>
-	  </developer>	  
+	  </developer>
 	  <developer>
 		<name>Frank Michel</name>
 		<organization>DFKI GmbH</organization>
-	  </developer>	
+	  </developer>
 	</developers>
 
 	<!-- Build Settings -->
@@ -86,13 +91,19 @@
           <enabled>false</enabled>
         </snapshots>
       </repository>
-       
+
       <repository>
         <id>snapshots</id>
         <url>http://av.kl.dfki.de/artifactory/repo</url>
         <releases>
           <enabled>false</enabled>
         </releases>
+      </repository>
+      <repository>
+        <url>http://download.java.net/maven/2/</url>
+        <id>beans-binding</id>
+        <layout>default</layout>
+        <name>Repository for library Library[beans-binding]</name>
       </repository>
     </repositories>
      
