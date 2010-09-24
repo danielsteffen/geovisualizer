@@ -5,6 +5,7 @@ import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
+import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
@@ -16,6 +17,8 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
@@ -29,6 +32,9 @@ import javax.vecmath.Vector3f;
 public class JPanel3D extends javax.swing.JPanel {
 
     private String geoFileName;
+    private TransformGroup verschiebenGroup;
+    public Appearance app;
+    public Appearance kl_air;
 
     public JPanel3D() throws FileNotFoundException, IOException {
         this("test.txt");
@@ -57,13 +63,20 @@ public class JPanel3D extends javax.swing.JPanel {
     private BranchGroup createSceneGraph() throws FileNotFoundException, IOException {
         // Create the root of the branchgroup
         BranchGroup objRoot = new BranchGroup();
-        Appearance app = new Appearance();
-//        app.setColoringAttributes(ca);
 
+        app = new Appearance();
+        TextureLoader loader = new TextureLoader("kl_map.jpg", null);
+        Texture2D texture = ( Texture2D ) loader.getTexture();
+        app.setTexture(texture);
+
+        kl_air = new Appearance();
+        loader = new TextureLoader("kl_air.jpg", null);
+        texture = ( Texture2D ) loader.getTexture();
+        kl_air.setTexture(texture);
         // transform x
         Transform3D verschieben = new Transform3D();
         verschieben.setTranslation(new Vector3f(0.5f, 0.0f, 0.0f));
-        TransformGroup verschiebenGroup = new TransformGroup(verschieben);
+        verschiebenGroup = new TransformGroup(verschieben);
         // rotation z
         Transform3D drehung = new Transform3D();
         drehung.rotZ(Math.toRadians(-90));
@@ -130,7 +143,18 @@ public class JPanel3D extends javax.swing.JPanel {
         objDreh.addChild(objDreh2);
         objDreh2.addChild(verschiebenGroup);
         verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
+        //((Shape3D)verschiebenGroup.getChild(0)).setAppearance(kl_air) ;
 //        verschiebenGroup.addChild(Create.Points(this.geoFileName));
         return objRoot;
+    }
+
+
+    public void disableApp(){
+        ((Shape3D)verschiebenGroup.getChild(0)).setAppearance(null);
+    }
+    
+    public void setGeomApp(Appearance geomApp)
+    {
+        ((Shape3D)verschiebenGroup.getChild(0)).setAppearance(geomApp) ;
     }
 }

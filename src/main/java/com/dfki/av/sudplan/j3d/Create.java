@@ -2,6 +2,7 @@ package com.dfki.av.sudplan.j3d;
 
 import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
+import com.sun.j3d.utils.image.TextureLoader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.media.j3d.Appearance;
@@ -13,8 +14,10 @@ import javax.media.j3d.LineAttributes;
 import javax.media.j3d.PointArray;
 import javax.media.j3d.PointAttributes;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture2D;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
+import javax.vecmath.TexCoord2f;
 
 /**
  *
@@ -69,10 +72,12 @@ public class Create {
 
         int NUM_Triangles = 360000;
         int NUM_INDICES = NUM_Triangles * 3;    // f�r jedes Dreieck 3 Indices
-        IndexedTriangleArray plane = new IndexedTriangleArray(AnzahlKoords, GeometryArray.COORDINATES | GeometryArray.COLOR_3, NUM_INDICES);
+        IndexedTriangleArray plane = new IndexedTriangleArray(AnzahlKoords, GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.TEXTURE_COORDINATE_2, NUM_INDICES);
         System.out.println("AnzahlKoords: " + AnzahlKoords);
 
         Point3f[] pts = new Point3f[AnzahlKoords];
+        TexCoord2f[] texCoords = new TexCoord2f[AnzahlKoords];
+        int[] textureIndices = new int[AnzahlKoords];
         System.out.println("pts.length: " + pts.length);
         int zaehler = 0;
         for (int spalte = 0; spalte < koordinaten.length; spalte++) {
@@ -81,6 +86,13 @@ public class Create {
                         (float) spalte / 300 - 1,
                         (float) zeile / 300 - 1,
                         (float) ((koordinaten[spalte][zeile]) / 1200));
+
+                texCoords[zaehler] = new TexCoord2f(
+                        (float) spalte / koordinaten.length ,
+                        (float) zeile /  koordinaten[0].length );
+                //System.out.println(texCoords[zaehler]);
+//                textureIndices[zaehler] = zaehler;
+
                 zaehler++;
             }
         }
@@ -88,6 +100,10 @@ public class Create {
         int spalte = koordinaten.length;        // 601
         int tmp = 0;
         int[] indices = new int[NUM_INDICES];
+//System.out.println("Coords: "+ pts.length);
+//System.out.println("texCo: "+ texCoords.length);
+//System.out.println("texIn: "+ textur.length);
+
         System.out.println("indices.length: " + indices.length);
 
         for (int i = 0; i < (NUM_INDICES - 602); i = i + 6) {
@@ -107,6 +123,8 @@ public class Create {
 
         plane.setCoordinates(0, pts);
         plane.setCoordinateIndices(0, indices);
+        plane.setTextureCoordinates(0, 0, texCoords);
+        plane.setTextureCoordinateIndices(0, 0, indices);
 
         // Color
         Color3f[] cols = new Color3f[AnzahlKoords];
@@ -128,6 +146,7 @@ public class Create {
         }
         plane.setColors(0, cols);
         plane.setColorIndices(0, indices);
+        //Shape3D killer = new Shape3D(plane, makeAppearance());
         Shape3D killer = new Shape3D(plane);
         return killer;
     }
@@ -166,5 +185,16 @@ public class Create {
         Shape3D dotShape = new Shape3D(dot, dotApp);
         return dotShape;
         //objRoot.addChild(dotShape);
+    }
+
+    private static Appearance makeAppearance(){
+
+        Appearance a = new Appearance();
+        //TextureLoader loader = new TextureLoader("schachbrett1024.png", null);
+        TextureLoader loader = new TextureLoader("kl_air.jpg", null);
+        Texture2D texture = ( Texture2D ) loader.getTexture();
+        a.setTexture(texture);
+
+        return a;
     }
 }

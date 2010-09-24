@@ -40,11 +40,12 @@ public class SudplanApp {
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        if(args.length < 1){
-            System.out.println("Missing argument! Please enter data file!");
-            System.exit(-1);
-        }
+//        if(args.length < 1){
+//            System.out.println("Missing argument! Please enter data file!");
+//            System.exit(-1);
+//        }
 
-        new SudplanApp(args[0]);
+        //new SudplanApp(args[0]);
+        new SudplanApp("test.txt");
     }
 }
