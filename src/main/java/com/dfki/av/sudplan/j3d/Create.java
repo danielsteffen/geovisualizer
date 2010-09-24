@@ -2,8 +2,10 @@ package com.dfki.av.sudplan.j3d;
 
 import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
+import com.sun.j3d.utils.image.TextureLoader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.GeometryArray;
@@ -18,11 +20,19 @@ import javax.vecmath.Point3f;
 
 /**
  *
- * @author Martin Weller
+ * @author 
  */
 public class Create {
 
-    public static Shape3D Points(String filename) throws FileNotFoundException, IOException {
+public static int scalefactor = 1200;
+
+    private void initComponents() throws FileNotFoundException, IOException {
+        //Textur
+        TextureLoader loader = new TextureLoader("map.jpg",null);
+    
+    }
+
+    public static Shape3D Points(String filename) throws FileNotFoundException, IOException, URISyntaxException {
         ColoringAttributes ca2 = new ColoringAttributes(0.0f, 0.0f, 0.0f, ColoringAttributes.SHADE_FLAT);
         GeoData data = new GeoData(filename);
         double array[][] = data.getPoints();
@@ -41,7 +51,7 @@ public class Create {
                 Kartenpunkte[zaehler] = new Point3f(
                         (float) spalte / 300 - 1,
                         (float) zeile / 300 - 1,
-                        (float) ((koordinaten[spalte][zeile]) / 1200));
+                        (float) ((koordinaten[spalte][zeile]) / scalefactor));
 //                System.out.println("Point3f["+zaehler+"]"+koordinaten[spalte][zeile] + Punkte[zaehler].toString());
                 zaehler++;
             }
@@ -58,7 +68,7 @@ public class Create {
         return punktShape;
     }   //end of Points
 
-    public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException {
+    public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException, URISyntaxException {
 
         GeoData data = new GeoData(filename);
         double array[][] = data.getPoints();
@@ -80,7 +90,7 @@ public class Create {
                 pts[zaehler] = new Point3f(
                         (float) spalte / 300 - 1,
                         (float) zeile / 300 - 1,
-                        (float) ((koordinaten[spalte][zeile]) / 1200));
+                        (float) ((koordinaten[spalte][zeile]) / scalefactor));
                 zaehler++;
             }
         }
@@ -89,7 +99,7 @@ public class Create {
         int tmp = 0;
         int[] indices = new int[NUM_INDICES];
         System.out.println("indices.length: " + indices.length);
-
+        
         for (int i = 0; i < (NUM_INDICES - 602); i = i + 6) {
             indices[i] = tmp;
             indices[i + 1] = tmp + 601;

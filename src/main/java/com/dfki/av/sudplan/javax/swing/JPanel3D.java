@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
@@ -29,19 +30,23 @@ import javax.vecmath.Vector3f;
 public class JPanel3D extends javax.swing.JPanel {
 
     private String geoFileName;
+    private MouseWheelZoom mz;
+    private MouseTranslate mt;
+    private MouseRotate mr;
 
-    public JPanel3D() throws FileNotFoundException, IOException {
+
+    public JPanel3D() throws FileNotFoundException, IOException, URISyntaxException {
         this("test.txt");
     }
 
-    public JPanel3D(String fileName) throws FileNotFoundException, IOException {
+    public JPanel3D(String fileName) throws FileNotFoundException, IOException, URISyntaxException {
         super();
         this.geoFileName = fileName;
 
         initComponents();
     }
 
-    private void initComponents() throws FileNotFoundException, IOException {
+    private void initComponents() throws FileNotFoundException, IOException, URISyntaxException {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas3D = new Canvas3D(config);
@@ -54,7 +59,10 @@ public class JPanel3D extends javax.swing.JPanel {
         simpleU.addBranchGraph(scene);
     }
 
-    private BranchGroup createSceneGraph() throws FileNotFoundException, IOException {
+
+
+
+    public BranchGroup createSceneGraph() throws FileNotFoundException, IOException, URISyntaxException {
         // Create the root of the branchgroup
         BranchGroup objRoot = new BranchGroup();
         Appearance app = new Appearance();
@@ -82,25 +90,30 @@ public class JPanel3D extends javax.swing.JPanel {
         //objTrans.addChild(bg);
 
         // set up the mouse rotation behavior
-        MouseRotate mr = new MouseRotate();
+        mr = new MouseRotate();
         mr.setTransformGroup(objTrans);
         mr.setSchedulingBounds(bounds);
-        // setFactor(x,y) => 0 = disable
+        // setFactor(x,y)  0 = disable
         mr.setFactor(0.0, 0.007);
+        mr.setEnable(false);
         objTrans.addChild(mr);
 
+        
+
         // set up the mouse translate
-        MouseTranslate mt = new MouseTranslate();
+        mt = new MouseTranslate();
         mt.setTransformGroup(objTrans);
         mt.setSchedulingBounds(bounds);
         mt.setFactor(0.0012, 0.0012);
+        mt.setEnable(false);
         objTrans.addChild(mt);
 
         // set up the mouse WHEEL zoom behavior
-        MouseWheelZoom mz = new MouseWheelZoom();
+        mz = new MouseWheelZoom();
         mz.setTransformGroup(objTrans);
         mz.setSchedulingBounds(bounds);
         mz.setFactor(0.05);
+        mz.setEnable(true);
         objTrans.addChild(mz);
 
         // set up the keyboard zoom behavior
@@ -131,6 +144,23 @@ public class JPanel3D extends javax.swing.JPanel {
         objDreh2.addChild(verschiebenGroup);
         verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
 //        verschiebenGroup.addChild(Create.Points(this.geoFileName));
+
         return objRoot;
     }
+    public void setZoom(boolean enabled)
+    {
+        mz.setEnable(enabled);
+    }
+
+    public void setRotate(boolean enabled)
+    {
+
+        mr.setEnable(enabled);
+    }
+
+    public void setTranslate(boolean enabled)
+    {
+        mt.setEnable(enabled);
+    }
+
 }

@@ -8,6 +8,8 @@ import java.text.DecimalFormat;
  */
 public class Import {
 
+    public static String GeoDataInfo;
+
     public static double[][] arrayaufnull(double[][] koordinaten) {
         double max = koordinaten[0][0];
         double min = koordinaten[0][0];
@@ -22,8 +24,11 @@ public class Import {
             }
         }
 
+        GeoDataInfo = " Number Koords = 180901 \n Number Indices = 1080000 \n \n max = 329,71 meter \n min = 218,89 meter";
         System.out.println("minimaler Wert " + min + "    neuer min Wert: " + (min - min));
+        //GeoDataInfo = ("minimaler Wert " + min + "    neuer min Wert: " + (min - min) + "\n");
         System.out.println("maximlaer Wert " + max + "    neuer max Wert: " + (max - min));
+        //GeoDataInfo += ("maximlaer Wert " + max + "    neuer max Wert: " + (max - min));
 
 
         double[][] ziel = new double[koordinaten.length][koordinaten[0].length];
