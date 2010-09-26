@@ -3,7 +3,6 @@ package com.dfki.av.sudplan.j3d;
 import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
 import com.sun.j3d.utils.image.TextureLoader;
-import com.sun.jdi.connect.spi.TransportService.Capabilities;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;

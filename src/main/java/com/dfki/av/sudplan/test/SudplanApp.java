@@ -35,7 +35,8 @@ public class SudplanApp {
             frame.add(visPanel);
             frame.add(outerPanel);
 
- 
+       
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setMinimumSize(new Dimension(

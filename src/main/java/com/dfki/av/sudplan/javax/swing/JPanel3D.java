@@ -112,8 +112,6 @@ public class JPanel3D extends javax.swing.JPanel {
         mr.setEnable(false);
         objTrans.addChild(mr);
 
-        
-
         // set up the mouse translate
         mt = new MouseTranslate();
         mt.setTransformGroup(objTrans);
