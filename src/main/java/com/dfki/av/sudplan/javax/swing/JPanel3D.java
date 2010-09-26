@@ -34,25 +34,26 @@ public class JPanel3D extends javax.swing.JPanel {
 
     private String geoFileName;
     private TransformGroup verschiebenGroup;
-    public Appearance app;
+    public Appearance kl_map;
     public Appearance kl_air;
+    public Appearance textureAppearance;
     private MouseWheelZoom mz;
     private MouseTranslate mt;
     private MouseRotate mr;
 
 
-    public JPanel3D() throws FileNotFoundException, IOException, URISyntaxException {
+    public JPanel3D()  {
         this("test.txt");
     }
 
-    public JPanel3D(String fileName) throws FileNotFoundException, IOException, URISyntaxException {
+    public JPanel3D(String fileName)  {
         super();
         this.geoFileName = fileName;
 
         initComponents();
     }
 
-    private void initComponents() throws FileNotFoundException, IOException, URISyntaxException {
+    private void initComponents()  {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas3D = new Canvas3D(config);
@@ -68,14 +69,14 @@ public class JPanel3D extends javax.swing.JPanel {
 
 
 
-    public BranchGroup createSceneGraph() throws FileNotFoundException, IOException, URISyntaxException {
+    public BranchGroup createSceneGraph()  {
         // Create the root of the branchgroup
         BranchGroup objRoot = new BranchGroup();
 
-        app = new Appearance();
+        kl_map = new Appearance();
         TextureLoader loader = new TextureLoader("kl_map.jpg", null);
         Texture2D texture = ( Texture2D ) loader.getTexture();
-        app.setTexture(texture);
+        kl_map.setTexture(texture);
 
         kl_air = new Appearance();
         loader = new TextureLoader("kl_air.jpg", null);
@@ -158,7 +159,7 @@ public class JPanel3D extends javax.swing.JPanel {
         verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
         //((Shape3D)verschiebenGroup.getChild(0)).setAppearance(kl_air) ;
 //        verschiebenGroup.addChild(Create.Points(this.geoFileName));
-
+        setGeomApp(kl_map);
         return objRoot;
     }
 
@@ -170,6 +171,17 @@ public class JPanel3D extends javax.swing.JPanel {
     public void setGeomApp(Appearance geomApp)
     {
         ((Shape3D)verschiebenGroup.getChild(0)).setAppearance(geomApp) ;
+    }
+
+    public void loadImage(String fileName)
+    {
+        textureAppearance = new Appearance();
+        TextureLoader loader = new TextureLoader(fileName, null);
+        Texture2D texture = ( Texture2D ) loader.getTexture();
+        textureAppearance.setTexture(texture);
+        
+        setGeomApp(textureAppearance);
+        //return textureAppearance;
     }
     public void setZoom(boolean enabled)
     {

@@ -3,6 +3,7 @@ package com.dfki.av.sudplan.j3d;
 import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
 import com.sun.j3d.utils.image.TextureLoader;
+import com.sun.jdi.connect.spi.TransportService.Capabilities;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -28,15 +29,16 @@ public class Create {
 
 public static int scalefactor = 1200;
 
-    private void initComponents() throws FileNotFoundException, IOException {
+    private void initComponents()  {
         //Textur
         TextureLoader loader = new TextureLoader("map.jpg",null);
     
     }
 
-    public static Shape3D Points(String filename) throws FileNotFoundException, IOException, URISyntaxException {
+    public static Shape3D Points(String filename)  {
         ColoringAttributes ca2 = new ColoringAttributes(0.0f, 0.0f, 0.0f, ColoringAttributes.SHADE_FLAT);
         GeoData data = new GeoData(filename);
+
         double array[][] = data.getPoints();
 //        double array[][] = Import.einlesen(filename);
 
@@ -70,7 +72,7 @@ public static int scalefactor = 1200;
         return punktShape;
     }   //end of Points
 
-    public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException, URISyntaxException {
+    public static Shape3D Dreieck(String filename)  {
 
         GeoData data = new GeoData(filename);
         double array[][] = data.getPoints();
@@ -94,8 +96,7 @@ public static int scalefactor = 1200;
                 pts[zaehler] = new Point3f(
                         (float) spalte / 300 - 1,
                         (float) zeile / 300 - 1,
-<<<<<<< HEAD:src/main/java/com/dfki/av/sudplan/j3d/Create.java
-                        (float) ((koordinaten[spalte][zeile]) / 1200));
+                        (float) ((koordinaten[spalte][zeile]) / scalefactor));
 
                 texCoords[zaehler] = new TexCoord2f(
                         (float) spalte / koordinaten.length ,
@@ -103,9 +104,9 @@ public static int scalefactor = 1200;
                 //System.out.println(texCoords[zaehler]);
 //                textureIndices[zaehler] = zaehler;
 
-=======
-                        (float) ((koordinaten[spalte][zeile]) / scalefactor));
->>>>>>> Minor bug fixes / first gui:src/main/java/com/dfki/av/sudplan/j3d/Create.java
+
+                        
+
                 zaehler++;
             }
         }
@@ -161,6 +162,7 @@ public static int scalefactor = 1200;
         plane.setColorIndices(0, indices);
         //Shape3D killer = new Shape3D(plane, makeAppearance());
         Shape3D killer = new Shape3D(plane);
+        killer.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
         return killer;
     }
 

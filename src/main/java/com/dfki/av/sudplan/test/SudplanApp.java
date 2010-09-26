@@ -28,8 +28,6 @@ public class SudplanApp {
 
     private void initComponents(String filename) {
         JFrame frame = new JFrame("SudplanApp");
-
-        try {
             visPanel = new JPanel3D(filename);
             outerPanel = new JPanelOuter2(visPanel);
             //frame.add(new JPanel3D(filename));
@@ -37,17 +35,7 @@ public class SudplanApp {
             frame.add(visPanel);
             frame.add(outerPanel);
 
-        } catch (URISyntaxException ex){
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-            System.exit(-1);
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-            System.exit(-1);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-            System.exit(-1);
-        }
-
+ 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setMinimumSize(new Dimension(
