@@ -7,9 +7,7 @@ import java.awt.GridLayout;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  *

@@ -3,9 +3,6 @@ package com.dfki.av.sudplan.j3d;
 import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
 import com.sun.j3d.utils.image.TextureLoader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.GeometryArray;
@@ -26,13 +23,15 @@ import javax.vecmath.TexCoord2f;
  */
 public class Create {
 
-public static int scalefactor = 1200;
+    public static final int scalefactor_normal = 1200;
+    public static int scalefactor = scalefactor_normal;
+    public static Shape3D geometry = new Shape3D();
 
-    private void initComponents()  {
-        //Textur
-        TextureLoader loader = new TextureLoader("map.jpg",null);
-    
-    }
+//    private void initComponents()  {
+//        //Textur
+//        TextureLoader loader = new TextureLoader("map.jpg",null);
+//
+//    }
 
     public static Shape3D Points(String filename)  {
         ColoringAttributes ca2 = new ColoringAttributes(0.0f, 0.0f, 0.0f, ColoringAttributes.SHADE_FLAT);
@@ -71,10 +70,20 @@ public static int scalefactor = 1200;
         return punktShape;
     }   //end of Points
 
-    public static Shape3D Dreieck(String filename)  {
+    public static Shape3D getGeometry(String filename){
+        //geometry = new Shape3D();
+        geometry.setGeometry(Dreieck(filename));
+        geometry.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+        geometry.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
+        return geometry;
+    }
+
+    public static IndexedTriangleArray Dreieck(String filename)  {
 
         GeoData data = new GeoData(filename);
         double array[][] = data.getPoints();
+
+
 
 //        double array[][] = Import.einlesen(filename);
         double koordinaten[][] = Import.arrayaufnull(array);
@@ -100,12 +109,6 @@ public static int scalefactor = 1200;
                 texCoords[zaehler] = new TexCoord2f(
                         (float) spalte / koordinaten.length ,
                         (float) zeile /  koordinaten[0].length );
-                //System.out.println(texCoords[zaehler]);
-//                textureIndices[zaehler] = zaehler;
-
-
-                        
-
                 zaehler++;
             }
         }
@@ -113,9 +116,7 @@ public static int scalefactor = 1200;
         int spalte = koordinaten.length;        // 601
         int tmp = 0;
         int[] indices = new int[NUM_INDICES];
-//System.out.println("Coords: "+ pts.length);
-//System.out.println("texCo: "+ texCoords.length);
-//System.out.println("texIn: "+ textur.length);
+
 
         System.out.println("indices.length: " + indices.length);
         
@@ -131,8 +132,7 @@ public static int scalefactor = 1200;
                 tmp = tmp + 1;
             }
         }
-//        for (int i = 0; i < indices.length; i=i+3)
-//            System.out.println("indices["+i+"] + 2 weitere: " + indices[i] +"  "+ indices[i+1] +"  "+ indices[i+2]);
+
 
         plane.setCoordinates(0, pts);
         plane.setCoordinateIndices(0, indices);
@@ -159,10 +159,12 @@ public static int scalefactor = 1200;
         }
         plane.setColors(0, cols);
         plane.setColorIndices(0, indices);
+        return plane;
         //Shape3D killer = new Shape3D(plane, makeAppearance());
-        Shape3D killer = new Shape3D(plane);
-        killer.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-        return killer;
+//        geometry = new Shape3D(plane);
+//        geometry.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+//        geometry.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
+//        return geometry;
     }
 
     public static Shape3D createKoordSystemY() {

@@ -9,9 +9,6 @@ import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
@@ -40,6 +37,7 @@ public class JPanel3D extends javax.swing.JPanel {
     private MouseWheelZoom mz;
     private MouseTranslate mt;
     private MouseRotate mr;
+    private Create create = new Create();
 
 
     public JPanel3D()  {
@@ -154,14 +152,18 @@ public class JPanel3D extends javax.swing.JPanel {
         objTrans.addChild(objDreh);
         objDreh.addChild(objDreh2);
         objDreh2.addChild(verschiebenGroup);
-        verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
+        verschiebenGroup.addChild(create.getGeometry(geoFileName));
+        //verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
         //((Shape3D)verschiebenGroup.getChild(0)).setAppearance(kl_air) ;
 //        verschiebenGroup.addChild(Create.Points(this.geoFileName));
         setGeomApp(kl_map);
         return objRoot;
     }
 
-
+    public void changeHeight(double scale){
+        Create.scalefactor = (int) (Create.scalefactor_normal * scale);
+        ((Shape3D)verschiebenGroup.getChild(0)).setGeometry(Create.Dreieck(geoFileName));
+    }
     public void disableApp(){
         ((Shape3D)verschiebenGroup.getChild(0)).setAppearance(null);
     }
