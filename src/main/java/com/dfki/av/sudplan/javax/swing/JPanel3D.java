@@ -5,18 +5,18 @@ import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
+import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
@@ -30,23 +30,28 @@ import javax.vecmath.Vector3f;
 public class JPanel3D extends javax.swing.JPanel {
 
     private String geoFileName;
+    private TransformGroup verschiebenGroup;
+    public Appearance kl_map;
+    public Appearance kl_air;
+    public Appearance textureAppearance;
     private MouseWheelZoom mz;
     private MouseTranslate mt;
     private MouseRotate mr;
+    private Create create = new Create();
 
 
-    public JPanel3D() throws FileNotFoundException, IOException, URISyntaxException {
+    public JPanel3D()  {
         this("test.txt");
     }
 
-    public JPanel3D(String fileName) throws FileNotFoundException, IOException, URISyntaxException {
+    public JPanel3D(String fileName)  {
         super();
         this.geoFileName = fileName;
 
         initComponents();
     }
 
-    private void initComponents() throws FileNotFoundException, IOException, URISyntaxException {
+    private void initComponents()  {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas3D = new Canvas3D(config);
@@ -62,16 +67,23 @@ public class JPanel3D extends javax.swing.JPanel {
 
 
 
-    public BranchGroup createSceneGraph() throws FileNotFoundException, IOException, URISyntaxException {
+    public BranchGroup createSceneGraph()  {
         // Create the root of the branchgroup
         BranchGroup objRoot = new BranchGroup();
-        Appearance app = new Appearance();
-//        app.setColoringAttributes(ca);
 
+        kl_map = new Appearance();
+        TextureLoader loader = new TextureLoader("kl_map.jpg", null);
+        Texture2D texture = ( Texture2D ) loader.getTexture();
+        kl_map.setTexture(texture);
+
+        kl_air = new Appearance();
+        loader = new TextureLoader("kl_air.jpg", null);
+        texture = ( Texture2D ) loader.getTexture();
+        kl_air.setTexture(texture);
         // transform x
         Transform3D verschieben = new Transform3D();
         verschieben.setTranslation(new Vector3f(0.5f, 0.0f, 0.0f));
-        TransformGroup verschiebenGroup = new TransformGroup(verschieben);
+        verschiebenGroup = new TransformGroup(verschieben);
         // rotation z
         Transform3D drehung = new Transform3D();
         drehung.rotZ(Math.toRadians(-90));
@@ -97,8 +109,6 @@ public class JPanel3D extends javax.swing.JPanel {
         mr.setFactor(0.0, 0.007);
         mr.setEnable(false);
         objTrans.addChild(mr);
-
-        
 
         // set up the mouse translate
         mt = new MouseTranslate();
@@ -142,10 +152,36 @@ public class JPanel3D extends javax.swing.JPanel {
         objTrans.addChild(objDreh);
         objDreh.addChild(objDreh2);
         objDreh2.addChild(verschiebenGroup);
-        verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
+        verschiebenGroup.addChild(create.getGeometry(geoFileName));
+        //verschiebenGroup.addChild(Create.Dreieck(this.geoFileName));
+        //((Shape3D)verschiebenGroup.getChild(0)).setAppearance(kl_air) ;
 //        verschiebenGroup.addChild(Create.Points(this.geoFileName));
-
+        setGeomApp(kl_map);
         return objRoot;
+    }
+
+    public void changeHeight(double scale){
+        Create.scalefactor = (int) (Create.scalefactor_normal * scale);
+        ((Shape3D)verschiebenGroup.getChild(0)).setGeometry(Create.Dreieck(geoFileName));
+    }
+    public void disableApp(){
+        ((Shape3D)verschiebenGroup.getChild(0)).setAppearance(null);
+    }
+    
+    public void setGeomApp(Appearance geomApp)
+    {
+        ((Shape3D)verschiebenGroup.getChild(0)).setAppearance(geomApp) ;
+    }
+
+    public void loadImage(String fileName)
+    {
+        textureAppearance = new Appearance();
+        TextureLoader loader = new TextureLoader(fileName, null);
+        Texture2D texture = ( Texture2D ) loader.getTexture();
+        textureAppearance.setTexture(texture);
+        
+        setGeomApp(textureAppearance);
+        //return textureAppearance;
     }
     public void setZoom(boolean enabled)
     {

@@ -3,9 +3,6 @@ package com.dfki.av.sudplan.j3d;
 import com.dfki.av.sudplan.io.GeoData;
 import com.dfki.av.sudplan.io.Import;
 import com.sun.j3d.utils.image.TextureLoader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.GeometryArray;
@@ -15,8 +12,10 @@ import javax.media.j3d.LineAttributes;
 import javax.media.j3d.PointArray;
 import javax.media.j3d.PointAttributes;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture2D;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
+import javax.vecmath.TexCoord2f;
 
 /**
  *
@@ -24,17 +23,20 @@ import javax.vecmath.Point3f;
  */
 public class Create {
 
-public static int scalefactor = 1200;
+    public static final int scalefactor_normal = 1200;
+    public static int scalefactor = scalefactor_normal;
+    public static Shape3D geometry = new Shape3D();
 
-    private void initComponents() throws FileNotFoundException, IOException {
-        //Textur
-        TextureLoader loader = new TextureLoader("map.jpg",null);
-    
-    }
+//    private void initComponents()  {
+//        //Textur
+//        TextureLoader loader = new TextureLoader("map.jpg",null);
+//
+//    }
 
-    public static Shape3D Points(String filename) throws FileNotFoundException, IOException, URISyntaxException {
+    public static Shape3D Points(String filename)  {
         ColoringAttributes ca2 = new ColoringAttributes(0.0f, 0.0f, 0.0f, ColoringAttributes.SHADE_FLAT);
         GeoData data = new GeoData(filename);
+
         double array[][] = data.getPoints();
 //        double array[][] = Import.einlesen(filename);
 
@@ -68,10 +70,20 @@ public static int scalefactor = 1200;
         return punktShape;
     }   //end of Points
 
-    public static Shape3D Dreieck(String filename) throws FileNotFoundException, IOException, URISyntaxException {
+    public static Shape3D getGeometry(String filename){
+        //geometry = new Shape3D();
+        geometry.setGeometry(Dreieck(filename));
+        geometry.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+        geometry.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
+        return geometry;
+    }
+
+    public static IndexedTriangleArray Dreieck(String filename)  {
 
         GeoData data = new GeoData(filename);
         double array[][] = data.getPoints();
+
+
 
 //        double array[][] = Import.einlesen(filename);
         double koordinaten[][] = Import.arrayaufnull(array);
@@ -79,10 +91,12 @@ public static int scalefactor = 1200;
 
         int NUM_Triangles = 360000;
         int NUM_INDICES = NUM_Triangles * 3;    // f�r jedes Dreieck 3 Indices
-        IndexedTriangleArray plane = new IndexedTriangleArray(AnzahlKoords, GeometryArray.COORDINATES | GeometryArray.COLOR_3, NUM_INDICES);
+        IndexedTriangleArray plane = new IndexedTriangleArray(AnzahlKoords, GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.TEXTURE_COORDINATE_2, NUM_INDICES);
         System.out.println("AnzahlKoords: " + AnzahlKoords);
 
         Point3f[] pts = new Point3f[AnzahlKoords];
+        TexCoord2f[] texCoords = new TexCoord2f[AnzahlKoords];
+        int[] textureIndices = new int[AnzahlKoords];
         System.out.println("pts.length: " + pts.length);
         int zaehler = 0;
         for (int spalte = 0; spalte < koordinaten.length; spalte++) {
@@ -91,6 +105,10 @@ public static int scalefactor = 1200;
                         (float) spalte / 300 - 1,
                         (float) zeile / 300 - 1,
                         (float) ((koordinaten[spalte][zeile]) / scalefactor));
+
+                texCoords[zaehler] = new TexCoord2f(
+                        (float) spalte / koordinaten.length ,
+                        (float) zeile /  koordinaten[0].length );
                 zaehler++;
             }
         }
@@ -98,6 +116,8 @@ public static int scalefactor = 1200;
         int spalte = koordinaten.length;        // 601
         int tmp = 0;
         int[] indices = new int[NUM_INDICES];
+
+
         System.out.println("indices.length: " + indices.length);
         
         for (int i = 0; i < (NUM_INDICES - 602); i = i + 6) {
@@ -112,11 +132,12 @@ public static int scalefactor = 1200;
                 tmp = tmp + 1;
             }
         }
-//        for (int i = 0; i < indices.length; i=i+3)
-//            System.out.println("indices["+i+"] + 2 weitere: " + indices[i] +"  "+ indices[i+1] +"  "+ indices[i+2]);
+
 
         plane.setCoordinates(0, pts);
         plane.setCoordinateIndices(0, indices);
+        plane.setTextureCoordinates(0, 0, texCoords);
+        plane.setTextureCoordinateIndices(0, 0, indices);
 
         // Color
         Color3f[] cols = new Color3f[AnzahlKoords];
@@ -138,8 +159,12 @@ public static int scalefactor = 1200;
         }
         plane.setColors(0, cols);
         plane.setColorIndices(0, indices);
-        Shape3D killer = new Shape3D(plane);
-        return killer;
+        return plane;
+        //Shape3D killer = new Shape3D(plane, makeAppearance());
+//        geometry = new Shape3D(plane);
+//        geometry.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+//        geometry.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
+//        return geometry;
     }
 
     public static Shape3D createKoordSystemY() {
@@ -176,5 +201,16 @@ public static int scalefactor = 1200;
         Shape3D dotShape = new Shape3D(dot, dotApp);
         return dotShape;
         //objRoot.addChild(dotShape);
+    }
+
+    private static Appearance makeAppearance(){
+
+        Appearance a = new Appearance();
+        //TextureLoader loader = new TextureLoader("schachbrett1024.png", null);
+        TextureLoader loader = new TextureLoader("kl_air.jpg", null);
+        Texture2D texture = ( Texture2D ) loader.getTexture();
+        a.setTexture(texture);
+
+        return a;
     }
 }
