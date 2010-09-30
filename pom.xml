@@ -4,7 +4,7 @@
   <groupId>com.dfki.av.sudplan</groupId>
   <artifactId>sudplan</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>sudplan</name>
   <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>
   <url>http://www.sudplan.eu</url>
@@ -37,7 +37,7 @@
   </dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sudplan.main>com.dfki.av.sudplan.test.SudplanApp</sudplan.main>
+		<sudplan.main>com.dfki.av.sudplan.test.Main</sudplan.main>
 	</properties>
 
   <!-- More Project Information -->

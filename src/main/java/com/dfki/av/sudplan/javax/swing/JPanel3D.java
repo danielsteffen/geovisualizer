@@ -9,6 +9,7 @@ import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
+import java.net.URL;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
@@ -72,12 +73,17 @@ public class JPanel3D extends javax.swing.JPanel {
         BranchGroup objRoot = new BranchGroup();
 
         kl_map = new Appearance();
-        TextureLoader loader = new TextureLoader("kl_map.jpg", null);
+        URL url = Thread.currentThread().getContextClassLoader().getResource("kl_map.jpg");
+//        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+
+//        TextureLoader loader = new TextureLoader("kl_map.jpg", null);
+        TextureLoader loader = new TextureLoader(url, null);
         Texture2D texture = ( Texture2D ) loader.getTexture();
         kl_map.setTexture(texture);
 
         kl_air = new Appearance();
-        loader = new TextureLoader("kl_air.jpg", null);
+        URL url_air = Thread.currentThread().getContextClassLoader().getResource("kl_air.jpg");
+        loader = new TextureLoader(url_air, null);
         texture = ( Texture2D ) loader.getTexture();
         kl_air.setTexture(texture);
         // transform x
@@ -176,7 +182,8 @@ public class JPanel3D extends javax.swing.JPanel {
     public void loadImage(String fileName)
     {
         textureAppearance = new Appearance();
-        TextureLoader loader = new TextureLoader(fileName, null);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
+        TextureLoader loader = new TextureLoader(url, null);
         Texture2D texture = ( Texture2D ) loader.getTexture();
         textureAppearance.setTexture(texture);
         
