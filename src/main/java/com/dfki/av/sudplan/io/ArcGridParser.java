@@ -25,7 +25,7 @@ public class ArcGridParser {
   //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: possible to parse without ncols/nrows (no array)
   private final static Logger logger = LoggerFactory.getLogger(ArcGridParser.class);
   private int columnCount;
-  private LandscapeGeometryInfo geoInfo;
+  private GeometryInfo geoInfo;
   private int rowCount;
   private double xOrigin;
   private double yOrigin;
@@ -40,7 +40,7 @@ public class ArcGridParser {
   private Point3f[] pointList;
 //  private Color4f[] colorsElevation;
 //  private Color4f[] colorsSlope;
-//  private Color4f[] colorsGreen;
+  private Color4f[] colorsGreen;
   private Color4f[] colorsPlain;
   private int[] indicesList;
   private static final float HIGH = 1800;
@@ -165,15 +165,15 @@ public class ArcGridParser {
           pointList[z] = new Point3f((x) * (cellSize / 1500.0f), (y)
                   * (cellSize / 1500.0f), currentHeight / 1500.0f);
 
-        if (currentHeight < LOW) {
-          colorsElevation[z] = Colors.green;
-        } else if (currentHeight < MEDIUM) {
-          colorsElevation[z] = Colors.darkGreen;
-        } else if (currentHeight < HIGH) {
-          colorsElevation[z] = Colors.purple;
-        } else {
-          colorsElevation[z] = Colors.greyWhite;
-        }
+//        if (currentHeight < LOW) {
+//          colorsElevation[z] = Colors.green;
+//        } else if (currentHeight < MEDIUM) {
+//          colorsElevation[z] = Colors.darkGreen;
+//        } else if (currentHeight < HIGH) {
+//          colorsElevation[z] = Colors.purple;
+//        } else {
+//          colorsElevation[z] = Colors.greyWhite;
+//        }
           colorsGreen[z] = Colors.darkGreen;
 
           z++;
@@ -212,38 +212,38 @@ public class ArcGridParser {
                     - ((k * 3) + 1)]];
             Point3f point3 = pointList[indicesList[index
                     - ((k * 3) + 2)]];
-            float dist1 = point1.distance(point2);
-            float dist2 = point1.distance(point3);
-            float diff1 = Math.abs(point1.z - point2.z);
-            float diff2 = Math.abs(point1.z - point3.z);
-
-            float slope = ((diff1 / dist1) + (diff2 / dist2)) * 50;
-            // slope = slope - 5;
-            if (slope < flatest) {
-              colorsSlope[indicesList[index - (k * 3)]] = colorsElevation[indicesList[index
-                      - (k * 3)]];
-              colorsSlope[indicesList[index - ((k * 3) + 1)]] = colorsElevation[indicesList[index
-                      - ((k * 3) + 1)]];
-              colorsSlope[indicesList[index - ((k * 3) + 2)]] = colorsElevation[indicesList[index
-                      - ((k * 3) + 2)]];
-            } else if (slope < flat) {
-              colorsSlope[indicesList[index - ((k * 3))]] = Colors.lightOrange;
-              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.lightOrange;
-              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.lightOrange;
-            } else if (slope < steep) {
-              colorsSlope[indicesList[index - ((k * 3))]] = Colors.orange;
-              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.orange;
-              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.orange;
-            } else if (slope < steeper) {
-              colorsSlope[indicesList[index - (k * 3)]] = Colors.darkOrange;
-              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.darkOrange;
-              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.darkOrange;
-            } else {
-              // Highest
-              colorsSlope[indicesList[index - (k * 3)]] = Colors.red;
-              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.red;
-              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.red;
-            }
+//            float dist1 = point1.distance(point2);
+//            float dist2 = point1.distance(point3);
+//            float diff1 = Math.abs(point1.z - point2.z);
+//            float diff2 = Math.abs(point1.z - point3.z);
+//
+//            float slope = ((diff1 / dist1) + (diff2 / dist2)) * 50;
+//            // slope = slope - 5;
+//            if (slope < flatest) {
+//              colorsSlope[indicesList[index - (k * 3)]] = colorsElevation[indicesList[index
+//                      - (k * 3)]];
+//              colorsSlope[indicesList[index - ((k * 3) + 1)]] = colorsElevation[indicesList[index
+//                      - ((k * 3) + 1)]];
+//              colorsSlope[indicesList[index - ((k * 3) + 2)]] = colorsElevation[indicesList[index
+//                      - ((k * 3) + 2)]];
+//            } else if (slope < flat) {
+//              colorsSlope[indicesList[index - ((k * 3))]] = Colors.lightOrange;
+//              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.lightOrange;
+//              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.lightOrange;
+//            } else if (slope < steep) {
+//              colorsSlope[indicesList[index - ((k * 3))]] = Colors.orange;
+//              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.orange;
+//              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.orange;
+//            } else if (slope < steeper) {
+//              colorsSlope[indicesList[index - (k * 3)]] = Colors.darkOrange;
+//              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.darkOrange;
+//              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.darkOrange;
+//            } else {
+//              // Highest
+//              colorsSlope[indicesList[index - (k * 3)]] = Colors.red;
+//              colorsSlope[indicesList[index - ((k * 3) + 1)]] = Colors.red;
+//              colorsSlope[indicesList[index - ((k * 3) + 2)]] = Colors.red;
+//            }
           }
           index -= 6;
         }
@@ -255,8 +255,9 @@ public class ArcGridParser {
       }
       throw new ParsingException("Error while parsing grid file.", ex);
     }
-    geoInfo = new LandscapeGeometryInfo(GeometryInfo.TRIANGLE_ARRAY,
-            colorsGreen, colorsElevation, colorsSlope, indicesList);
+//    geoInfo = new LandscapeGeometryInfo(GeometryInfo.TRIANGLE_ARRAY,
+//            colorsGreen, colorsElevation, colorsSlope, indicesList);
+    geoInfo = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
     geoInfo.setCoordinates(pointList);
     geoInfo.setCoordinateIndices(indicesList);
   }
@@ -267,7 +268,7 @@ public class ArcGridParser {
    *
    * @return
    */
-  public LandscapeGeometryInfo getGeometryInfo() {
+  public GeometryInfo getGeometryInfo() {
     return geoInfo;
   }
 
