@@ -19,7 +19,7 @@ public class LandscapeGeometryInfo extends GeometryInfo {
 
     private Color4f[] colorsSlope;
 
-    private int[] indices;
+//    private int[] indices;
 
     /**
      * Default Contructor. The integer value determines what kind of Geometry
@@ -54,14 +54,14 @@ public class LandscapeGeometryInfo extends GeometryInfo {
         colorsStandard = standardColor;
         colorsElevation = elevationColor;
         colorsSlope = slopeColor;
-        this.indices = indices;
+//        this.indices = indices;
         setColorIndices(indices);
         setStandardColor();
     }
 
-    private void setIndicies(int[] indiciesList) {
-        indices = indiciesList;
-    }
+//    private void setIndicies(int[] indiciesList) {
+//        indices = indiciesList;
+//    }
 
     private void setElevationColor(Color4f[] colorList) {
         colorsElevation = colorList;

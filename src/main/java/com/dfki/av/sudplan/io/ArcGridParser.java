@@ -1,6 +1,5 @@
 package com.dfki.av.sudplan.io;
 
-import com.dfki.av.sudplan.util.NumberParser;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -8,6 +7,8 @@ import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 
 import com.sun.j3d.utils.geometry.GeometryInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -18,8 +19,11 @@ import com.sun.j3d.utils.geometry.GeometryInfo;
  * the color indices
  * 
  */
-public class GeometryLoader {
+public class ArcGridParser {
 
+  //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: documentation/unit tests
+  //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: possible to parse without ncols/nrows (no array)
+  private final static Logger logger = LoggerFactory.getLogger(ArcGridParser.class);
   private int columnCount;
   private LandscapeGeometryInfo geoInfo;
   private int rowCount;
@@ -30,13 +34,13 @@ public class GeometryLoader {
   private int countQuads;
   private int countTriangles;
   private int indexCountTriangles;
-  private int noData;
+  private double noData;
   // private Point3f[] quads;
   // private Point3f[][] realPoints;
   private Point3f[] pointList;
-  private Color4f[] colorsElevation;
-  private Color4f[] colorsSlope;
-  private Color4f[] colorsGreen;
+//  private Color4f[] colorsElevation;
+//  private Color4f[] colorsSlope;
+//  private Color4f[] colorsGreen;
   private Color4f[] colorsPlain;
   private int[] indicesList;
   private static final float HIGH = 1800;
@@ -46,6 +50,14 @@ public class GeometryLoader {
   private static final float steep = 40;
   private static final float flat = 35;
   private static final float flatest = 30;
+  private final static String WHITE_SPACE = "\\s";
+  private final static String WHITE_SPACES = WHITE_SPACE+"+";
+  public final static String NUMBER_OF_COLUMNS = "ncols";
+  public final static String NUMBER_OF_ROWS = "nrows";
+  public final static String LEFTMOST_X_COORDINATE = "xllcorner";
+  public final static String BOTTOMMOST_Y_COORDINATE = "yllcorner";
+  public final static String CELLSIZE = "cellsize";
+  public final static String NO_DATA_VALUE = "nodata_value";
 
   /**
    * Contructor requested an stream with coordinate informations
@@ -53,57 +65,105 @@ public class GeometryLoader {
    * @param reader -
    *            coordinate stream
    */
-  public GeometryLoader(InputStreamReader reader) {
+  public ArcGridParser(InputStreamReader reader) throws ParsingException {
     readCoordinates(reader);
   }
 
-  private void readCoordinates(InputStreamReader reader) {
+  private void readCoordinates(final InputStreamReader reader) throws ParsingException {
     try {
       BufferedReader sr = new BufferedReader(reader);
 
       // READ PARAMETERFILES OF DGM
       //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:problem this must be variable --> no_data need not be there
-      columnCount = Integer.parseInt(sr.readLine().split(" ")[1]);
-      rowCount = Integer.parseInt(sr.readLine().split(" ")[1]);
-      xOrigin = Double.parseDouble(sr.readLine().split(" ")[1]);
-      yOrigin = Double.parseDouble(sr.readLine().split(" ")[1]);
-      cellSize = Integer.parseInt(sr.readLine().split(" ")[1]);
-      noData = Integer.parseInt(sr.readLine().split(" ")[1]);
+      String[] currentKeyValuePair = doubleSplit(sr.readLine());
+      if (!currentKeyValuePair[0].equalsIgnoreCase(NUMBER_OF_COLUMNS)) {
+        throw new FileFormatException("No number of columns specified(" + NUMBER_OF_COLUMNS + ")");
+      }
+      columnCount = Integer.parseInt(currentKeyValuePair[1]);
 
-//            coordinateCount = columnCount * rowCount;
-      coordinateCount = 454536 * 3;
+      currentKeyValuePair = doubleSplit(sr.readLine());
+      if (!currentKeyValuePair[0].equalsIgnoreCase(NUMBER_OF_ROWS)) {
+        throw new FileFormatException("No number of rows specified(" + NUMBER_OF_ROWS + ")");
+      }
+      rowCount = Integer.parseInt(currentKeyValuePair[1]);
+
+      currentKeyValuePair = doubleSplit(sr.readLine());
+      if (!currentKeyValuePair[0].equalsIgnoreCase(LEFTMOST_X_COORDINATE)) {
+        throw new FileFormatException("No x orgin value specified(" + LEFTMOST_X_COORDINATE + ")");
+      }
+      xOrigin = Double.parseDouble(currentKeyValuePair[1]);
+
+      currentKeyValuePair = doubleSplit(sr.readLine());
+      if (!currentKeyValuePair[0].equalsIgnoreCase(BOTTOMMOST_Y_COORDINATE)) {
+        throw new FileFormatException("No y orgin value specified(" + BOTTOMMOST_Y_COORDINATE + ")");
+      }
+      yOrigin = Double.parseDouble(currentKeyValuePair[1]);
+
+      currentKeyValuePair = doubleSplit(sr.readLine());
+      if (!currentKeyValuePair[0].equalsIgnoreCase(CELLSIZE)) {
+        throw new FileFormatException("No cell size specified(" + CELLSIZE + ")");
+      }
+      cellSize = Integer.parseInt(currentKeyValuePair[1]);
+
+      String testLine = sr.readLine();
+      try {
+        currentKeyValuePair = doubleSplit(testLine);
+        if (currentKeyValuePair[0].equalsIgnoreCase(NO_DATA_VALUE)) {
+          noData = Double.parseDouble(currentKeyValuePair[1]);
+          logger.info("No data value is: " + noData);
+          testLine = null;
+        }
+      } catch (SplitNotPossibleException ex) {
+        logger.info("No data value is not avaialable");
+      }
+
+      coordinateCount = columnCount * rowCount;
+//            coordinateCount = 90600;
       countQuads = (columnCount - 1) * (rowCount - 1);
       countTriangles = countQuads * 2;
       indexCountTriangles = countTriangles * 3;
 
-      // THE ARRAY WITH THE HEIGHT POINTS (Starts by 0,0)
+      // THE ARRAY WITH THE HEIGHT POINTS (Starts by 0,NUMBER_OF_COLUMNS)
       // points = new Point3f[rowCount][columCount];
       // REAL WORLD COORDINATES
       // realPoints = new Point3f[rowCount][columCount];
-      // A list of all Points (the points only one time)
+//       A list of all Points (the points only one time)
       pointList = new Point3f[coordinateCount];
-      colorsElevation = new Color4f[coordinateCount];
-      colorsSlope = new Color4f[coordinateCount];
+//      colorsElevation = new Color4f[coordinateCount];
+//      colorsSlope = new Color4f[coordinateCount];
       colorsGreen = new Color4f[coordinateCount];
       colorsPlain = null;
-      NumberParser geoParser = new NumberParser(sr);
+//      NumberParser geoParser = new NumberParser(sr);
       int z = 0;
       int x = 0;
       int y = 0;
       float currentHeight = 0;
       int counter = 0;
-      while (geoParser.getToken()) {
-        counter++;
-        currentHeight = (float) geoParser.nval;
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:evil hack only for looking
-        if (currentHeight == noData) {
-          currentHeight = 1;
-        }
+
+      while (sr.ready()) {
+        String currentLine;
+        if (testLine == null) {          
+          currentLine = sr.readLine();
+        } else {          
+          currentLine = testLine;
+          testLine = null;
+        }        
+        final String[] currentRow= currentLine.split(WHITE_SPACE);
+//        if(currentRow.length != columnCount){
+//          throw new FileFormatException("Row "+x+" does contain "+currentRow.length+" elements, not as specified: "+columnCount+"."+" Row: "+currentLine);
+//        }
+        for(int currentColumn=0;currentColumn<currentRow.length;currentColumn++){
+          counter++;
+          currentHeight = Float.parseFloat(currentRow[currentColumn]);
+          //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:evil hack only for looking
+          if (currentHeight == noData) {
+            currentHeight = 1;
+          }
 //        pointList[z] = new Point3f((x) * (cellSize / 1500f), (y)
 //                * (cellSize / 1500f), currentHeight / 1500f);
 
-        pointList[z] = new Point3f((x) * (cellSize/1.0f), (y)
-                * (cellSize/1.0f), currentHeight/1.0f);
+          pointList[z] = new Point3f((x) * (cellSize / 1500.0f), (y)
+                  * (cellSize / 1500.0f), currentHeight / 1500.0f);
 
         if (currentHeight < LOW) {
           colorsElevation[z] = Colors.green;
@@ -114,16 +174,18 @@ public class GeometryLoader {
         } else {
           colorsElevation[z] = Colors.greyWhite;
         }
-        colorsGreen[z] = Colors.darkGreen;
+          colorsGreen[z] = Colors.darkGreen;
 
-        z++;
-        y++;
-        if (y == 301) {
-          y = 0;
-          x++;
+          z++;
+          y++;
+          if (y == columnCount) {
+            y = 0;
+            x++;
+          }
         }
       }
-      System.out.println("counter: " + counter);
+      logger.debug("counter: " + counter+" x: "+x+" y: "+y+ " z: "+z);
+      logger.debug("coordinateCount: "+coordinateCount);
       sr.close();
 
       indicesList = new int[indexCountTriangles];
@@ -132,7 +194,7 @@ public class GeometryLoader {
 
         for (int j = 0; j < rowCount - 1; j++) {
 
-          // under left triangle
+//      under left triangle
           indicesList[index] = (i * rowCount) + j;
           indicesList[index - 1] = (i * rowCount) + j + 1;
           indicesList[index - 2] = (i * rowCount) + j + (rowCount);
@@ -154,6 +216,7 @@ public class GeometryLoader {
             float dist2 = point1.distance(point3);
             float diff1 = Math.abs(point1.z - point2.z);
             float diff2 = Math.abs(point1.z - point3.z);
+
             float slope = ((diff1 / dist1) + (diff2 / dist2)) * 50;
             // slope = slope - 5;
             if (slope < flatest) {
@@ -185,9 +248,12 @@ public class GeometryLoader {
           index -= 6;
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println(e.getMessage());
+
+    } catch (Exception ex) {
+      if (ex instanceof SplitNotPossibleException) {
+        ex = new FileFormatException("Grid description at file begining is not correct", ex);
+      }
+      throw new ParsingException("Error while parsing grid file.", ex);
     }
     geoInfo = new LandscapeGeometryInfo(GeometryInfo.TRIANGLE_ARRAY,
             colorsGreen, colorsElevation, colorsSlope, indicesList);
@@ -203,5 +269,17 @@ public class GeometryLoader {
    */
   public LandscapeGeometryInfo getGeometryInfo() {
     return geoInfo;
+  }
+
+  private String[] doubleSplit(final String lineToSplit) throws SplitNotPossibleException {
+    if (lineToSplit == null) {
+      throw new SplitNotPossibleException("Line is empty.");
+    }
+    lineToSplit.trim();
+    final String[] splitting = lineToSplit.split(WHITE_SPACES);
+    if (splitting.length < 2) {
+      throw new SplitNotPossibleException("White space split yields less results than 2. No key value pair.");
+    }
+    return splitting;
   }
 }

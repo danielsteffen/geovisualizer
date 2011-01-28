@@ -10,7 +10,7 @@
  */
 package com.dfki.av.sudplan.ui.vis;
 
-import com.dfki.av.sudplan.io.GeometryLoader;
+import com.dfki.av.sudplan.io.ArcGridParser;
 import com.dfki.av.sudplan.io.LandscapeGeometryInfo;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
@@ -37,6 +37,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Material;
+import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
@@ -190,26 +191,35 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
   }
 
   private void loadASCGeom() {
-    InputStream input = this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc");
+    try {
+      InputStream input = this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc");
 //    InputStream input = this.getClass().getClassLoader().getResourceAsStream("basedem.asc");
-    InputStreamReader isr = new InputStreamReader(new BufferedInputStream(input));
-    GeometryLoader loader = new GeometryLoader(isr);
-    LandscapeGeometryInfo geoInfo = loader.getGeometryInfo();
-    geoInfo.compact();
-    NormalGenerator nGenerator = new NormalGenerator();
-    nGenerator.generateNormals(geoInfo);
-    Stripifier stripifier = new Stripifier();
-    stripifier.stripify(geoInfo);
-    Shape3D landscape = new Shape3D();
-    landscape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
-    landscape.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
-    landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);
-    landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
-    landscape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-    landscape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
-    landscape.addGeometry(geoInfo.getIndexedGeometryArray());
-    Appearance landscapeAppearance = new Appearance();
-    sceneGraph.addChild(landscape);
+      InputStreamReader isr = new InputStreamReader(new BufferedInputStream(input));
+      ArcGridParser loader = new ArcGridParser(isr);
+      LandscapeGeometryInfo geoInfo = loader.getGeometryInfo();
+      logger.debug("coordinates length: "+geoInfo.getCoordinates().length);
+      geoInfo.compact();
+      NormalGenerator nGenerator = new NormalGenerator();
+      nGenerator.generateNormals(geoInfo);
+      Stripifier stripifier = new Stripifier();
+      stripifier.stripify(geoInfo);
+      Appearance landscapeAppearance = new Appearance();
+      PolygonAttributes pa = new PolygonAttributes();
+      pa.setCullFace(PolygonAttributes.CULL_NONE);
+      landscapeAppearance.setPolygonAttributes(pa);
+      Shape3D landscape = new Shape3D();
+      landscape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
+      landscape.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
+      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);
+      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
+      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
+      landscape.addGeometry(geoInfo.getIndexedGeometryArray());
+      landscape.setAppearance(landscapeAppearance);
+      sceneGraph.addChild(landscape);
+    } catch (Exception ex) {
+      logger.error("Error while building geometry: ", ex);
+    }
   }
 
   @Override
