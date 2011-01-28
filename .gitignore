@@ -7,3 +7,6 @@ VS08/
 .project
 .test
 target/
+target/
+nbactions.xml
+Userspuhl.netbeans*
