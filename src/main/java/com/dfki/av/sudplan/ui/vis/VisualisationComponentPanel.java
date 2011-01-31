@@ -10,23 +10,19 @@
  */
 package com.dfki.av.sudplan.ui.vis;
 
-import com.dfki.av.sudplan.io.ArcGridParser;
-import com.dfki.av.sudplan.io.LandscapeGeometryInfo;
+import com.dfki.av.sudplan.io.geometry.DEMLoader;
+import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.Box;
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.geometry.Stripifier;
 import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import javax.media.j3d.AmbientLight;
@@ -36,11 +32,8 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Geometry;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
@@ -68,7 +61,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
   private SimpleUniverse universe;
   private BranchGroup sceneGraph;
   private AmbientLight al = new AmbientLight(new Color3f(0.5f, 0.5f, 0.5f));
-  private Vector3d home = new Vector3d(0.0, 0.0, 50.0);
+  private Vector3d home = new Vector3d(0.0, 0.0, 200.0);
 
   /** Creates new form VisualisationComponentPanel */
   public VisualisationComponentPanel() {
@@ -116,7 +109,8 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     setBackground();
     configureLight();
 //    createWorld();
-    loadASCGeom();
+//    loadASCGeom();
+    loadASCGeom2();
 //    initNavigation();
     OrbitBehavior behaviour = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
     behaviour.setSchedulingBounds(behaviourBounding);
@@ -193,35 +187,35 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
   }
 
   private void loadASCGeom() {
-    try {
-      InputStream input = this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc");
-//    InputStream input = this.getClass().getClassLoader().getResourceAsStream("basedem.asc");
-      InputStreamReader isr = new InputStreamReader(new BufferedInputStream(input));
-      ArcGridParser loader = new ArcGridParser(isr);
-      GeometryInfo geoInfo = loader.getGeometryInfo();
-      logger.debug("coordinates length: "+geoInfo.getCoordinates().length);
-      geoInfo.compact();
-      NormalGenerator nGenerator = new NormalGenerator();
-      nGenerator.generateNormals(geoInfo);
-      Stripifier stripifier = new Stripifier();
-      stripifier.stripify(geoInfo);
-      Appearance landscapeAppearance = new Appearance();
-      PolygonAttributes pa = new PolygonAttributes();
-      pa.setCullFace(PolygonAttributes.CULL_NONE);
-      landscapeAppearance.setPolygonAttributes(pa);
-      Shape3D landscape = new Shape3D();
-      landscape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
-      landscape.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
-      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);
-      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
-      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
-      landscape.addGeometry(geoInfo.getIndexedGeometryArray());
-      landscape.setAppearance(landscapeAppearance);
-      sceneGraph.addChild(landscape);
-    } catch (Exception ex) {
-      logger.error("Error while building geometry: ", ex);
-    }
+//    try {
+//      InputStream input = this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc");
+////    InputStream input = this.getClass().getClassLoader().getResourceAsStream("basedem.asc");
+//      InputStreamReader isr = new InputStreamReader(new BufferedInputStream(input));
+//      ArcGridParser loader = new ArcGridParser(isr);
+//      GeometryInfo geoInfo = loader.parseArcGrid();
+//      logger.debug("coordinates length: "+geoInfo.getCoordinates().length);
+//      geoInfo.compact();
+//      NormalGenerator nGenerator = new NormalGenerator();
+//      nGenerator.generateNormals(geoInfo);
+//      Stripifier stripifier = new Stripifier();
+//      stripifier.stripify(geoInfo);
+//      Appearance landscapeAppearance = new Appearance();
+//      PolygonAttributes pa = new PolygonAttributes();
+//      pa.setCullFace(PolygonAttributes.CULL_NONE);
+//      landscapeAppearance.setPolygonAttributes(pa);
+//      Shape3D landscape = new Shape3D();
+//      landscape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
+//      landscape.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
+//      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);
+//      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
+//      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+//      landscape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
+//      landscape.addGeometry(geoInfo.getIndexedGeometryArray());
+//      landscape.setAppearance(landscapeAppearance);
+//      sceneGraph.addChild(landscape);
+//    } catch (Exception ex) {
+//      logger.error("Error while building geometry: ", ex);
+//    }
   }
 
   @Override
@@ -230,4 +224,17 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     viewTransformation.setTranslation(home);
     universe.getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
   }
+
+  private void loadASCGeom2() {
+    DEMLoader loader = new DEMLoader();
+    try {
+      Scene loadedScene = loader.load(new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc"))));
+//      Scene loadedScene = loader.load(new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("basedem.asc"))));
+      logger.debug("loadedScene"+loadedScene);
+      sceneGraph.addChild(loadedScene.getSceneGroup());
+    } catch (Exception ex) {
+      logger.error("Error while loading Asc geometry: ",ex);
+    }
+  }
+
 }
