@@ -11,13 +11,13 @@ package com.dfki.av.sudplan.io;
  * @version 1.0
  * @since 1.6
  */
-public class FileFormatException extends Exception {
+public class ParsingException extends Exception{
 
-  public FileFormatException(String message, Throwable cause) {
+  public ParsingException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public FileFormatException(String message) {
+  public ParsingException(String message) {
     super(message);
   }
 
