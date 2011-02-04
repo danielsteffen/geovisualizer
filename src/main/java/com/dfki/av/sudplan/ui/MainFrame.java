@@ -84,7 +84,7 @@ public class MainFrame extends javax.swing.JFrame {
     doDefaultLayout();
     initDeveloperShortcut();
     //configure JFrame
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
     setSize(800, 600);
 //    pack();
   }
@@ -211,7 +211,6 @@ public class MainFrame extends javax.swing.JFrame {
   private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
     System.exit(0);
   }//GEN-LAST:event_exitMenuItemActionPerformed
-
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton cmdHome;
   private javax.swing.JMenu editMenu;
@@ -319,5 +318,5 @@ public class MainFrame extends javax.swing.JFrame {
     } else {
       v.restore();
     }
-  }
+  }  
 }
