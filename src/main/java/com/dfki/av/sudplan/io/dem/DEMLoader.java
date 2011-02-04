@@ -2,11 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.io.geometry;
+package com.dfki.av.sudplan.io.dem;
 
-import com.dfki.av.sudplan.io.ArcGridParser;
+import com.dfki.av.sudplan.io.AbstractLoader;
 import com.dfki.av.sudplan.io.ParsingException;
-import com.dfki.av.sudplan.io.RawArcGrid;
 import com.dfki.av.sudplan.util.TimeMeasurement;
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.LoaderBase;
@@ -41,42 +40,14 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public class DEMLoader extends LoaderBase {
+public class DEMLoader extends AbstractLoader {
 
   private final static Logger logger = LoggerFactory.getLogger(DEMLoader.class);
-  //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if there are more loaders extend the loader base
-  //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:why is basepath & url differently treated (
+
   private boolean fromUrl = false;
   private RawArcGrid arcGrid;
   private Point3f[] triangleCoordinates;
   private ObjectFile test;
-
-  @Override
-  public Scene load(final String fileName) throws FileNotFoundException, IncorrectFormatException, ParsingErrorException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Loading scene from file: " + fileName + " ...");
-    }
-    setBasePathFromFilename(fileName);
-    final Reader reader = new BufferedReader(new FileReader(fileName));
-    return load(reader);
-  }
-
-  @Override
-  public Scene load(final URL url) throws FileNotFoundException, IncorrectFormatException, ParsingErrorException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Loading scene from url: " + url + " ...");
-    }
-    if (baseUrl == null) {
-      setBaseUrlFromUrl(url);
-    }
-    try {
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-      fromUrl = true;
-      return load(reader);
-    } catch (IOException e) {
-      throw new FileNotFoundException(e.getMessage());
-    }
-  }
 
   @Override
   public Scene load(final Reader reader) throws FileNotFoundException, IncorrectFormatException, ParsingErrorException {
@@ -95,42 +66,7 @@ public class DEMLoader extends LoaderBase {
     }
   }
 
-  private void setBaseUrlFromUrl(final URL url) throws FileNotFoundException {
-    final String u = url.toString();
-    String s;
-    if (u.lastIndexOf('/') == -1) {
-      s = url.getProtocol() + ":";
-    } else {
-      s = u.substring(0, u.lastIndexOf('/') + 1);
-    }
-    try {
-      baseUrl = new URL(s);
-    } catch (final MalformedURLException e) {
-      throw new FileNotFoundException(e.getMessage());
-    }
-    if (logger.isDebugEnabled()) {
-      logger.debug("Setting base url from url: " + getBaseUrl());
-    }
-  } // End of setBaseUrlFromUrl
-
-  /**
-   * Set the path where files associated with this .asc file are
-   * located.
-   * Only needs to be called to set it to a different directory
-   * from that containing the .obj file.
-   */
-  private void setBasePathFromFilename(final String fileName) {
-    if (fileName.lastIndexOf(java.io.File.separator) == -1) {
-      // No path given - current directory
-      setBasePath("." + java.io.File.separator);
-    } else {
-      setBasePath(
-              fileName.substring(0, fileName.lastIndexOf(java.io.File.separator)));
-    }
-    if (logger.isDebugEnabled()) {
-      logger.debug("Setting base path from filename: " + getBasePath());
-    }
-  } // End of setBasePathFromFilename
+  
 
   //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: create Triangles directly (do this directly while parsing --> only one run)
   //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: could be good to move this in ArcGridClass/or as mentioned above in parser
