@@ -11,7 +11,7 @@ package com.dfki.av.sudplan.io;
  * @version 1.0
  * @since 1.6
  */
-class SplitNotPossibleException extends Exception {
+public class SplitNotPossibleException extends Exception {
  public SplitNotPossibleException(Throwable cause) {
     super(cause);
   }
