@@ -20,8 +20,10 @@ public class RawArcGrid {
     private final Logger logger = LoggerFactory.getLogger(RawArcGrid.class);
     public final static String NUMBER_OF_COLUMNS = "ncols";
     public final static String NUMBER_OF_ROWS = "nrows";
-    public final static String LEFTMOST_X_COORDINATE = "xllcorner";
-    public final static String BOTTOMMOST_Y_COORDINATE = "yllcorner";
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:rename xmin
+    public final static String X_MINIMUM = "xllcorner";
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:rename ymin
+    public final static String Y_MINIMUM = "yllcorner";
     public final static String CELLSIZE = "cellsize";
     public final static String NO_DATA_VALUE = "nodata_value";
     public final static String FILE_EXTENSION = ".asc";
@@ -36,8 +38,12 @@ public class RawArcGrid {
     private float cellsize;
     private float noDataValue = Float.NaN;
     private Point3f[] rawCoordinates;
-    private float scaleFactor = 0.01f;
-    private float zExaggeration = 1f;
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: bad design is only used externaly. Attention could be terrible slow to
+    private float scaleFactor = 1.0f;
+    private float zExaggeration = 2.0f;
+    /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: bad design if the sparse factor is changed before the initialisation
+     * will not be readed correctly because the factor does influence the number of rows/columns
+     */
     private float sparseFactor = 1.0f;
 
     public Point2f getOrigin() {
@@ -48,15 +54,19 @@ public class RawArcGrid {
         this.origin = origin;
     }
 
-    public float getBottommostYValue() {
+    public float getYMin() {
         return origin.getY();
     }
 
-    public void setBottommostYValue(float bottommostYValue) {
+    public void setYMin(float yMin) {
         if (origin == null) {
             origin = new Point2f();
         }
-        origin.setY(bottommostYValue);
+        origin.setY(yMin);
+    }
+
+    public float getYMax(){
+        return getYMin()+(getCellsize()*(getNumberOfRows() -1));
     }
 
     public float getCellsize() {
@@ -67,15 +77,15 @@ public class RawArcGrid {
         this.cellsize = cellsize;
     }
 
-    public float getLeftmostXValue() {
-        return origin.getY();
+    public float getXMin() {
+        return origin.getX();
     }
 
-    public void setLeftmostXValue(final float leftmostXValue) {
+    public void setXMin(final float xMin) {
         if (origin == null) {
             origin = new Point2f();
         }
-        origin.setX(leftmostXValue);
+        origin.setX(xMin);
     }
 
     public float getNoDataValue() {
@@ -138,6 +148,7 @@ public class RawArcGrid {
         return sparseFactor;
     }
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: does not work properly ---> disortion of width/height
     public void setSparseFactor(final float sparseFactor) {
         this.sparseFactor = sparseFactor;
     }
@@ -146,7 +157,7 @@ public class RawArcGrid {
         return scaleFactor;
     }
 
-    public void setScaleFactor(float scaleFactor) {
+    public void setScaleFactor(final float scaleFactor) {
         this.scaleFactor = scaleFactor;
     }
 
@@ -154,7 +165,7 @@ public class RawArcGrid {
         return zExaggeration;
     }
 
-    public void setzExaggeration(float zExaggeration) {
+    public void setzExaggeration(final float zExaggeration) {
         this.zExaggeration = zExaggeration;
     }
 }
