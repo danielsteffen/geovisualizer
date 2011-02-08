@@ -26,11 +26,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TooManyListenersException;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
+import javax.media.j3d.Shape3D;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,14 +55,16 @@ public class ComponentController implements DropTargetListener {
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Exception Handling
 
-    public ComponentController(final VisualisationComponent visualisationComponent, final ApplicationConfiguration applicationConfiguration) throws TooManyListenersException {
+    public ComponentController(final VisualisationComponent visualisationComponent,
+            final ApplicationConfiguration applicationConfiguration) throws TooManyListenersException {
         setVisualisationComponent(visualisationComponent);
         setApplicationConfiguration(applicationConfiguration);
-        dropTarget.addDropTargetListener(this);
-        dropTarget.setDefaultActions(DnDConstants.ACTION_COPY_OR_MOVE);
-        dropTarget.setComponent(visualisationComponent.getDnDComponent());
 //    visualisationComponent.getDnDComponent().setTransferHandler(handler);
         configureLogging();
+    }
+
+    public ComponentController() {
+        configureDropBehaviour();
     }
 
     public final boolean isInitialiseLoggingEnabled() {
@@ -104,7 +104,8 @@ public class ComponentController implements DropTargetListener {
     private void configureLogging() {
         if (applicationConfiguration.isLoggingEnabled()) {
         } else {
-            logger.info("No logging will be configured. If the enveloping application does not configure logging, then it will not work.");
+            logger.info("No logging will be configured. If the enveloping application does not configure logging,"
+                    + " then it will not work.");
         }
     }
 
@@ -177,7 +178,10 @@ public class ComponentController implements DropTargetListener {
                 logger.info("Trying to load file: " + file.getName() + ".");
             }
             try {
-                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:improve if the file extension is not correctly set automatic recognition should be done. In the worst case the user should be asked what filetype it is.
+                /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:improve if the file
+                 * extension is not correctly set automatic recognition should be done.
+                 * In the worst case the user should be asked what filetype it is.
+                 */
                 if (file.getName().endsWith(RawArcGrid.FILE_EXTENSION)) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Given file is of type: " + RawArcGrid.NAME + ".");
@@ -193,7 +197,8 @@ public class ComponentController implements DropTargetListener {
                                 }
                                 final Scene loadedScene = demLoader.load(file);
                                 if (logger.isDebugEnabled()) {
-                                    logger.debug("Background load of DEM scene done. Elapsed time: " + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
+                                    logger.debug("Background load of DEM scene done. Elapsed time: " +
+                                            TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
                                 }
                                 return loadedScene;
                             }
@@ -202,9 +207,12 @@ public class ComponentController implements DropTargetListener {
                             protected void done() {
                                 try {
                                     final Scene loadedScene = get();
+                                    if (logger.isDebugEnabled()) {
+                                        logger.debug("Scene Bounds: "+((Shape3D)loadedScene.getSceneGroup().getChild(0)).getBounds());
+                                    }
                                     visualisationComponent.addContent(loadedScene);
                                     setProgressDialogVisible(false);
-                                } catch (Exception ex) {                                    
+                                } catch (Exception ex) {
                                     fileLoadingErrorNotification(ex, file);
                                 }
                             }
@@ -246,13 +254,39 @@ public class ComponentController implements DropTargetListener {
     }
     private JDialog progressDialog;
 
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: replace by a more sophisticated panel e.g. floating panel with entries for each process.
-    private void setProgressDialogVisible(final boolean visible) {        
+    /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: replace by a more sophisticated panel e.g. floating panel 
+     * withentries for each process.
+     */
+    private void setProgressDialogVisible(final boolean visible) {
         if (progressDialog == null) {
             progressDialog = new JDialog(mainFrame, "File Import");
             progressDialog.setContentPane(new ProgressPanel());
+            progressDialog.pack();
         }
         progressDialog.setLocationRelativeTo(mainFrame);
         progressDialog.setVisible(visible);
+    }
+
+    public void setConfiguration(ApplicationConfiguration applicationConfiguration) {
+        this.applicationConfiguration = applicationConfiguration;
+    }
+
+    public ApplicationConfiguration getConfiguration() {
+        return applicationConfiguration;
+    }
+
+    private void configureDropBehaviour() {
+        try {
+            dropTarget.addDropTargetListener(this);
+        } catch (TooManyListenersException ex) {
+            if (logger.isErrorEnabled()) {
+                logger.error("It was not possible to create Drag & Drop support. Drag & Drop on the visualisation "
+                        + "component will not work.", ex);
+            }
+        }
+        dropTarget.setDefaultActions(DnDConstants.ACTION_COPY_OR_MOVE);
+        if (visualisationComponent != null && visualisationComponent.getDnDComponent() != null) {
+            dropTarget.setComponent(visualisationComponent.getDnDComponent());
+        }
     }
 }
