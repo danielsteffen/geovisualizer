@@ -61,7 +61,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="stateLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Improting files..."/>
+            <Property name="text" type="java.lang.String" value="Importing files..."/>
           </Properties>
         </Component>
       </SubComponents>

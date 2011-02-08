@@ -37,7 +37,7 @@ public class ProgressPanel extends javax.swing.JPanel {
 
         progressBar.setIndeterminate(true);
 
-        stateLabel.setText("Improting files...");
+        stateLabel.setText("Importing files...");
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
