@@ -23,5 +23,8 @@
     <appender-ref ref="console" />
     <appender-ref ref="SOCKET" />
   </root>
+  <logger name="org.deegree">
+    <priority value ="error" />
+  </logger>
 
 </log4j:configuration>
