@@ -1,41 +1,41 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.dfki.av.sudplan</groupId>
-  <artifactId>sudplan</artifactId>
-  <packaging>jar</packaging>
-  <version>0.0.2</version>
-  <name>sudplan</name>
-  <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>
-  <url>http://www.sudplan.eu</url>
-  <dependencies>
-    <dependency>
-      <groupId>java3d</groupId>
-      <artifactId>j3dcore</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <dependency>
-      <groupId>java3d</groupId>
-      <artifactId>j3dutils</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <dependency>
-      <groupId>java3d</groupId>
-      <artifactId>vecmath</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jdesktop</groupId>
-      <artifactId>beansbinding</artifactId>
-      <version>1.2.1</version>
-    </dependency>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.dfki.av.sudplan</groupId>
+    <artifactId>sudplan</artifactId>
+    <packaging>jar</packaging>
+    <version>0.0.5</version>
+    <name>sudplan</name>
+    <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>
+    <url>http://www.sudplan.eu</url>
+    <dependencies>
+        <dependency>
+            <groupId>java3d</groupId>
+            <artifactId>j3dcore</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>java3d</groupId>
+            <artifactId>j3dutils</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>java3d</groupId>
+            <artifactId>vecmath</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdesktop</groupId>
+            <artifactId>beansbinding</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     <!--Meta logging framework-->
-    <dependency>
-      <groupId>org.swinglabs</groupId>
-      <artifactId>swing-layout</artifactId>
-      <version>1.0.3</version>
-    </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
+            <version>1.0.3</version>
+        </dependency>
 <!--    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>log4j-over-slf4j</artifactId>
@@ -57,11 +57,11 @@
       <artifactId>logback-classic</artifactId>
       <version>0.9.27</version>
     </dependency>-->
-    <dependency>
-      <groupId>net.infonode.docking</groupId>
-      <artifactId>docking</artifactId>
-      <version>1.5.0</version>
-    </dependency><!--Library to connect to the Lilith log viewer-->
+        <dependency>
+            <groupId>net.infonode.docking</groupId>
+            <artifactId>docking</artifactId>
+            <version>1.5.0</version>
+        </dependency><!--Library to connect to the Lilith log viewer-->
 <!--    <dependency>
       <groupId>de.huxhorn.lilith</groupId>
       <artifactId>de.huxhorn.lilith.logback.appender.multiplex-classic</artifactId>
@@ -76,18 +76,18 @@
       <artifactId>cismet-gui-commons</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>-->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.16</version>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
     <!-- GeoTools libaries -->
-    <dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
@@ -103,87 +103,97 @@
             <artifactId>gt-swing</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-  </dependencies>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sudplan.main>com.dfki.av.sudplan.test.Main</sudplan.main>
-    <geotools.version>2.7-M2</geotools.version>
-  </properties>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.deegree</groupId>
+            <artifactId>deegree-core</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+    </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sudplan.main>com.dfki.av.sudplan.test.Main</sudplan.main>
+        <geotools.version>2.7-M2</geotools.version>
+    </properties>
 
   <!-- More Project Information -->
-  <organization>
-    <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
-    <url>http://www.dfki.de</url>
-  </organization>
-  <developers>
-    <developer>
-      <name>Daniel Steffen</name>
-      <organization>DFKI GmbH</organization>
-    </developer>
-    <developer>
-      <name>Martin Weller</name>
-      <organization>DFKI GmbH</organization>
-    </developer>
-    <developer>
-      <name>Frank Michel</name>
-      <organization>DFKI GmbH</organization>
-    </developer>
-    <developer>
-      <name>Sebastian Puhl</name>
-      <organization>DFKI GmbH</organization>
-    </developer>
-  </developers>
+    <organization>
+        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <url>http://www.dfki.de</url>
+    </organization>
+    <developers>
+        <developer>
+            <name>Daniel Steffen</name>
+            <organization>DFKI GmbH</organization>
+        </developer>
+        <developer>
+            <name>Martin Weller</name>
+            <organization>DFKI GmbH</organization>
+        </developer>
+        <developer>
+            <name>Frank Michel</name>
+            <organization>DFKI GmbH</organization>
+        </developer>
+        <developer>
+            <name>Sebastian Puhl</name>
+            <organization>DFKI GmbH</organization>
+        </developer>
+    </developers>
 
 	<!-- Build Settings -->
-  <build>
+    <build>
 		<!-- For annotations and other Java5 stuff -->
-    <plugins>                                  
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>${sudplan.main}</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>${sudplan.main}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 	<!-- Environment Settings -->
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>http://av.kl.dfki.de/artifactory/repo</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://av.kl.dfki.de/artifactory/repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
 
-    <repository>
-      <id>snapshots</id>
-      <url>http://av.kl.dfki.de/artifactory/repo</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <url>http://download.java.net/maven/2/</url>
-      <id>beans-binding</id>
-      <layout>default</layout>
-      <name>Repository for library Library[beans-binding]</name>
-    </repository>
+        <repository>
+            <id>snapshots</id>
+            <url>http://av.kl.dfki.de/artifactory/repo</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <url>http://download.java.net/maven/2/</url>
+            <id>beans-binding</id>
+            <layout>default</layout>
+            <name>Repository for library Library[beans-binding]</name>
+        </repository>
 <!--    <repository>
       <id>eig-cismet-repo</id>
       <url>http://flexo.cismet.de:8081/artifactory/repo</url>
@@ -195,30 +205,40 @@
       </snapshots>
     </repository>-->
     <!-- used for geotools -->
-     <repository>
+        <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
             <url>http://download.osgeo.org/webdav/geotools/</url>
         </repository>
-  </repositories>
+        <repository>
+            <id>deegree-repo</id>
+            <url>http://artefacts.deegree.org/repo</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
      
-  <pluginRepositories>
+    <pluginRepositories>
     
-    <pluginRepository>
-      <id>central</id>
-      <url>http://av.kl.dfki.de/artifactory/repo</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <url>http://av.kl.dfki.de/artifactory/repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
     
-    <pluginRepository>
-      <id>snapshots</id>
-      <url>http://av.kl.dfki.de/artifactory/repo</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
+        <pluginRepository>
+            <id>snapshots</id>
+            <url>http://av.kl.dfki.de/artifactory/repo</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
       
-  </pluginRepositories>
+    </pluginRepositories>
 </project>
