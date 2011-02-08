@@ -10,43 +10,31 @@
  */
 package com.dfki.av.sudplan.ui.vis;
 
-import com.dfki.av.sudplan.io.dem.ArcGridParser;
+import com.dfki.av.sudplan.control.ComponentBroker;
+import com.dfki.av.sudplan.util.EarthFlat;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
-import com.sun.j3d.utils.geometry.Box;
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.geometry.Stripifier;
-import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import javax.media.j3d.AmbientLight;
-import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
+import javax.media.j3d.BoundingBox;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,15 +48,18 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private MouseWheelZoom zoomBehaviour;
     private MouseTranslate translationBehaviour;
     private MouseRotate rotationBehaviour;
-    //**ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Not a perfect solution if the users leaves the sphere no control will be possible
+    /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Not a perfect solution if the users leaves the sphere no control 
+     *  will be possible
+     */
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: seems it would be a good idea to define the earth as bounds
-    private BoundingSphere behaviourBounding = new BoundingSphere(new Point3d(), 1000.0);
-    private BoundingSphere lightBounds = new BoundingSphere(new Point3d(), 1000.0);
-    private BoundingSphere backgroundBounds = new BoundingSphere(new Point3d(), 1000.0);
+    private BoundingSphere behaviourBounding = new BoundingSphere(new Point3d(), 1000000.0);
+    private BoundingSphere lightBounds = new BoundingSphere(new Point3d(), 1000000.0);
+    private BoundingSphere backgroundBounds = new BoundingSphere(new Point3d(), 1000000.0);
     private SimpleUniverse universe;
     private BranchGroup sceneGraph;
-    private AmbientLight al = new AmbientLight(new Color3f(0.5f, 0.5f, 0.5f));
-    private Vector3d home = new Vector3d(0.0, 0.0, 50.0);
+    private final AmbientLight al = new AmbientLight(new Color3f(0.6f, 0.6f, 0.6f));
+//    private Vector3d home = new Vector3d(16.0, 65.0, 5.0);
+    private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
     private final Canvas3D canvas3D = new Canvas3D(config);
 
@@ -106,7 +97,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     }
 
     private void createUniverse() {
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: clipping should be handeld in general therefore it was set by default to 10
+        /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: clipping should be handeld in general therefore it was set by
+         * default to 10
+         */
         universe = new SimpleUniverse(canvas3D);
         canvas3D.getView().setBackClipDistance(300);
         canvas3D.setPreferredSize(new Dimension(800, 600));
@@ -117,11 +110,14 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         sceneGraph.setCapability(BranchGroup.ALLOW_DETACH);
         setBackground();
         configureLight();
-//      createWorld();
+        createWorld();
 //    loadASCGeom();
 //    loadASCGeom2();
 //    initNavigation();
         OrbitBehavior behaviour = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
+        behaviour.setProportionalZoom(true);
+        behaviour.setRotationCenter(new Point3d(2007.0, 6609.0, 0.0));
+//        behaviour.setZoomFactor(2);
         behaviour.setSchedulingBounds(behaviourBounding);
         universe.getViewingPlatform().setViewPlatformBehavior(behaviour);
         // This will move the ViewPlatform back a bit so the
@@ -157,36 +153,31 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     }
 
     private void createWorld() {
-        URL imageURL = this.getClass().getClassLoader().getResource(
-                "blue_marble_small.jpg");
-//    URL imageURL = this.getClass().getClassLoader().getResource(
-//            "kl_air.jpg");
-        TextureLoader textureLoader = new TextureLoader(imageURL, this);
-        ImageComponent2D image = textureLoader.getImage();
-        Texture2D worldTexture = new Texture2D(Texture2D.BASE_LEVEL, Texture2D.RGBA, image.getWidth(), image.getHeight());
-        worldTexture.setImage(0, image);
-        worldTexture.setEnable(true);
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: switchable reference system
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this should be done somewhere else it is a layer only in the inital version
-        Appearance worldAppearance = new Appearance();
-        worldAppearance.setTexture(worldTexture);
-//    PolygonAttributes polyAttributes = new PolygonAttributes();
-//    polyAttributes.setCullFace(PolygonAttributes.CULL_NONE);
-//    worldAppearance.setPolygonAttributes(polyAttributes);
-        worldAppearance.setMaterial(new Material(new Color3f(1.0f, 1.0f, 0.0f),
-                new Color3f(0, 0, 0), new Color3f(0.0f, 0.0f, 0.0f),
-                new Color3f(0.0f, 0.0f, 0.0f), 100f));
+
 //    Box world = new Box(40075016.6856f, 34261226.9711f, 1.0f, Box.GENERATE_NORMALS, worldAppearance);
-        Box world = new Box(50f, 50f, 0.0f, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
-        world.setAppearance(Box.FRONT, worldAppearance);
-        sceneGraph.addChild(world);
+        final EarthFlat earth =  new EarthFlat(ComponentBroker.getInstance().getScalingFactor());
+        System.out.println("earth extends: "+earth.EARTH_EXTENDS);
+        System.out.println("earth bounds: "+new BoundingBox(earth.getGeometry().getBounds()));
+        Transform3D worldTransformation = new Transform3D();
+        worldTransformation.setTranslation(new Vector3f(0.0f, 0.0f, -0.02f));
+        TransformGroup worldGroup = new TransformGroup(
+                worldTransformation);
+        worldGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);        
+        worldGroup.addChild(earth.getGeometry());        
+        sceneGraph.addChild(worldGroup);
     }
 
     private void configureLight() {
         al.setInfluencingBounds(lightBounds);
         al.setCapability(DirectionalLight.ALLOW_STATE_WRITE);
-        al.setCapability(DirectionalLight.ALLOW_STATE_READ);
+        al.setCapability(DirectionalLight.ALLOW_STATE_READ);        
         sceneGraph.addChild(al);
+
+        Color3f light1Color = new Color3f(0.9f, 0.9f, 0.9f);
+        Vector3f light1Direction = new Vector3f(300.0f, 150.0f, -50.0f);
+        DirectionalLight light1 = new DirectionalLight(light1Color, light1Direction);
+        light1.setInfluencingBounds(lightBounds);
+        sceneGraph.addChild(light1);
     }
 
     private void setBackground() {
@@ -226,7 +217,6 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //      logger.error("Error while building geometry: ", ex);
 //    }
 //    }
-
     @Override
     public void gotoToHome() {
         Transform3D viewTransformation = new Transform3D();
@@ -237,8 +227,10 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //  private void loadASCGeom2() {
 //    DEMLoader loader = new DEMLoader();
 //    try {
-//      Scene loadedScene = loader.load(new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc"))));
-////      Scene loadedScene = loader.load(new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("basedem.asc"))));
+//      Scene loadedScene = loader.load(new BufferedReader(
+    //new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("sodermalm_5m.asc"))));
+////      Scene loadedScene = loader.load(new BufferedReader(
+//    new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("basedem.asc"))));
 //      logger.debug("loadedScene"+loadedScene);
 //      sceneGraph.addChild(loadedScene.getSceneGroup());
 //    } catch (Exception ex) {
@@ -251,8 +243,8 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     }
 
     @Override
-    public void addContent(Scene scene) {
-        if(scene == null){
+    public void addContent(final Scene scene) {
+        if (scene == null) {
             return;
         }
         sceneGraph.addChild(scene.getSceneGroup());
