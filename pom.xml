@@ -5,7 +5,7 @@
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.5</version>
+    <version>0.1.0</version>
     <name>sudplan</name>
     <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>
     <url>http://www.sudplan.eu</url>
@@ -14,16 +14,19 @@
             <groupId>java3d</groupId>
             <artifactId>j3dcore</artifactId>
             <version>1.5.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>java3d</groupId>
             <artifactId>j3dutils</artifactId>
             <version>1.5.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>java3d</groupId>
             <artifactId>vecmath</artifactId>
             <version>1.5.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jdesktop</groupId>
@@ -61,7 +64,13 @@
             <groupId>net.infonode.docking</groupId>
             <artifactId>docking</artifactId>
             <version>1.5.0</version>
-        </dependency><!--Library to connect to the Lilith log viewer-->
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>sdk</artifactId>
+            <version>0.6.73</version>
+        </dependency>
+        <!--Library to connect to the Lilith log viewer-->
 <!--    <dependency>
       <groupId>de.huxhorn.lilith</groupId>
       <artifactId>de.huxhorn.lilith.logback.appender.multiplex-classic</artifactId>
@@ -93,7 +102,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
             <version>${geotools.version}</version>
@@ -112,12 +121,13 @@
             <groupId>org.deegree</groupId>
             <artifactId>deegree-core</artifactId>
             <version>3.0.2</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sudplan.main>com.dfki.av.sudplan.test.Main</sudplan.main>
         <geotools.version>2.7-M2</geotools.version>
+        <main-class>com.dfki.av.sudplan.main.Starter</main-class>
+        <codebase>http://localhost:8080/sudplan</codebase>
     </properties>
 
   <!-- More Project Information -->
@@ -156,6 +166,38 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo.webstart</groupId>
+                <artifactId>webstart-maven-plugin</artifactId>
+                <version>1.0-beta-1</version>
+                <configuration>
+                    <jnlp>
+                        <outputFile>sudplan.jnlp</outputFile>
+                        <mainClass>${main-class}</mainClass>
+                    </jnlp>
+                    <sign>
+                        <keystore>/tmp/sudplan.jks</keystore>
+                        <keypass>sudplan</keypass>
+                        <storepass>sudplan</storepass>
+                        <alias>sudplan</alias>
+                        <validity>3650</validity>
+                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameOu>AV</dnameOu>
+                        <dnameO>DFKI</dnameO>
+                        <dnameL>KL</dnameL>
+                        <dnameSt>RLP</dnameSt>
+                        <dnameC>DE</dnameC>
+                        <verify>true</verify>
+                        <keystoreConfig>
+                            <delete>true</delete> <!-- delete the keystore -->
+                            <gen>true</gen>       <!-- optional shortcut to generate the store. -->
+                        </keystoreConfig>
+                    </sign>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
