@@ -59,6 +59,8 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import com.sun.j3d.internal.J3dUtilsI18N;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Moves the View around a point of interest when the mouse is dragged with
@@ -120,6 +122,7 @@ import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
  */
 public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
+    private final Logger logger = LoggerFactory.getLogger(AdvancedOrbitBehavior.class);
     private Transform3D longditudeTransform = new Transform3D();
     private Transform3D latitudeTransform = new Transform3D();
     private Transform3D rotateTransform = new Transform3D();
@@ -163,8 +166,8 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private boolean stopZoom = false;
     private boolean proportionalZoom = false;
     private double minRadius = 0.0;
-    private int leftButton = ROTATE;
-    private int rightButton = TRANSLATE;
+    private int leftButton = TRANSLATE;
+    private int rightButton = ROTATE;
     private int middleButton = ZOOM;
 
     // the factor to be applied to wheel zooming so that it does not
@@ -295,8 +298,44 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     protected synchronized void processAWTEvents( final AWTEvent[] events ) {
         motion = false;
         for(int i=0; i<events.length; i++)
-            if (events[i] instanceof MouseEvent)
-                processMouseEvent( (MouseEvent)events[i] );
+            if (events[i] instanceof MouseEvent){
+                detRotationCenter((MouseEvent) events[i]);
+                processMouseEvent( (MouseEvent)events[i]);
+            }
+    }
+
+      private void detRotationCenter(final MouseEvent e) {
+        if (MouseEvent.MOUSE_PRESSED == e.getID() || MouseEvent.MOUSE_RELEASED == e.getID()) {
+            final int mouseX = e.getX();
+            final int mouseY = e.getY();
+            final Point3d eye_pos = new Point3d();
+            final Point3d mouse_pos = new Point3d();
+            final Point3d center = new Point3d();
+            canvases[0].getPixelLocationInImagePlate(mouseX, mouseY, mouse_pos);
+            canvases[0].getCenterEyeInImagePlate(eye_pos);
+            canvases[0].getPixelLocationInImagePlate(canvases[0].getWidth()/2,canvases[0].getHeight()/2, center);
+            if (logger.isDebugEnabled()) {
+                logger.debug("center: "+center);
+            }
+            Transform3D motionToWorld = new Transform3D();
+            canvases[0].getImagePlateToVworld(motionToWorld);
+            motionToWorld.transform(mouse_pos);
+            motionToWorld = new Transform3D();
+            canvases[0].getImagePlateToVworld(motionToWorld);
+            motionToWorld.transform(eye_pos);
+            motionToWorld = new Transform3D();
+            canvases[0].getImagePlateToVworld(motionToWorld);
+            motionToWorld.transform(center);
+            mouse_pos.z = 0.0f;
+            eye_pos.z = 0.0f;
+            center.z = 0.0f;
+            if (logger.isDebugEnabled()) {
+                logger.debug("mouse_point: " + mouse_pos);
+                logger.debug("eye_pos: " + eye_pos);
+                logger.debug("center: "+center);
+            }
+            setRotationCenter(center);
+        }
     }
 
     protected void processMouseEvent( final MouseEvent evt ) {
