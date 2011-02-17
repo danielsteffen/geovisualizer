@@ -20,4 +20,5 @@ public interface VisualisationComponent{
   public Component getDnDComponent();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: should be refactored so that it is independant of Java3D. How to interact with the layer component ?
   public void addContent(Scene scene);
+  public void enableDirectedLight(boolean enabled);
 }

@@ -12,27 +12,39 @@ package com.dfki.av.sudplan.ui.vis;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.util.EarthFlat;
+import com.dfki.av.sudplan.vis.control.AdvancedOrbitBehavior;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
+import com.sun.j3d.utils.geometry.Box;
+import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.net.URL;
 import javax.media.j3d.AmbientLight;
+import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.ImageComponent2D;
+import javax.media.j3d.Material;
+import javax.media.j3d.Node;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture2D;
+import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
@@ -57,7 +69,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private BoundingSphere backgroundBounds = new BoundingSphere(new Point3d(), 1000000.0);
     private SimpleUniverse universe;
     private BranchGroup sceneGraph;
-    private final AmbientLight al = new AmbientLight(new Color3f(0.6f, 0.6f, 0.6f));
+    private final AmbientLight al = new AmbientLight(new Color3f(0.7f, 0.7f, 0.7f));
+    DirectionalLight dl;
+//    private Vector3d home = new Vector3d(0.0, 0.0, 50.0);
 //    private Vector3d home = new Vector3d(16.0, 65.0, 5.0);
     private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -111,19 +125,32 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         setBackground();
         configureLight();
         createWorld();
+        createOrthobox();
 //    loadASCGeom();
 //    loadASCGeom2();
 //    initNavigation();
-        OrbitBehavior behaviour = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
+//        OrbitBehavior behaviour = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
+        AdvancedOrbitBehavior behaviour = new AdvancedOrbitBehavior(canvas3D,OrbitBehavior.REVERSE_ALL);
         behaviour.setProportionalZoom(true);
-        behaviour.setRotationCenter(new Point3d(2007.0, 6609.0, 0.0));
-//        behaviour.setZoomFactor(2);
+        behaviour.setProportionalTranslate(true);
+        behaviour.setTransFactors(5, 5);
+        behaviour.setRotationCenter(new Point3d(2010.0, 6602.0, 0.0));
+        gotoToHome();
+        final Transform3D viewTransfrom = new Transform3D();
+        universe.getViewingPlatform().getViewPlatformTransform().getTransform(viewTransfrom);
+        final Vector3d position = new Vector3d();
+        viewTransfrom.get(position);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Viewing Position: "+position);
+        }
+//        behaviour.setRotationCenter(new Point3d(position));
+//        behaviour.setPointOnEarth(universe.getViewingPlatform().get);
+        behaviour.setZoomFactor(0.5);
         behaviour.setSchedulingBounds(behaviourBounding);
         universe.getViewingPlatform().setViewPlatformBehavior(behaviour);
         // This will move the ViewPlatform back a bit so the
         // objects in the scene can be viewed.
-//    universe.getViewingPlatform().setNominalViewingTransform();
-        gotoToHome();
+//    universe.getViewingPlatform().setNominalViewingTransform();        
         universe.addBranchGraph(sceneGraph);
     }
 
@@ -155,33 +182,179 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private void createWorld() {
 
 //    Box world = new Box(40075016.6856f, 34261226.9711f, 1.0f, Box.GENERATE_NORMALS, worldAppearance);
-        final EarthFlat earth =  new EarthFlat(ComponentBroker.getInstance().getScalingFactor());
-        System.out.println("earth extends: "+earth.EARTH_EXTENDS);
-        System.out.println("earth bounds: "+new BoundingBox(earth.getGeometry().getBounds()));
+        final EarthFlat earth = new EarthFlat(ComponentBroker.getInstance().getScalingFactor());
+        if (logger.isDebugEnabled()) {
+            logger.debug("earth extends: " + earth.EARTH_EXTENDS);
+            logger.debug("earth bounds: " + new BoundingBox(earth.getGeometry().getBounds()));
+        }        
         Transform3D worldTransformation = new Transform3D();
-        worldTransformation.setTranslation(new Vector3f(0.0f, 0.0f, -0.02f));
+        worldTransformation.setTranslation(new Vector3f(0.0f, 0.0f, -0.08f));
         TransformGroup worldGroup = new TransformGroup(
                 worldTransformation);
-        worldGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);        
-        worldGroup.addChild(earth.getGeometry());        
+        worldGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        worldGroup.addChild(earth.getGeometry());
         sceneGraph.addChild(worldGroup);
+    }
+
+    private void createOrthobox() {
+        final float xOff=0.0034f;
+        final float yOff=0.00047f;
+        final BoundingBox orthoExtends = new BoundingBox(
+                //            EarthFlat.geodeticToCartesian(new Point3d(59.29252, 17.998819, 0.0), EarthFlat.PLATE_CARREE_PROJECTION),
+                //            EarthFlat.geodeticToCartesian(new Point3d(59.327, 18.144483, 0.0), EarthFlat.PLATE_CARREE_PROJECTION));
+                EarthFlat.geodeticToCartesian(new Point3d(18.008895+xOff, 59.297637+yOff, 0.0), EarthFlat.PLATE_CARREE_PROJECTION),
+                EarthFlat.geodeticToCartesian(new Point3d(18.118415+xOff, 59.327774+yOff, 0.0), EarthFlat.PLATE_CARREE_PROJECTION));
+//        URL imageURL = this.getClass().getClassLoader().getResource(
+//                "sodermalm.png");
+        URL imageURL = this.getClass().getClassLoader().getResource(
+                "osm_basic.png");
+//    URL imageURL = this.getClass().getClassLoader().getResource(
+//            "kl_air.jpg");
+        TextureLoader textureLoader = new TextureLoader(imageURL, ComponentBroker.getInstance().getMainFrame());
+        ImageComponent2D image = textureLoader.getImage();
+        Texture2D worldTexture = new Texture2D(
+                Texture2D.BASE_LEVEL,
+                Texture2D.RGBA,
+                image.getWidth(),
+                image.getHeight());
+        worldTexture.setImage(0, image);
+        worldTexture.setEnable(true);
+        Appearance worldAppearance = new Appearance();
+//          Material material = new Material();
+//        material.setDiffuseColor(new Color3f(0.3f, 0.3f, 0.3f));
+//        material.setAmbientColor(new Color3f(0.3f, 0.3f, 0.3f));
+        TextureAttributes texAttribtues = new TextureAttributes();
+//        texAttribtues.setTextureMode(TextureAttributes.DECAL);
+//        worldAppearance.setMaterial(material);
+        worldAppearance.setTextureAttributes(texAttribtues);
+        worldTexture.setMagFilter(Texture2D.BASE_LEVEL_LINEAR);
+        worldTexture.setMinFilter(Texture2D.BASE_LEVEL_LINEAR);
+        worldAppearance.setTexture(worldTexture);
+//        worldAppearance.setMaterial(new Material(new Color3f(1.0f, 1.0f, 0.0f),
+//                new Color3f(0, 0, 0), new Color3f(0.0f, 0.0f, 0.0f),
+//                new Color3f(0.0f, 0.0f, 0.0f), 100f));
+
+        Transform3D scaling = new Transform3D();
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:bad design this is actually transforming the bounds not creating a new scaled object.
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Better to centralise the scaling --> one place then everywhere in the code
+        scaling.setScale(ComponentBroker.getInstance().getScalingFactor());
+        orthoExtends.transform(scaling);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Ortho boundings scaled: " + orthoExtends);
+        }
+        final Point3d lower = new Point3d();
+        final Point3d upper = new Point3d();
+        orthoExtends.getLower(lower);
+        orthoExtends.getUpper(upper);
+        if (logger.isDebugEnabled()) {
+            logger.debug("distance x: " + (float) (upper.getX() - lower.getX()));
+            logger.debug("distance y: " + (float) (upper.getY() - lower.getY()));
+        }
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:extends bounds with distance
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: divided by 2 because the box doubles by default.
+        final Box geometry = new Box(
+                (float) (((upper.getX() - lower.getX()) / 2)),
+                (float) (((upper.getY() - lower.getY()) / 2)),
+                -0.04f,Box.GENERATE_TEXTURE_COORDS, new Appearance());
+//        this.geometry = new Box(
+//                3.0f,
+//                2.0f,
+//                0.0f, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
+//        this.geometry = new Box();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Ortho box bounds: " + new BoundingBox(geometry.getBounds()));
+            logger.debug("Ortho xdim: " + geometry.getXdimension());
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Ortho extends: " + orthoExtends);
+        }                
+        geometry.setAppearance(Box.FRONT, worldAppearance);
+        Transform3D orthoTransformation = new Transform3D();
+        if (logger.isDebugEnabled()) {
+            logger.debug("lower x: "+lower.x+" y: "+lower.y);
+        }
+        double x = lower.x +geometry.getXdimension();
+        double y = lower.y +geometry.getYdimension();
+        if (logger.isDebugEnabled()) {
+            logger.debug("lower x: "+x+" y: "+y);
+        }
+        orthoTransformation.setTranslation(new Vector3d(x,y,0.0));
+//        orthoTransformation.setTranslation(new Vector3d(lower));
+        //        orthoTransformation.setTranslation(new Vector3f((float)lower.x/2,(float)lower.y/2,0.0f));
+        TransformGroup orthoGroup = new TransformGroup(
+                orthoTransformation);
+        orthoGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        orthoGroup.addChild(geometry);
+        sceneGraph.addChild(orthoGroup);        
+        if (logger.isDebugEnabled()) {
+            logger.debug("Postion: " + getPositionOfObject(geometry));
+        }
+        final Point3f point1 = EarthFlat.geodeticToCartesian(new Point3f(18.028919047425f , 59.3046022310815f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        final Point3f point2 = EarthFlat.geodeticToCartesian(new Point3f(18.028919047425f , 59.3046022310815f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        scalePoint(point1, ComponentBroker.getInstance().getScalingFactor());
+        scalePoint(point2, ComponentBroker.getInstance().getScalingFactor());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Building Postion1 : " + point1);
+            logger.debug("Building Postion2 : " + point2);
+        }
+        final Point3f point3 = EarthFlat.geodeticToCartesian(new Point3f(18.027139322596f , 59.302444439500f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        if (logger.isDebugEnabled()) {
+            logger.debug("DEM Postion3 unscaled: " + point3);
+            scalePoint(point3, ComponentBroker.getInstance().getScalingFactor());
+            logger.debug("DEM Postion3 scaled: " + point3);
+        }
+        final Point3f point4 = EarthFlat.geodeticToCartesian(new Point3f(17.998819f , 59.29252f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Ortho Postion4 unscaled: " + point4);
+            scalePoint(point4, ComponentBroker.getInstance().getScalingFactor());
+            logger.debug("Ortho Postion4 scaled: " + point4);
+        }
+        final Point3f point5 = EarthFlat.geodeticToCartesian(new Point3f(0.000080294914256f , 0.0f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Cellsize unscaled: " + point5);
+            scalePoint(point5, ComponentBroker.getInstance().getScalingFactor());
+            logger.debug("Cellsize scaled: " + point5);
+        }
+    }
+
+    private Point3d getPositionOfObject(final Node node){
+        final Point3d position = new Point3d(0.0, 0.0, 0.0);
+        Transform3D transformPos = new Transform3D();
+        node.getLocalToVworld(transformPos);
+        Vector3d translation = new Vector3d();
+        transformPos.get(translation);
+        if (logger.isDebugEnabled()) {
+            logger.debug("transform: "+translation);
+        }
+        transformPos.transform(position);        
+        return position;
+    }
+
+    private Point3f scalePoint(final Point3f point,final double scalingFactor){
+        point.x*=scalingFactor;
+        point.y*=scalingFactor;
+        point.z*=scalingFactor;
+        return point;
     }
 
     private void configureLight() {
         al.setInfluencingBounds(lightBounds);
-        al.setCapability(DirectionalLight.ALLOW_STATE_WRITE);
-        al.setCapability(DirectionalLight.ALLOW_STATE_READ);        
+        al.setCapability(AmbientLight.ALLOW_STATE_WRITE);
+        al.setCapability(AmbientLight.ALLOW_STATE_READ);
         sceneGraph.addChild(al);
 
-        Color3f light1Color = new Color3f(0.9f, 0.9f, 0.9f);
-        Vector3f light1Direction = new Vector3f(300.0f, 150.0f, -50.0f);
-        DirectionalLight light1 = new DirectionalLight(light1Color, light1Direction);
-        light1.setInfluencingBounds(lightBounds);
-        sceneGraph.addChild(light1);
+        Color3f light1Color = new Color3f(0.5f, 0.5f, 0.5f);
+        Vector3f light1Direction = new Vector3f(2011.058f, 6603.77f, -300.0f);
+        dl = new DirectionalLight(light1Color, light1Direction);
+        dl.setCapability(DirectionalLight.ALLOW_STATE_WRITE);
+        dl.setCapability(DirectionalLight.ALLOW_STATE_READ);
+        dl.setInfluencingBounds(lightBounds);
+        sceneGraph.addChild(dl);
     }
 
     private void setBackground() {
-        Background background = new Background(0f, 1f, 0f);
+        Background background = new Background(0.50f, 0.85f, 0.98f);
         background.setApplicationBounds(backgroundBounds);
         sceneGraph.addChild(background);
     }
@@ -248,5 +421,18 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
             return;
         }
         sceneGraph.addChild(scene.getSceneGroup());
+        if (logger.isDebugEnabled()) {
+            logger.debug("First child: "+scene.getSceneGroup().getChild(0));            
+            logger.debug("scene : "+sceneGraph.isLive());
+            Shape3D test = new Shape3D();
+            logger.debug("Position of first child: "+getPositionOfObject(scene.getSceneGroup().getChild(0)));
+        }
     }
+
+    @Override
+    public void enableDirectedLight(boolean enabled) {
+        dl.setEnable(enabled);
+    }
+
+
 }

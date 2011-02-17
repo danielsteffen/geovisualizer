@@ -43,6 +43,7 @@ public class ComponentFactory {
             newApplicatioFrame = new MainFrame();
             ComponentBroker.getInstance().setMainFrame(newApplicatioFrame);
             compControl = new ComponentController();
+            ComponentBroker.getInstance().setController(compControl);
             compControl.setMainFrame(newApplicatioFrame);
             compControl.setVisualisationComponent(newApplicatioFrame.getVisualisationComponent());
             compControl.setConfiguration(configuration);

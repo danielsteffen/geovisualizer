@@ -7,7 +7,12 @@ package com.dfki.av.sudplan.control;
 import com.dfki.av.sudplan.conf.ApplicationConfiguration;
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
 import com.dfki.av.sudplan.io.dem.DEMLoader;
+import com.dfki.av.sudplan.io.dem.DEMShape;
+import com.dfki.av.sudplan.io.shape.ShapeLoader;
+import com.dfki.av.sudplan.io.shape.ShapefileObject;
+import com.dfki.av.sudplan.ui.MainFrame;
 import com.dfki.av.sudplan.ui.ProgressPanel;
+import com.dfki.av.sudplan.ui.SimpleControlPanel;
 import com.dfki.av.sudplan.ui.vis.VisualisationComponent;
 import com.dfki.av.sudplan.util.TimeMeasurement;
 import com.sun.j3d.loaders.Scene;
@@ -26,6 +31,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TooManyListenersException;
+import javax.media.j3d.LineArray;
 import javax.media.j3d.Shape3D;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -46,8 +52,11 @@ public class ComponentController implements DropTargetListener {
     private boolean isInitialized;
     private VisualisationComponent visualisationComponent;
     private ApplicationConfiguration applicationConfiguration;
-    private Frame mainFrame;
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna
+    private MainFrame mainFrame;
     private final DropTarget dropTarget = new DropTarget();
+    private DEMShape dem = null;
+    private ShapeLoader concentrationLoader = null;
 //  private TransferHandler transferHandler =
 
     public ComponentController(final VisualisationComponent visualisationComponent) throws TooManyListenersException {
@@ -93,11 +102,11 @@ public class ComponentController implements DropTargetListener {
         this.applicationConfiguration = applicationConfiguration;
     }
 
-    public Frame getMainFrame() {
+    public MainFrame getMainFrame() {
         return mainFrame;
     }
 
-    public void setMainFrame(Frame mainFrame) {
+    public void setMainFrame(final MainFrame mainFrame) {
         this.mainFrame = mainFrame;
     }
 
@@ -196,9 +205,53 @@ public class ComponentController implements DropTargetListener {
                                     TimeMeasurement.getInstance().startMeasurement(this);
                                 }
                                 final Scene loadedScene = demLoader.load(file);
+                                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove only for Vienna Demo
+                                ComponentBroker.getInstance().setHeights(demLoader.getArcGrid());
                                 if (logger.isDebugEnabled()) {
-                                    logger.debug("Background load of DEM scene done. Elapsed time: " +
-                                            TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
+                                    logger.debug("Background load of DEM scene done. Elapsed time: "
+                                            + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
+                                }
+                                return loadedScene;
+                            }
+
+                            @Override
+                            protected void done() {
+                                try {
+                                    final Scene loadedScene = get();
+                                    if (loadedScene.getSceneGroup().getChild(0) instanceof DEMShape) {
+                                        dem = (DEMShape) loadedScene.getSceneGroup().getChild(0);
+                                        mainFrame.enableDEMButtons(true);
+                                        if (logger.isDebugEnabled()) {
+                                            logger.debug("Scene Bounds: " + dem.getBounds());
+                                        }
+                                    }
+                                    visualisationComponent.addContent(loadedScene);
+                                    setProgressDialogVisible(false);
+                                } catch (Exception ex) {
+                                    fileLoadingErrorNotification(ex, file);
+                                }
+                            }
+                        };
+                        sceneLoader.execute();
+                    }
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make constant and also check for shx dbf prj etc. also use suffix same above
+                } else if (file.getName().endsWith(".shp")) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Given file is of type: ESRI Shapefile.");
+                        final ShapeLoader localShapeLoader = new ShapeLoader();
+                        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
+                        SwingWorker<Scene, Void> sceneLoader = new SwingWorker<Scene, Void>() {
+
+                            @Override
+                            protected Scene doInBackground() throws Exception {
+                                if (logger.isDebugEnabled()) {
+                                    logger.debug("Background load of shapefile");
+                                    TimeMeasurement.getInstance().startMeasurement(this);
+                                }
+                                final Scene loadedScene = localShapeLoader.load(file);
+                                if (logger.isDebugEnabled()) {
+                                    logger.debug("Background load of shapefile scene done. Elapsed time: "
+                                            + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
                                 }
                                 return loadedScene;
                             }
@@ -208,7 +261,15 @@ public class ComponentController implements DropTargetListener {
                                 try {
                                     final Scene loadedScene = get();
                                     if (logger.isDebugEnabled()) {
-                                        logger.debug("Scene Bounds: "+((Shape3D)loadedScene.getSceneGroup().getChild(0)).getBounds());
+                                        logger.debug("Scene Bounds: " + ((Shape3D) loadedScene.getSceneGroup().getChild(0)).getBounds());
+                                    }
+                                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna
+                                    if (loadedScene.getSceneGroup().getChild(0) instanceof ShapefileObject) {
+                                        final ShapefileObject shpObj = (ShapefileObject) loadedScene.getSceneGroup().getChild(0);
+                                        if (localShapeLoader.getShapeArray().size() != 0) {
+                                            concentrationLoader = localShapeLoader;
+                                            mainFrame.enableControls(true);
+                                        }
                                     }
                                     visualisationComponent.addContent(loadedScene);
                                     setProgressDialogVisible(false);
@@ -287,6 +348,56 @@ public class ComponentController implements DropTargetListener {
         dropTarget.setDefaultActions(DnDConstants.ACTION_COPY_OR_MOVE);
         if (visualisationComponent != null && visualisationComponent.getDnDComponent() != null) {
             dropTarget.setComponent(visualisationComponent.getDnDComponent());
+        }
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: remove after Vienna Meeting
+    public void enableDEMTexture(final boolean enabled) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("enabled: " + enabled + " dem: " + dem);
+        }
+        if (dem != null) {
+            dem.enableTexture(enabled);
+        }
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: move and refactor after Vienna
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this could be used from the inital code of the loader almost exact the same code.
+    public void recalculateColors(final Double lowConTresh, final Double mediumConTresh) {
+//            concentration.recalculateColors(lowConTresh, mediumConTresh);
+//         ShapefileObject[] shapes = concentrationLoader.getShapeArray().toArray(new ShapefileObject[]{});
+        Double[] concentrations = concentrationLoader.getPointColors().toArray(new Double[]{});
+        int counter = 0;
+        for (ShapefileObject currentShapefileObject : concentrationLoader.getShapeArray()) {
+            final LineArray currentGeometry = ((LineArray) currentShapefileObject.getGeometry());
+            for (int i = 0; i < currentGeometry.getVertexCount(); i++) {
+//                 if (logger.isDebugEnabled()) {
+//                logger.debug("con: "+concentrations[counter]+" low: "+lowConTresh+" med: "+ mediumConTresh);
+//            }
+                if (concentrations[counter] < lowConTresh) {
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("green");
+//                    }
+                    currentGeometry.setColor(i, concentrationLoader.getLowConcentrationColor());
+                } else if (concentrations[counter] < mediumConTresh) {
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("yellow");
+//                    }
+                    currentGeometry.setColor(i, concentrationLoader.getMediumConcentrationColor());
+                } else {
+//                     if (logger.isDebugEnabled()) {
+//                        logger.debug("red");
+//                    }
+                    currentGeometry.setColor(i, concentrationLoader.getHighConcentrationColor());
+                }
+                if (i % 2 != 0) {
+                    counter++;
+                }
+            }
+            counter++;
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Totalindex: " + counter);
         }
     }
 }
