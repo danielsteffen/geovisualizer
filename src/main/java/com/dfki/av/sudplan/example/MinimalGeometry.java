@@ -7,6 +7,7 @@ package com.dfki.av.sudplan.example;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
+import com.sun.j3d.utils.geometry.Triangulator;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
@@ -20,7 +21,9 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.LineArray;
 import javax.media.j3d.LineAttributes;
+import javax.media.j3d.LineStripArray;
 import javax.media.j3d.Material;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.RotationInterpolator;
@@ -28,7 +31,6 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JPanel;
 import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 /**
@@ -37,14 +39,82 @@ import javax.vecmath.Vector3f;
  * @version 1.0
  * @since 1.6
  */
-public class Example5 {
+public class MinimalGeometry {
+
 
   private GeometryInfo gi;
 
-Point3f[] createCoordinateData() {
-    Point3f[] data = {new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f), new Point3f(0.0f, 0.0f, 1.0f)};         // ******
-    int i = 0;
-    System.out.println("Coordinate size: "+data.length);
+  float[] createCoordinateData() {
+    float[] data = new float[48];         // ******
+    int i = 0;    
+
+
+    data[i++] = 0f;
+    data[i++] = 0f;
+    data[i++] = 0f; //1
+    data[i++] = 1f;
+    data[i++] = 0f;
+    data[i++] = 0f; //2
+    data[i++] = 0.5f;
+    data[i++] = 0.5f;
+    data[i++] = 1f; //3
+//    System.out.println("end polygon; total vertex count: " + i / 3);
+
+    data[i++] = 0f;
+    data[i++] = 1f;
+    data[i++] = 0f; //1
+    data[i++] = 0f;
+    data[i++] = 0f;
+    data[i++] = 0; //2
+    data[i++] = 0.5f;
+    data[i++] = 0.5f;
+    data[i++] = 1f; //3
+
+    data[i++] = 1f;
+    data[i++] = 0f;
+    data[i++] = 0f; //1
+    data[i++] = 1f;
+    data[i++] = 1f;
+    data[i++] = 0f; //3
+    data[i++] = 0.5f;
+    data[i++] = 0.5f;
+    data[i++] = 1.0f; //2
+
+    data[i++] = 0f;
+    data[i++] = 1f;
+    data[i++] = 0f; //1
+    data[i++] = 0.5f;
+    data[i++] = 0.5f;
+    data[i++] = 1.0f; //2
+    data[i++] = 1f;
+    data[i++] = 1f;
+    data[i++] = 0f; //3
+
+    data[i++] = 0f;
+    data[i++] = 0f;
+    data[i++] = 0f; //1
+    data[i++] = 1f;
+    data[i++] = 0f;
+    data[i++] = 0f; //2
+    data[i++] = 1f;
+    data[i++] = 1f;
+    data[i++] = 0f; //3
+    data[i++] = 0f;
+    data[i++] = 1f;
+    data[i++] = 0f; //3 
+    System.out.println("end polygon; total vertex count: " + i / 3);
+
+//    data[i++] = ;
+//    data[i++] = ;
+//    data[i++] = ; //1
+//    System.out.println("end polygon; total vertex count: " + i / 3);
+//
+//    data[i++] = ;
+//    data[i++] = ;
+//    data[i++] = ; //1
+//    System.out.println("end polygon; total vertex count: " + i / 3);
+
+    
     return data;
   }
 
@@ -84,31 +154,31 @@ Point3f[] createCoordinateData() {
 
     System.out.println("\n --- geometry debug information --- \n");
 
-    Point3f[] coordinateData = null;
+    float[] coordinateData = null;
     coordinateData = createCoordinateData();
 //    int[] stripCount = {17, 17, 5, 5, 5, 5, 5, 5, 5};  // ******
 //        int[] stripCount = {17,17,17};  // ******
 //        int[] stripCount = {3,3};  // ******
-//    int[] stripCount = {3,3,3,3,4};  // ******
-//    for (int i = 0; i < stripCount.length; i++) {
-//      System.out.println("stripCount[" + i + "] = " + stripCount[i]);
-//      total += stripCount[i];
-//    }
+    int[] stripCount = {3,3,3,3,4};  // ******
+    for (int i = 0; i < stripCount.length; i++) {
+      System.out.println("stripCount[" + i + "] = " + stripCount[i]);
+      total += stripCount[i];
+    }
 
     if (total != coordinateData.length / 3) {
       System.out.println("  coordinateData vertex count: " + coordinateData.length / 3);
       System.out.println("stripCount total vertex count: " + total);
     }
 
-    gi = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
+    gi = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
     gi.setCoordinates(coordinateData);
-//    gi.setStripCounts(stripCount);
+    gi.setStripCounts(stripCount);
     printGeometry(gi);
-//    Triangulator tr = new Triangulator();
+    Triangulator tr = new Triangulator();
 //        Triangulator tr = new Triangulator(GeometryInfo);
-//    System.out.println("begin triangulation");
-//    tr.triangulate(gi);
-//    System.out.println("  END triangulation");
+    System.out.println("begin triangulation");
+    tr.triangulate(gi);    
+    System.out.println("  END triangulation");
     printGeometry(gi);
     gi.recomputeIndices();
 
@@ -143,7 +213,7 @@ Point3f[] createCoordinateData() {
 
     ////////////////////////
 //    LineStripArray lineArray = new LineStripArray(69, LineArray.COORDINATES, stripCount); //*****
-
+    
 //        LineStripArray lineArray = new LineStripArray(51, LineArray.COORDINATES, stripCount); //*****
 //    lineArray.setCoordinates(0, coordinateData);
     Appearance blueColorAppearance = new Appearance();
@@ -210,16 +280,14 @@ Point3f[] createCoordinateData() {
   //  The following allows this to be run as an application
   //  as well as an applet
 
-  public void printGeometry(final GeometryInfo geoInfo) {
+  public void printGeometry(final GeometryInfo geoInfo){
     System.out.println("");
-    System.out.println("Primitive: " + geoInfo.getPrimitive());
-    if (geoInfo.getStripCounts() != null) {
-      System.out.println("Stripcounts: " + geoInfo.getStripCounts().length);
-    } else {
-      System.out.println("Stripcounts: " + null);
-    }
-    System.out.println("Coordinates: " + Arrays.deepToString(geoInfo.getCoordinates()));
-    System.out.println("ToString: " + geoInfo.toString());
+    System.out.println("Primitive: "+geoInfo.getPrimitive());
+    System.out.println("Stripcount: "+geoInfo.getStripCounts());
+    System.out.println("Coordinates: "+Arrays.deepToString(geoInfo.getCoordinates()));
+    System.out.println("ToString: "+geoInfo.toString());
     System.out.println("");
   }
+
+
 }
