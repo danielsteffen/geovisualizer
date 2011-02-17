@@ -17,6 +17,7 @@ import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +77,11 @@ public class EarthFlat {
         return newPosition;
     }
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:performance nightmare
+    public static Point3f geodeticToCartesian(final Point3f postionToTransform, final int projection) {
+        return new Point3f(geodeticToCartesian(new Point3d(postionToTransform), projection));
+    }
+
     private static void checkPoint(final Point3d postionToTransform) {
         if (postionToTransform == null) {
             final String message = "Point is null.";
@@ -117,6 +123,8 @@ public class EarthFlat {
                 image.getHeight());
         worldTexture.setImage(0, image);
         worldTexture.setEnable(true);
+        worldTexture.setMagFilter(Texture2D.BASE_LEVEL_LINEAR);
+        worldTexture.setMinFilter(Texture2D.BASE_LEVEL_LINEAR);
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: switchable reference system
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this should be done somewhere else it is a layer only in the inital version
         Appearance worldAppearance = new Appearance();
@@ -143,21 +151,25 @@ public class EarthFlat {
         final Point3d upper = new Point3d();
         EARTH_EXTENDS.getLower(lower);
         EARTH_EXTENDS.getUpper(upper);
-        System.out.println("distance x: " + (float) (upper.getX() - lower.getX()));
-        System.out.println("distance y: " + (float) (upper.getY() - lower.getY()));
+        if (logger.isDebugEnabled()) {
+            logger.debug("distance x: " + (float) (upper.getX() - lower.getX()));
+            logger.debug("distance y: " + (float) (upper.getY() - lower.getY()));
+        }        
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:extends bounds with distance
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: divided by 2 because the box doubles by default. 
         this.geometry = new Box(
                 (float) (((upper.getX() - lower.getX()) / 2)),
                 (float) (((upper.getY() - lower.getY()) / 2)),
-                0.0f, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
+                -0.06f, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
 //        this.geometry = new Box(
 //                3.0f,
 //                2.0f,
 //                0.0f, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
 //        this.geometry = new Box();
-        System.out.println("box bounds: " + new BoundingBox(geometry.getBounds()));
-        System.out.println("xdim: " + geometry.getXdimension());
+        if (logger.isDebugEnabled()) {
+            logger.debug("box bounds: " + new BoundingBox(geometry.getBounds()));
+            logger.debug("xdim: " + geometry.getXdimension());
+        }    
         geometry.setAppearance(Box.FRONT, worldAppearance);
     }
 
