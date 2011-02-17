@@ -165,6 +165,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private boolean reverseZoom = false;
     private boolean stopZoom = false;
     private boolean proportionalZoom = false;
+    private boolean proportionalTranslate = false;
     private double minRadius = 0.0;
     private int leftButton = TRANSLATE;
     private int rightButton = ROTATE;
@@ -226,6 +227,8 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
      */
     public static final int PROPORTIONAL_ZOOM = 0x1000;
 
+    public static final int PROPORTIONAL_TRANSLATE = 0x1000;
+
     /**
      * Used to set the fuction for a mouse button to Rotate
      */
@@ -245,6 +248,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private static final double NOMINAL_PZOOM_FACTOR = 1.0;
     private static final double NOMINAL_ROT_FACTOR = .01;
     private static final double NOMINAL_TRANS_FACTOR = .01;
+    private static final double NOMINAL_PTRANS_FACTOR = 1.0;
 
     private double rotXMul = NOMINAL_ROT_FACTOR * rotXFactor;
     private double rotYMul = NOMINAL_ROT_FACTOR * rotYFactor;
@@ -293,6 +297,11 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 	    proportionalZoom = true;
 	    zoomMul = NOMINAL_PZOOM_FACTOR * zoomFactor;
 	}
+        if ((flags & PROPORTIONAL_TRANSLATE) != 0) {
+            proportionalTranslate = true;
+            transYMul = NOMINAL_PTRANS_FACTOR * transYFactor;
+            transXMul = NOMINAL_PTRANS_FACTOR * transXFactor;
+        }
     }
 
     protected synchronized void processAWTEvents( final AWTEvent[] events ) {
@@ -360,14 +369,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 	    }
 	    // translate
 	    else if (translate(evt)) {
-		if (reverseTrans) {
-		    xtrans -= xchange * transXMul;
-		    ytrans += ychange * transYMul;
-		}
-		else {
-		    xtrans += xchange * transXMul;
-		    ytrans -= ychange * transYMul;
-		}
+		doTranslateOperations(xchange, ychange);
             }
 	    // zoom
 	    else if (zoom(evt)) {
@@ -459,7 +461,31 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 	}
     }
 
-
+    protected void doTranslateOperations(final int xchange, final int ychange) {
+        if (isProportionalTranslate()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("prop translate");
+            }
+            if (reverseTrans) {
+                xtrans -= xchange * transXMul * distanceFromCenter / 100.0;
+                ytrans += ychange * transYMul * distanceFromCenter / 100.0;
+            } else {
+                xtrans += xchange * transXMul * distanceFromCenter / 100.0;
+                ytrans -= ychange * transYMul * distanceFromCenter / 100.0;
+            }
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("non prop translate");
+            }
+            if (reverseTrans) {
+                xtrans -= xchange * transXMul;
+                ytrans += ychange * transYMul;
+            } else {
+                xtrans += xchange * transXMul;
+                ytrans -= ychange * transYMul;
+            }
+        }
+    }
 
     /**
      * Sets the ViewingPlatform for this behavior.  This method is
@@ -1102,6 +1128,14 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 	else {
 	    zoomMul = NOMINAL_ZOOM_FACTOR * zoomFactor;
 	}
+    }
+
+    public void setProportionalTranslate(boolean proportionalTranslate) {
+        this.proportionalTranslate = proportionalTranslate;
+    }
+
+    public boolean isProportionalTranslate() {
+        return proportionalTranslate;
     }
 
     /**
