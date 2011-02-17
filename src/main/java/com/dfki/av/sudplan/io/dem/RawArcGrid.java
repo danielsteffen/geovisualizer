@@ -4,6 +4,8 @@
  */
 package com.dfki.av.sudplan.io.dem;
 
+import com.dfki.av.sudplan.control.ComponentBroker;
+import java.util.ArrayList;
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ public class RawArcGrid {
     private Point3f[] rawCoordinates;
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: bad design is only used externaly. Attention could be terrible slow to
     private float scaleFactor = 1.0f;
-    private float zExaggeration = 2.0f;
+    private float zExaggeration = 1.0f;
     /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: bad design if the sparse factor is changed before the initialisation
      * will not be readed correctly because the factor does influence the number of rows/columns
      */
@@ -65,8 +67,8 @@ public class RawArcGrid {
         origin.setY(yMin);
     }
 
-    public float getYMax(){
-        return getYMin()+(getCellsize()*(getNumberOfRows() -1));
+    public float getYMax() {
+        return getYMin() + (getCellsize() * (getNumberOfRows() - 1));
     }
 
     public float getCellsize() {
@@ -134,18 +136,89 @@ public class RawArcGrid {
 
     public Point3f getGridPoint(final int x, final int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x > getNumberOfColumns()) {
-            logger.debug("getGridPoint (" + x + "," + y + ")");
+//            logger.debug("getGridPoint (" + x + "," + y + ")");
             throw new ArrayIndexOutOfBoundsException(x);
         }
         if (y < 0 || y > getNumberOfRows()) {
-            logger.debug("getGridPoint (" + x + "," + y + ")");
+//            logger.debug("getGridPoint (" + x + "," + y + ")");
             throw new ArrayIndexOutOfBoundsException(y);
         }
-        return rawCoordinates[(int)(x * sparseFactor + y * sparseFactor * (getNumberOfColumns()))];
+        return rawCoordinates[(int) (x * sparseFactor + y * sparseFactor * (getNumberOfColumns()))];
     }
 
     public float getSparseFactor() {
         return sparseFactor;
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:naiv implementation
+    public Point3f getNearestNeighbour(final Point3f point) throws ArrayIndexOutOfBoundsException {        
+        final int xIndex = (int) Math.floor((point.x/ComponentBroker.getInstance().getScalingFactor()-getXMin())/(getCellsize()));
+        final int yIndex = (int) Math.floor((point.y/ComponentBroker.getInstance().getScalingFactor()-getYMin())/(getCellsize()));
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:better to raise the exception than to duplicate the check method is responsible for this
+        ArrayList<Point3f> points = new ArrayList<Point3f>();
+         if(xIndex  < getNumberOfColumns() && xIndex >= 0 && yIndex < getNumberOfRows() && yIndex >= 0){
+            points.add(getGridPoint(xIndex, yIndex));
+        }
+        if(xIndex < getNumberOfColumns() && xIndex >= 0 && yIndex+1 < getNumberOfRows() && yIndex >= 0){
+            points.add(getGridPoint(xIndex, yIndex+1));
+        }
+        if(xIndex +1 < getNumberOfColumns() && xIndex >= 0 && yIndex < getNumberOfRows() && yIndex >= 0){
+            points.add(getGridPoint(xIndex+1, yIndex));
+        }
+        if(xIndex +1 < getNumberOfColumns() && xIndex >= 0 && yIndex+1 < getNumberOfRows() && yIndex >= 0){
+            points.add(getGridPoint(xIndex+1, yIndex+1));
+        }
+        double zMax = -99999.0;
+        Point3f maxNeigbour=null;
+        for(Point3f currentPoint:points){
+            if(currentPoint.z > zMax){
+                zMax=currentPoint.z;
+                maxNeigbour=currentPoint;
+            }
+        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("point: "+point);
+//            logger.debug("x: "+xIndex+" y:"+yIndex);
+//        }
+//does work but makes no sense
+        //        final int startIndex = xIndex+(yIndex*getNumberOfColumns());
+//        final int stopIndex = xIndex+3+((yIndex+3)*getNumberOfColumns());
+//        Point3f nearestNeighbour = null;
+//        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:dangerous
+//        double minimulDistance = 9999.0;
+//        for (int i = startIndex; i < stopIndex; i++) {
+//            final double tmpDistance = getDistance(point, rawCoordinates[i]);
+////            if (logger.isDebugEnabled()) {
+////                logger.debug("tmpDistance: "+tmpDistance);
+////            }
+//            if (nearestNeighbour != null) {
+//                if (tmpDistance < minimulDistance) {
+//                    minimulDistance = tmpDistance;
+//                    nearestNeighbour = rawCoordinates[i];
+//                }
+//            } else {
+//                minimulDistance = tmpDistance;
+//                nearestNeighbour = rawCoordinates[i];
+//            }
+//        }
+//        try{
+//        return getGridPoint(xIndex, yIndex);
+//        }catch(ArrayIndexOutOfBoundsException ex){
+////            if (logger.isErrorEnabled()) {
+////                logger.error("error");
+////            }
+//            return null;
+//        }
+        return maxNeigbour;
+    }
+
+    private double getDistance(final Point3f point1, final Point3f point2) {
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("point1: "+point1+" point2: "+point2);
+//            logger.debug("quad1: "+Math.pow((point2.x - point1.x),2));
+//            logger.debug("quad2: "+Math.pow((point1.y - point2.y),2));
+//        }
+        return Math.sqrt(Math.pow((point1.x - point2.x),2) + Math.pow((point1.y - point2.y),2));
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: does not work properly ---> disortion of width/height
