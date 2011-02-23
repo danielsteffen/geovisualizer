@@ -6,6 +6,7 @@
 package com.dfki.av.sudplan.control;
 
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 
 /**
@@ -16,6 +17,10 @@ import javax.swing.JFrame;
  */
 public class ComponentBroker {
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:How to do the configuration of setting up the connections between Gui and functionality
+    //e.g. layerManager & layerComponent this should do the frame in my opinion. Frame should now Controller VisComp etc.
+
+    public static final Icon LAYER_ICON = new javax.swing.ImageIcon(ComponentBroker.class.getResource("/com/dfki/av/sudplan/ui/icon/layer/layerIcon24.png"));
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:replace this completley with lookups
     private JFrame mainFrame;

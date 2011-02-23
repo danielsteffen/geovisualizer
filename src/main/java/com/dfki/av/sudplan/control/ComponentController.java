@@ -5,18 +5,19 @@
 package com.dfki.av.sudplan.control;
 
 import com.dfki.av.sudplan.conf.ApplicationConfiguration;
-import com.dfki.av.sudplan.io.dem.RawArcGrid;
-import com.dfki.av.sudplan.io.dem.DEMLoader;
-import com.dfki.av.sudplan.io.dem.DEMShape;
+import com.dfki.av.sudplan.conf.InitialisationException;
+import com.dfki.av.sudplan.io.dem.ElevationShape;
 import com.dfki.av.sudplan.io.shape.ShapeLoader;
 import com.dfki.av.sudplan.io.shape.ShapefileObject;
+import com.dfki.av.sudplan.layer.Layer;
+import com.dfki.av.sudplan.layer.LayerManager;
+import com.dfki.av.sudplan.layer.LayerStateEvent;
+import com.dfki.av.sudplan.layer.SimpleLayerManager;
 import com.dfki.av.sudplan.ui.MainFrame;
 import com.dfki.av.sudplan.ui.ProgressPanel;
-import com.dfki.av.sudplan.ui.SimpleControlPanel;
 import com.dfki.av.sudplan.ui.vis.VisualisationComponent;
-import com.dfki.av.sudplan.util.TimeMeasurement;
-import com.sun.j3d.loaders.Scene;
-import java.awt.Frame;
+import com.dfki.av.sudplan.layer.LayerListener;
+import java.awt.Component;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -26,16 +27,17 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TooManyListenersException;
+import java.util.logging.Level;
 import javax.media.j3d.LineArray;
-import javax.media.j3d.Shape3D;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +47,8 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public class ComponentController implements DropTargetListener {
+//ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:generate Interface this is a Simple ComponentBroker
+public class ComponentController implements DropTargetListener, LayerListener {
 
     private final static Logger logger = LoggerFactory.getLogger(ComponentController.class);
     private boolean initialiseLoggingEnabled = true;
@@ -54,26 +57,38 @@ public class ComponentController implements DropTargetListener {
     private ApplicationConfiguration applicationConfiguration;
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna
     private MainFrame mainFrame;
-    private final DropTarget dropTarget = new DropTarget();
-    private DEMShape dem = null;
+    private ElevationShape dem = null;
     private ShapeLoader concentrationLoader = null;
+    private LayerManager layerManager = new SimpleLayerManager();
+    private ArrayList<DropTarget> dropTargets = new ArrayList<DropTarget>();
 //  private TransferHandler transferHandler =
 
-    public ComponentController(final VisualisationComponent visualisationComponent) throws TooManyListenersException {
+    public ComponentController(final VisualisationComponent visualisationComponent) throws InitialisationException{
         this(visualisationComponent, new ApplicationConfiguration());
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Exception Handling
 
     public ComponentController(final VisualisationComponent visualisationComponent,
-            final ApplicationConfiguration applicationConfiguration) throws TooManyListenersException {
-        setVisualisationComponent(visualisationComponent);
+            final ApplicationConfiguration applicationConfiguration) throws InitialisationException {
+        try {
+            setVisualisationComponent(visualisationComponent);
+
         setApplicationConfiguration(applicationConfiguration);
 //    visualisationComponent.getDnDComponent().setTransferHandler(handler);
-        configureLogging();
+//        configureLogging();        
+        layerManager.addLayerListener(this);
+          } catch (Exception ex) {
+            final String message = "Error during Controller initialisation.";
+              if (logger.isErrorEnabled()) {
+                logger.error(message,ex);
+            }
+            throw new InitialisationException(message,ex);
+        }
     }
 
-    public ComponentController() {
-        configureDropBehaviour();
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not happen and
+    public ComponentController() throws InitialisationException{
+        this(null, new ApplicationConfiguration());
     }
 
     public final boolean isInitialiseLoggingEnabled() {
@@ -88,9 +103,15 @@ public class ComponentController implements DropTargetListener {
         return visualisationComponent;
     }
 
-    public final void setVisualisationComponent(final VisualisationComponent visualisationComponent) {
+    public final void setVisualisationComponent(final VisualisationComponent visualisationComponent) throws DragAndDropException {
+        if (this.visualisationComponent != null) {
+            removeDropTarget(getVisualisationComponent().getDnDComponent());
+        }
         this.visualisationComponent = visualisationComponent;
-        dropTarget.setComponent(visualisationComponent.getDnDComponent());
+        if (visualisationComponent != null) {
+            addDropTarger(getVisualisationComponent().getDnDComponent());
+
+        }
 //    this.visualisationComponent.getDnDComponent().setTransferHandler(handler);
     }
 
@@ -133,7 +154,7 @@ public class ComponentController implements DropTargetListener {
     @Override
     public void drop(final DropTargetDropEvent dtde) {
         if (logger.isDebugEnabled()) {
-            logger.debug("DnD on Component: " + dropTarget.getComponent() + ".");
+            logger.debug("DnD on Component: " + dtde.getDropTargetContext().getComponent() + ".");
             logger.debug("Data flavors: " + Arrays.deepToString(dtde.getTransferable().getTransferDataFlavors()));
         }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: check on unix & mac
@@ -144,9 +165,9 @@ public class ComponentController implements DropTargetListener {
                 List fileList = (List) tr.getTransferData(DataFlavor.javaFileListFlavor);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Drop list= " + fileList + ".");
-                    setProgressDialogVisible(true);
-                    loadFile(fileList);
                 }
+                setProgressDialogVisible(true);
+                layerManager.addLayersFromFile(fileList);
             } catch (UnsupportedFlavorException ex) {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:user information
                 if (logger.isErrorEnabled()) {
@@ -172,131 +193,6 @@ public class ComponentController implements DropTargetListener {
 
     @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
-    }
-
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:encapsulate in an own class
-    public void loadFile(List<File> files) {
-        if (files == null) {
-            return;
-        }
-        if (logger.isInfoEnabled()) {
-            logger.info("loading files...");
-        }
-        for (final File file : files) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Trying to load file: " + file.getName() + ".");
-            }
-            try {
-                /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:improve if the file
-                 * extension is not correctly set automatic recognition should be done.
-                 * In the worst case the user should be asked what filetype it is.
-                 */
-                if (file.getName().endsWith(RawArcGrid.FILE_EXTENSION)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Given file is of type: " + RawArcGrid.NAME + ".");
-                        final DEMLoader demLoader = new DEMLoader();
-                        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
-                        SwingWorker<Scene, Void> sceneLoader = new SwingWorker<Scene, Void>() {
-
-                            @Override
-                            protected Scene doInBackground() throws Exception {
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("Background load of DEM scene");
-                                    TimeMeasurement.getInstance().startMeasurement(this);
-                                }
-                                final Scene loadedScene = demLoader.load(file);
-                                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove only for Vienna Demo
-                                ComponentBroker.getInstance().setHeights(demLoader.getArcGrid());
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("Background load of DEM scene done. Elapsed time: "
-                                            + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
-                                }
-                                return loadedScene;
-                            }
-
-                            @Override
-                            protected void done() {
-                                try {
-                                    final Scene loadedScene = get();
-                                    if (loadedScene.getSceneGroup().getChild(0) instanceof DEMShape) {
-                                        dem = (DEMShape) loadedScene.getSceneGroup().getChild(0);
-                                        mainFrame.enableDEMButtons(true);
-                                        if (logger.isDebugEnabled()) {
-                                            logger.debug("Scene Bounds: " + dem.getBounds());
-                                        }
-                                    }
-                                    visualisationComponent.addContent(loadedScene);
-                                    setProgressDialogVisible(false);
-                                } catch (Exception ex) {
-                                    fileLoadingErrorNotification(ex, file);
-                                }
-                            }
-                        };
-                        sceneLoader.execute();
-                    }
-                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make constant and also check for shx dbf prj etc. also use suffix same above
-                } else if (file.getName().endsWith(".shp")) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Given file is of type: ESRI Shapefile.");
-                        final ShapeLoader localShapeLoader = new ShapeLoader();
-                        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
-                        SwingWorker<Scene, Void> sceneLoader = new SwingWorker<Scene, Void>() {
-
-                            @Override
-                            protected Scene doInBackground() throws Exception {
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("Background load of shapefile");
-                                    TimeMeasurement.getInstance().startMeasurement(this);
-                                }
-                                final Scene loadedScene = localShapeLoader.load(file);
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("Background load of shapefile scene done. Elapsed time: "
-                                            + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
-                                }
-                                return loadedScene;
-                            }
-
-                            @Override
-                            protected void done() {
-                                try {
-                                    final Scene loadedScene = get();
-                                    if (logger.isDebugEnabled()) {
-                                        logger.debug("Scene Bounds: " + ((Shape3D) loadedScene.getSceneGroup().getChild(0)).getBounds());
-                                    }
-                                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna
-                                    if (loadedScene.getSceneGroup().getChild(0) instanceof ShapefileObject) {
-                                        final ShapefileObject shpObj = (ShapefileObject) loadedScene.getSceneGroup().getChild(0);
-                                        if (localShapeLoader.getShapeArray().size() != 0) {
-                                            concentrationLoader = localShapeLoader;
-                                            mainFrame.enableControls(true);
-                                        }
-                                    }
-                                    visualisationComponent.addContent(loadedScene);
-                                    setProgressDialogVisible(false);
-                                } catch (Exception ex) {
-                                    fileLoadingErrorNotification(ex, file);
-                                }
-                            }
-                        };
-                        sceneLoader.execute();
-                    }
-                } else {
-                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:i18n
-                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:default images look bad.
-                    setProgressDialogVisible(false);
-                    JOptionPane.showMessageDialog(
-                            getMainFrame(),
-                            "The given file could not be added. The file type is unknown.",
-                            "Unrecognised File Type",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            } catch (Exception ex) {
-                fileLoadingErrorNotification(ex, file);
-            }
-        }
-        if (logger.isInfoEnabled()) {
-            logger.info("loading files done.");
-        }
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:poor design see above
@@ -334,21 +230,6 @@ public class ComponentController implements DropTargetListener {
 
     public ApplicationConfiguration getConfiguration() {
         return applicationConfiguration;
-    }
-
-    private void configureDropBehaviour() {
-        try {
-            dropTarget.addDropTargetListener(this);
-        } catch (TooManyListenersException ex) {
-            if (logger.isErrorEnabled()) {
-                logger.error("It was not possible to create Drag & Drop support. Drag & Drop on the visualisation "
-                        + "component will not work.", ex);
-            }
-        }
-        dropTarget.setDefaultActions(DnDConstants.ACTION_COPY_OR_MOVE);
-        if (visualisationComponent != null && visualisationComponent.getDnDComponent() != null) {
-            dropTarget.setComponent(visualisationComponent.getDnDComponent());
-        }
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: remove after Vienna Meeting
@@ -400,4 +281,77 @@ public class ComponentController implements DropTargetListener {
             logger.debug("Totalindex: " + counter);
         }
     }
+
+    public void addDropTarger(final Component targetToAdd) throws DragAndDropException {
+        final DropTarget newDropTarget = new DropTarget();
+        newDropTarget.setDefaultActions(DnDConstants.ACTION_COPY_OR_MOVE);
+        newDropTarget.setComponent(targetToAdd);
+        try {
+            newDropTarget.addDropTargetListener(this);
+        } catch (TooManyListenersException ex) {
+            if (logger.isErrorEnabled()) {
+                logger.error("Too many DnD listeners.", ex);
+            }
+            throw new DragAndDropException("Not possible to register Listner", ex);
+        }
+        dropTargets.add(newDropTarget);
+    }
+
+    public void removeDropTarget(final Component targetToRemove) {
+        if (targetToRemove != null) {
+            DropTarget dropTargetToRemove = null;
+            for (DropTarget currentTarget : dropTargets) {
+                if (currentTarget.getComponent() != null && targetToRemove.equals(currentTarget.getComponent())) {
+                    dropTargetToRemove = currentTarget;
+                }
+            }
+            if (dropTargetToRemove != null) {
+                dropTargetToRemove.removeDropTargetListener(this);
+                dropTargets.remove(dropTargetToRemove);
+            }
+        }
+    }
+
+    public LayerManager getLayerManager() {
+        return layerManager;
+    }
+
+    public void setLayerManager(final LayerManager layerManager) {
+        this.layerManager = layerManager;
+    }
+
+    @Override
+    public void layerAdded(final Layer addedLayer) {
+        setProgressDialogVisible(false);
+        visualisationComponent.addContent(addedLayer.getDataObject());
+    }
+
+    @Override
+    public void layerNotAdded(final LayerStateEvent event) {
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: file is here not known
+        fileLoadingErrorNotification(event.getEx(), event.getFile());    
+    }
+
+    @Override
+    public void layerRemoved(final Layer removedLayer) {
+        visualisationComponent.removContent(removedLayer.getDataObject());
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof Layer) {
+            final Layer layer = (Layer) evt.getSource();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Layer " + layer.getName() + " property: " + evt.getPropertyName() + " has changed.");
+            }
+            if (evt.getPropertyName().equals("visible")) {
+                if (layer.isVisible()) {
+                    visualisationComponent.addContent(layer.getDataObject());
+                } else {
+                    visualisationComponent.removContent(layer.getDataObject());
+                }
+            }
+        }
+    }
+    
 }
