@@ -27,13 +27,13 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public class DEMShape extends Shape3D {
+public class ElevationShape extends Shape3D {
 
     Appearance landscapeAppearance = new Appearance();
-    private final static Logger logger = LoggerFactory.getLogger(DEMShape.class);
+    private final static Logger logger = LoggerFactory.getLogger(ElevationShape.class);
     Texture2D demTexture=null;
 
-    public DEMShape(final Geometry geometry) {
+    public ElevationShape(final Geometry geometry) {
         super(geometry);
         landscapeAppearance.setCapability(Appearance.ALLOW_TEXTURE_READ);
         landscapeAppearance.setCapability(Appearance.ALLOW_TEXTURE_WRITE);

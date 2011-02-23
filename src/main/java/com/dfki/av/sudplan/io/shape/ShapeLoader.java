@@ -47,9 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ShapeLoader extends AbstractLoader {
 
-    private final static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);
-    final SceneBase createdScene = new SceneBase();
-    final BranchGroup sceneBranch = new BranchGroup();
+    private final static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);    
     final ArrayList<Point3f> points = new ArrayList<Point3f>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Optimise waste of memory and time
     private final ArrayList<Double> pointColors = new ArrayList<Double>();
@@ -84,46 +82,21 @@ public class ShapeLoader extends AbstractLoader {
     SHAPE_TYPE shapeType = null;
 
     @Override
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:check exceptionhandling DEMLOADER
-    public Scene load()
-            throws FileNotFoundException,
-            IncorrectFormatException,
-            ParsingErrorException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Loading scene...");
-        }
-
+    public void loadImpl() throws Exception {
         try {
             this.shp = new Shapefile(file);
-            createPoints();
+            createPoints();            
+            if (shapeType == SHAPE_TYPE.POLYGON) {
+                createPolygons();
+            } else if (shapeType == SHAPE_TYPE.POLYLINE) {
+                createPolylines();
+            }
         } finally {
             if (shp != null) {
                 shp.close();
             }
         }
-        return createScene();
     }
-
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: abtract DEMloader ?? Example Empty Scene. only difference is setting the geometry
-    private Scene createScene() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Creating scene...");
-            TimeMeasurement.getInstance().startMeasurement(this);
-        }
-        createdScene.setSceneGroup(sceneBranch);
-        if (shapeType == SHAPE_TYPE.POLYGON) {
-            createPolygons();
-        } else if (shapeType == SHAPE_TYPE.POLYLINE) {
-            createPolylines();
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Creating scene done. Time elapsed: "
-                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms.");
-        }
-        return createdScene;
-    }
-
     private void createPolygons() {
         final TransformGroup wireGroup = new TransformGroup();
         final Point3f[] coordinates = points.toArray(new Point3f[]{});
@@ -221,14 +194,14 @@ public class ShapeLoader extends AbstractLoader {
         wire.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);
         wire.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
         wire.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-        wire.setCapability(Shape3D.ALLOW_APPEARANCE_READ);        
+        wire.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
         wire.setAppearance(materialAppear);
         Transform3D scaling = new Transform3D();
 //        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not work wire disapears
 //        scaling.setScale(1.1);
         wireGroup.setTransform(scaling);
-        sceneBranch.addChild(landscape);
-        sceneBranch.addChild(wireGroup);
+        createdScene.getSceneGroup().addChild(landscape);
+        createdScene.getSceneGroup().addChild(wireGroup);
         wireGroup.addChild(wire);
     }
 
@@ -272,9 +245,9 @@ public class ShapeLoader extends AbstractLoader {
             LineAttributes lineAttributes = new LineAttributes();
             lineAttributes.setLineWidth(2.0f);
             lineAppearance.setLineAttributes(lineAttributes);
-            lineShape.setAppearance(lineAppearance);                     
+            lineShape.setAppearance(lineAppearance);
             shapeArray.add(lineShape);
-            sceneBranch.addChild(lineShape);
+            createdScene.getSceneGroup().addChild(lineShape);
             for (int j = 0; j < currentLineSize - 1; j += 2) {
 //                if (logger.isDebugEnabled() && currentIndex == 5934) {
 //                    logger.debug("currentIndex: " + (j));
@@ -300,7 +273,7 @@ public class ShapeLoader extends AbstractLoader {
 //            }
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("TotalIndex: "+currentIndex);
+            logger.debug("TotalIndex: " + currentIndex);
         }
 //        if (logger.isDebugEnabled()) {
 //            logger.debug("Line creation done.");
@@ -313,7 +286,7 @@ public class ShapeLoader extends AbstractLoader {
 //            logger.debug("Number of geometries: "+geomCounter);
 //        }
         if (logger.isDebugEnabled()) {
-            logger.debug("Number of Shapes: "+shapeArray.size());
+            logger.debug("Number of Shapes: " + shapeArray.size());
         }
     }
 
@@ -351,7 +324,6 @@ public class ShapeLoader extends AbstractLoader {
 //        shape.setAppearance(materialAppear);
 //        return shape;
 //    }
-
     private void createPoints() {
         if (logger.isDebugEnabled()) {
             logger.debug("Creating Geometry...");
@@ -439,13 +411,13 @@ public class ShapeLoader extends AbstractLoader {
 //                            logger.debug("point: "+transformedPoint+" nb: " + nb);
 //                        }
                         if (nb != null) {
-                            if(nb.z<0.0f){
+                            if (nb.z < 0.0f) {
                                 transformedPoint.setZ((float) (-0.039f));
                             } else {
                                 transformedPoint.setZ((float) (nb.z + 0.002f));
                             }
                         }
-                    } else if(shapeType == SHAPE_TYPE.POLYLINE && currentHeights == null){
+                    } else if (shapeType == SHAPE_TYPE.POLYLINE && currentHeights == null) {
                         transformedPoint.setZ((float) (-0.039f));
                     }
                     if (shapeType == SHAPE_TYPE.POLYLINE) {
@@ -472,8 +444,8 @@ public class ShapeLoader extends AbstractLoader {
 //                            polygonColors.add(new Color4f(transparent));
 //                            wireColors.add(new Color4f(transparent));
 //                        } else {
-                            polygonColors.add(new Color4f(gray));
-                            wireColors.add(new Color4f(black));
+                        polygonColors.add(new Color4f(gray));
+                        wireColors.add(new Color4f(black));
 //                        }
 
 //                        polygonColorsIndex.add(0);
@@ -521,7 +493,7 @@ public class ShapeLoader extends AbstractLoader {
      *
      * @return the height value if a height attribute is found, otherwise null.
      */
-    protected Double extractDoubleAttribute(final String attributeName,final ShapefileRecord record) {
+    protected Double extractDoubleAttribute(final String attributeName, final ShapefileRecord record) {
         for (Map.Entry<String, Object> attr : record.getAttributes().getEntries()) {
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:hardcoded!!!!
             if (!attr.getKey().trim().equalsIgnoreCase(attributeName)) {
@@ -574,7 +546,4 @@ public class ShapeLoader extends AbstractLoader {
         return highConcentrationColor;
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna
-
-    
-
 }

@@ -4,18 +4,22 @@
  */
 package com.dfki.av.sudplan.io;
 
+import com.dfki.av.sudplan.io.dem.ElevationShape;
+import com.dfki.av.sudplan.util.TimeMeasurement;
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
+import com.sun.j3d.loaders.SceneBase;
+import com.sun.j3d.utils.geometry.GeometryInfo;
+import com.sun.j3d.utils.geometry.NormalGenerator;
+import com.sun.j3d.utils.geometry.Stripifier;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.media.j3d.BranchGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +42,15 @@ public abstract class AbstractLoader implements Loader {
      * passed into load(String).*/
     protected String basePath = null;
     protected BufferedReader reader = null;
-    protected File file=null;
+    protected File file = null;
+    protected Scene createdScene;
 
     // Constructors
     /**
      * Constructs a Loader with default values for all variables.
      */
     public AbstractLoader() {
+        createdScene = createScene();
     }
 
     // Variable get/set methods
@@ -87,15 +93,15 @@ public abstract class AbstractLoader implements Loader {
         return basePath;
     }
 
-    public Scene load(final String fileName) throws FileNotFoundException, IncorrectFormatException, ParsingErrorException {
+    public Scene load(final String fileName) throws LoadingNotPossibleException {
         if (logger.isDebugEnabled()) {
             logger.debug("Loading scene from string: " + fileName + " ...");
-        }                
+        }
         return load(new File(fileName));
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:totally inconsistent --> refactor everything
 
-    public Scene load(final URL url) throws FileNotFoundException, IncorrectFormatException, ParsingErrorException {
+    public Scene load(final URL url) throws LoadingNotPossibleException {
         if (logger.isDebugEnabled()) {
             logger.debug("Loading scene from url: " + url + " ...");
         }
@@ -113,11 +119,16 @@ public abstract class AbstractLoader implements Loader {
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:problem if it should be loaded from a url. Just switch everything build on the url
-    public Scene load(final File file) throws FileNotFoundException, IncorrectFormatException, ParsingErrorException {
+    public Scene load(final File file) throws LoadingNotPossibleException {
+        try{
         this.file = file;
         setBasePathFromFilename(file.getAbsolutePath());
         reader = new BufferedReader(new FileReader(file));
-        return load();
+        loadImpl();
+        return createdScene;
+        }catch(Exception ex){
+            throw new LoadingNotPossibleException("Error while loading scene.", ex);
+        }
     }
 
     private void setBaseUrlFromUrl(final URL url) throws FileNotFoundException {
@@ -186,7 +197,24 @@ public abstract class AbstractLoader implements Loader {
         }
     }
 
-    public abstract Scene load() throws FileNotFoundException,
-            IncorrectFormatException,
-            ParsingErrorException;
+     public abstract void loadImpl() throws Exception;
+
+    protected Scene createScene() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating scene...");
+            TimeMeasurement.getInstance().startMeasurement(this);
+        }
+        final SceneBase tmpScene = new SceneBase();
+        final BranchGroup tmpBranch = new BranchGroup();
+        tmpBranch.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
+        tmpBranch.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        tmpBranch.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        tmpBranch.setCapability(BranchGroup.ALLOW_DETACH);
+        tmpScene.setSceneGroup(tmpBranch);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating scene done. Time elapsed: "
+                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms.");
+        }
+        return tmpScene;
+    }
 }
