@@ -9,8 +9,13 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
+//import org.apache.commons.httpclient.*;
+//import org.apache.commons.httpclient.methods.*
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 
 public class MapsDownloaderExample {
@@ -26,7 +31,7 @@ public class MapsDownloaderExample {
 
     // Pathname where the downloaded images get stored
     public static final String path = "C:\\Users\\puhl\\Downloads\\sudplanmaps\\";
-
+    
     public static final String GmapStaticURI = "http://maps.google.com/staticmap";
     public static final String ZoomKey = "zoom";
     public static final String SizeKey = "size";
@@ -66,12 +71,18 @@ public class MapsDownloaderExample {
                     } else {
                         String u2 = getMap(lat, lon, 640, 640, 20);
 
-                        GetMethod get = new GetMethod(u2);
+                        //create httpclient
+                        HttpClient httpcl = new DefaultHttpClient();
+                        //transform googlemaps URI in httpget
+                        HttpGet get = new HttpGet(u2);
 
                         try {
-                            new HttpClient().executeMethod(get);
-                            //StringBuffer result = new StringBuffer(get.getResponseBodyAsString());
-                            BufferedImage result2 = ImageIO.read(get.getResponseBodyAsStream());
+
+                            //get the response and write it pictureformated into result2
+                            HttpResponse response = httpcl.execute(get);
+                            HttpEntity entity = response.getEntity();
+                            BufferedImage result2 = ImageIO.read(entity.getContent());
+
                             Graphics gra1 = result2.getGraphics();
                             BufferedImage cuttedImage = new BufferedImage(640,610,BufferedImage.TYPE_INT_ARGB);
                             for(int k = 0; k < 640; k++){
@@ -87,7 +98,7 @@ public class MapsDownloaderExample {
 
                             }
                         finally {
-                            get.releaseConnection();
+                            httpcl.getConnectionManager().shutdown();
                         }
 
 
