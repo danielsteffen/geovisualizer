@@ -1,6 +1,6 @@
 
 
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.j3d;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

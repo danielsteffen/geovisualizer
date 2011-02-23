@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.dnd;
 
 import java.awt.BorderLayout;
 import java.awt.Font;

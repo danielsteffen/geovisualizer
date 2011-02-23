@@ -1,6 +1,6 @@
 
 
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.google;
 
 
 import java.awt.Graphics;
@@ -18,14 +18,14 @@ public class MapsDownloaderExample {
     // Inputcoords -> 1 = left down corner ; 2 = right upper corner
     static double lat1 = 59.297637;
     static double lon1 = 18.008895;
-    static double lat2 = 59.298471;
-    static double lon2 = 18.00975;
+    static double lat2 = 59.327774;
+    static double lon2 = 18.02001;
 
     // Stallingtime between downloads ; 1000 = one second
     static int sleeptime = 7000;
 
     // Pathname where the downloaded images get stored
-    public static final String path = "C:\\Users\\Brickwedde\\Downloads\\maps\\";
+    public static final String path = "C:\\Users\\puhl\\Downloads\\sudplanmaps\\";
 
     public static final String GmapStaticURI = "http://maps.google.com/staticmap";
     public static final String ZoomKey = "zoom";

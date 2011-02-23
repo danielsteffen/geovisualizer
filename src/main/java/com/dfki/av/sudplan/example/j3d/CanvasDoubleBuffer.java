@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.j3d;
 
+import com.dfki.av.sudplan.ui.vis.DoubleBufferedCanvas3D;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
@@ -28,7 +29,7 @@ import javax.vecmath.Point3f;
  * @version 1.0
  * @since 1.6
  */
-public class LineArrayExample {
+public class CanvasDoubleBuffer {
 
     private GeometryInfo gi;
 
@@ -174,7 +175,12 @@ public class LineArrayExample {
         GraphicsConfiguration config =
                 SimpleUniverse.getPreferredConfiguration();
 
-        Canvas3D canvas3D = new Canvas3D(config);
+//        Canvas3D canvas3D = new Canvas3D(config);
+          Canvas3D canvas3D = new DoubleBufferedCanvas3D(config);
+//            System.out.println("isDoubleBuffered: "+canvas3D.isDoubleBuffered());
+//            System.out.println("isDoubleBuffering supported: "+canvas3D.getDoubleBufferAvailable());
+//        canvas3D.setDoubleBufferEnable(true);
+//        System.out.println("isDoubleBuffered: "+canvas3D.isDoubleBuffered());
         panel.add(canvas3D, BorderLayout.CENTER);
         BranchGroup scene = createSceneGraph(false);
 

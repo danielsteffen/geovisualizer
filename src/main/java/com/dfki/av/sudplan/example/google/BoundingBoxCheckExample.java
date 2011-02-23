@@ -1,6 +1,6 @@
 
 
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.google;
 
 
 public class BoundingBoxCheckExample {
@@ -11,10 +11,10 @@ public class BoundingBoxCheckExample {
 
    //Bounding box Coords
    // Inputcoords -> 1 = left down corner ; 2 = right upper corner
-    static double lat1;
-    static double lon1;
-    static double lat2;
-    static double lon2;
+    static double lat1=59.297637;
+    static double lon1=18.008895;
+    static double lat2=59.327774;
+    static double lon2=18.118415;
 
     // Examplevalues -> 4 tiles
     // static double lat1 = 59.297637;

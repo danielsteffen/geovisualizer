@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.j3d;
 
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
@@ -39,13 +39,13 @@ import javax.vecmath.Vector3f;
  * @version 1.0
  * @since 1.6
  */
-public class MinimalGeometry {
+public class TriangleArray {
 
 
   private GeometryInfo gi;
 
   float[] createCoordinateData() {
-    float[] data = new float[48];         // ******
+    float[] data = new float[36];         // ******
     int i = 0;    
 
 
@@ -90,18 +90,18 @@ public class MinimalGeometry {
     data[i++] = 1f;
     data[i++] = 0f; //3
 
-    data[i++] = 0f;
-    data[i++] = 0f;
-    data[i++] = 0f; //1
-    data[i++] = 1f;
-    data[i++] = 0f;
-    data[i++] = 0f; //2
-    data[i++] = 1f;
-    data[i++] = 1f;
-    data[i++] = 0f; //3
-    data[i++] = 0f;
-    data[i++] = 1f;
-    data[i++] = 0f; //3 
+//    data[i++] = 0f;
+//    data[i++] = 0f;
+//    data[i++] = 0f; //1
+//    data[i++] = 1f;
+//    data[i++] = 0f;
+//    data[i++] = 0f; //2
+//    data[i++] = 1f;
+//    data[i++] = 1f;
+//    data[i++] = 0f; //3
+//    data[i++] = 0f;
+//    data[i++] = 1f;
+//    data[i++] = 0f; //3 
     System.out.println("end polygon; total vertex count: " + i / 3);
 
 //    data[i++] = ;
@@ -159,26 +159,26 @@ public class MinimalGeometry {
 //    int[] stripCount = {17, 17, 5, 5, 5, 5, 5, 5, 5};  // ******
 //        int[] stripCount = {17,17,17};  // ******
 //        int[] stripCount = {3,3};  // ******
-    int[] stripCount = {3,3,3,3,4};  // ******
-    for (int i = 0; i < stripCount.length; i++) {
-      System.out.println("stripCount[" + i + "] = " + stripCount[i]);
-      total += stripCount[i];
-    }
+//    int[] stripCount = {3,3,3,3,4};  // ******
+//    for (int i = 0; i < stripCount.length; i++) {
+//      System.out.println("stripCount[" + i + "] = " + stripCount[i]);
+//      total += stripCount[i];
+//    }
 
     if (total != coordinateData.length / 3) {
       System.out.println("  coordinateData vertex count: " + coordinateData.length / 3);
       System.out.println("stripCount total vertex count: " + total);
     }
 
-    gi = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
+    gi = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
     gi.setCoordinates(coordinateData);
-    gi.setStripCounts(stripCount);
+//    gi.setStripCounts(stripCount);
     printGeometry(gi);
-    Triangulator tr = new Triangulator();
+//    Triangulator tr = new Triangulator();
 //        Triangulator tr = new Triangulator(GeometryInfo);
-    System.out.println("begin triangulation");
-    tr.triangulate(gi);    
-    System.out.println("  END triangulation");
+//    System.out.println("begin triangulation");
+//    tr.triangulate(gi);
+//    System.out.println("  END triangulation");
     printGeometry(gi);
     gi.recomputeIndices();
 

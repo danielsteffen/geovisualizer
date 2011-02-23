@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.dfki.av.sudplan.example;
+package com.dfki.av.sudplan.example.google;
 
 import java.io.*;
 import org.apache.commons.httpclient.*;

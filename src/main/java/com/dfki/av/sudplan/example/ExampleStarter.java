@@ -5,6 +5,8 @@
 
 package com.dfki.av.sudplan.example;
 
+import com.dfki.av.sudplan.example.j3d.CanvasDoubleBuffer;
+import com.dfki.av.sudplan.example.j3d.TriangleArray;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import javax.swing.JFrame;
@@ -20,8 +22,9 @@ public class ExampleStarter {
       JFrame frame = new JFrame();
           frame.setSize(800,600);
           frame.setLayout(new BorderLayout());
+          frame.getRootPane().setDoubleBuffered(false);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          frame.add(new TriangleArray().createUniverse(),BorderLayout.CENTER);
+          frame.add(new CanvasDoubleBuffer().createUniverse(),BorderLayout.CENTER);
           frame.setVisible(true);
       }
 }
