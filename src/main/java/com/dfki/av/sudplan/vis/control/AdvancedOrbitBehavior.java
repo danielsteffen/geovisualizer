@@ -462,10 +462,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     }
 
     protected void doTranslateOperations(final int xchange, final int ychange) {
-        if (isProportionalTranslate()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("prop translate");
-            }
+        if (isProportionalTranslate()) {            
             if (reverseTrans) {
                 xtrans -= xchange * transXMul * distanceFromCenter / 100.0;
                 ytrans += ychange * transYMul * distanceFromCenter / 100.0;
@@ -473,10 +470,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
                 xtrans += xchange * transXMul * distanceFromCenter / 100.0;
                 ytrans -= ychange * transYMul * distanceFromCenter / 100.0;
             }
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("non prop translate");
-            }
+        } else {            
             if (reverseTrans) {
                 xtrans -= xchange * transXMul;
                 ytrans += ychange * transYMul;
