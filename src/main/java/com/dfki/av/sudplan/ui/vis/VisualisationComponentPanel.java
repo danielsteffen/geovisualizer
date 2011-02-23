@@ -35,7 +35,6 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.Material;
 import javax.media.j3d.Node;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture2D;
@@ -45,6 +44,8 @@ import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3d;
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
@@ -82,6 +83,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         logger.debug("{} Constructor() call", VisualisationComponentPanel.class.toString());
         initComponents();
         createUniverse();
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not work
+//        setDoubleBuffered(false);
+//        canvas3D.setDoubleBufferEnable(true);
     }
 
     /** This method is called from within the constructor to
@@ -130,7 +134,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //    loadASCGeom2();
 //    initNavigation();
 //        OrbitBehavior behaviour = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
-        AdvancedOrbitBehavior behaviour = new AdvancedOrbitBehavior(canvas3D,OrbitBehavior.REVERSE_ALL);
+        AdvancedOrbitBehavior behaviour = new AdvancedOrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
         behaviour.setProportionalZoom(true);
         behaviour.setProportionalTranslate(true);
         behaviour.setTransFactors(5, 5);
@@ -141,7 +145,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         final Vector3d position = new Vector3d();
         viewTransfrom.get(position);
         if (logger.isDebugEnabled()) {
-            logger.debug("Viewing Position: "+position);
+            logger.debug("Viewing Position: " + position);
         }
 //        behaviour.setRotationCenter(new Point3d(position));
 //        behaviour.setPointOnEarth(universe.getViewingPlatform().get);
@@ -186,7 +190,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         if (logger.isDebugEnabled()) {
             logger.debug("earth extends: " + earth.EARTH_EXTENDS);
             logger.debug("earth bounds: " + new BoundingBox(earth.getGeometry().getBounds()));
-        }        
+        }
         Transform3D worldTransformation = new Transform3D();
         worldTransformation.setTranslation(new Vector3f(0.0f, 0.0f, -0.08f));
         TransformGroup worldGroup = new TransformGroup(
@@ -197,13 +201,13 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     }
 
     private void createOrthobox() {
-        final float xOff=0.0034f;
-        final float yOff=0.00047f;
+        final float xOff = 0.0034f;
+        final float yOff = 0.00047f;
         final BoundingBox orthoExtends = new BoundingBox(
                 //            EarthFlat.geodeticToCartesian(new Point3d(59.29252, 17.998819, 0.0), EarthFlat.PLATE_CARREE_PROJECTION),
                 //            EarthFlat.geodeticToCartesian(new Point3d(59.327, 18.144483, 0.0), EarthFlat.PLATE_CARREE_PROJECTION));
-                EarthFlat.geodeticToCartesian(new Point3d(18.008895+xOff, 59.297637+yOff, 0.0), EarthFlat.PLATE_CARREE_PROJECTION),
-                EarthFlat.geodeticToCartesian(new Point3d(18.118415+xOff, 59.327774+yOff, 0.0), EarthFlat.PLATE_CARREE_PROJECTION));
+                EarthFlat.geodeticToCartesian(new Point3d(18.008895 + xOff, 59.297637 + yOff, 0.0), EarthFlat.PLATE_CARREE_PROJECTION),
+                EarthFlat.geodeticToCartesian(new Point3d(18.118415 + xOff, 59.327774 + yOff, 0.0), EarthFlat.PLATE_CARREE_PROJECTION));
 //        URL imageURL = this.getClass().getClassLoader().getResource(
 //                "sodermalm.png");
         URL imageURL = this.getClass().getClassLoader().getResource(
@@ -256,7 +260,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         final Box geometry = new Box(
                 (float) (((upper.getX() - lower.getX()) / 2)),
                 (float) (((upper.getY() - lower.getY()) / 2)),
-                -0.04f,Box.GENERATE_TEXTURE_COORDS, new Appearance());
+                -0.04f, Box.GENERATE_TEXTURE_COORDS, new Appearance());
 //        this.geometry = new Box(
 //                3.0f,
 //                2.0f,
@@ -268,49 +272,49 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         }
         if (logger.isDebugEnabled()) {
             logger.debug("Ortho extends: " + orthoExtends);
-        }                
+        }
         geometry.setAppearance(Box.FRONT, worldAppearance);
         Transform3D orthoTransformation = new Transform3D();
         if (logger.isDebugEnabled()) {
-            logger.debug("lower x: "+lower.x+" y: "+lower.y);
+            logger.debug("lower x: " + lower.x + " y: " + lower.y);
         }
-        double x = lower.x +geometry.getXdimension();
-        double y = lower.y +geometry.getYdimension();
+        double x = lower.x + geometry.getXdimension();
+        double y = lower.y + geometry.getYdimension();
         if (logger.isDebugEnabled()) {
-            logger.debug("lower x: "+x+" y: "+y);
+            logger.debug("lower x: " + x + " y: " + y);
         }
-        orthoTransformation.setTranslation(new Vector3d(x,y,0.0));
+        orthoTransformation.setTranslation(new Vector3d(x, y, 0.0));
 //        orthoTransformation.setTranslation(new Vector3d(lower));
         //        orthoTransformation.setTranslation(new Vector3f((float)lower.x/2,(float)lower.y/2,0.0f));
         TransformGroup orthoGroup = new TransformGroup(
                 orthoTransformation);
         orthoGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         orthoGroup.addChild(geometry);
-        sceneGraph.addChild(orthoGroup);        
+        sceneGraph.addChild(orthoGroup);
         if (logger.isDebugEnabled()) {
             logger.debug("Postion: " + getPositionOfObject(geometry));
         }
-        final Point3f point1 = EarthFlat.geodeticToCartesian(new Point3f(18.028919047425f , 59.3046022310815f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
-        final Point3f point2 = EarthFlat.geodeticToCartesian(new Point3f(18.028919047425f , 59.3046022310815f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        final Point3f point1 = EarthFlat.geodeticToCartesian(new Point3f(18.028919047425f, 59.3046022310815f, 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        final Point3f point2 = EarthFlat.geodeticToCartesian(new Point3f(18.028919047425f, 59.3046022310815f, 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
         scalePoint(point1, ComponentBroker.getInstance().getScalingFactor());
         scalePoint(point2, ComponentBroker.getInstance().getScalingFactor());
         if (logger.isDebugEnabled()) {
             logger.debug("Building Postion1 : " + point1);
             logger.debug("Building Postion2 : " + point2);
         }
-        final Point3f point3 = EarthFlat.geodeticToCartesian(new Point3f(18.027139322596f , 59.302444439500f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        final Point3f point3 = EarthFlat.geodeticToCartesian(new Point3f(18.027139322596f, 59.302444439500f, 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
         if (logger.isDebugEnabled()) {
             logger.debug("DEM Postion3 unscaled: " + point3);
             scalePoint(point3, ComponentBroker.getInstance().getScalingFactor());
             logger.debug("DEM Postion3 scaled: " + point3);
         }
-        final Point3f point4 = EarthFlat.geodeticToCartesian(new Point3f(17.998819f , 59.29252f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        final Point3f point4 = EarthFlat.geodeticToCartesian(new Point3f(17.998819f, 59.29252f, 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
         if (logger.isDebugEnabled()) {
             logger.debug("Ortho Postion4 unscaled: " + point4);
             scalePoint(point4, ComponentBroker.getInstance().getScalingFactor());
             logger.debug("Ortho Postion4 scaled: " + point4);
         }
-        final Point3f point5 = EarthFlat.geodeticToCartesian(new Point3f(0.000080294914256f , 0.0f , 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
+        final Point3f point5 = EarthFlat.geodeticToCartesian(new Point3f(0.000080294914256f, 0.0f, 0.0f), EarthFlat.PLATE_CARREE_PROJECTION);
         if (logger.isDebugEnabled()) {
             logger.debug("Cellsize unscaled: " + point5);
             scalePoint(point5, ComponentBroker.getInstance().getScalingFactor());
@@ -318,23 +322,23 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         }
     }
 
-    private Point3d getPositionOfObject(final Node node){
+    private Point3d getPositionOfObject(final Node node) {
         final Point3d position = new Point3d(0.0, 0.0, 0.0);
         Transform3D transformPos = new Transform3D();
         node.getLocalToVworld(transformPos);
         Vector3d translation = new Vector3d();
         transformPos.get(translation);
         if (logger.isDebugEnabled()) {
-            logger.debug("transform: "+translation);
+            logger.debug("transform: " + translation);
         }
-        transformPos.transform(position);        
+        transformPos.transform(position);
         return position;
     }
 
-    private Point3f scalePoint(final Point3f point,final double scalingFactor){
-        point.x*=scalingFactor;
-        point.y*=scalingFactor;
-        point.z*=scalingFactor;
+    private Point3f scalePoint(final Point3f point, final double scalingFactor) {
+        point.x *= scalingFactor;
+        point.y *= scalingFactor;
+        point.z *= scalingFactor;
         return point;
     }
 
@@ -422,11 +426,19 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         }
         sceneGraph.addChild(scene.getSceneGroup());
         if (logger.isDebugEnabled()) {
-            logger.debug("First child: "+scene.getSceneGroup().getChild(0));            
-            logger.debug("scene : "+sceneGraph.isLive());
+            logger.debug("First child: " + scene.getSceneGroup().getChild(0));
+            logger.debug("scene : " + sceneGraph.isLive());
             Shape3D test = new Shape3D();
-            logger.debug("Position of first child: "+getPositionOfObject(scene.getSceneGroup().getChild(0)));
+            logger.debug("Position of first child: " + getPositionOfObject(scene.getSceneGroup().getChild(0)));
         }
+    }
+
+    @Override
+    public void removContent(final Scene scene) {
+        if (scene == null) {
+            return;
+        }
+        sceneGraph.removeChild(scene.getSceneGroup());
     }
 
     @Override
@@ -434,5 +446,39 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         dl.setEnable(enabled);
     }
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if the center is more often used extend Bounding box
+    @Override
+    public void gotoBoundingBox(BoundingBox boundingBox) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Goto BoundingBox: "+boundingBox);
+        }
+        if(boundingBox != null && !boundingBox.isEmpty()){
+            final Point3d lower = new Point3d();
+            final Point3d upper = new Point3d();
+            boundingBox.getLower(lower);
+            boundingBox.getUpper(upper);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not fixed but so that all is seen
+            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
+        }
+    }
 
+    @Override
+    public void gotoPoint(Tuple3f point) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Goto point: "+point);
+        }
+        if (point != null) {
+            Transform3D viewTransformation = new Transform3D();
+            viewTransformation.setTranslation(new Vector3f(point));
+            universe.getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
+        }
+    }
+
+    @Override
+    public void gotoPoint(Tuple3d point) {
+         if (logger.isDebugEnabled()) {
+            logger.debug("Goto point: "+point);
+        }
+     gotoPoint(new Point3f(point));
+    }
 }
