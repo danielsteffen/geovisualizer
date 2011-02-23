@@ -26,5 +26,8 @@
   <logger name="org.deegree">
     <priority value ="error" />
   </logger>
+   <logger name="org.apache">
+    <priority value ="error" />
+  </logger>
 
 </log4j:configuration>
