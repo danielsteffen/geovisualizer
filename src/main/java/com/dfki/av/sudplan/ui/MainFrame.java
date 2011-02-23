@@ -10,14 +10,22 @@
  */
 package com.dfki.av.sudplan.ui;
 
+import com.dfki.av.sudplan.conf.InitialisationException;
+import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.control.ComponentController;
+import com.dfki.av.sudplan.layer.Layer;
+import com.dfki.av.sudplan.layer.LayerManager;
+import com.dfki.av.sudplan.layer.LayerSelectionEvent;
+import com.dfki.av.sudplan.layer.LayerSelectionListener;
 import com.dfki.av.sudplan.ui.vis.VisualisationComponent;
 import com.dfki.av.sudplan.ui.vis.VisualisationComponentPanel;
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -30,9 +38,13 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
+import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.mouse.DockingWindowActionMouseButtonListener;
 import net.infonode.docking.properties.RootWindowProperties;
@@ -45,6 +57,7 @@ import net.infonode.docking.util.StringViewMap;
 import net.infonode.gui.componentpainter.AlphaGradientComponentPainter;
 import net.infonode.util.Direction;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +65,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Sebastian Puhl <sebastian.puhl@dfki.de>
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame implements LayerSelectionListener {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: save window Size/Position
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: save Layout
@@ -69,29 +82,73 @@ public class MainFrame extends javax.swing.JFrame {
      * Possible place could be the controler class
      */
     private VisualisationComponentPanel visualisationPanel = new VisualisationComponentPanel();
-    private SimpleLayerControlPanel layerPanel = new SimpleLayerControlPanel();
     private SimpleControlPanel controlPanel = new SimpleControlPanel();
     private RootWindow layoutRootWindow;
     private final StringViewMap viewMap = new StringViewMap();
     private final Map<String, JMenuItem> viewMenuMap = new HashMap<String, JMenuItem>();
     ResourceBundle i18n = ResourceBundle.getBundle("com/dfki/av/sudplan/ui/Bundle");
     private ComponentController componentController;
+    private SimpleLayerPanel layerPanel;
+    private ArrayList<Layer> currentSelectedLayer;
+    private final LayerManager layerManager;
+//    private boolean initialised = false;
 
     /** Creates new form MainFrame */
-    public MainFrame() {
-        logger.debug("{} Constructor() call", MainFrame.class.toString());
-        initComponents();
-        loadIcons();
-        initLayoutFramework();
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: save user Layout
-        doDefaultLayout();
-        initDeveloperShortcut();
-        //configure JFrame
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1024, 768);
+    public MainFrame() throws InitialisationException {
+        try {
+//            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("Info: "+info.getName());
+//                }
+//ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Nimbus look & feel is buggy removeNodefrom()parent results in Nullpointer exception
+//                // known from http://netbeans.org/bugzilla/show_bug.cgi?id=132550 not in JDK bug database
+//                                if ("Nimbus".equals(info.getName())) {
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("Found Nimbus Look & Feel.");
+//                    }
+//                    UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }               
+//                }
+//            }
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make this failsave if the laf is not available --> use default.
+            javax.swing.UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:place all this in controller ? --> no because other people will do this by them selfs
+            componentController = new ComponentController();
+            layerManager = componentController.getLayerManager();
+            layerPanel = new SimpleLayerPanel(layerManager);
+            layerPanel.addLayerSelectionListener(this);
+            componentController.addDropTarger(layerPanel);
+            logger.debug("{} Constructor() call", MainFrame.class.toString());
+            initComponents();
+            loadIcons();
+            initLayoutFramework();
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: save user Layout
+            doDefaultLayout();
+            initDeveloperShortcut();
+            //configure JFrame
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setSize(1024, 768);
+            componentController.getLayerManager().addLayerListener(layerPanel);
+            ComponentBroker.getInstance().setController(componentController);
+            componentController.setMainFrame(this);
+            componentController.setVisualisationComponent(getVisualisationComponent());
+        } catch (Exception ex) {
+            final String message = "Error during Controller initialisation.";
+            if (logger.isErrorEnabled()) {
+                logger.error(message, ex);
+            }
+            throw new InitialisationException(message, ex);
+        }
 //    pack();
     }
 
+//    public void initialise() throws InitialisationException {
+//        if (!initialised) {
+//        } else {
+//            throw new InitialisationException("The main application is already inistialised.");
+//        }
+//    }
     public VisualisationComponent getVisualisationComponent() {
         return visualisationPanel;
     }
@@ -105,12 +162,16 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        mainToolbarPanel = new javax.swing.JPanel();
+        postionControlPanel = new javax.swing.JPanel();
+        layerControlPanel = new javax.swing.JPanel();
         frameMainPanel = new javax.swing.JPanel();
         frameToolBar = new javax.swing.JToolBar();
-        jPanel1 = new javax.swing.JPanel();
-        cmdHome = new javax.swing.JButton();
-        cmdTexture = new javax.swing.JToggleButton();
-        cmdLight = new javax.swing.JToggleButton();
+        gotoHomeButton = new javax.swing.JButton();
+        toggleTextureButton = new javax.swing.JToggleButton();
+        toggleLightButton = new javax.swing.JToggleButton();
+        first_seperator = new javax.swing.JToolBar.Separator();
+        deleteLayerButton = new javax.swing.JButton();
         frameMenueBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -121,6 +182,51 @@ public class MainFrame extends javax.swing.JFrame {
         controlMenueItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
 
+        mainToolbarPanel.setMinimumSize(new java.awt.Dimension(300, 40));
+        mainToolbarPanel.setPreferredSize(new java.awt.Dimension(300, 40));
+
+        javax.swing.GroupLayout postionControlPanelLayout = new javax.swing.GroupLayout(postionControlPanel);
+        postionControlPanel.setLayout(postionControlPanelLayout);
+        postionControlPanelLayout.setHorizontalGroup(
+            postionControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 123, Short.MAX_VALUE)
+        );
+        postionControlPanelLayout.setVerticalGroup(
+            postionControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 33, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout layerControlPanelLayout = new javax.swing.GroupLayout(layerControlPanel);
+        layerControlPanel.setLayout(layerControlPanelLayout);
+        layerControlPanelLayout.setHorizontalGroup(
+            layerControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        layerControlPanelLayout.setVerticalGroup(
+            layerControlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 33, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout mainToolbarPanelLayout = new javax.swing.GroupLayout(mainToolbarPanel);
+        mainToolbarPanel.setLayout(mainToolbarPanelLayout);
+        mainToolbarPanelLayout.setHorizontalGroup(
+            mainToolbarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainToolbarPanelLayout.createSequentialGroup()
+                .addComponent(postionControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(132, 132, 132)
+                .addComponent(layerControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(151, Short.MAX_VALUE))
+        );
+        mainToolbarPanelLayout.setVerticalGroup(
+            mainToolbarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainToolbarPanelLayout.createSequentialGroup()
+                .addComponent(postionControlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(mainToolbarPanelLayout.createSequentialGroup()
+                .addComponent(layerControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/dfki/av/sudplan/ui/Bundle"); // NOI18N
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
@@ -128,80 +234,71 @@ public class MainFrame extends javax.swing.JFrame {
         frameMainPanel.setLayout(new java.awt.BorderLayout());
 
         frameToolBar.setRollover(true);
+        frameToolBar.setMinimumSize(null);
+        frameToolBar.setPreferredSize(null);
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
-        jPanel1.setPreferredSize(new java.awt.Dimension(50, 20));
-
-        cmdHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/home.gif"))); // NOI18N
-        cmdHome.setToolTipText(bundle.getString("MainFrame.cmdHome.toolTipText")); // NOI18N
-        cmdHome.setBorderPainted(false);
-        cmdHome.setFocusable(false);
-        cmdHome.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cmdHome.setMargin(new java.awt.Insets(2, 4, 2, 4));
-        cmdHome.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        cmdHome.addActionListener(new java.awt.event.ActionListener() {
+        gotoHomeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/home.gif"))); // NOI18N
+        gotoHomeButton.setToolTipText(bundle.getString("MainFrame.gotoHomeButton.toolTipText")); // NOI18N
+        gotoHomeButton.setBorderPainted(false);
+        gotoHomeButton.setFocusable(false);
+        gotoHomeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gotoHomeButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        gotoHomeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gotoHomeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdHomeActionPerformed(evt);
+                gotoHomeButtonActionPerformed(evt);
             }
         });
+        frameToolBar.add(gotoHomeButton);
 
-        cmdTexture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/layerIcon24.png"))); // NOI18N
-        cmdTexture.setSelected(true);
-        cmdTexture.setText(bundle.getString("MainFrame.cmdTexture.text")); // NOI18N
-        cmdTexture.setEnabled(false);
-        cmdTexture.setFocusable(false);
-        cmdTexture.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cmdTexture.setMargin(new java.awt.Insets(2, 4, 2, 4));
-        cmdTexture.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        cmdTexture.addActionListener(new java.awt.event.ActionListener() {
+        toggleTextureButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/layer/layerIcon24.png"))); // NOI18N
+        toggleTextureButton.setSelected(true);
+        toggleTextureButton.setText(bundle.getString("MainFrame.toggleTextureButton.text")); // NOI18N
+        toggleTextureButton.setEnabled(false);
+        toggleTextureButton.setFocusable(false);
+        toggleTextureButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        toggleTextureButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        toggleTextureButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toggleTextureButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdTextureActionPerformed(evt);
+                toggleTextureButtonActionPerformed(evt);
             }
         });
+        frameToolBar.add(toggleTextureButton);
 
-        cmdLight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/lightbulb24.png"))); // NOI18N
-        cmdLight.setSelected(true);
-        cmdLight.setText(bundle.getString("MainFrame.cmdLight.text")); // NOI18N
-        cmdLight.setEnabled(false);
-        cmdLight.setFocusable(false);
-        cmdLight.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        cmdLight.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cmdLight.setMargin(new java.awt.Insets(2, 4, 2, 4));
-        cmdLight.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        cmdLight.addActionListener(new java.awt.event.ActionListener() {
+        toggleLightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/lightbulb24.png"))); // NOI18N
+        toggleLightButton.setSelected(true);
+        toggleLightButton.setText(bundle.getString("MainFrame.toggleLightButton.text")); // NOI18N
+        toggleLightButton.setEnabled(false);
+        toggleLightButton.setFocusable(false);
+        toggleLightButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        toggleLightButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        toggleLightButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        toggleLightButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toggleLightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdLightActionPerformed(evt);
+                toggleLightButtonActionPerformed(evt);
             }
         });
+        frameToolBar.add(toggleLightButton);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(cmdHome)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmdTexture)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmdLight)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        first_seperator.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        frameToolBar.add(first_seperator);
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cmdHome, cmdLight, cmdTexture});
-
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                .addComponent(cmdLight, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmdHome, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdTexture)))
-        );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cmdHome, cmdLight, cmdTexture});
-
-        frameToolBar.add(jPanel1);
+        deleteLayerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/deleteLayer24.png"))); // NOI18N
+        deleteLayerButton.setToolTipText(bundle.getString("MainFrame.deleteLayerButton.toolTipText")); // NOI18N
+        deleteLayerButton.setBorderPainted(false);
+        deleteLayerButton.setEnabled(false);
+        deleteLayerButton.setFocusable(false);
+        deleteLayerButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        deleteLayerButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        deleteLayerButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        deleteLayerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteLayerButtonActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(deleteLayerButton);
 
         fileMenu.setText(bundle.getString("MainFrame.fileMenu.text")); // NOI18N
 
@@ -260,12 +357,12 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(frameMainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(frameToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(frameToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(frameMainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
         );
@@ -273,9 +370,9 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-  private void cmdHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdHomeActionPerformed
+  private void gotoHomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoHomeButtonActionPerformed
       componentController.getVisualisationComponent().gotoToHome();
-}//GEN-LAST:event_cmdHomeActionPerformed
+}//GEN-LAST:event_gotoHomeButtonActionPerformed
 
   private void visualisationMenueItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualisationMenueItemActionPerformed
       showOrHideView(visualisationView);
@@ -293,28 +390,35 @@ public class MainFrame extends javax.swing.JFrame {
       showOrHideView(controlView);
   }//GEN-LAST:event_controlMenueItemActionPerformed
 
-  private void cmdLightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLightActionPerformed
-      componentController.getVisualisationComponent().enableDirectedLight(cmdLight.isSelected());
-  }//GEN-LAST:event_cmdLightActionPerformed
+  private void toggleLightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleLightButtonActionPerformed
+      componentController.getVisualisationComponent().enableDirectedLight(toggleLightButton.isSelected());
+  }//GEN-LAST:event_toggleLightButtonActionPerformed
 
-  private void cmdTextureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTextureActionPerformed
-      componentController.enableDEMTexture(cmdTexture.isSelected());
-  }//GEN-LAST:event_cmdTextureActionPerformed
+  private void toggleTextureButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleTextureButtonActionPerformed
+      componentController.enableDEMTexture(toggleTextureButton.isSelected());
+  }//GEN-LAST:event_toggleTextureButtonActionPerformed
 
+  private void deleteLayerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLayerButtonActionPerformed
+      layerManager.removeLayers(currentSelectedLayer);
+  }//GEN-LAST:event_deleteLayerButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cmdHome;
-    private javax.swing.JToggleButton cmdLight;
-    private javax.swing.JToggleButton cmdTexture;
     private javax.swing.JMenuItem controlMenueItem;
+    private javax.swing.JButton deleteLayerButton;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JToolBar.Separator first_seperator;
     private javax.swing.JPanel frameMainPanel;
     private javax.swing.JMenuBar frameMenueBar;
     private javax.swing.JToolBar frameToolBar;
+    private javax.swing.JButton gotoHomeButton;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel layerControlPanel;
     private javax.swing.JMenuItem layerMenueItem;
+    private javax.swing.JPanel mainToolbarPanel;
+    private javax.swing.JPanel postionControlPanel;
+    private javax.swing.JToggleButton toggleLightButton;
+    private javax.swing.JToggleButton toggleTextureButton;
     private javax.swing.JMenuItem visualisationMenueItem;
     private javax.swing.JMenu windowMenu;
     // End of variables declaration//GEN-END:variables
@@ -380,7 +484,8 @@ public class MainFrame extends javax.swing.JFrame {
     private void doDefaultLayout() {
         layoutRootWindow.setWindow(new SplitWindow(
                 true,
-                0.25225961f, controlView, visualisationView));
+                0.25225961f, new TabWindow(new DockingWindow[]{layerView, controlView}), visualisationView));
+        layerView.restoreFocus();
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: works only the first time + should be in a developer mode
@@ -407,6 +512,10 @@ public class MainFrame extends javax.swing.JFrame {
         getRootPane().getActionMap().put("config.layout", configAction);
     }
 
+    public ComponentController getController() {
+        return componentController;
+    }
+
     public void setController(ComponentController compController) {
         this.componentController = compController;
     }
@@ -421,12 +530,28 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
 
-    public void enableDEMButtons(final boolean enabled){
-        cmdLight.setEnabled(enabled);
-        cmdTexture.setEnabled(enabled);
+    public void enableDEMButtons(final boolean enabled) {
+        toggleLightButton.setEnabled(enabled);
+        toggleTextureButton.setEnabled(enabled);
     }
 
-    public void enableControls(final boolean enabled){
+    public void enableControls(final boolean enabled) {
         controlPanel.enableRecoloringControls(enabled);
+    }
+
+    @Override
+    public void layerSelectionChanged(LayerSelectionEvent layerSelectionEvent) {
+        currentSelectedLayer = layerSelectionEvent.getSelectedLayer();
+        if (layerSelectionEvent.isLayersSelected() && currentSelectedLayer.size() > 0) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("layer selection: ");
+            }
+            deleteLayerButton.setEnabled(true);
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("layer deselection: ");
+            }
+            deleteLayerButton.setEnabled(false);
+        }
     }
 }

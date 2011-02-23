@@ -42,12 +42,8 @@ public class ComponentFactory {
         try {
             newApplicatioFrame = new MainFrame();
             ComponentBroker.getInstance().setMainFrame(newApplicatioFrame);
-            compControl = new ComponentController();
-            ComponentBroker.getInstance().setController(compControl);
-            compControl.setMainFrame(newApplicatioFrame);
-            compControl.setVisualisationComponent(newApplicatioFrame.getVisualisationComponent());
-            compControl.setConfiguration(configuration);
-            newApplicatioFrame.setController(compControl);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this will not work good idea to make a init method for mainframe
+            newApplicatioFrame.getController().setConfiguration(configuration);
         } catch (Exception ex) {
             if (logger.isErrorEnabled()) {
                 final String message = "Error during initialisation of ComponentController.";
