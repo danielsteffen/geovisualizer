@@ -4,7 +4,6 @@
  */
 package com.dfki.av.sudplan.example.j3d;
 
-import com.dfki.av.sudplan.ui.vis.DoubleBufferedCanvas3D;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
@@ -175,8 +174,8 @@ public class CanvasDoubleBuffer {
         GraphicsConfiguration config =
                 SimpleUniverse.getPreferredConfiguration();
 
-//        Canvas3D canvas3D = new Canvas3D(config);
-          Canvas3D canvas3D = new DoubleBufferedCanvas3D(config);
+        Canvas3D canvas3D = new Canvas3D(config);
+//          Canvas3D canvas3D = new DoubleBufferedCanvas3D(config);
 //            System.out.println("isDoubleBuffered: "+canvas3D.isDoubleBuffered());
 //            System.out.println("isDoubleBuffering supported: "+canvas3D.getDoubleBufferAvailable());
 //        canvas3D.setDoubleBufferEnable(true);
