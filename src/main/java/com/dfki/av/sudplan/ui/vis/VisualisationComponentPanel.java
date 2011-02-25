@@ -77,6 +77,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
     private final Canvas3D canvas3D = new Canvas3D(config);
+    private AdvancedOrbitBehavior behavior;
 
     /** Creates new form VisualisationComponentPanel */
     public VisualisationComponentPanel() {
@@ -133,12 +134,11 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //    loadASCGeom();
 //    loadASCGeom2();
 //    initNavigation();
-//        OrbitBehavior behaviour = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
-        AdvancedOrbitBehavior behaviour = new AdvancedOrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
-        behaviour.setProportionalZoom(true);
-        behaviour.setProportionalTranslate(true);
-        behaviour.setTransFactors(5, 5);
-        behaviour.setRotationCenter(new Point3d(2010.0, 6602.0, 0.0));
+        behavior = new AdvancedOrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
+        behavior.setProportionalZoom(true);
+        behavior.setProportionalTranslate(true);
+        behavior.setTransFactors(5, 5);
+        behavior.setRotationCenter(new Point3d(2010.0, 6602.0, 0.0));
         gotoToHome();
         final Transform3D viewTransfrom = new Transform3D();
         universe.getViewingPlatform().getViewPlatformTransform().getTransform(viewTransfrom);
@@ -147,41 +147,18 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         if (logger.isDebugEnabled()) {
             logger.debug("Viewing Position: " + position);
         }
-//        behaviour.setRotationCenter(new Point3d(position));
-//        behaviour.setPointOnEarth(universe.getViewingPlatform().get);
-        behaviour.setZoomFactor(0.5);
-        behaviour.setSchedulingBounds(behaviourBounding);
-        universe.getViewingPlatform().setViewPlatformBehavior(behaviour);
+//        behavior.setRotationCenter(new Point3d(position));
+//        behavior.setPointOnEarth(universe.getViewingPlatform().get);
+        behavior.setZoomFactor(0.5);
+        behavior.setSchedulingBounds(behaviourBounding);
+        universe.getViewingPlatform().setViewPlatformBehavior(behavior);
         // This will move the ViewPlatform back a bit so the
         // objects in the scene can be viewed.
 //    universe.getViewingPlatform().setNominalViewingTransform();        
         universe.addBranchGraph(sceneGraph);
     }
 
-    private void initNavigation() {
-        // set up the mouse rotation behavior
-        final TransformGroup vpTransformation = universe.getViewingPlatform().getViewPlatformTransform();
-        rotationBehaviour = new MouseRotate(MouseTranslate.INVERT_INPUT);
-        rotationBehaviour.setTransformGroup(vpTransformation);
-        rotationBehaviour.setSchedulingBounds(behaviourBounding);
-        // setFactor(x,y)  0 = disable
-//    rotationBehaviour.setFactor(0,005);
-        sceneGraph.addChild(rotationBehaviour);
 
-        // set up the mouse translate
-        translationBehaviour = new MouseTranslate();
-        translationBehaviour.setTransformGroup(vpTransformation);
-        translationBehaviour.setSchedulingBounds(behaviourBounding);
-//    translationBehaviour.setFactor(0.0012, 0.0012);
-        sceneGraph.addChild(translationBehaviour);
-
-        // set up the mouse WHEEL zoom behavior
-        zoomBehaviour = new MouseWheelZoom();
-        zoomBehaviour.setTransformGroup(vpTransformation);
-        zoomBehaviour.setSchedulingBounds(behaviourBounding);
-//    zoomBehaviour.setFactor(0.05);
-        sceneGraph.addChild(zoomBehaviour);
-    }
 
     private void createWorld() {
 
@@ -480,5 +457,33 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
             logger.debug("Goto point: "+point);
         }
      gotoPoint(new Point3f(point));
+    }
+
+    @Override
+    public void setModeZoom() {
+        if (behavior != null) {
+            behavior.setInteractionMode(2);//behavior.ZOOM);
+        }
+    }
+
+    @Override
+    public void setModePan() {
+        if (behavior != null) {
+            behavior.setInteractionMode(1);//behavior.TRANSLATE);
+        }
+    }
+
+    @Override
+    public void setModeRotate() {
+        if (behavior != null) {
+            behavior.setInteractionMode(0);//behavior.ROTATE);
+        }
+    }
+
+    @Override
+    public void setModeCombined() {
+        if (behavior != null) {
+            behavior.setInteractionMode(3);//behavior.COMBINED);
+        }
     }
 }

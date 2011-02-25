@@ -171,6 +171,8 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private int rightButton = ROTATE;
     private int middleButton = ZOOM;
 
+    private int actualInteractionMode = COMBINED;
+
     // the factor to be applied to wheel zooming so that it does not
     // look much different with mouse movement zooming.
     // This is a totally subjective factor.
@@ -232,17 +234,22 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     /**
      * Used to set the fuction for a mouse button to Rotate
      */
-    private static final int ROTATE = 0;
+    public static final int ROTATE = 0;
 
     /**
      * Used to set the function for a mouse button to Translate
      */
-    private static final int TRANSLATE = 1;
+    public static final int TRANSLATE = 1;
 
     /**
      * Used to set the function for a mouse button to Zoom
      */
-    private static final int ZOOM = 2;
+    public static final int ZOOM = 2;
+
+     /**
+     * Used to set the function for a mouse button to Combined mode
+     */
+    public static final int COMBINED = 3;
 
     private static final double NOMINAL_ZOOM_FACTOR = .01;
     private static final double NOMINAL_PZOOM_FACTOR = 1.0;
@@ -1145,4 +1152,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
 	setProportionalZoom(((Boolean)state[0]).booleanValue());
     }
+
+    public void setInteractionMode(int newInteractionMode) {
+        actualInteractionMode = newInteractionMode;
+    }
+
 }

@@ -171,6 +171,10 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         toggleTextureButton = new javax.swing.JToggleButton();
         toggleLightButton = new javax.swing.JToggleButton();
         first_seperator = new javax.swing.JToolBar.Separator();
+        toggleCombinedButton = new javax.swing.JToggleButton();
+        togglePanButton = new javax.swing.JToggleButton();
+        toggleRotateButton = new javax.swing.JToggleButton();
+        toggleZoomButton = new javax.swing.JToggleButton();
         deleteLayerButton = new javax.swing.JButton();
         frameMenueBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -234,8 +238,6 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         frameMainPanel.setLayout(new java.awt.BorderLayout());
 
         frameToolBar.setRollover(true);
-        frameToolBar.setMinimumSize(null);
-        frameToolBar.setPreferredSize(null);
 
         gotoHomeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/home.gif"))); // NOI18N
         gotoHomeButton.setToolTipText(bundle.getString("MainFrame.gotoHomeButton.toolTipText")); // NOI18N
@@ -284,6 +286,50 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
 
         first_seperator.setOrientation(javax.swing.SwingConstants.VERTICAL);
         frameToolBar.add(first_seperator);
+
+        toggleCombinedButton.setText(bundle.getString("MainFrame.toggleCombinedButton.text")); // NOI18N
+        toggleCombinedButton.setFocusable(false);
+        toggleCombinedButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        toggleCombinedButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toggleCombinedButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toggleCombinedButtonActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(toggleCombinedButton);
+
+        togglePanButton.setText(bundle.getString("MainFrame.togglePanButton.text")); // NOI18N
+        togglePanButton.setFocusable(false);
+        togglePanButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        togglePanButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        togglePanButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                togglePanButtonActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(togglePanButton);
+
+        toggleRotateButton.setText(bundle.getString("MainFrame.toggleRotateButton.text")); // NOI18N
+        toggleRotateButton.setFocusable(false);
+        toggleRotateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        toggleRotateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toggleRotateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toggleRotateButtonActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(toggleRotateButton);
+
+        toggleZoomButton.setText(bundle.getString("MainFrame.toggleZoomButton.text")); // NOI18N
+        toggleZoomButton.setFocusable(false);
+        toggleZoomButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        toggleZoomButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toggleZoomButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toggleZoomButtonActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(toggleZoomButton);
 
         deleteLayerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/toolbar/deleteLayer24.png"))); // NOI18N
         deleteLayerButton.setToolTipText(bundle.getString("MainFrame.deleteLayerButton.toolTipText")); // NOI18N
@@ -357,7 +403,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(frameMainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,6 +447,23 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
   private void deleteLayerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLayerButtonActionPerformed
       layerManager.removeLayers(currentSelectedLayer);
   }//GEN-LAST:event_deleteLayerButtonActionPerformed
+
+  private void toggleZoomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleZoomButtonActionPerformed
+      componentController.enableModeZoom(toggleZoomButton.isSelected());
+  }//GEN-LAST:event_toggleZoomButtonActionPerformed
+
+  private void toggleCombinedButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleCombinedButtonActionPerformed
+      componentController.enableModeCombined(toggleCombinedButton.isSelected());
+  }//GEN-LAST:event_toggleCombinedButtonActionPerformed
+
+  private void togglePanButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_togglePanButtonActionPerformed
+      componentController.enableModePan(togglePanButton.isSelected());
+  }//GEN-LAST:event_togglePanButtonActionPerformed
+
+  private void toggleRotateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleRotateButtonActionPerformed
+      componentController.enableModeRotate(toggleRotateButton.isSelected());
+  }//GEN-LAST:event_toggleRotateButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem controlMenueItem;
     private javax.swing.JButton deleteLayerButton;
@@ -417,8 +480,12 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private javax.swing.JMenuItem layerMenueItem;
     private javax.swing.JPanel mainToolbarPanel;
     private javax.swing.JPanel postionControlPanel;
+    private javax.swing.JToggleButton toggleCombinedButton;
     private javax.swing.JToggleButton toggleLightButton;
+    private javax.swing.JToggleButton togglePanButton;
+    private javax.swing.JToggleButton toggleRotateButton;
     private javax.swing.JToggleButton toggleTextureButton;
+    private javax.swing.JToggleButton toggleZoomButton;
     private javax.swing.JMenuItem visualisationMenueItem;
     private javax.swing.JMenu windowMenu;
     // End of variables declaration//GEN-END:variables
