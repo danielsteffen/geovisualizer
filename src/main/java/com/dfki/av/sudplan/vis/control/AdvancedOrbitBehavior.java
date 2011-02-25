@@ -1154,7 +1154,33 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     }
 
     public void setInteractionMode(int newInteractionMode) {
-        actualInteractionMode = newInteractionMode;
+        if (newInteractionMode != actualInteractionMode) {
+            actualInteractionMode = newInteractionMode;
+            alternateInteractionMode(newInteractionMode);
+        }
+    }
+
+    private void alternateInteractionMode (int newInteractionMode) {
+        if (newInteractionMode == COMBINED) {
+            setZoomEnable(true);
+            setTranslateEnable(true);
+            setRotateEnable(true);
+        } else if (newInteractionMode == ROTATE) {
+            setZoomEnable(false);
+            setTranslateEnable(false);
+            setRotateEnable(true);
+        } else if (newInteractionMode == TRANSLATE) {
+            setZoomEnable(false);
+            setTranslateEnable(true);
+            setRotateEnable(false);
+        } else if (newInteractionMode == ZOOM) {
+            setZoomEnable(true);
+            setTranslateEnable(false);
+            setRotateEnable(false);
+        } else {
+            logger.debug ("The interaction Mode should be one of these:"+
+                    "COMBINED, ROTATE, ZOOM, TRANSLATE");
+        }
     }
 
 }
