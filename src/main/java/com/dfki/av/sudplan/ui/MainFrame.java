@@ -449,19 +449,28 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
   }//GEN-LAST:event_deleteLayerButtonActionPerformed
 
   private void toggleZoomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleZoomButtonActionPerformed
-      componentController.enableModeZoom(toggleZoomButton.isSelected());
+      disableAllInteractionModeButtons();
+      toggleZoomButton.setSelected(true);
+      componentController.enableModeZoom();
   }//GEN-LAST:event_toggleZoomButtonActionPerformed
 
   private void toggleCombinedButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleCombinedButtonActionPerformed
-      componentController.enableModeCombined(toggleCombinedButton.isSelected());
+      disableAllInteractionModeButtons();
+      toggleCombinedButton.setSelected(true);
+      componentController.enableModeCombined();
   }//GEN-LAST:event_toggleCombinedButtonActionPerformed
 
   private void togglePanButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_togglePanButtonActionPerformed
-      componentController.enableModePan(togglePanButton.isSelected());
+      disableAllInteractionModeButtons();
+      togglePanButton.setSelected(true);
+      componentController.enableModePan();
+      
   }//GEN-LAST:event_togglePanButtonActionPerformed
 
   private void toggleRotateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleRotateButtonActionPerformed
-      componentController.enableModeRotate(toggleRotateButton.isSelected());
+      disableAllInteractionModeButtons();
+      toggleRotateButton.setSelected(true);
+      componentController.enableModeRotate();
   }//GEN-LAST:event_toggleRotateButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -620,5 +629,12 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
             }
             deleteLayerButton.setEnabled(false);
         }
+    }
+
+    private void disableAllInteractionModeButtons () {
+        toggleCombinedButton.setSelected(false);
+        toggleZoomButton.setSelected(false);
+        toggleRotateButton.setSelected(false);
+        togglePanButton.setSelected(false);
     }
 }
