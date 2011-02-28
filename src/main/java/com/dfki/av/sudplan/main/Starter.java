@@ -26,7 +26,7 @@ private final static Logger logger = LoggerFactory.getLogger(Starter.class);
 
       @Override
       public void run() {
-        try {     
+        try {          
           ComponentFactory.getStandaloneApplication(new ApplicationConfiguration()).setVisible(true);
         } catch (InitialisationException ex) {
           if(logger.isErrorEnabled()){

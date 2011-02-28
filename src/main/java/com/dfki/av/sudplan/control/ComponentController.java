@@ -9,6 +9,7 @@ import com.dfki.av.sudplan.conf.InitialisationException;
 import com.dfki.av.sudplan.io.dem.ElevationShape;
 import com.dfki.av.sudplan.io.shape.ShapeLoader;
 import com.dfki.av.sudplan.io.shape.ShapefileObject;
+import com.dfki.av.sudplan.layer.FeatureLayer;
 import com.dfki.av.sudplan.layer.Layer;
 import com.dfki.av.sudplan.layer.LayerManager;
 import com.dfki.av.sudplan.layer.LayerStateEvent;
@@ -63,7 +64,7 @@ public class ComponentController implements DropTargetListener, LayerListener {
     private ArrayList<DropTarget> dropTargets = new ArrayList<DropTarget>();
 //  private TransferHandler transferHandler =
 
-    public ComponentController(final VisualisationComponent visualisationComponent) throws InitialisationException{
+    public ComponentController(final VisualisationComponent visualisationComponent) throws InitialisationException {
         this(visualisationComponent, new ApplicationConfiguration());
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Exception Handling
@@ -73,21 +74,21 @@ public class ComponentController implements DropTargetListener, LayerListener {
         try {
             setVisualisationComponent(visualisationComponent);
 
-        setApplicationConfiguration(applicationConfiguration);
+            setApplicationConfiguration(applicationConfiguration);
 //    visualisationComponent.getDnDComponent().setTransferHandler(handler);
 //        configureLogging();        
-        layerManager.addLayerListener(this);
-          } catch (Exception ex) {
+            layerManager.addLayerListener(this);
+        } catch (Exception ex) {
             final String message = "Error during Controller initialisation.";
-              if (logger.isErrorEnabled()) {
-                logger.error(message,ex);
+            if (logger.isErrorEnabled()) {
+                logger.error(message, ex);
             }
-            throw new InitialisationException(message,ex);
+            throw new InitialisationException(message, ex);
         }
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not happen and
-    public ComponentController() throws InitialisationException{
+    public ComponentController() throws InitialisationException {
         this(null, new ApplicationConfiguration());
     }
 
@@ -238,7 +239,7 @@ public class ComponentController implements DropTargetListener, LayerListener {
             logger.debug("enabled: " + enabled + " dem: " + dem);
         }
         if (dem != null) {
-            dem.enableTexture(enabled);
+//            dem.enableTexture(enabled);
         }
     }
 
@@ -323,18 +324,22 @@ public class ComponentController implements DropTargetListener, LayerListener {
     @Override
     public void layerAdded(final Layer addedLayer) {
         setProgressDialogVisible(false);
-        visualisationComponent.addContent(addedLayer.getDataObject());
+        if (addedLayer instanceof FeatureLayer) {
+            visualisationComponent.addContent(((FeatureLayer) addedLayer).getDataObject());
+        }
     }
 
     @Override
     public void layerNotAdded(final LayerStateEvent event) {
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: file is here not known
-        fileLoadingErrorNotification(event.getEx(), event.getFile());    
+        fileLoadingErrorNotification(event.getEx(), event.getFile());
     }
 
     @Override
     public void layerRemoved(final Layer removedLayer) {
-        visualisationComponent.removContent(removedLayer.getDataObject());
+        if (removedLayer instanceof FeatureLayer) {
+            visualisationComponent.removContent(((FeatureLayer) removedLayer).getDataObject());
+        }
     }
 
     @Override
@@ -344,14 +349,13 @@ public class ComponentController implements DropTargetListener, LayerListener {
             if (logger.isDebugEnabled()) {
                 logger.debug("Layer " + layer.getName() + " property: " + evt.getPropertyName() + " has changed.");
             }
-            if (evt.getPropertyName().equals("visible")) {
+            if (evt.getPropertyName().equals("visible") && layer instanceof FeatureLayer) {
                 if (layer.isVisible()) {
-                    visualisationComponent.addContent(layer.getDataObject());
+                    visualisationComponent.addContent(((FeatureLayer) layer).getDataObject());
                 } else {
-                    visualisationComponent.removContent(layer.getDataObject());
+                    visualisationComponent.removContent(((FeatureLayer) layer).getDataObject());
                 }
             }
         }
     }
-    
 }

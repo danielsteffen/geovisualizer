@@ -3,7 +3,9 @@
  * and open the template in the editor.
  */
 
-package com.dfki.av.sudplan.io;
+package com.dfki.av.sudplan.layer.texture;
+
+import com.dfki.av.sudplan.layer.Layer;
 
 /**
  *
@@ -11,6 +13,6 @@ package com.dfki.av.sudplan.io;
  * @version 1.0
  * @since 1.6
  */
-public interface Loader {
-    public Object load(final Object source) throws LoadingNotPossibleException;
+public interface ImageLayer extends Layer,TextureProvider{
+      
 }

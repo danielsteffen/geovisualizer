@@ -4,7 +4,7 @@
  */
 package com.dfki.av.sudplan.io.dem;
 
-import com.dfki.av.sudplan.io.AbstractLoader;
+import com.dfki.av.sudplan.io.AbstractSceneLoader;
 import com.dfki.av.sudplan.io.LoadingNotPossibleException;
 import com.dfki.av.sudplan.io.ParsingException;
 import com.dfki.av.sudplan.util.TimeMeasurement;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public class ElevationLoader extends AbstractLoader {
+public class ElevationLoader extends AbstractSceneLoader {
 
     private final static Logger logger = LoggerFactory.getLogger(ElevationLoader.class);
     private RawArcGrid arcGrid;
@@ -38,7 +38,7 @@ public class ElevationLoader extends AbstractLoader {
     private ObjectFile test;
 
     @Override
-    public void loadImpl() throws Exception {
+    public void fillScene() throws Exception {
         arcGrid = new ArcGridParser(reader).parseArcGrid();
         createTriangle();
         GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);

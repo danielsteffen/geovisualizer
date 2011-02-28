@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 public class ElevationShape extends Shape3D {
 
     Appearance landscapeAppearance = new Appearance();
-    private final static Logger logger = LoggerFactory.getLogger(ElevationShape.class);
-    Texture2D demTexture=null;
+    private final static Logger logger = LoggerFactory.getLogger(ElevationShape.class);    
 
     public ElevationShape(final Geometry geometry) {
         super(geometry);
@@ -48,41 +47,37 @@ public class ElevationShape extends Shape3D {
                 "dem.png");
 //    URL imageURL = this.getClass().getClassLoader().getResource(
 //            "kl_air.jpg");
-        TextureLoader textureLoader = new TextureLoader(imageURL, ComponentBroker.getInstance().getMainFrame());
-//        TexCoordGeneration tcg = new TexCoordGeneration(TexCoordGeneration.OBJECT_LINEAR,
-//                                                        TexCoordGeneration.TEXTURE_COORDINATE_2);
-//       landscapeAppearance.setTexCoordGeneration(tcg);
-        ImageComponent2D image = textureLoader.getImage();
-        demTexture = new Texture2D(
-                Texture2D.BASE_LEVEL,
-                Texture2D.RGBA,
-                image.getWidth(),
-                image.getHeight());
-        if (logger.isDebugEnabled()) {
-            logger.debug("image.getWidth(): " + image.getWidth());
-            logger.debug("image.getHeight(): " + image.getHeight());
-        }
-        demTexture.setImage(0, image);
-        demTexture.setMagFilter(Texture2D.BASE_LEVEL_LINEAR);
-        demTexture.setMinFilter(Texture2D.BASE_LEVEL_LINEAR);
-        demTexture.setCapability(Texture2D.ALLOW_ENABLE_READ);
-        demTexture.setCapability(Texture2D.ALLOW_ENABLE_WRITE);
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:what does this mean ?
-        demTexture.setEnable(true);
-        TextureAttributes attrib = new TextureAttributes();
-//        TextureUnitState texture = new TextureUnitState(demTexture, attrib,
-//                new TexCoordGeneration(TexCoordGeneration.OBJECT_LINEAR,
-//                        TexCoordGeneration.TEXTURE_COORDINATE_2));
-//        texture.setCapability(TextureUnitState.ALLOW_STATE_WRITE);
+//        TextureLoader textureLoader = new TextureLoader(imageURL, ComponentBroker.getInstance().getMainFrame());
+////        TexCoordGeneration tcg = new TexCoordGeneration(TexCoordGeneration.OBJECT_LINEAR,
+////                                                        TexCoordGeneration.TEXTURE_COORDINATE_2);
+////       landscapeAppearance.setTexCoordGeneration(tcg);
+//        ImageComponent2D image = textureLoader.getImage();
+//        demTexture = new Texture2D(
+//                Texture2D.BASE_LEVEL,
+//                Texture2D.RGBA,
+//                image.getWidth(),
+//                image.getHeight());
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("image.getWidth(): " + image.getWidth());
+//            logger.debug("image.getHeight(): " + image.getHeight());
+//        }
+//        demTexture.setImage(0, image);
+//        demTexture.setMagFilter(Texture2D.BASE_LEVEL_LINEAR);
+//        demTexture.setMinFilter(Texture2D.BASE_LEVEL_LINEAR);
+//        demTexture.setCapability(Texture2D.ALLOW_ENABLE_READ);
+//        demTexture.setCapability(Texture2D.ALLOW_ENABLE_WRITE);
+//        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:what does this mean ?
+//        demTexture.setEnable(true);
+//        TextureAttributes attrib = new TextureAttributes();
+////        TextureUnitState texture = new TextureUnitState(demTexture, attrib,
+////                new TexCoordGeneration(TexCoordGeneration.OBJECT_LINEAR,
+////                        TexCoordGeneration.TEXTURE_COORDINATE_2));
+////        texture.setCapability(TextureUnitState.ALLOW_STATE_WRITE);
         Material material = new Material();
         material.setDiffuseColor(new Color3f(0.9f, 0.9f, 0.9f));
         material.setShininess(20.0f);
-        material.setAmbientColor(new Color3f(0.8f, 0.8f, 0.8f));
-        attrib.setTextureMode(TextureAttributes.BLEND);
-
-        landscapeAppearance.setTextureAttributes(attrib);
+        material.setAmbientColor(new Color3f(0.8f, 0.8f, 0.8f));                
         landscapeAppearance.setMaterial(material);
-        landscapeAppearance.setTexture(demTexture);
         TextureAttributes texAttrib = new TextureAttributes();
         final Transform3D texTransform = new Transform3D();
         texAttrib.getTextureTransform(texTransform);
@@ -111,15 +106,15 @@ public class ElevationShape extends Shape3D {
         this.setAppearance(landscapeAppearance);
     }
 
-    public void enableTexture(final boolean enabled){        
-        if(enabled){
-            landscapeAppearance.setTexture(demTexture);
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("texture off");
-            }
-            landscapeAppearance.setTexture(null);
-        }
-
-    }
+//    public void enableTexture(final boolean enabled){
+//        if(enabled){
+//            landscapeAppearance.setTexture(demTexture);
+//        } else {
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("texture off");
+//            }
+//            landscapeAppearance.setTexture(null);
+//        }
+//
+//    }
 }

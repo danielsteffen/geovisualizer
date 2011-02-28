@@ -180,4 +180,12 @@ public class EarthFlat {
     public void setGeometry(final Box geometry) {
         this.geometry = geometry;
     }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:central place transformation
+    public static Point3d scalePoint3d(final Point3d point){
+        point.x *= ComponentBroker.getInstance().getScalingFactor();
+        point.y *= ComponentBroker.getInstance().getScalingFactor();
+        point.z *= ComponentBroker.getInstance().getScalingFactor();
+        return point;
+    }
 }

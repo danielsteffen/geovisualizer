@@ -6,11 +6,11 @@
 package com.dfki.av.sudplan.layer;
 
 import com.dfki.av.sudplan.io.shape.ShapeLoader;
+import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.IconUtil;
 import com.sun.j3d.loaders.Scene;
 import java.io.File;
 import java.net.URL;
-import javax.media.j3d.BoundingBox;
 import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @since 1.6
  */
 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:generic file based layer ? --> only difference is the loader
-public class ShapeLayer extends FileBasedLayer{
+public class ShapeLayer extends FileBasedLayer implements FeatureLayer{
 
     private final static Logger logger = LoggerFactory.getLogger(ShapeLayer.class);
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:lookup of loader + generic
@@ -49,7 +49,7 @@ public class ShapeLayer extends FileBasedLayer{
         loader = new ShapeLoader();
         try {
             this.dataObject = loader.load(file);
-             setBoundingBox(new BoundingBox(dataObject.getSceneGroup().getBounds()));
+             setBoundingBox(new AdvancedBoundingBox(dataObject.getSceneGroup().getBounds()));
         } catch (Exception ex) {
             final String message = "Error while intialising layer.";
             if (logger.isErrorEnabled()) {
@@ -60,12 +60,15 @@ public class ShapeLayer extends FileBasedLayer{
     }
 
     @Override
-    public Scene getDataObject() {
+    public Object getDataObject() {
          return dataObject;
     }
 
     @Override
-    public void setDataObject(Scene dataObject) {
-        this.dataObject = dataObject;
+    public void setDataObject(Object dataObject) {
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Exception
+        if(dataObject == null || dataObject instanceof Scene){
+            this.dataObject = (Scene)dataObject;
+        }
     }
 }

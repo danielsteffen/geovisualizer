@@ -4,6 +4,7 @@
  */
 package com.dfki.av.sudplan.layer;
 
+import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.media.j3d.BoundingBox;
@@ -22,11 +23,11 @@ public abstract class AbstractLayer implements Layer {
     private double transparency = 1.0;
     private boolean enabled = true;
     private boolean visible = true;
-    private BoundingBox boundingBox = null;
+    private AdvancedBoundingBox boundingBox = null;
     private String name;
 
     @Override
-    public BoundingBox getBoundingBox() {
+    public AdvancedBoundingBox getBoundingBox() {
         return boundingBox;
     }
 
@@ -46,7 +47,7 @@ public abstract class AbstractLayer implements Layer {
     }
 
     @Override
-    public void setBoundingBox(final BoundingBox boundingBox) {
+    public void setBoundingBox(final AdvancedBoundingBox boundingBox) {
         final BoundingBox oldValue = this.boundingBox;
         this.boundingBox = boundingBox;
         changeSupport.firePropertyChange("boundingBox", oldValue, boundingBox);

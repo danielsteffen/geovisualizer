@@ -59,6 +59,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import com.sun.j3d.internal.J3dUtilsI18N;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
+import java.awt.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -325,6 +326,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
             canvases[0].getPixelLocationInImagePlate(canvases[0].getWidth()/2,canvases[0].getHeight()/2, center);
             if (logger.isDebugEnabled()) {
                 logger.debug("center: "+center);
+                logger.debug("mouse: "+new Point(mouseX,mouseY));
             }
             Transform3D motionToWorld = new Transform3D();
             canvases[0].getImagePlateToVworld(motionToWorld);

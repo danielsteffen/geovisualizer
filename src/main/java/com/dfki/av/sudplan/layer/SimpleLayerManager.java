@@ -6,6 +6,9 @@ package com.dfki.av.sudplan.layer;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
+import com.dfki.av.sudplan.layer.texture.GeographicImageLayer;
+import com.dfki.av.sudplan.layer.texture.ImageLayer;
+import com.dfki.av.sudplan.layer.texture.Texturable;
 import com.dfki.av.sudplan.util.TimeMeasurement;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
@@ -35,10 +38,14 @@ public class SimpleLayerManager implements LayerManager {
 //        SHAPE, ARC_INFO_GRID
 //    };
     @Override
-    public synchronized void addLayer(Layer layer) {
+    public synchronized void addLayer(final Layer layer) {
         if (layer != null && !layers.contains(layer)) {
             if (logger.isDebugEnabled()) {
+                logger.debug("Adding layer: " + layer.getName());
                 logger.debug("Layer BoundingBox: " + layer.getBoundingBox());
+            }
+            if (layer instanceof ImageLayer) {
+                notifyTextureProviderAdded((ImageLayer) layer);
             }
             layers.add(layer);
             layer.addPropertyChangeListener(this);
@@ -54,7 +61,10 @@ public class SimpleLayerManager implements LayerManager {
     public synchronized void removeLayer(final Layer layerToRemove) {
         if (layerToRemove != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("remove layer: " + layerToRemove.getName());
+                logger.debug("Remove layer: " + layerToRemove.getName());
+            }
+            if (layerToRemove instanceof ImageLayer) {
+                notifyTextureProviderRemoved((ImageLayer) layerToRemove);
             }
             if (layers.contains(layerToRemove)) {
                 layers.remove(layerToRemove);
@@ -154,6 +164,37 @@ public class SimpleLayerManager implements LayerManager {
         }
     }
 
+    private void notifyTextureProviderAdded(final ImageLayer layer) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding ImageLayer to Texturables.");
+        }
+        for (final Layer currentLayer : layers) {
+            if (currentLayer instanceof Texturable) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Adding layer to texturable: " + currentLayer);
+                }
+                ((Texturable) currentLayer).addTextureProvider(((ImageLayer) layer));
+            }
+        }
+    }
+
+    private void notifyTextureProviderRemoved(final ImageLayer layer) {
+        if (layer instanceof ImageLayer) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Removing ImageLayer from Texturables.");
+            }
+            for (final Layer currentLayer : layers) {
+                if (currentLayer instanceof Texturable) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Removing layer from texturable: " + currentLayer);
+                    }
+                    ((Texturable) currentLayer).removeTextureProvider(((ImageLayer) layer));
+                }
+            }
+        }
+    }
+
     class LayerWorker extends SwingWorker<Layer, Void> {
 
         public LayerWorker(File file) {
@@ -165,7 +206,7 @@ public class SimpleLayerManager implements LayerManager {
         @Override
         protected Layer doInBackground() throws Exception {
             if (logger.isDebugEnabled()) {
-                logger.debug("Background load of DEM scene");
+                logger.debug("Background load of layer");
                 TimeMeasurement.getInstance().startMeasurement(this);
             }
             Layer newLayer = null;
@@ -177,8 +218,11 @@ public class SimpleLayerManager implements LayerManager {
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
                 }
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make constant and also check for shx dbf prj etc. also use suffix same above
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: make something generic with suffixes
             } else if (file.getName().endsWith(".shp")) {
                 newLayer = new ShapeLayer(file);
+            } else if (file.getName().endsWith(".tif") || file.getName().endsWith(".tiff")) {
+                newLayer = new GeographicImageLayer(file);
             } else {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:i18n
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:default images look bad.
@@ -199,7 +243,7 @@ public class SimpleLayerManager implements LayerManager {
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove only for Vienna Demo
 
             if (logger.isDebugEnabled()) {
-                logger.debug("Background load of DEM scene done. Elapsed time: "
+                logger.debug("Background load of layer done. Elapsed time: "
                         + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + ".");
             }
             return newLayer;

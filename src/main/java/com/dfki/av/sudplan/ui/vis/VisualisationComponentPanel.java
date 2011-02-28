@@ -11,6 +11,7 @@
 package com.dfki.av.sudplan.ui.vis;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
+import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.vis.control.AdvancedOrbitBehavior;
 import com.sun.j3d.loaders.Scene;
@@ -25,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.Point;
 import java.net.URL;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -36,7 +38,6 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Node;
-import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
@@ -420,25 +421,37 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     }
 
     @Override
-    public void addContent(final Scene scene) {
-        if (scene == null) {
+    public void addContent(final Object object) {
+        if (object == null) {
             return;
         }
-        sceneGraph.addChild(scene.getSceneGroup());
+        if (object instanceof Scene) {
+            sceneGraph.addChild(((Scene) object).getSceneGroup());
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Not possible to add content unkown type: " + object.getClass());
+            }
+        }
         if (logger.isDebugEnabled()) {
-            logger.debug("First child: " + scene.getSceneGroup().getChild(0));
-            logger.debug("scene : " + sceneGraph.isLive());
-            Shape3D test = new Shape3D();
-            logger.debug("Position of first child: " + getPositionOfObject(scene.getSceneGroup().getChild(0)));
+//            logger.debug("First child: " + scene.getSceneGroup().getChild(0));
+//            logger.debug("scene : " + sceneGraph.isLive());
+//            Shape3D test = new Shape3D();
+//            logger.debug("Position of first child: " + getPositionOfObject(scene.getSceneGroup().getChild(0)));
         }
     }
 
     @Override
-    public void removContent(final Scene scene) {
-        if (scene == null) {
+    public void removContent(final Object object) {
+        if (object == null) {
             return;
         }
-        sceneGraph.removeChild(scene.getSceneGroup());
+        if (object instanceof Scene) {
+            sceneGraph.removeChild(((Scene) object).getSceneGroup());
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Not possible to add content unkown type: " + object.getClass());
+            }
+        }
     }
 
     @Override
@@ -448,24 +461,79 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if the center is more often used extend Bounding box
     @Override
-    public void gotoBoundingBox(BoundingBox boundingBox) {
+    public void gotoBoundingBox(AdvancedBoundingBox boundingBox) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Goto BoundingBox: "+boundingBox);
+            logger.debug("Goto BoundingBox: " + boundingBox);
         }
-        if(boundingBox != null && !boundingBox.isEmpty()){
+        if (boundingBox != null && !boundingBox.isEmpty()) {
             final Point3d lower = new Point3d();
             final Point3d upper = new Point3d();
             boundingBox.getLower(lower);
             boundingBox.getUpper(upper);
+            final Point3d currentPoint = new Point3d();
+            final Transform3D viewTransformation = new Transform3D();
+            universe.getViewingPlatform().getViewPlatformTransform().getTransform(viewTransformation);
+            viewTransformation.transform(currentPoint);
+            logger.debug("View Position: " + currentPoint);
+            final AdvancedBoundingBox viewBoundingBox = getViewBoundingBox();
+            final Dimension deltaCenter = boundingBox.getDelta(viewBoundingBox);
+            if (logger.isDebugEnabled()) {
+                logger.debug("View boundingBox: "+viewBoundingBox);
+                logger.debug("delta center: "+deltaCenter);                
+            }
+            currentPoint.x+=deltaCenter.width;
+            currentPoint.y+=deltaCenter.height;
+            logger.debug("delta center: "+deltaCenter);                
+//            viewTransformation.setTranslation(new Vector3d(currentPoint));
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not fixed but so that all is seen
-            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
+//            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
+            gotoPoint(currentPoint);
         }
     }
 
+    public AdvancedBoundingBox getViewBoundingBox() {
+        final Point realPosition = canvas3D.getLocation();
+        final Point canvasPositionRealLower = new Point(realPosition.x, realPosition.y + canvas3D.getHeight());
+        final Point canvasPositionRealUpper = new Point(realPosition.x + canvas3D.getWidth(), realPosition.y);
+                logger.debug("canvas position lower real: " + canvasPositionRealLower);
+                logger.debug("canvas position upper real: " + canvasPositionRealUpper);
+        Transform3D motionToWorld = new Transform3D();
+        canvas3D.getImagePlateToVworld(motionToWorld);
+        final Point3d canvasPositionVirtualLower = new Point3d();
+        final Point3d canvasPositionVirtualUpper = new Point3d();      
+        canvas3D.getPixelLocationInImagePlate(canvasPositionRealLower.x, canvasPositionRealLower.y, canvasPositionVirtualLower);
+        canvas3D.getPixelLocationInImagePlate(canvasPositionRealUpper.x, canvasPositionRealUpper.y, canvasPositionVirtualUpper);        
+        if (logger.isDebugEnabled()) {
+            logger.debug("image plate lower"+canvasPositionVirtualLower);
+            logger.debug("image plate upper"+canvasPositionVirtualUpper);
+        }
+        motionToWorld.transform(canvasPositionVirtualLower);
+        motionToWorld.transform(canvasPositionVirtualUpper);
+                logger.debug("canvas position lower virtual: " + canvasPositionVirtualLower);
+                logger.debug("canvas position upper virtual: " + canvasPositionVirtualUpper);
+        AdvancedBoundingBox vViewBoundingBox = new AdvancedBoundingBox(canvasPositionVirtualLower, canvasPositionVirtualUpper);
+//                logger.debug("Viewing bounding box: " + vViewBoundingBox);
+        return vViewBoundingBox;
+    }
+
+//    @Override
+//    public void gotoBoundingBox(BoundingBox boundingBox) {
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Goto BoundingBox: "+boundingBox);
+//        }
+//        if(boundingBox != null && !boundingBox.isEmpty()){
+//            final Point3d lower = new Point3d();
+//            final Point3d upper = new Point3d();
+//            boundingBox.getLower(lower);
+//            boundingBox.getUpper(upper);
+//            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not fixed but so that all is seen
+//            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
+//        }
+//    }
     @Override
     public void gotoPoint(Tuple3f point) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Goto point: "+point);
+            logger.debug("Goto point: " + point);
         }
         if (point != null) {
             Transform3D viewTransformation = new Transform3D();
@@ -476,9 +544,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 
     @Override
     public void gotoPoint(Tuple3d point) {
-         if (logger.isDebugEnabled()) {
-            logger.debug("Goto point: "+point);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Goto point: " + point);
         }
-     gotoPoint(new Point3f(point));
+        gotoPoint(new Point3f(point));
     }
 }

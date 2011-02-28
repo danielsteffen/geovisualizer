@@ -20,6 +20,11 @@ import com.dfki.av.sudplan.layer.LayerStateEvent;
 import com.dfki.av.sudplan.layer.ShapeLayer;
 import com.dfki.av.sudplan.util.IconUtil;
 import com.dfki.av.sudplan.layer.LayerListener;
+import com.dfki.av.sudplan.layer.texture.GeographicImageLayer;
+import com.dfki.av.sudplan.layer.texture.ImageLayer;
+import com.dfki.av.sudplan.layer.texture.Texturable;
+import com.dfki.av.sudplan.layer.texture.TexturableListener;
+import com.dfki.av.sudplan.layer.texture.TextureProvider;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,8 +33,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashMap;
+import javax.media.j3d.Texture;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -40,11 +45,9 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellEditor;
-import javax.swing.tree.TreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -57,16 +60,19 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleLayerPanel extends javax.swing.JPanel implements
         LayerListener,
+        TexturableListener,
         TreeModelListener,
-        TreeSelectionListener {
+        TreeSelectionListener,
+        MouseListener {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Workaround use Checkboxes from look & feel or render them.
-    public static final ImageIcon CHECKBOX_CHECKED_ICON = new javax.swing.ImageIcon(ElevationLayer.class.getResource("/com/dfki/av/sudplan/ui/icon/workaround/checkboxChecked.png"));
-    public static final ImageIcon CHECKBOX_NOT_CHECKED_ICON = new javax.swing.ImageIcon(ElevationLayer.class.getResource("/com/dfki/av/sudplan/ui/icon/workaround/checkBoxNotChecked.png"));
+    public static final ImageIcon CHECKBOX_CHECKED_ICON = new javax.swing.ImageIcon(SimpleLayerPanel.class.getResource("/com/dfki/av/sudplan/ui/icon/workaround/checkboxChecked.png"));
+    public static final ImageIcon CHECKBOX_NOT_CHECKED_ICON = new javax.swing.ImageIcon(SimpleLayerPanel.class.getResource("/com/dfki/av/sudplan/ui/icon/workaround/checkboxNotChecked.png"));
     private final Logger logger = LoggerFactory.getLogger(SimpleLayerPanel.class);
     private final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Layer");
     private final DefaultMutableTreeNode elevationNode = new DefaultMutableTreeNode("Elevation");
     private final DefaultMutableTreeNode shapeNode = new DefaultMutableTreeNode("Shapefile");
+    private final DefaultMutableTreeNode imageNode = new DefaultMutableTreeNode("Images");
     private final DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode("Other");
     private final DefaultTreeModel layerTreeModel = new DefaultTreeModel(rootNode);
     private final LayerManager layerManager;
@@ -85,12 +91,13 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         layerTree.setModel(layerTreeModel);
         layerTree.expandPath(new TreePath(rootNode.getPath()));
         layerTree.setCellRenderer(new LayerTreeCellRenderer());
-        layerTree.setCellEditor(new LayerTreeCellEditor(layerTree, (LayerTreeCellRenderer) layerTree.getCellRenderer()));
-        layerTree.setEditable(true);
+//        layerTree.setCellEditor(new LayerTreeCellEditor(layerTree, (DefaultTreeCellRenderer)layerTree.getCellRenderer()));
+//        layerTree.setEditable(true);
         layerTree.getSelectionModel().addTreeSelectionListener(this);
         layerTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         layerTreeModel.addTreeModelListener(this);
         layerTree.addMouseListener(popupListener);
+        layerTree.addMouseListener(this);
         //this is necessary that the contextmenu will be shown on awt components --> http://java.sun.com/products/jfc/tsc/articles/mixing/        
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:problems with shadow of popup and repaint of awt
         layerPopup.setLightWeightPopupEnabled(false);
@@ -160,7 +167,12 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:redundandcode --> extract nodes
         if (addedLayer != null) {
             final LayerNode newLayerNode = new LayerNode(addedLayer);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:generic method duplicated code
+            if (addedLayer instanceof Texturable) {
+                ((Texturable) addedLayer).addTextureListener(this);
+            }
             if (addedLayer instanceof ElevationLayer) {
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:nonsense to add two times to the tree only add one node see texture
                 if (elevationNode.getChildCount() == 0) {
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:postioning of Layers DEM always deeper than objects 
                     layerTreeModel.insertNodeInto(elevationNode, rootNode, rootNode.getChildCount());
@@ -183,6 +195,17 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
                         shapeNode.getChildCount());
                 if (shapeNode.getChildCount() != 0) {
                     layerTree.expandPath(new TreePath(shapeNode.getPath()));
+                }
+            } else if (addedLayer instanceof ImageLayer) {
+                if (imageNode.getChildCount() == 0) {
+                    layerTreeModel.insertNodeInto(imageNode, rootNode, rootNode.getChildCount());
+                }
+                layerTreeModel.insertNodeInto(
+                        newLayerNode,
+                        imageNode,
+                        imageNode.getChildCount());
+                if (imageNode.getChildCount() != 0) {
+                    layerTree.expandPath(new TreePath(imageNode.getPath()));
                 }
             } else {
                 otherNode.add(new DefaultMutableTreeNode(addedLayer));
@@ -207,13 +230,19 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
 
     @Override
     public void layerRemoved(final Layer removedLayer) {
-
         if (logger.isDebugEnabled()) {
             logger.debug("layer removed. Removing Treenode...");
         }
         if (removedLayer != null) {
+            if (removedLayer instanceof Texturable) {
+                ((Texturable) removedLayer).reomveTextureListener(this);
+            }
             final LayerNode layerNodeToRemove = layerToNodeMap.get(removedLayer);
             if (layerNodeToRemove != null) {
+                final TreePath pathToNode = new TreePath(layerNodeToRemove);
+                if (layerTree.getSelectionModel().isPathSelected(pathToNode)) {
+                    layerTree.getSelectionModel().removeSelectionPath(pathToNode);
+                }
                 TreeNode parent = layerNodeToRemove.getParent();
                 if (logger.isDebugEnabled()) {
                     logger.debug("parent: " + parent);
@@ -234,11 +263,62 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
                             logger.debug("Elevation node is empty, will also be removed");
                         }
                         layerTreeModel.removeNodeFromParent(elevationNode);
+                    } else if (removedLayer instanceof ImageLayer && elevationNode.getChildCount() == 0) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Image node is empty, will also be removed");
+                        }
+                        layerTreeModel.removeNodeFromParent(imageNode);
                     }
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: other node
                 }
             }
         }
+    }
+
+    @Override
+    public void textureAdded(final Object source, final Texture addedTexture) {
+        if (source != null && layerToNodeMap.containsKey(source)) {
+            final LayerNode parentLayerNode = layerToNodeMap.get((Layer) source);
+            if (addedTexture != null) {
+                final TextureNode newTextureNode = new TextureNode(addedTexture);
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:generic method duplicated code
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: intelligent ordering saves code
+                if (parentLayerNode.getChildCount() == 0) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("TextureNode add no Child");
+                    }
+                    DefaultMutableTreeNode textureGroup = parentLayerNode.getTextureGroup();
+//                    textureGroup.add(newTextureNode);
+                    layerTreeModel.insertNodeInto(textureGroup, parentLayerNode, parentLayerNode.getChildCount());
+                    layerTreeModel.insertNodeInto(newTextureNode, textureGroup, textureGroup.getChildCount());
+                    layerTree.expandPath(new TreePath(textureGroup.getPath()));
+                    return;
+                } else {
+                    if (nodeContainsChild(parentLayerNode, parentLayerNode.getTextureGroup())) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("TextureNode available.");
+                        }
+                        final DefaultMutableTreeNode textureGroup = parentLayerNode.getTextureGroup();
+                        layerTreeModel.insertNodeInto(newTextureNode, textureGroup, textureGroup.getChildCount());
+                        layerTree.expandPath(new TreePath(textureGroup.getPath()));
+                    } else {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("TextureNode not available.");
+                        }
+                        final DefaultMutableTreeNode textureGroup = parentLayerNode.getTextureGroup();
+//                        textureGroup.add(newTextureNode);
+                        layerTreeModel.insertNodeInto(textureGroup, parentLayerNode, parentLayerNode.getChildCount());
+                        layerTreeModel.insertNodeInto(newTextureNode, textureGroup, textureGroup.getChildCount());
+                        layerTree.expandPath(new TreePath(textureGroup.getPath()));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void textureRemoved(final Object source, final Texture textureToRemove) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -293,6 +373,8 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
     public class LayerNode extends DefaultMutableTreeNode {
 
         Layer layer;
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Not every layer has a texture, more generic perhaps
+        TextureNode textureGroup = new TextureNode("Image Links");
 
         public LayerNode(final Layer layer, boolean allowsChildren) {
             super(layer, allowsChildren);
@@ -315,8 +397,16 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
             return layer;
         }
 
-        public void setLayer(Layer layer) {
+        public void setLayer(final Layer layer) {
             this.layer = layer;
+        }
+
+        public DefaultMutableTreeNode getTextureGroup() {
+            return textureGroup;
+        }
+
+        public void setTextureGroup(final TextureNode textureGroup) {
+            this.textureGroup = textureGroup;
         }
 
 //        @Override
@@ -334,12 +424,81 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         }
     }
 
-    @Override
-    public void treeNodesChanged(TreeModelEvent e) {
+    public class TextureNode extends DefaultMutableTreeNode {
+
+        private Texture texture;
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:maybe better to save a reference to the layerNode ?? 
+        private TextureProvider reference;
+        private boolean group = false;
+
+        public TextureNode(final Texture texture, boolean allowsChildren) {
+            super(texture, allowsChildren);
+            this.texture = texture;
+        }
+
+        public TextureNode(final Texture texture) {
+            this(texture, false);
+        }
+
+        public TextureNode(String GroupName) {
+            this(null, true);
+            group = true;
+        }
+
+        @Override
+        public void setParent(MutableTreeNode newParent) {
+            super.setParent(newParent);
+            if (newParent != null) {
+                final TreeNode layerParent = parent.getParent();
+                if (layerParent != null && layerParent instanceof LayerNode) {
+                    final Layer layer = ((LayerNode) layerParent).getLayer();
+                    if (layer != null && layer instanceof Texturable) {
+                        this.reference = ((Texturable) layer).getTextureProvider(texture);
+                    }
+                }
+            }
+        }
+
+        public TreePath getTreePath() {
+            return new TreePath(getPath());
+        }
+
+        public Texture getTexture() {
+            return texture;
+        }
+
+        public void setTexture(final Texture texture) {
+            this.texture = texture;
+        }
+
+        public TextureProvider getReference() {
+            return reference;
+        }
+
+        public boolean isGroup() {
+            return group;
+        }
+
+        @Override
+        public String toString() {
+            if (isGroup()) {
+                return super.toString();
+            } else {
+                if (getTexture() != null) {
+                    return getTexture().getName();
+                } else {
+                    return null;
+                }
+            }
+        }
     }
 
     @Override
-    public void treeNodesInserted(TreeModelEvent e) {
+    public void treeNodesChanged(final TreeModelEvent e) {
+    }
+
+    @Override
+    public void treeNodesInserted(final TreeModelEvent e) {
         final TreeNode parentNode = (TreeNode) e.getTreePath().getLastPathComponent();
         if ((parentNode.equals(rootNode) && rootNode.getChildCount() > 0)
                 || (parentNode.equals(elevationNode) && elevationNode.getChildCount() > 0)
@@ -350,14 +509,15 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
     }
 
     @Override
-    public void treeNodesRemoved(TreeModelEvent e) {
+    public void treeNodesRemoved(final TreeModelEvent e) {
     }
 
     @Override
-    public void treeStructureChanged(TreeModelEvent e) {
+    public void treeStructureChanged(final TreeModelEvent e) {
     }
 
-    public class LayerTreeCellRenderer extends DefaultTreeCellRenderer {
+    public class LayerTreeCellRenderer
+            extends DefaultTreeCellRenderer {
 
 //       Icon checkedIcon = (Icon) UIManager.get("CheckBox.icon");
 //       private Icon uncheckedIcon =  UIManager.getLookAndFeel().getDisabledSelectedIcon(new JCheckBox(), checkedIcon);
@@ -367,15 +527,43 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         }
 
         @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public Component getTreeCellRendererComponent(
+                final JTree tree,
+                final Object value,
+                final boolean sel,
+                final boolean expanded,
+                final boolean leaf,
+                final int row,
+                final boolean hasFocus) {
             final JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             if (rootNode.equals(value)) {
-                label.setIcon(ComponentBroker.getInstance().LAYER_ICON);
+                label.setIcon(ComponentBroker.LAYER_ICON);
             } else if (shapeNode.equals(value)) {
                 label.setIcon(ShapeLayer.SHAPE_ICON_12);
             } else if (elevationNode.equals(value)) {
                 label.setIcon(ElevationLayer.ELEVATION_ICON_12);
-            } else if (leaf && value instanceof LayerNode) {
+            } else if (imageNode.equals(value)) {
+                label.setIcon(GeographicImageLayer.IMAGE_ICON_12);
+            } else if (value instanceof TextureNode) {
+                final TextureNode textureNode = ((TextureNode) value);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("rendering textureNode");
+                }
+                if (textureNode.isGroup()) {
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:maybe a modified icon with a link symbol would be cool                  
+                    label.setIcon(GeographicImageLayer.IMAGE_ICON_12);
+                    label.setText(textureNode.toString());
+                } else {
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if it changes this is pain maybe better in TextureNode
+                    final Texturable texturable = ((Texturable) ((LayerNode) ((TextureNode) value).getParent().getParent()).getLayer());
+                    label.setIcon(GeographicImageLayer.IMAGE_ICON_12);
+                    if (texturable.isTextureVisible(textureNode.getTexture())) {
+                        label.setIcon(CHECKBOX_CHECKED_ICON);
+                    } else {
+                        label.setIcon(CHECKBOX_NOT_CHECKED_ICON);
+                    }
+                }
+            } else if (value instanceof LayerNode) {
                 final Layer layer = ((LayerNode) value).getLayer();
                 if (layer.isVisible()) {
                     label.setIcon(CHECKBOX_CHECKED_ICON);
@@ -387,110 +575,112 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         }
     }
 
-    public class LayerTreeCellEditor extends DefaultTreeCellEditor //implements MouseListener
-    {
-
-        LayerNode currentEditedLayerNode = null;
-
-        public LayerTreeCellEditor(JTree tree, DefaultTreeCellRenderer renderer, TreeCellEditor editor) {
-            super(tree, renderer, editor);
-        }
-
-        public LayerTreeCellEditor(JTree tree, DefaultTreeCellRenderer renderer) {
-            super(tree, renderer);
-//            renderer.addMouseListener(this);
-        }
-
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:modified suncode
-        @Override
-        public boolean isCellEditable(EventObject event) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("isEditable");
-            }
-//            final boolean isEditable = super.isCellEditable(event);
-
-//            if (!isEditable) {
+//    public class LayerTreeCellEditor extends DefaultTreeCellEditor //implements MouseListener
+//    {
+//
+//        LayerNode currentEditedLayerNode = null;
+//
+//        public LayerTreeCellEditor(JTree tree, DefaultTreeCellRenderer renderer, TreeCellEditor editor) {
+//            super(tree, renderer, editor);
+//        }
+//
+//        public LayerTreeCellEditor(JTree tree, DefaultTreeCellRenderer renderer) {
+//            super(tree, renderer);
+////            renderer.addMouseListener(this);
+//        }
+//        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:modified suncode
+//        @Override
+//        public boolean isCellEditable(EventObject event) {
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("isEditable");
+//            }
+////            final boolean isEditable = super.isCellEditable(event);
+//
+////            if (!isEditable) {
+////                return false;
+////            }
+//            Object value = null;
+//            if (event != null) {
+//                if (event.getSource() instanceof JTree) {
+//                    if (event instanceof MouseEvent) {
+//                        final MouseEvent mouseEvent = ((MouseEvent) event);
+//                        if (mouseEvent.getClickCount() < 2) {
+//                            if (logger.isDebugEnabled()) {
+//                                logger.debug("clickcount not right");
+//                            }
+//                            return false;
+//                        }
+//                        TreePath path = tree.getPathForLocation(
+//                                mouseEvent.getX(),
+//                                mouseEvent.getY());
+//                        if (path != null) {
+//                            lastRow = tree.getRowForPath(path);
+//                            value = path.getLastPathComponent();
+//                        }
+//                    }
+//                }
+//            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("super is editable");
+//            }
+//            if (value != null && value instanceof LayerNode) {
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("layernode");
+//                }
+//                return true;
+//            } else {
 //                return false;
 //            }
-            Object value = null;
-            if (event != null) {
-                if (event.getSource() instanceof JTree) {
-                    if (event instanceof MouseEvent) {
-                        final MouseEvent mouseEvent = ((MouseEvent) event);
-                        if (mouseEvent.getClickCount() < 2) {
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("clickcount not right");
-                            }
-                            return false;
-                        }
-                        TreePath path = tree.getPathForLocation(
-                                mouseEvent.getX(),
-                                mouseEvent.getY());
-                        if (path != null) {
-                            lastRow = tree.getRowForPath(path);
-                            value = path.getLastPathComponent();
-                        }
-                    }
-                }
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("super is editable");
-            }
-            if (value != null && value instanceof LayerNode) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("layernode");
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
-            Component editor = super.getTreeCellEditorComponent(tree, value, isSelected, expanded, leaf, row);
-            if (logger.isDebugEnabled()) {
-                logger.debug("editor: " + editor.getClass());
-            }
-            if (leaf && value instanceof LayerNode) {
-                currentEditedLayerNode = (LayerNode) value;
-                currentEditedLayerNode.getLayer().setVisible(!currentEditedLayerNode.getLayer().isVisible());
-                final Layer layer = currentEditedLayerNode.getLayer();
-                if (layer.isVisible()) {
-                    renderer.setIcon(CHECKBOX_CHECKED_ICON);
-                } else {
-                    renderer.setIcon(CHECKBOX_NOT_CHECKED_ICON);
-                }
-            }
-            return renderer;
-        }
+//        }
+//
 //        @Override
-//        public void mouseClicked(MouseEvent e) {
+//        public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
+//            Component editor = super.getTreeCellEditorComponent(tree, value, isSelected, expanded, leaf, row);
 //            if (logger.isDebugEnabled()) {
-//                logger.debug("mouseClicked");
+//                logger.debug("getEditor: "+value.getClass());
+//                logger.debug("Value: "+value);
 //            }
-//            if(e.getClickCount() > 1){
+//            renderer.setText("lala");
+//            if (leaf && value instanceof LayerNode) {
+//                currentEditedLayerNode = (LayerNode) value;
 //                currentEditedLayerNode.getLayer().setVisible(!currentEditedLayerNode.getLayer().isVisible());
+//                final Layer layer = currentEditedLayerNode.getLayer();
+//                if (layer.isVisible()) {
+//                    renderer.setIcon(CHECKBOX_CHECKED_ICON);
+//                } else {
+//                    renderer.setIcon(CHECKBOX_NOT_CHECKED_ICON);
+//                }
 //            }
+//            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:ugly hack
+//            stopCellEditing();
+//            return renderer;
 //        }
-//
-//        @Override
-//        public void mouseEntered(MouseEvent e) {
-//        }
-//
-//        @Override
-//        public void mouseExited(MouseEvent e) {
-//        }
-//
-//        @Override
-//        public void mousePressed(MouseEvent e) {
-//        }
-//
-//        @Override
-//        public void mouseReleased(MouseEvent e) {
-//        }
-    }
-
+////        @Override
+////        public void mouseClicked(MouseEvent e) {
+////            if (logger.isDebugEnabled()) {
+////                logger.debug("mouseClicked");
+////            }
+////            if(e.getClickCount() > 1){
+////                currentEditedLayerNode.getLayer().setVisible(!currentEditedLayerNode.getLayer().isVisible());
+////            }
+////        }
+////
+////        @Override
+////        public void mouseEntered(MouseEvent e) {
+////        }
+////
+////        @Override
+////        public void mouseExited(MouseEvent e) {
+////        }
+////
+////        @Override
+////        public void mousePressed(MouseEvent e) {
+////        }
+////
+////        @Override
+////        public void mouseReleased(MouseEvent e) {
+////        }
+//    }
     public void addLayerSelectionListener(final LayerSelectionListener listenerToAdd) {
         if (listenerToAdd != null) {
             layerSelectionListener.add(listenerToAdd);
@@ -517,7 +707,8 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         unselectionEvent.setSelectedLayer(deselectedLayers);
         if (treeSelectionEvent.getPaths() != null) {
             TreePath[] paths = treeSelectionEvent.getPaths();
-            for (int i = 0; i < paths.length; i++) {
+            for (int i = 0; i
+                    < paths.length; i++) {
 //                if (logger.isDebugEnabled()) {
 //                    logger.debug("component: "+paths[i].getLastPathComponent());
 //                }
@@ -595,6 +786,60 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
     public void removePopupItem(final JMenuItem popupItemToRemove) {
         if (popupItemToRemove != null) {
             layerPopup.remove(popupItemToRemove);
+
+
+
+
+        }
+    }
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:bad design
+    private TreeNode nodeFromLastTime = null;
+
+    @Override
+    public void mouseClicked(final MouseEvent mouseEvent) {
+        TreePath path = layerTree.getPathForLocation(
+                mouseEvent.getX(),
+                mouseEvent.getY());
+
+
+
+
+        if (path != null) {
+            if (path.getLastPathComponent() instanceof LayerNode) {
+                if (mouseEvent.getClickCount() > 1 && nodeFromLastTime.equals(path.getLastPathComponent())) {
+                    final Layer currentLayer = ((LayerNode) path.getLastPathComponent()).getLayer();
+                    currentLayer.setVisible(!currentLayer.isVisible());
+                    layerTree.repaint();
+                }
+            }
+            nodeFromLastTime = (TreeNode) path.getLastPathComponent();
+        }
+    }
+
+    @Override
+    public void mouseEntered(final MouseEvent mouseEvent) {
+    }
+
+    @Override
+    public void mouseExited(final MouseEvent mouseEvent) {
+    }
+
+    @Override
+    public void mousePressed(final MouseEvent mouseEvent) {
+    }
+
+    @Override
+    public void mouseReleased(final MouseEvent mouseEvent) {
+    }
+
+    public boolean nodeContainsChild(final DefaultMutableTreeNode parent, final DefaultMutableTreeNode child) {
+        if (parent == null || child == null) {
+            return false;
+        }
+        try {
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
         }
     }
 }

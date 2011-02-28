@@ -2,24 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.dfki.av.sudplan.io;
 
-import com.dfki.av.sudplan.io.dem.ElevationShape;
-import com.dfki.av.sudplan.util.TimeMeasurement;
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.SceneBase;
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.geometry.Stripifier;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.media.j3d.BranchGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +20,9 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public abstract class AbstractLoader implements Loader {
-
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:credits for loaderbase
-//ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:why is basepath & url differently treated. Code from Java 3D ObjectFile
-    private final static Logger logger = LoggerFactory.getLogger(AbstractLoader.class);
-    private boolean fromUrl = false;
+public abstract class AbstractFileLoader implements Loader {
+    private final static Logger logger = LoggerFactory.getLogger(AbstractFileLoader.class);
+      private boolean fromUrl = false;
     /** Stores the baseUrl for data files associated with the URL
      * passed into load(URL).*/
     protected URL baseUrl = null;
@@ -43,14 +31,14 @@ public abstract class AbstractLoader implements Loader {
     protected String basePath = null;
     protected BufferedReader reader = null;
     protected File file = null;
-    protected Scene createdScene;
-
+    private Object createdObject;
+    
     // Constructors
     /**
      * Constructs a Loader with default values for all variables.
      */
-    public AbstractLoader() {
-        createdScene = createScene();
+    public AbstractFileLoader() {
+        
     }
 
     // Variable get/set methods
@@ -93,45 +81,7 @@ public abstract class AbstractLoader implements Loader {
         return basePath;
     }
 
-    public Scene load(final String fileName) throws LoadingNotPossibleException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Loading scene from string: " + fileName + " ...");
-        }
-        return load(new File(fileName));
-    }
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:totally inconsistent --> refactor everything
-
-    public Scene load(final URL url) throws LoadingNotPossibleException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Loading scene from url: " + url + " ...");
-        }
-//        if (baseUrl == null) {
-//            setBaseUrlFromUrl(url);
-//        }
-//        try {
-//            fromUrl = true;
-//            reader = new BufferedReader(new InputStreamReader(url.openStream()));
-//            return load();
-//        } catch (IOException e) {
-//            throw new FileNotFoundException(e.getMessage());
-//        }
-        return load(url.getFile());
-    }
-
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:problem if it should be loaded from a url. Just switch everything build on the url
-    public Scene load(final File file) throws LoadingNotPossibleException {
-        try{
-        this.file = file;
-        setBasePathFromFilename(file.getAbsolutePath());
-        reader = new BufferedReader(new FileReader(file));
-        loadImpl();
-        return createdScene;
-        }catch(Exception ex){
-            throw new LoadingNotPossibleException("Error while loading scene.", ex);
-        }
-    }
-
-    private void setBaseUrlFromUrl(final URL url) throws FileNotFoundException {
+    protected  void setBaseUrlFromUrl(final URL url) throws FileNotFoundException {
         final String u = url.toString();
         String s;
         if (u.lastIndexOf('/') == -1) {
@@ -168,8 +118,47 @@ public abstract class AbstractLoader implements Loader {
         }
     } // End of setBasePathFromFilename
 
+
+     protected Object load(final String fileName) throws LoadingNotPossibleException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loading file from string: " + fileName + " ...");
+        }
+        return load(new File(fileName));
+    }
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:totally inconsistent --> refactor everything
+
+    protected Object load(final URL url) throws LoadingNotPossibleException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loading file from url: " + url + " ...");
+        }
+//        if (baseUrl == null) {
+//            setBaseUrlFromUrl(url);
+//        }
+//        try {
+//            fromUrl = true;
+//            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+//            return load();
+//        } catch (IOException e) {
+//            throw new FileNotFoundException(e.getMessage());
+//        }
+        return load(url.getFile());
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:problem if it should be loaded from a url. Just switch everything build on the url
+    protected  Object load(final File file) throws LoadingNotPossibleException {
+        try {
+            this.file = file;
+            setBasePathFromFilename(file.getAbsolutePath());
+            reader = new BufferedReader(new FileReader(file));
+            createdObject = loadImpl();
+            return createdObject;
+        } catch (Exception ex) {
+            throw new LoadingNotPossibleException("Error while loading file.", ex);
+        }
+    }
+
     @Override
-    public Scene load(Object source) throws LoadingNotPossibleException {
+    public Object load(Object source) throws LoadingNotPossibleException {
         if (source == null) {
             final String message = "source object is null.";
             if (logger.isErrorEnabled()) {
@@ -189,32 +178,13 @@ public abstract class AbstractLoader implements Loader {
                 throw new LoadingNotPossibleException("Unrecognised object class: " + source.getClass() + " not possible to load from this source.");
             }
         } catch (Exception ex) {
-            final String message = "Error while loading scene.";
+            final String message = "Error while loading file.";
             if (logger.isErrorEnabled()) {
-                logger.error(message);
+                logger.error(message,ex);
             }
             throw new LoadingNotPossibleException(message, ex);
         }
     }
 
-     public abstract void loadImpl() throws Exception;
-
-    protected Scene createScene() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Creating scene...");
-            TimeMeasurement.getInstance().startMeasurement(this);
-        }
-        final SceneBase tmpScene = new SceneBase();
-        final BranchGroup tmpBranch = new BranchGroup();
-        tmpBranch.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
-        tmpBranch.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
-        tmpBranch.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        tmpBranch.setCapability(BranchGroup.ALLOW_DETACH);
-        tmpScene.setSceneGroup(tmpBranch);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Creating scene done. Time elapsed: "
-                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms.");
-        }
-        return tmpScene;
-    }
+    protected abstract Object loadImpl() throws Exception;
 }

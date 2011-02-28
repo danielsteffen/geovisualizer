@@ -5,7 +5,7 @@
 package com.dfki.av.sudplan.io.shape;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
-import com.dfki.av.sudplan.io.AbstractLoader;
+import com.dfki.av.sudplan.io.AbstractSceneLoader;
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.util.TimeMeasurement;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public class ShapeLoader extends AbstractLoader {
+public class ShapeLoader extends AbstractSceneLoader {
 
     private final static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);    
     final ArrayList<Point3f> points = new ArrayList<Point3f>();
@@ -82,7 +82,7 @@ public class ShapeLoader extends AbstractLoader {
     SHAPE_TYPE shapeType = null;
 
     @Override
-    public void loadImpl() throws Exception {
+    public void fillScene() throws Exception {
         try {
             this.shp = new Shapefile(file);
             createPoints();            
