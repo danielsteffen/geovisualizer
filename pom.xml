@@ -145,12 +145,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcomponents-client</artifactId>
+            <artifactId>httpcomponents-client-internal</artifactId>
             <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcomponents-core</artifactId>
+            <artifactId>httpcomponents-core-internal</artifactId>
             <version>4.0.1</version>
         </dependency>
     </dependencies>
