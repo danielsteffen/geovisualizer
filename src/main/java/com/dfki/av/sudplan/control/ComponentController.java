@@ -350,6 +350,9 @@ public class ComponentController implements DropTargetListener, LayerListener {
                 logger.debug("Layer " + layer.getName() + " property: " + evt.getPropertyName() + " has changed.");
             }
             if (evt.getPropertyName().equals("visible") && layer instanceof FeatureLayer) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Removing Content");
+                }
                 if (layer.isVisible()) {
                     visualisationComponent.addContent(((FeatureLayer) layer).getDataObject());
                 } else {

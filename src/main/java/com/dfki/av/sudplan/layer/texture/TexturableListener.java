@@ -16,4 +16,6 @@ import javax.media.j3d.Texture;
 public interface TexturableListener {
     public void textureAdded(final Object source, final Texture addedTexture);
     public void textureRemoved(final Object source, final Texture removedTexture);
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:better over propertyChange attribute ?
+    public void textureVisibilityChanged(final Object source, final Texture changedtexture,final boolean isVisible);
 }
