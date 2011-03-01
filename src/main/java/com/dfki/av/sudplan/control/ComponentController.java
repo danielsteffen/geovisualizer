@@ -361,4 +361,21 @@ public class ComponentController implements DropTargetListener, LayerListener {
             }
         }
     }
+
+    public void enableModeZoom() {
+            visualisationComponent.setModeZoom();
+    }
+
+    public void enableModePan() {
+            visualisationComponent.setModePan();
+    }
+
+    public void enableModeCombined() {
+            visualisationComponent.setModeCombined();
+    }
+
+    public void enableModeRotate() {
+            visualisationComponent.setModeRotate();
+    }
+
 }

@@ -172,6 +172,8 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private int rightButton = ROTATE;
     private int middleButton = ZOOM;
 
+    private int actualInteractionMode = COMBINED;
+
     // the factor to be applied to wheel zooming so that it does not
     // look much different with mouse movement zooming.
     // This is a totally subjective factor.
@@ -233,17 +235,22 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     /**
      * Used to set the fuction for a mouse button to Rotate
      */
-    private static final int ROTATE = 0;
+    public static final int ROTATE = 0;
 
     /**
      * Used to set the function for a mouse button to Translate
      */
-    private static final int TRANSLATE = 1;
+    public static final int TRANSLATE = 1;
 
     /**
      * Used to set the function for a mouse button to Zoom
      */
-    private static final int ZOOM = 2;
+    public static final int ZOOM = 2;
+
+     /**
+     * Used to set the function for a mouse button to Combined mode
+     */
+    public static final int COMBINED = 3;
 
     private static final double NOMINAL_ZOOM_FACTOR = .01;
     private static final double NOMINAL_PZOOM_FACTOR = 1.0;
@@ -315,37 +322,37 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     }
 
       private void detRotationCenter(final MouseEvent e) {
-        if (MouseEvent.MOUSE_PRESSED == e.getID() || MouseEvent.MOUSE_RELEASED == e.getID()) {
+        if (MouseEvent.MOUSE_PRESSED == e.getID() || MouseEvent.MOUSE_RELEASED == e.getID() || MouseEvent.MOUSE_DRAGGED == e.getID()) {
             final int mouseX = e.getX();
             final int mouseY = e.getY();
-            final Point3d eye_pos = new Point3d();
+//            final Point3d eye_pos = new Point3d();
             final Point3d mouse_pos = new Point3d();
-            final Point3d center = new Point3d();
+//            final Point3d center = new Point3d();
             canvases[0].getPixelLocationInImagePlate(mouseX, mouseY, mouse_pos);
-            canvases[0].getCenterEyeInImagePlate(eye_pos);
-            canvases[0].getPixelLocationInImagePlate(canvases[0].getWidth()/2,canvases[0].getHeight()/2, center);
-            if (logger.isDebugEnabled()) {
-                logger.debug("center: "+center);
-                logger.debug("mouse: "+new Point(mouseX,mouseY));
-            }
+//            canvases[0].getCenterEyeInImagePlate(eye_pos);
+//            canvases[0].getPixelLocationInImagePlate(canvases[0].getWidth()/2,canvases[0].getHeight()/2, center);
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("center: "+center);
+//                logger.debug("mouse: "+new Point(mouseX,mouseY));
+//            }
             Transform3D motionToWorld = new Transform3D();
             canvases[0].getImagePlateToVworld(motionToWorld);
             motionToWorld.transform(mouse_pos);
-            motionToWorld = new Transform3D();
-            canvases[0].getImagePlateToVworld(motionToWorld);
-            motionToWorld.transform(eye_pos);
-            motionToWorld = new Transform3D();
-            canvases[0].getImagePlateToVworld(motionToWorld);
-            motionToWorld.transform(center);
+//            motionToWorld = new Transform3D();
+//            canvases[0].getImagePlateToVworld(motionToWorld);
+//            motionToWorld.transform(eye_pos);
+//            motionToWorld = new Transform3D();
+//            canvases[0].getImagePlateToVworld(motionToWorld);
+//            motionToWorld.transform(center);
             mouse_pos.z = 0.0f;
-            eye_pos.z = 0.0f;
-            center.z = 0.0f;
-            if (logger.isDebugEnabled()) {
-                logger.debug("mouse_point: " + mouse_pos);
-                logger.debug("eye_pos: " + eye_pos);
-                logger.debug("center: "+center);
-            }
-            setRotationCenter(center);
+//            eye_pos.z = 0.0f;
+//            center.z = 0.0f;
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("mouse_point: " + mouse_pos);
+//                logger.debug("eye_pos: " + eye_pos);
+//                logger.debug("center: "+center);
+//            }
+            setRotationCenter(mouse_pos);
         }
     }
 
@@ -1147,4 +1154,35 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
 	setProportionalZoom(((Boolean)state[0]).booleanValue());
     }
+
+    public void setInteractionMode(int newInteractionMode) {
+        if (newInteractionMode != actualInteractionMode) {
+            actualInteractionMode = newInteractionMode;
+            alternateInteractionMode(newInteractionMode);
+        }
+    }
+
+    private void alternateInteractionMode (int newInteractionMode) {
+        if (newInteractionMode == COMBINED) {
+            setZoomEnable(true);
+            setTranslateEnable(true);
+            setRotateEnable(true);
+        } else if (newInteractionMode == ROTATE) {
+            setZoomEnable(false);
+            setTranslateEnable(false);
+            setRotateEnable(true);
+        } else if (newInteractionMode == TRANSLATE) {
+            setZoomEnable(false);
+            setTranslateEnable(true);
+            setRotateEnable(false);
+        } else if (newInteractionMode == ZOOM) {
+            setZoomEnable(true);
+            setTranslateEnable(false);
+            setRotateEnable(false);
+        } else {
+            logger.debug ("The interaction Mode should be one of these:"+
+                    "COMBINED, ROTATE, ZOOM, TRANSLATE");
+        }
+    }
+
 }

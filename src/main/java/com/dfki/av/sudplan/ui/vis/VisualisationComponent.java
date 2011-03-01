@@ -27,4 +27,8 @@ public interface VisualisationComponent{
   public void gotoBoundingBox(final AdvancedBoundingBox boundingBox);
   public void gotoPoint(final Tuple3f point);
   public void gotoPoint(final Tuple3d point);
+  public void setModeZoom();
+  public void setModePan();
+  public void setModeRotate();
+  public void setModeCombined();
 }
