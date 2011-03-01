@@ -78,6 +78,7 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
     private final LayerManager layerManager;
     private final ArrayList<LayerSelectionListener> layerSelectionListener = new ArrayList<LayerSelectionListener>();
     private final HashMap<Layer, LayerNode> layerToNodeMap = new HashMap<Layer, LayerNode>();
+    private final HashMap<Texture, TextureNode> textureToNodeMap = new HashMap<Texture, TextureNode>();
     private final JPopupMenu layerPopup = new JPopupMenu();
     private final PopupListener popupListener = new PopupListener(layerPopup);
 
@@ -263,7 +264,7 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
                             logger.debug("Elevation node is empty, will also be removed");
                         }
                         layerTreeModel.removeNodeFromParent(elevationNode);
-                    } else if (removedLayer instanceof ImageLayer && elevationNode.getChildCount() == 0) {
+                    } else if (removedLayer instanceof ImageLayer && imageNode.getChildCount() == 0) {
                         if (logger.isDebugEnabled()) {
                             logger.debug("Image node is empty, will also be removed");
                         }
@@ -281,6 +282,7 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
             final LayerNode parentLayerNode = layerToNodeMap.get((Layer) source);
             if (addedTexture != null) {
                 final TextureNode newTextureNode = new TextureNode(addedTexture);
+                textureToNodeMap.put(addedTexture,newTextureNode);
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:generic method duplicated code
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: intelligent ordering saves code
                 if (parentLayerNode.getChildCount() == 0) {
@@ -317,8 +319,41 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
     }
 
     @Override
+    public void textureVisibilityChanged(Object source, Texture changedtexture, boolean isVisible) {
+        
+    }
+
+    @Override
     public void textureRemoved(final Object source, final Texture textureToRemove) {
-        throw new UnsupportedOperationException("Not supported yet.");
+          if (logger.isDebugEnabled()) {
+            logger.debug("Texture removed. Removing Treenode...");
+        }
+        if (textureToRemove != null) {
+            final TextureNode textureToRemoveNode= textureToNodeMap.get(textureToRemove);
+            if (textureToRemoveNode != null) {
+                final TreePath pathToNode = new TreePath(textureToRemoveNode);
+                if (layerTree.getSelectionModel().isPathSelected(pathToNode)) {
+                    layerTree.getSelectionModel().removeSelectionPath(pathToNode);
+                }
+                MutableTreeNode parent = (MutableTreeNode)textureToRemoveNode.getParent();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("parent: " + parent);
+                }
+                if (parent != null) {
+                    layerTreeModel.removeNodeFromParent(textureToRemoveNode);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("removed Node: " + textureToRemoveNode);
+                    }
+                    textureToNodeMap.remove(textureToRemoveNode);
+                    if (parent.getChildCount() == 0) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Texture node is empty, will also be removed");
+                        }
+                        layerTreeModel.removeNodeFromParent(parent);
+                    }                     
+                }
+            }
+        }
     }
 
     @Override
@@ -800,10 +835,6 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
         TreePath path = layerTree.getPathForLocation(
                 mouseEvent.getX(),
                 mouseEvent.getY());
-
-
-
-
         if (path != null) {
             if (path.getLastPathComponent() instanceof LayerNode) {
                 if (mouseEvent.getClickCount() > 1 && nodeFromLastTime.equals(path.getLastPathComponent())) {
