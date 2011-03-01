@@ -8,6 +8,8 @@ import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.control.ComponentController;
 import com.dfki.av.sudplan.ui.MainFrame;
 import java.util.Properties;
+import java.util.TooManyListenersException;
+import java.util.logging.Level;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.slf4j.Logger;

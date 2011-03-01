@@ -12,8 +12,6 @@ import com.dfki.av.sudplan.layer.texture.TextureProvider;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.IconUtil;
 import com.sun.j3d.loaders.Scene;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,10 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
-public class ElevationLayer extends FileBasedLayer implements
-        FeatureLayer,
-        Texturable,
-        PropertyChangeListener {
+public class ElevationLayer extends FileBasedLayer implements FeatureLayer, Texturable {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:lookup of loader + generic
     private final static Logger logger = LoggerFactory.getLogger(ElevationLayer.class);
@@ -120,7 +115,6 @@ public class ElevationLayer extends FileBasedLayer implements
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generell for scene based layers.
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:simply wrong here we need mutltiple textures
     public void removeTextureRecursively(final Texture texture, final Group branchGroup) {
         if (dataObject != null && dataObject.getSceneGroup() != null) {
             final BranchGroup allObjects = dataObject.getSceneGroup();
@@ -133,7 +127,8 @@ public class ElevationLayer extends FileBasedLayer implements
                     if (logger.isDebugEnabled()) {
                         logger.debug("found shape, removing texture.");
                     }
-                    ((Shape3D) currentChild).getAppearance().setTexture(null);
+                    //does not work.
+//                    ((Shape3D)currentChild).getAppearance().setTexture(texture);
                 }
             }
         }
@@ -143,7 +138,6 @@ public class ElevationLayer extends FileBasedLayer implements
     public void addTextureProvider(final TextureProvider provider) {
         if (provider != null && !textureProviders.contains(provider)) {
             textureProviders.add(provider);
-            provider.addPropertyChangeListener(this);
             addTexture(provider.getTexture());
         }
     }
@@ -152,7 +146,6 @@ public class ElevationLayer extends FileBasedLayer implements
     public void removeTextureProvider(final TextureProvider provider) {
         if (textureProviders.contains(provider)) {
             textureProviders.remove(provider);
-            provider.removePropertyChangeListener(this);
             removeTexture(provider.getTexture());
         }
     }
@@ -215,24 +208,12 @@ public class ElevationLayer extends FileBasedLayer implements
 
     @Override
     public void setTextureVisible(final int index, final boolean isVisible) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("setTextureVisible: index:" + index + " isVisible: " + isVisible);
-        }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void setTextureVisible(final Texture texture, final boolean isVisible) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("setTextureVisible: texture:" + texture + " isVisible: " + isVisible);
-        }
-        if (isVisible && dataObject != null && dataObject.getSceneGroup() != null) {
-            setTextureRecursivley(texture, dataObject.getSceneGroup());
-        } else {
-            removeTextureRecursively(texture, dataObject.getSceneGroup());
-        }
-        for (TexturableListener texturableListener : texturableListeners) {
-            texturableListener.textureVisibilityChanged(this, texture, isVisible);
-        }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -246,27 +227,6 @@ public class ElevationLayer extends FileBasedLayer implements
     public void reomveTextureListener(final TexturableListener listener) {
         if (texturableListeners.contains(listener)) {
             texturableListeners.remove(listener);
-        }
-    }
-
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:redesign texturable concept I think it is overengineerd to complicated.
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("propertyChanged");
-        }
-        if (evt.getSource() instanceof TextureProvider) {
-            final TextureProvider textureProvider = (TextureProvider) evt.getSource();
-            if (logger.isDebugEnabled()) {
-                logger.debug("TextureProvider " + textureProvider.getName() + " property: " + evt.getPropertyName() + " has changed.");
-            }
-            if (evt.getPropertyName().equals("visible")) {
-                if (textureProvider.isVisible()) {
-                    setTextureVisible(textureProvider.getTexture(), true);
-                } else {
-                    setTextureVisible(textureProvider.getTexture(), false);
-                }
-            }
         }
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: move up in AbstractSceneLayer

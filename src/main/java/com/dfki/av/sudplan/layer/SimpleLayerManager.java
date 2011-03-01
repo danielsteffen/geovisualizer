@@ -149,7 +149,6 @@ public class SimpleLayerManager implements LayerManager {
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:encapsulate in an own class
-    @Override
     public void addLayersFromFile(final List<File> files) {
         if (files == null) {
             return;
