@@ -121,7 +121,8 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
          * default to 10
          */
         universe = new SimpleUniverse(canvas3D);
-        canvas3D.getView().setBackClipDistance(300);
+        canvas3D.getView().setBackClipDistance(30000);
+        canvas3D.getView().setFrontClipDistance(0.1);
         canvas3D.setPreferredSize(new Dimension(800, 600));
         mainPanel.add(canvas3D, BorderLayout.CENTER);
         sceneGraph = createSceneGraph();

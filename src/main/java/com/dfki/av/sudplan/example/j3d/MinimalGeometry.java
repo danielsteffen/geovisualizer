@@ -4,6 +4,7 @@
  */
 package com.dfki.av.sudplan.example.j3d;
 
+import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
@@ -265,15 +266,15 @@ public class MinimalGeometry {
 
     Canvas3D canvas3D = new Canvas3D(config);
     panel.add(canvas3D, BorderLayout.CENTER);
-    BranchGroup scene = createSceneGraph(false);
+    BranchGroup scene = createSceneGraph(false);    
+
 
     // SimpleUniverse is a Convenience Utility class
-    SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
-
+    SimpleUniverse simpleU = new SimpleUniverse(canvas3D);   
     // This will move the ViewPlatform back a bit so the
     // objects in the scene can be viewed.
     simpleU.getViewingPlatform().setNominalViewingTransform();
-
+   
     simpleU.addBranchGraph(scene);
     return panel;
   } // end of GeomInfoApp constructor
