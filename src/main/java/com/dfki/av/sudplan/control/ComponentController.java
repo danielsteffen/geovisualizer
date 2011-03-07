@@ -11,6 +11,7 @@ import com.dfki.av.sudplan.io.shape.ShapeLoader;
 import com.dfki.av.sudplan.io.shape.ShapefileObject;
 import com.dfki.av.sudplan.layer.FeatureLayer;
 import com.dfki.av.sudplan.layer.Layer;
+import com.dfki.av.sudplan.layer.LayerIntialisationException;
 import com.dfki.av.sudplan.layer.LayerManager;
 import com.dfki.av.sudplan.layer.LayerStateEvent;
 import com.dfki.av.sudplan.layer.SimpleLayerManager;
@@ -169,6 +170,11 @@ public class ComponentController implements DropTargetListener, LayerListener {
                 }
                 setProgressDialogVisible(true);
                 layerManager.addLayersFromFile(fileList);
+            } catch (LayerIntialisationException ex) {
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:user information
+                if (logger.isErrorEnabled()) {
+                    logger.error("Layer could not be loaded.", ex);
+                }
             } catch (UnsupportedFlavorException ex) {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:user information
                 if (logger.isErrorEnabled()) {
@@ -363,19 +369,18 @@ public class ComponentController implements DropTargetListener, LayerListener {
     }
 
     public void enableModeZoom() {
-            visualisationComponent.setModeZoom();
+        visualisationComponent.setModeZoom();
     }
 
     public void enableModePan() {
-            visualisationComponent.setModePan();
+        visualisationComponent.setModePan();
     }
 
     public void enableModeCombined() {
-            visualisationComponent.setModeCombined();
+        visualisationComponent.setModeCombined();
     }
 
     public void enableModeRotate() {
-            visualisationComponent.setModeRotate();
+        visualisationComponent.setModeRotate();
     }
-
 }

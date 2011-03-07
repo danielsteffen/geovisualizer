@@ -5,6 +5,7 @@
 package com.dfki.av.sudplan.layer;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
+import com.dfki.av.sudplan.io.IOUtils;
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
 import com.dfki.av.sudplan.layer.texture.GeographicImageLayer;
 import com.dfki.av.sudplan.layer.texture.ImageLayer;
@@ -114,57 +115,6 @@ public class SimpleLayerManager implements LayerManager {
         }
     }
 
-    @Override
-    public void addLayerFromFile(final File file) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Trying to load file: " + file.getName() + ".");
-        }
-        try {
-            /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:improve if the file
-             * extension is not correctly set automatic recognition should be done.
-             * In the worst case the user should be asked what filetype it is.
-             */
-            LayerWorker worker = new LayerWorker(file);
-            worker.execute();
-        } catch (Exception ex) {
-//                fileLoadingErrorNotification(ex, file);
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:duplicated
-            for (LayerStateListener currentListener : layerListener) {
-                currentListener.layerNotAdded(new LayerStateEvent(
-                        System.currentTimeMillis(),
-                        file,
-                        ex));
-            }
-        }
-    }
-
-    @Override
-    public void addLayerFromFile(final String filename) {
-        addLayerFromFile(new File(filename));
-    }
-
-    @Override
-    public void addLayerFromFile(final URL fileURL) {
-        addLayerFromFile(fileURL.getFile());
-    }
-
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:encapsulate in an own class
-    @Override
-    public void addLayersFromFile(final List<File> files) {
-        if (files == null) {
-            return;
-        }
-        if (logger.isInfoEnabled()) {
-            logger.info("loading files...");
-        }
-        for (final File file : files) {
-            addLayerFromFile(file);
-        }
-        if (logger.isInfoEnabled()) {
-            logger.info("loading files done.");
-        }
-    }
-
     private void notifyTextureProviderAdded(final ImageLayer layer) {
 
         if (logger.isDebugEnabled()) {
@@ -196,6 +146,13 @@ public class SimpleLayerManager implements LayerManager {
         }
     }
 
+    public void addLayersFromFile(final List<File> files) throws LayerIntialisationException {
+        for (final File file : files) {
+            LayerWorker layerLoader = new LayerWorker(file);
+            layerLoader.execute();
+        }
+    }
+
     class LayerWorker extends SwingWorker<Layer, Void> {
 
         public LayerWorker(File file) {
@@ -211,37 +168,7 @@ public class SimpleLayerManager implements LayerManager {
                 TimeMeasurement.getInstance().startMeasurement(this);
             }
             Layer newLayer = null;
-            if (file.getName().endsWith(RawArcGrid.FILE_EXTENSION)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Given file is of type: " + RawArcGrid.NAME + ".");
-                    newLayer = new ElevationLayer(file);
-                    ComponentBroker.getInstance().setHeights(((ElevationLayer) newLayer).getGrid());
-                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
-                }
-                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make constant and also check for shx dbf prj etc. also use suffix same above
-                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: make something generic with suffixes
-            } else if (file.getName().endsWith(".shp")) {
-                newLayer = new ShapeLayer(file);
-            } else if (file.getName().endsWith(".tif") || file.getName().endsWith(".tiff")) {
-                newLayer = new GeographicImageLayer(file);
-            } else {
-                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:i18n
-                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:default images look bad.
-                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: duplicated code
-                for (LayerStateListener currentListener : layerListener) {
-                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:bad design + duplicated
-                    currentListener.layerNotAdded(new LayerStateEvent(
-                            System.currentTimeMillis(),
-                            file,
-                            new Exception("The given file could not be added. The file type is unknown.")));
-                }
-//                JOptionPane.showMessageDialog(
-//                        getMainFrame(),
-//                        "The given file could not be added. The file type is unknown.",
-//                        "Unrecognised File Type",
-//                        JOptionPane.INFORMATION_MESSAGE);
-            }
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove only for Vienna Demo
+            newLayer = IOUtils.createLayerFromFile(file);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Background load of layer done. Elapsed time: "

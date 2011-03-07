@@ -31,11 +31,6 @@ public interface LayerManager extends PropertyChangeListener{
 
     public void addLayerListener(final LayerListener listener);
     public void removeLayerListener(final LayerListener listener);
-    
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:interface FileLayerManager
-    public void addLayerFromFile(final File file);
-    public void addLayerFromFile(final String filename);
-    public void addLayerFromFile(final URL fileURL);
 
-    void addLayersFromFile(final List<File> files);
+    public void addLayersFromFile(final List<File> files) throws LayerIntialisationException;
 }
