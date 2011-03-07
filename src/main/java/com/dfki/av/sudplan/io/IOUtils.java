@@ -38,10 +38,10 @@ public class IOUtils {
         if (file.getName().endsWith(RawArcGrid.FILE_EXTENSION)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Given file is of type: " + RawArcGrid.NAME + ".");
-                newLayer = new ElevationLayer(file);
-                ComponentBroker.getInstance().setHeights(((ElevationLayer) newLayer).getGrid());
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
             }
+            newLayer = new ElevationLayer(file);
+            ComponentBroker.getInstance().setHeights(((ElevationLayer) newLayer).getGrid());
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make constant and also check for shx dbf prj etc. also use suffix same above
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: make something generic with suffixes
         } else if (file.getName().endsWith(".shp")) {
