@@ -10,23 +10,23 @@
  */
 package com.dfki.av.sudplan.ui.vis;
 
+import com.dfki.av.sudplan.camera.Camera;
+import com.dfki.av.sudplan.camera.Camera2D;
+import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.control.ComponentBroker;
-import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.vis.control.AdvancedOrbitBehavior;
 import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
-import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
-import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
-import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
+import com.sun.j3d.utils.behaviors.vp.ViewPlatformBehavior;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
+import com.sun.j3d.utils.universe.Viewer;
+import com.sun.j3d.utils.universe.ViewingPlatform;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
-import java.awt.Point;
 import java.net.URL;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -42,11 +42,10 @@ import javax.media.j3d.Texture2D;
 import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.swing.JPanel;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3d;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
@@ -59,9 +58,6 @@ import org.slf4j.LoggerFactory;
 public class VisualisationComponentPanel extends javax.swing.JPanel implements VisualisationComponent {
 
     private final Logger logger = LoggerFactory.getLogger(VisualisationComponentPanel.class);
-    private MouseWheelZoom zoomBehaviour;
-    private MouseTranslate translationBehaviour;
-    private MouseRotate rotationBehaviour;
     /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Not a perfect solution if the users leaves the sphere no control 
      *  will be possible
      */
@@ -78,7 +74,10 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
     private final Canvas3D canvas3D = new Canvas3D(config);
-    private AdvancedOrbitBehavior behavior;
+    private Camera camera3D;
+    private final Canvas3D canvas2D = new Canvas3D(config);
+    private Camera2D camera2D;
+    private final JPanel panel2d = new JPanel(new BorderLayout());
 
     /** Creates new form VisualisationComponentPanel */
     public VisualisationComponentPanel() {
@@ -124,8 +123,13 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         canvas3D.getView().setBackClipDistance(30000);
         canvas3D.getView().setFrontClipDistance(0.1);
         canvas3D.setPreferredSize(new Dimension(800, 600));
-        mainPanel.add(canvas3D, BorderLayout.CENTER);
         sceneGraph = createSceneGraph();
+        configure2dView();
+        canvas2D.getView().setBackClipDistance(30000);
+        canvas2D.getView().setFrontClipDistance(0.1);
+        canvas2D.setPreferredSize(new Dimension(800, 600));
+        mainPanel.add(canvas3D, BorderLayout.CENTER);
+
         sceneGraph.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         sceneGraph.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         sceneGraph.setCapability(BranchGroup.ALLOW_DETACH);
@@ -136,12 +140,11 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //    loadASCGeom();
 //    loadASCGeom2();
 //    initNavigation();
-        behavior = new AdvancedOrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
-        behavior.setProportionalZoom(true);
-        behavior.setProportionalTranslate(true);
-        behavior.setTransFactors(5, 5);
-        behavior.setRotationCenter(new Point3d(2010.0, 6602.0, 0.0));
-        gotoToHome();
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this must also be proportional
+
+//        behavior.setMinRadius(1);
+//        AdvancedOrbitBehavior.NOMINAL_TRANS_FACTOR = 1.0;                
         final Transform3D viewTransfrom = new Transform3D();
         universe.getViewingPlatform().getViewPlatformTransform().getTransform(viewTransfrom);
         final Vector3d position = new Vector3d();
@@ -149,18 +152,51 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         if (logger.isDebugEnabled()) {
             logger.debug("Viewing Position: " + position);
         }
+        camera3D = new SimpleCamera(universe.getViewer(), sceneGraph);
+        camera3D.setCameraBounds(behaviourBounding);
+        camera3D.addCameraListner(camera2D);
+//        camera3D.setCameraPosition(new Point3d(home));
 //        behavior.setRotationCenter(new Point3d(position));
-//        behavior.setPointOnEarth(universe.getViewingPlatform().get);
-        behavior.setZoomFactor(0.5);
-        behavior.setSchedulingBounds(behaviourBounding);
-        universe.getViewingPlatform().setViewPlatformBehavior(behavior);
+//        behavior.setPointOnEarth(universe.getViewingPlatform().get);       
+//        universe.getViewingPlatform().setViewPlatformBehavior(camera3D.getViewBehavior());
         // This will move the ViewPlatform back a bit so the
         // objects in the scene can be viewed.
 //    universe.getViewingPlatform().setNominalViewingTransform();        
         universe.addBranchGraph(sceneGraph);
+        gotoToHome();
     }
 
+    public void configure2dView() {
+        ViewingPlatform vwp;
+        vwp = new ViewingPlatform(1);
+        vwp.setUniverse(universe);
+        Viewer[] viewer = new Viewer[1];
+        viewer[0] = new Viewer(canvas2D);
+        viewer[0].setViewingPlatform(vwp);
+        sceneGraph.addChild(vwp);
+//        Transform3D viewTransformation = new Transform3D();
+//        viewTransformation.setTranslation(home);
+//        vwp.getViewPlatformTransform().setTransform(viewTransformation);
+        panel2d.add(canvas2D, BorderLayout.CENTER);
+//        final AdvancedOrbitBehavior behavior2d = new AdvancedOrbitBehavior(canvas2D, sceneGraph, OrbitBehavior.REVERSE_ALL | OrbitBehavior.STOP_ZOOM);
+//        behavior2d.setProportionalZoom(true);
+//        behavior2d.setProportionalTranslate(true);
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this must also be proportional
+//        behavior2d.setTransFactors(10, 10);
+//        behavior.setMinRadius(1);
+//        AdvancedOrbitBehavior.NOMINAL_TRANS_FACTOR = 1.0;
+//        behavior2d.setRotationCenter(new Point3d(home.x, home.y, 0.0));
+//        behavior2d.setInteractionMode(AdvancedOrbitBehavior.TRANSLATE);
+//        behavior2d.setSchedulingBounds(behaviourBounding);
+//        vwp.setViewPlatformBehavior(behavior2d);
+        camera2D = new Camera2D(viewer[0], sceneGraph);
+        camera2D.setCameraBounds(behaviourBounding);
+//        camera2D.setCameraPosition(new Point3d(home));
+    }
 
+    public JPanel getPanel2d() {
+        return panel2d;
+    }
 
     private void createWorld() {
 
@@ -321,19 +357,29 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         return point;
     }
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:directed light does not shine to soedermalm destination
     private void configureLight() {
+//        final TransformGroup lightTG = new TransformGroup();
+//        final Transform3D lightT = new Transform3D();
+//        final Vector3d translate = new Vector3d(home.x,home.y,home.z+500);
+//        lightTG.getTransform(lightT);
+//        lightT.setTranslation(translate);
+//        lightTG.setTransform(lightT);
         al.setInfluencingBounds(lightBounds);
         al.setCapability(AmbientLight.ALLOW_STATE_WRITE);
         al.setCapability(AmbientLight.ALLOW_STATE_READ);
         sceneGraph.addChild(al);
 
-        Color3f light1Color = new Color3f(0.5f, 0.5f, 0.5f);
-        Vector3f light1Direction = new Vector3f(2011.058f, 6603.77f, -300.0f);
-        dl = new DirectionalLight(light1Color, light1Direction);
+//        Color3f light1Color = new Color3f(0.5f, 0.5f, 0.5f);
+        Vector3f light1Direction = new Vector3f(2011.058f, 6603.77f, -10.0f);
+//        dl = new DirectionalLight(light1Color, light1Direction);
+        dl = new DirectionalLight();
+        dl.setDirection(light1Direction);
         dl.setCapability(DirectionalLight.ALLOW_STATE_WRITE);
         dl.setCapability(DirectionalLight.ALLOW_STATE_READ);
         dl.setInfluencingBounds(lightBounds);
         sceneGraph.addChild(dl);
+//        sceneGraph.addChild(lightTG);
     }
 
     private void setBackground() {
@@ -373,13 +419,6 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //      logger.error("Error while building geometry: ", ex);
 //    }
 //    }
-    @Override
-    public void gotoToHome() {
-        Transform3D viewTransformation = new Transform3D();
-        viewTransformation.setTranslation(home);
-        universe.getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
-    }
-
 //  private void loadASCGeom2() {
 //    DEMLoader loader = new DEMLoader();
 //    try {
@@ -437,63 +476,6 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         dl.setEnable(enabled);
     }
 
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if the center is more often used extend Bounding box
-    @Override
-    public void gotoBoundingBox(AdvancedBoundingBox boundingBox) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Goto BoundingBox: " + boundingBox);
-        }
-        if (boundingBox != null && !boundingBox.isEmpty()) {
-            final Point3d lower = new Point3d();
-            final Point3d upper = new Point3d();
-            boundingBox.getLower(lower);
-            boundingBox.getUpper(upper);
-            final Point3d currentPoint = new Point3d();
-            final Transform3D viewTransformation = new Transform3D();
-            universe.getViewingPlatform().getViewPlatformTransform().getTransform(viewTransformation);
-            viewTransformation.transform(currentPoint);
-            logger.debug("View Position: " + currentPoint);
-            final AdvancedBoundingBox viewBoundingBox = getViewBoundingBox();
-            final Dimension deltaCenter = boundingBox.getDelta(viewBoundingBox);
-            if (logger.isDebugEnabled()) {
-                logger.debug("View boundingBox: "+viewBoundingBox);
-                logger.debug("delta center: "+deltaCenter);                
-            }
-            currentPoint.x+=deltaCenter.width;
-            currentPoint.y+=deltaCenter.height;
-            logger.debug("delta center: "+deltaCenter);                
-//            viewTransformation.setTranslation(new Vector3d(currentPoint));
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not fixed but so that all is seen
-//            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
-            gotoPoint(currentPoint);
-        }
-    }
-
-    public AdvancedBoundingBox getViewBoundingBox() {
-        final Point realPosition = canvas3D.getLocation();
-        final Point canvasPositionRealLower = new Point(realPosition.x, realPosition.y + canvas3D.getHeight());
-        final Point canvasPositionRealUpper = new Point(realPosition.x + canvas3D.getWidth(), realPosition.y);
-                logger.debug("canvas position lower real: " + canvasPositionRealLower);
-                logger.debug("canvas position upper real: " + canvasPositionRealUpper);
-        Transform3D motionToWorld = new Transform3D();
-        canvas3D.getImagePlateToVworld(motionToWorld);
-        final Point3d canvasPositionVirtualLower = new Point3d();
-        final Point3d canvasPositionVirtualUpper = new Point3d();      
-        canvas3D.getPixelLocationInImagePlate(canvasPositionRealLower.x, canvasPositionRealLower.y, canvasPositionVirtualLower);
-        canvas3D.getPixelLocationInImagePlate(canvasPositionRealUpper.x, canvasPositionRealUpper.y, canvasPositionVirtualUpper);        
-        if (logger.isDebugEnabled()) {
-            logger.debug("image plate lower"+canvasPositionVirtualLower);
-            logger.debug("image plate upper"+canvasPositionVirtualUpper);
-        }
-        motionToWorld.transform(canvasPositionVirtualLower);
-        motionToWorld.transform(canvasPositionVirtualUpper);
-                logger.debug("canvas position lower virtual: " + canvasPositionVirtualLower);
-                logger.debug("canvas position upper virtual: " + canvasPositionVirtualUpper);
-        AdvancedBoundingBox vViewBoundingBox = new AdvancedBoundingBox(canvasPositionVirtualLower, canvasPositionVirtualUpper);
-//                logger.debug("Viewing bounding box: " + vViewBoundingBox);
-        return vViewBoundingBox;
-    }
-
 //    @Override
 //    public void gotoBoundingBox(BoundingBox boundingBox) {
 //        if (logger.isDebugEnabled()) {
@@ -508,51 +490,54 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
 //        }
 //    }
-    @Override
-    public void gotoPoint(Tuple3f point) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Goto point: " + point);
-        }
-        if (point != null) {
-            Transform3D viewTransformation = new Transform3D();
-            viewTransformation.setTranslation(new Vector3f(point));
-            universe.getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
-        }
-    }
-
-    @Override
-    public void gotoPoint(Tuple3d point) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Goto point: " + point);
-        }
-        gotoPoint(new Point3f(point));
-    }
-
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:duplicated code
     @Override
     public void setModeZoom() {
-        if (behavior != null) {
+        final ViewPlatformBehavior viewBehavior = camera3D.getViewingPlatform().getViewPlatformBehavior();
+        if (viewBehavior != null && viewBehavior instanceof AdvancedOrbitBehavior) {
+            final AdvancedOrbitBehavior behavior = (AdvancedOrbitBehavior) viewBehavior;
             behavior.setInteractionMode(2);//behavior.ZOOM);
         }
     }
 
     @Override
     public void setModePan() {
-        if (behavior != null) {
+        final ViewPlatformBehavior viewBehavior = camera3D.getViewingPlatform().getViewPlatformBehavior();
+        if (viewBehavior != null && viewBehavior instanceof AdvancedOrbitBehavior) {
+            final AdvancedOrbitBehavior behavior = (AdvancedOrbitBehavior) viewBehavior;
             behavior.setInteractionMode(1);//behavior.TRANSLATE);
         }
     }
 
     @Override
     public void setModeRotate() {
-        if (behavior != null) {
+        final ViewPlatformBehavior viewBehavior = camera3D.getViewingPlatform().getViewPlatformBehavior();
+        if (viewBehavior != null && viewBehavior instanceof AdvancedOrbitBehavior) {
+            final AdvancedOrbitBehavior behavior = (AdvancedOrbitBehavior) viewBehavior;
             behavior.setInteractionMode(0);//behavior.ROTATE);
         }
     }
 
     @Override
     public void setModeCombined() {
-        if (behavior != null) {
+        final ViewPlatformBehavior viewBehavior = camera3D.getViewingPlatform().getViewPlatformBehavior();
+        if (viewBehavior != null && viewBehavior instanceof AdvancedOrbitBehavior) {
+            final AdvancedOrbitBehavior behavior = (AdvancedOrbitBehavior) viewBehavior;
             behavior.setInteractionMode(3);//behavior.COMBINED);
         }
+    }
+
+    @Override
+    public Camera get2dCamera() {
+        return camera2D;
+    }
+
+    @Override
+    public Camera get3dCamera() {
+        return camera3D;
+    }
+
+    public void gotoToHome() {
+        camera3D.setCameraPosition(new Point3d(home));
     }
 }

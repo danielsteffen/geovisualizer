@@ -37,6 +37,8 @@ public class EarthFlat {
             geodeticToCartesian(new Point3d(180.0, 90.0, 0.0), PLATE_CARREE_PROJECTION));
     ////ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:often used for epsg 4326;    
     public static final String PLATE_CARREE_NAME = "Plate Carree";
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: remove this 
+    public static final double EARTH_OFFSET = -0.06f;
     private Box geometry;
 
     /* ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: The projection is not good and the height is even worse.
@@ -160,7 +162,7 @@ public class EarthFlat {
         this.geometry = new Box(
                 (float) (((upper.getX() - lower.getX()) / 2)),
                 (float) (((upper.getY() - lower.getY()) / 2)),
-                -0.06f, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
+                (float)EARTH_OFFSET, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
 //        this.geometry = new Box(
 //                3.0f,
 //                2.0f,

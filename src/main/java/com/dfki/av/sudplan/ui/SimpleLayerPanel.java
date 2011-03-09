@@ -370,7 +370,7 @@ public class SimpleLayerPanel extends javax.swing.JPanel implements
             public void actionPerformed(ActionEvent e) {
                 if (popupListener.getLastSelectedLayer() != null && popupListener.getLastSelectedLayer().getBoundingBox() != null) {
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:better to set the bounding box of the viewing Component then propertyChange Visualisation is changed.Viewing Component does not exist at the moment.
-                    ComponentBroker.getInstance().getController().getVisualisationComponent().gotoBoundingBox(popupListener.getLastSelectedLayer().getBoundingBox());
+                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().gotoBoundingBox(popupListener.getLastSelectedLayer().getBoundingBox());
                 }
             }
         });

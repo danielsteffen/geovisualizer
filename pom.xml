@@ -5,8 +5,10 @@
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>vis-comp</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.2</version>
-    <name>sudplanMaint</name>
+
+    <version>0.4.0</version>
+    <name>sudplan</name>
+
     <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>
     <url>http://www.sudplan.eu</url>
     <dependencies>
@@ -176,7 +178,12 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>0.9.27</version>
-    </dependency>-->     
+    </dependency>-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -299,7 +306,8 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+<!--todo how to disable enable during dev-->
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
@@ -323,7 +331,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>

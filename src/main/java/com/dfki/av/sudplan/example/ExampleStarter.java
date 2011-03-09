@@ -5,12 +5,11 @@
 
 package com.dfki.av.sudplan.example;
 
-import com.dfki.av.sudplan.example.j3d.CanvasDoubleBuffer;
-import com.dfki.av.sudplan.example.j3d.ImagePlate;
-import com.dfki.av.sudplan.example.j3d.TriangleArray;
+import com.dfki.av.sudplan.example.j3d.TriangleArrayPyramid;
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import javax.swing.JFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -19,15 +18,22 @@ import javax.swing.JFrame;
  * @since 1.6
  */
 public class ExampleStarter {
+     private final static Logger logger = LoggerFactory.getLogger(ExampleStarter.class);
+     private final static java.util.logging.Logger loggers =  java.util.logging.Logger.getLogger("org.wombat");
       public static void main(String[] args) {
       JFrame frame = new JFrame();
           frame.setSize(800,600);
           frame.setLayout(new BorderLayout());
           frame.getRootPane().setDoubleBuffered(false);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          frame.add(new ImagePlate().createUniverse(),BorderLayout.CENTER);
+          frame.add(new Transformation(),BorderLayout.CENTER);
           frame.setVisible(true);
 //          GeoTiff tiff = new GeoTiff();
 //          tiff.readGeoTiff2();
+//      logger.debug("testit");
+//      SLF4JBridgeHandler.install();
+//      loggers.fine("lala");
+//      JavaLoggingRedirection test = new JavaLoggingRedirection();
+//      test.testLogging();
       }
 }
