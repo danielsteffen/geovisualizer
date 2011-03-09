@@ -44,8 +44,10 @@
  */
 package com.dfki.av.sudplan.vis.control;
 
+import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.TransformationEvent;
 import com.dfki.av.sudplan.camera.TransformationListener;
+import com.dfki.av.sudplan.util.EarthFlat;
 import java.awt.event.MouseEvent;
 import java.awt.AWTEvent;
 
@@ -59,13 +61,11 @@ import javax.vecmath.Matrix3d;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import com.sun.j3d.internal.J3dUtilsI18N;
-import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import java.util.ArrayList;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PickInfo;
-import javax.vecmath.Matrix4d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,7 +218,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
      * rotation.  The percentage of distance that the viewer zooms
      * is determined by the zoom factor.
      */
-    public static final int PROPORTIONAL_ZOOM = 0x1000;
+    public static final int PROPORTIONAL_ZOOM = 0x1200;
     public static final int PROPORTIONAL_TRANSLATE = 0x1000;
     /**
      * Used to set the fuction for a mouse button to Rotate
@@ -250,6 +250,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private final PickCanvas pickCanvas;
     private final ArrayList<TransformationListener> transformationListeners = new ArrayList<TransformationListener>();
     private boolean transformationLoggingEnabled = false;
+    private final Camera camera;
 //    private boolean newValidMouseEvent = false;
 
     public void addTransformationListener(final TransformationListener newListener) {
@@ -290,10 +291,10 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
      * @param c The Canvas3D to add the behavior to
      * @param flags The option flags
      */
-    public AdvancedOrbitBehavior(Canvas3D c, BranchGroup scene, int flags) {
+    public AdvancedOrbitBehavior(Canvas3D c, BranchGroup scene, Camera camera, int flags) {
         super(c, MOUSE_LISTENER | MOUSE_MOTION_LISTENER | MOUSE_WHEEL_LISTENER | flags);
         this.scene = scene;
-
+        this.camera = camera;
         pickCanvas = new PickCanvas(canvases[0], scene);
         pickCanvas.setMode(PickInfo.PICK_GEOMETRY);
         pickCanvas.setFlags(PickInfo.CLOSEST_INTERSECTION_POINT);
@@ -644,16 +645,16 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
 //    private static enum INTEGRATION_TYPE {Latitude,Longitude};
     protected void integrateTransformation(Transform3D rotation) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("distance from Center: "+distanceFromCenter);
-            logger.debug("start Distance: "+startDistanceFromCenter);
+        if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+            logger.debug("distance from Center: " + distanceFromCenter);
+            logger.debug("start Distance: " + startDistanceFromCenter);
         }
         targetTG.getTransform(currentXfm);
         if (!targetTransform.equals(currentXfm)) {
             resetView();
         }
         rotateTransform.mul(rotateTransform, rotation);
-         distanceVector.z = distanceFromCenter - startDistanceFromCenter;
+        distanceVector.z = distanceFromCenter - startDistanceFromCenter;
 
         temp1.set(distanceVector);
         temp1.mul(rotateTransform, temp1);
@@ -663,7 +664,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         transVector.y = rotationCenter.y + ytrans;
         transVector.z = rotationCenter.z + ztrans;
 
-        translation.set(transVector);        
+        translation.set(transVector);
         targetTransform.mul(temp1, translation);
 
         // handle rotationCenter
@@ -677,9 +678,22 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         temp2.set(invertCenterVector);
         targetTransform.mul(temp1, temp2);
 
+        final Point3d oldPosition = new Point3d();
+        final Point3d newPosition = new Point3d();
+        currentXfm.transform(oldPosition);
+        targetTransform.transform(newPosition);
+
+        if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+            logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition);
+        }
+        if (!viewTransCheck(newPosition, oldPosition)) {
+            return;
+        }
+
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
-        
+
+
         for (TransformationListener currentListener : transformationListeners) {
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("transformation"+rotateTransform);
@@ -687,7 +701,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
             final Transform3D rotationPart = new Transform3D(targetTransform);
             currentListener.rotated(new TransformationEvent(targetTransform));
         }
-        
+
         for (TransformationListener currentListener : transformationListeners) {
 
             final Vector3d newTranslation = new Vector3d();
@@ -701,25 +715,64 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
             }
         }
 
-        Point3d oldPosition = new Point3d();
-        Point3d newPosition = new Point3d();
-        currentXfm.transform(oldPosition);
-        targetTransform.transform(newPosition);
-        boolean transformationAllowed = false;
-        if (newPosition.z > 0.0) {
-            transformationAllowed = true;
-        }
-        if (logger.isDebugEnabled() && transformationLoggingEnabled) {
-            logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition + " allowed: " + transformationAllowed);
-        }
 
-        if (transformationAllowed) {
-            targetTG.setTransform(targetTransform);
-        }
+
+
+        targetTG.setTransform(targetTransform);
 
         // reset yaw and pitch angles
         longditude = 0.0;
         latitude = 0.0;
+    }
+
+    private boolean viewTransCheck(final Point3d newPosition, final Point3d oldPosition) {
+
+        final Vector3d newCameraUp = new Vector3d(Camera.DEFAULT_UP);
+        targetTransform.transform(newCameraUp);
+
+        if (newPosition.z < 0.0) {
+            if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+                logger.debug("View transformation not allowed z would be negative: ");
+            }
+            return false;
+        }
+
+        //Europe camera pos (1666.4799082660177, 6114.203458541641, 6949.083219005746)        
+
+        if (newPosition.x < -2000 || newPosition.x > 6000) {
+            if (logger.isDebugEnabled()  && transformationLoggingEnabled) {
+                logger.debug("View transformation not allowed, x not in view constraint ");
+            }
+            return false;
+        }
+        
+        if (newPosition.y < 3500 || newPosition.y > 8700) {
+            if (logger.isDebugEnabled()  && transformationLoggingEnabled) {
+                logger.debug("View transformation not allowed, y not in view constraint ");
+            }
+            return false;
+        }
+
+        if ((newPosition.z > 8000)) {
+            if (logger.isDebugEnabled()  && transformationLoggingEnabled) {
+                logger.debug("View transformation not allowed, z would greater too great: ");
+            }
+            return false;
+        }
+
+        final double upVectorDiff = Math.floor(EarthFlat.EARTH_UP.angle(newCameraUp) * 100) / 100;
+        if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+            logger.debug("upVectorDiff: " + upVectorDiff);
+        }
+
+        if ((upVectorDiff > (Math.PI / 2) || upVectorDiff < 0.0)) {
+            if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+                logger.debug("View transformation not allowed angle between camera and earth must be between 0...PI/2: " + upVectorDiff);
+            }
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -18,6 +18,7 @@ import javax.media.j3d.Transform3D;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class EarthFlat {
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is hardcoded what if the earth is rotated;
+    public static final Vector3d EARTH_UP = new Vector3d(0,0,1);
     private static final Logger logger = LoggerFactory.getLogger(VisualisationComponentPanel.class);
     public static final double WGS84_EARTH_EQUATORIAL_RADIUS = 6378137.0; // ellipsoid equatorial getRadius, in meters
     public static final int PLATE_CARREE_PROJECTION = 0;

@@ -46,26 +46,19 @@ public class SimpleCamera implements Camera, TransformationListener {
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: set default same as above
     private Vector3d cameraDirection = new Vector3d(0.0, 0.0, -1.0);
     private Canvas3D canvas;
-    private double viewingDistance = 10000.0;
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:sync with java3d this is hardcoded by knowledge;
-    private final static Vector3d DEFAULT_UP = new Vector3d(0, 1.0, 0);
-    private final static Vector3d DEFAULT_DOWN = new Vector3d(0, -1.0, 0);
-    private final static Vector3d DEFAULT_LEFT = new Vector3d(-1.0, 0, 0);
-    private final static Vector3d DEFAULT_RIGHT = new Vector3d(1.0, 0, 0);
-    private final static Vector3d DEFAULT_VIEW = new Vector3d(0, 0, -1.0);
-    private Vector3d up;
-    private Vector3d down;
-    private Vector3d left;
-    private Vector3d right;
-    private Vector3d view;
-    
+    private double viewingDistance = 10000.0;    
+    private Vector3d cameraUp;
+    private Vector3d cameraDown;
+    private Vector3d cameraLeft;
+    private Vector3d cameraRight;
+    private Vector3d cameraView;
     private PickCanvas pickCanvas;
     private AdvancedBoundingBox viewingBoundingBox;
-    protected boolean cameraLoggingEnabled = true;
+    protected boolean cameraLoggingEnabled = false;
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not nice with the branchGroup
     public SimpleCamera(final Viewer viewer, final BranchGroup scene) {
-        behavior = new AdvancedOrbitBehavior(viewer.getCanvas3D(), scene, OrbitBehavior.REVERSE_ALL);
+        behavior = new AdvancedOrbitBehavior(viewer.getCanvas3D(), scene,this, OrbitBehavior.REVERSE_ALL);
         this.scene = scene;
         this.viewingPlatform = viewer.getViewingPlatform();
         canvas = viewer.getCanvas3D();
@@ -170,15 +163,16 @@ public class SimpleCamera implements Camera, TransformationListener {
             transEvent.getRotation().transform(newDirection);
             newDirection.normalize();
             logCameraOrientation();
-            up= new Vector3d(DEFAULT_UP);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: own method
+            cameraUp = new Vector3d(DEFAULT_UP);
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:don't have to be transformed simply based on one vector for example -up is down up rotated by 45 clockwise is right etc
-            down= new Vector3d(DEFAULT_DOWN);
-            left= new Vector3d(DEFAULT_LEFT);
-            right= new Vector3d(DEFAULT_RIGHT);
-            transEvent.getRotation().transform(up);
-            transEvent.getRotation().transform(down);
-            transEvent.getRotation().transform(left);
-            transEvent.getRotation().transform(right);
+            cameraDown = new Vector3d(DEFAULT_DOWN);
+            cameraLeft = new Vector3d(DEFAULT_LEFT);
+            cameraRight = new Vector3d(DEFAULT_RIGHT);
+            transEvent.getRotation().transform(cameraUp);
+            transEvent.getRotation().transform(cameraDown);
+            transEvent.getRotation().transform(cameraLeft);
+            transEvent.getRotation().transform(cameraRight);
             logCameraOrientation();
             if (!oldDirection.equals(newDirection)) {
                 setCameraDirection(newDirection);
@@ -232,6 +226,9 @@ public class SimpleCamera implements Camera, TransformationListener {
             }
         } else {
             viewingBoundingBox = null;
+        }
+        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+            logger.debug("Viewableboundingbox: "+viewingBoundingBox);
         }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: special cases contains. For now they are not valid.
 
@@ -361,7 +358,27 @@ public class SimpleCamera implements Camera, TransformationListener {
 
     private void logCameraOrientation() {
         if (logger.isDebugEnabled() && cameraLoggingEnabled) {
-            logger.debug("up: " + up + " down: " + down + " left: " + left + " right: " + right);
+            logger.debug("up: " + cameraUp + " down: " + cameraDown + " left: " + cameraLeft + " right: " + cameraRight);
         }
+    }
+
+    @Override
+    public Vector3d getCameraDown() {
+        return cameraDown;
+    }
+
+    @Override
+    public Vector3d getCameraLeft() {
+        return cameraLeft;
+    }
+
+    @Override
+    public Vector3d getCameraRight() {
+        return cameraRight;
+    }
+
+    @Override
+    public Vector3d getCameraUp() {
+        return cameraUp;
     }
 }
