@@ -37,9 +37,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
@@ -72,9 +71,11 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: either make toolbar unfloatable or make it possible to reattach
     private final Logger logger = LoggerFactory.getLogger(MainFrame.class);
     private Icon visualisationIcon;
+    private Icon visualisation2dIcon;
     private Icon layerIcon;
     private Icon controlIcon;
     private View visualisationView;
+    private View visualisation2DView;
     private View layerView;
     private View controlView;
 
@@ -82,6 +83,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
      * Possible place could be the controler class
      */
     private VisualisationComponentPanel visualisationPanel = new VisualisationComponentPanel();
+    private JPanel visualisation2dPanel = visualisationPanel.getPanel2d();
     private SimpleControlPanel controlPanel = new SimpleControlPanel();
     private RootWindow layoutRootWindow;
     private final StringViewMap viewMap = new StringViewMap();
@@ -480,7 +482,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
       disableAllInteractionModeButtons();
       togglePanButton.setSelected(true);
       componentController.enableModePan();
-      
+
   }//GEN-LAST:event_togglePanButtonActionPerformed
 
   private void toggleRotateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleRotateButtonActionPerformed
@@ -488,7 +490,6 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
       toggleRotateButton.setSelected(true);
       componentController.enableModeRotate();
   }//GEN-LAST:event_toggleRotateButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem controlMenueItem;
     private javax.swing.JButton deleteLayerButton;
@@ -522,6 +523,10 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
                 borderIcon(visualisationIcon, 0, 3, 0, 1),
                 visualisationPanel);
         viewMap.addView("visualisation", visualisationView);
+        visualisation2DView = new View(i18n.getString("MainFrame.visalualisation2d.view.title"),
+                borderIcon(visualisation2dIcon, 0, 3, 0, 1),
+                visualisation2dPanel);
+        viewMap.addView("visualisation", visualisation2DView);
         layerView = new View(i18n.getString("MainFrame.layer.view.title"),
                 borderIcon(layerIcon, 0, 3, 0, 1),
                 layerPanel);
@@ -546,6 +551,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
                 java.awt.SystemColor.activeCaptionText,
                 java.awt.SystemColor.inactiveCaptionText);
         visualisationView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
+        visualisation2DView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         layoutRootWindow.getRootWindowProperties().getDragRectangleShapedPanelProperties().setComponentPainter(x);
         //????
         //            viewMap.addView("activeLayers", vLayers);
@@ -568,6 +574,8 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private void loadIcons() {
         visualisationIcon = new javax.swing.ImageIcon(getClass().getResource(
                 i18n.getString("MainFrame.visualisation.view.icon")));
+        visualisation2dIcon = new javax.swing.ImageIcon(getClass().getResource(
+                i18n.getString("MainFrame.visualisation2d.view.icon")));
         layerIcon = new javax.swing.ImageIcon(getClass().getResource(
                 i18n.getString("MainFrame.layer.view.icon")));
         controlIcon = new javax.swing.ImageIcon(getClass().getResource(
@@ -577,8 +585,9 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private void doDefaultLayout() {
         layoutRootWindow.setWindow(new SplitWindow(
                 true,
-                0.25225961f, new TabWindow(new DockingWindow[]{layerView, controlView}), visualisationView));
+                0.25225961f, new TabWindow(new DockingWindow[]{layerView, controlView}), new TabWindow(new DockingWindow[]{visualisationView, visualisation2DView})));
         layerView.restoreFocus();
+        visualisationView.restoreFocus();
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: works only the first time + should be in a developer mode
@@ -648,7 +657,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         }
     }
 
-    private void disableAllInteractionModeButtons () {
+    private void disableAllInteractionModeButtons() {
         toggleCombinedButton.setSelected(false);
         toggleZoomButton.setSelected(false);
         toggleRotateButton.setSelected(false);
