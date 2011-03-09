@@ -54,6 +54,8 @@ public interface Camera {
 
     public void removeCameraListner(final CameraListener listenerToRemove);
 
+    public void setCameraToInitalViewingDirection();
+
     public Vector3d getCameraRight();
 
     public Vector3d getCameraUp();

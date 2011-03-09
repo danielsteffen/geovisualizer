@@ -179,6 +179,8 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         toggleZoomButton = new javax.swing.JToggleButton();
         second_seperator = new javax.swing.JToolBar.Separator();
         deleteLayerButton = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        resetCameraDirection = new javax.swing.JButton();
         frameMenueBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -259,6 +261,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         toggleTextureButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dfki/av/sudplan/ui/icon/layer/layerIcon24.png"))); // NOI18N
         toggleTextureButton.setSelected(true);
         toggleTextureButton.setText(bundle.getString("MainFrame.toggleTextureButton.text")); // NOI18N
+        toggleTextureButton.setToolTipText(bundle.getString("MainFrame.toggleTextureButton.toolTipText")); // NOI18N
         toggleTextureButton.setEnabled(false);
         toggleTextureButton.setFocusable(false);
         toggleTextureButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -291,6 +294,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         frameToolBar.add(first_seperator);
 
         toggleCombinedButton.setText(bundle.getString("MainFrame.toggleCombinedButton.text")); // NOI18N
+        toggleCombinedButton.setToolTipText(bundle.getString("MainFrame.toggleCombinedButton.toolTipText")); // NOI18N
         toggleCombinedButton.setFocusable(false);
         toggleCombinedButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toggleCombinedButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
@@ -305,6 +309,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         frameToolBar.add(toggleCombinedButton);
 
         togglePanButton.setText(bundle.getString("MainFrame.togglePanButton.text")); // NOI18N
+        togglePanButton.setToolTipText(bundle.getString("MainFrame.togglePanButton.toolTipText")); // NOI18N
         togglePanButton.setFocusable(false);
         togglePanButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         togglePanButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
@@ -319,6 +324,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         frameToolBar.add(togglePanButton);
 
         toggleRotateButton.setText(bundle.getString("MainFrame.toggleRotateButton.text")); // NOI18N
+        toggleRotateButton.setToolTipText(bundle.getString("MainFrame.toggleRotateButton.toolTipText")); // NOI18N
         toggleRotateButton.setFocusable(false);
         toggleRotateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toggleRotateButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
@@ -333,6 +339,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         frameToolBar.add(toggleRotateButton);
 
         toggleZoomButton.setText(bundle.getString("MainFrame.toggleZoomButton.text")); // NOI18N
+        toggleZoomButton.setToolTipText(bundle.getString("MainFrame.toggleZoomButton.toolTipText")); // NOI18N
         toggleZoomButton.setFocusable(false);
         toggleZoomButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toggleZoomButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
@@ -363,6 +370,21 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
             }
         });
         frameToolBar.add(deleteLayerButton);
+        frameToolBar.add(jSeparator1);
+
+        resetCameraDirection.setText(bundle.getString("MainFrame.resetCameraDirection.text")); // NOI18N
+        resetCameraDirection.setToolTipText(bundle.getString("MainFrame.resetCameraDirection.toolTipText")); // NOI18N
+        resetCameraDirection.setBorderPainted(false);
+        resetCameraDirection.setFocusable(false);
+        resetCameraDirection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        resetCameraDirection.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        resetCameraDirection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        resetCameraDirection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetCameraDirectionActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(resetCameraDirection);
 
         fileMenu.setText(bundle.getString("MainFrame.fileMenu.text")); // NOI18N
 
@@ -490,6 +512,11 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
       toggleRotateButton.setSelected(true);
       componentController.enableModeRotate();
   }//GEN-LAST:event_toggleRotateButtonActionPerformed
+
+  private void resetCameraDirectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetCameraDirectionActionPerformed
+      visualisationPanel.get3dCamera().setCameraToInitalViewingDirection();
+  }//GEN-LAST:event_resetCameraDirectionActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem controlMenueItem;
     private javax.swing.JButton deleteLayerButton;
@@ -502,10 +529,12 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private javax.swing.JToolBar frameToolBar;
     private javax.swing.JButton gotoHomeButton;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JPanel layerControlPanel;
     private javax.swing.JMenuItem layerMenueItem;
     private javax.swing.JPanel mainToolbarPanel;
     private javax.swing.JPanel postionControlPanel;
+    private javax.swing.JButton resetCameraDirection;
     private javax.swing.JToolBar.Separator second_seperator;
     private javax.swing.JToggleButton toggleCombinedButton;
     private javax.swing.JToggleButton toggleLightButton;

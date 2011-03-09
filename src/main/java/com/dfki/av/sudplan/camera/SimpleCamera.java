@@ -46,7 +46,7 @@ public class SimpleCamera implements Camera, TransformationListener {
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: set default same as above
     private Vector3d cameraDirection = new Vector3d(0.0, 0.0, -1.0);
     private Canvas3D canvas;
-    private double viewingDistance = 10000.0;    
+    private double viewingDistance = 10000.0;
     private Vector3d cameraUp;
     private Vector3d cameraDown;
     private Vector3d cameraLeft;
@@ -58,7 +58,7 @@ public class SimpleCamera implements Camera, TransformationListener {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not nice with the branchGroup
     public SimpleCamera(final Viewer viewer, final BranchGroup scene) {
-        behavior = new AdvancedOrbitBehavior(viewer.getCanvas3D(), scene,this, OrbitBehavior.REVERSE_ALL);
+        behavior = new AdvancedOrbitBehavior(viewer.getCanvas3D(), scene, this, OrbitBehavior.REVERSE_ALL);
         this.scene = scene;
         this.viewingPlatform = viewer.getViewingPlatform();
         canvas = viewer.getCanvas3D();
@@ -132,7 +132,12 @@ public class SimpleCamera implements Camera, TransformationListener {
         if (logger.isDebugEnabled() && cameraLoggingEnabled) {
             logger.debug("setCameraDirection");
         }
+        final Vector3d oldCameraDirection = this.cameraDirection;
         this.cameraDirection = cameraDirection;
+        updateOrientationVectors();
+        for (CameraListener cameraListener : cameraListeners) {
+            cameraListener.cameraViewChanged(new CameraEvent(this, oldCameraDirection, getCameraDirection(), getViewBoundingBox()));
+        }
     }
 
     @Override
@@ -162,23 +167,8 @@ public class SimpleCamera implements Camera, TransformationListener {
             final Vector3d newDirection = new Vector3d(DEFAULT_VIEW);
             transEvent.getRotation().transform(newDirection);
             newDirection.normalize();
-            logCameraOrientation();
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: own method
-            cameraUp = new Vector3d(DEFAULT_UP);
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:don't have to be transformed simply based on one vector for example -up is down up rotated by 45 clockwise is right etc
-            cameraDown = new Vector3d(DEFAULT_DOWN);
-            cameraLeft = new Vector3d(DEFAULT_LEFT);
-            cameraRight = new Vector3d(DEFAULT_RIGHT);
-            transEvent.getRotation().transform(cameraUp);
-            transEvent.getRotation().transform(cameraDown);
-            transEvent.getRotation().transform(cameraLeft);
-            transEvent.getRotation().transform(cameraRight);
-            logCameraOrientation();
             if (!oldDirection.equals(newDirection)) {
                 setCameraDirection(newDirection);
-                for (CameraListener cameraListener : cameraListeners) {
-                    cameraListener.cameraViewChanged(new CameraEvent(this, oldDirection, getCameraDirection(), getViewBoundingBox()));
-                }
             } else {
                 if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                     logger.debug("same direction no change:");
@@ -228,7 +218,7 @@ public class SimpleCamera implements Camera, TransformationListener {
             viewingBoundingBox = null;
         }
         if (logger.isDebugEnabled() && cameraLoggingEnabled) {
-            logger.debug("Viewableboundingbox: "+viewingBoundingBox);
+            logger.debug("Viewableboundingbox: " + viewingBoundingBox);
         }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: special cases contains. For now they are not valid.
 
@@ -380,5 +370,36 @@ public class SimpleCamera implements Camera, TransformationListener {
     @Override
     public Vector3d getCameraUp() {
         return cameraUp;
+    }
+
+    protected void updateOrientationVectors() {
+        final Transform3D viewTransform = new Transform3D();
+        viewingPlatform.getViewPlatformTransform().getTransform(viewTransform);
+        logCameraOrientation();
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: own method
+        cameraUp = new Vector3d(DEFAULT_UP);
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:don't have to be transformed simply based on one vector for example -up is down up rotated by 45 clockwise is right etc
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this should be done in the setCameraDirection
+        cameraDown = new Vector3d(DEFAULT_DOWN);
+        cameraLeft = new Vector3d(DEFAULT_LEFT);
+        cameraRight = new Vector3d(DEFAULT_RIGHT);
+        viewTransform.transform(cameraUp);
+        viewTransform.transform(cameraDown);
+        viewTransform.transform(cameraLeft);
+        viewTransform.transform(cameraRight);
+        logCameraOrientation();
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:clear concept what controls what does changes in vwp triggers the camera or wise versa
+    @Override
+    public void setCameraToInitalViewingDirection() {
+        final Transform3D oldCameraTransformation = new Transform3D();
+        final Vector3d position = new Vector3d();
+        viewingPlatform.getViewPlatformTransform().getTransform(oldCameraTransformation);
+        oldCameraTransformation.get(position);
+        final Transform3D newCameraTransformation = new Transform3D();
+        newCameraTransformation.setTranslation(position);
+        viewingPlatform.getViewPlatformTransform().setTransform(newCameraTransformation);
+        setCameraDirection(DEFAULT_VIEW);        
     }
 }
