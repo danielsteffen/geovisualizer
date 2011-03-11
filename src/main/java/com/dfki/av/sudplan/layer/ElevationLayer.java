@@ -83,6 +83,7 @@ public class ElevationLayer extends FileBasedLayer implements
             }
             this.dataObject = loader.load(file);
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:abstract will be the same for all layers
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:seems to be not correct // maybe this should be calculated by hand.
             setBoundingBox(new AdvancedBoundingBox(dataObject.getSceneGroup().getBounds()));
         } catch (Exception ex) {
             final String message = "Error while intialising layer.";

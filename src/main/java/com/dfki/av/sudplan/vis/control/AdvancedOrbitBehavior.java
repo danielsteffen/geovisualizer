@@ -61,6 +61,7 @@ import javax.vecmath.Matrix3d;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import com.sun.j3d.internal.J3dUtilsI18N;
+import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import java.util.ArrayList;
@@ -624,27 +625,28 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         rotateTransform.set(rotMatrix);
     }
 
+    @Override
     protected synchronized void integrateTransforms() {
-        // Check if the transform has been changed by another
-        // behavior             
+//        // Check if the transform has been changed by another
+//        // behavior
         latitudeTransform.rotX(latitude);
         longditudeTransform.rotY(longditude);
 
-        integrateTransformation(latitudeTransform);
-        integrateTransformation(longditudeTransform);
+        integrateTransforms(latitudeTransform);
+        integrateTransforms(longditudeTransform);
 //        if (logger.isDebugEnabled()) {
 //            final Matrix4d temp = new Matrix4d();
 //            longditudeTransform.get(temp);
 //            logger.debug("long transformation: "+temp);
-//        }    
+//        }
 //        rotateTransform.mul(rotateTransform, latitudeTransform);
-//        rotateTransform.mul(rotateTransform, longditudeTransform);        
+//        rotateTransform.mul(rotateTransform, longditudeTransform);
 
 
     }
 
 //    private static enum INTEGRATION_TYPE {Latitude,Longitude};
-    protected void integrateTransformation(Transform3D rotation) {
+    protected void integrateTransforms(Transform3D rotation) {
         if (logger.isDebugEnabled() && transformationLoggingEnabled) {
             logger.debug("distance from Center: " + distanceFromCenter);
             logger.debug("start Distance: " + startDistanceFromCenter);
@@ -653,6 +655,10 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         if (!targetTransform.equals(currentXfm)) {
             resetView();
         }
+//        latitudeTransform.rotX(latitude);
+//        longditudeTransform.rotY(longditude);
+//        rotateTransform.mul(rotateTransform, latitudeTransform);
+//        rotateTransform.mul(rotateTransform, longditudeTransform);
         rotateTransform.mul(rotateTransform, rotation);
         distanceVector.z = distanceFromCenter - startDistanceFromCenter;
 
@@ -692,7 +698,11 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
+        targetTG.setTransform(targetTransform);
 
+        // reset yaw and pitch angles
+        longditude = 0.0;
+        latitude = 0.0;
 
         for (TransformationListener currentListener : transformationListeners) {
 //            if (logger.isDebugEnabled()) {
@@ -714,15 +724,6 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
                 currentListener.translated(new TransformationEvent(new Point3d(oldTranslation), new Point3d(newTranslation)));
             }
         }
-
-
-
-
-        targetTG.setTransform(targetTransform);
-
-        // reset yaw and pitch angles
-        longditude = 0.0;
-        latitude = 0.0;
     }
 
     private boolean viewTransCheck(final Point3d newPosition, final Point3d oldPosition) {
@@ -740,21 +741,21 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         //Europe camera pos (1666.4799082660177, 6114.203458541641, 6949.083219005746)        
 
         if (newPosition.x < -2000 || newPosition.x > 6000) {
-            if (logger.isDebugEnabled()  && transformationLoggingEnabled) {
+            if (logger.isDebugEnabled() && transformationLoggingEnabled) {
                 logger.debug("View transformation not allowed, x not in view constraint ");
             }
             return false;
         }
-        
+
         if (newPosition.y < 3500 || newPosition.y > 8700) {
-            if (logger.isDebugEnabled()  && transformationLoggingEnabled) {
+            if (logger.isDebugEnabled() && transformationLoggingEnabled) {
                 logger.debug("View transformation not allowed, y not in view constraint ");
             }
             return false;
         }
 
         if ((newPosition.z > 8000)) {
-            if (logger.isDebugEnabled()  && transformationLoggingEnabled) {
+            if (logger.isDebugEnabled() && transformationLoggingEnabled) {
                 logger.debug("View transformation not allowed, z would greater too great: ");
             }
             return false;

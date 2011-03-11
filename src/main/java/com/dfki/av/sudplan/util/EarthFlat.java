@@ -18,6 +18,7 @@ import javax.media.j3d.Transform3D;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3d;
 import javax.vecmath.Vector3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class EarthFlat {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is hardcoded what if the earth is rotated;
-    public static final Vector3d EARTH_UP = new Vector3d(0,0,1);
+    public static final Vector3d EARTH_UP = new Vector3d(0, 0, 1);
     private static final Logger logger = LoggerFactory.getLogger(VisualisationComponentPanel.class);
     public static final double WGS84_EARTH_EQUATORIAL_RADIUS = 6378137.0; // ellipsoid equatorial getRadius, in meters
     public static final int PLATE_CARREE_PROJECTION = 0;
@@ -44,12 +45,59 @@ public class EarthFlat {
     public static final double EARTH_OFFSET = -0.06f;
     private Box geometry;
 
+    public static Point3d cartesianToGeodetic(final Point3d postionToTransform, final int projection) {
+        checkPoint(postionToTransform);
+        return (Point3d) cartesianToGeodetic((Tuple3d) postionToTransform, projection);
+    }
+
+    public static Vector3d cartesianToGeodetic(final Vector3d postionToTransform, final int projection) {
+//        checkPoint(postionToTransform);
+        return (Vector3d) cartesianToGeodetic((Tuple3d) postionToTransform, projection);
+    }
+
+    public static Point3d geodeticToCartesian(final Point3d postionToTransform, final int projection) {
+        checkPoint(postionToTransform);
+        return (Point3d) geodeticToCartesian((Tuple3d) postionToTransform, projection);
+    }
+
+    public static Vector3d geodeticToCartesian(final Vector3d postionToTransform, final int projection) {
+//        checkPoint(postionToTransform);
+        return (Vector3d) geodeticToCartesian((Tuple3d) postionToTransform, projection);
+    }
+
+    public static AdvancedBoundingBox geodeticToCartesian(final AdvancedBoundingBox boxToTransform, final int projection) {
+        if (boxToTransform == null) {
+            return null;
+        }
+        return new AdvancedBoundingBox(
+                geodeticToCartesian(boxToTransform.getLower(), projection),
+                geodeticToCartesian(boxToTransform.getUpper(), projection));
+    }
+
+    public static AdvancedBoundingBox cartesianToGeodetic(final AdvancedBoundingBox boxToTransform, final int projection) {
+        if (boxToTransform == null) {
+            return null;
+        }
+        return new AdvancedBoundingBox(
+                cartesianToGeodetic(boxToTransform.getLower(), projection),
+                cartesianToGeodetic(boxToTransform.getUpper(), projection));
+    }
+
     /* ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: The projection is not good and the height is even worse.
      * Introduce proper coordinate system.
      */
-    public static Point3d cartesianToGeodetic(final Point3d postionToTransform, final int projection) {
-        checkPoint(postionToTransform);
-        final Point3d newPosition = new Point3d();
+    public static Tuple3d cartesianToGeodetic(final Tuple3d postionToTransform, final int projection)
+            throws UnsupportedOperationException,
+            IllegalArgumentException {
+        Tuple3d newPosition = null;
+        if (postionToTransform instanceof Point3d) {
+            newPosition = new Point3d();
+        } else if (postionToTransform instanceof Vector3d) {
+            newPosition = new Vector3d();
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
         if (projection == PLATE_CARREE_PROJECTION) {
             newPosition.set(
                     radiansToDeegree(postionToTransform.getX()) / WGS84_EARTH_EQUATORIAL_RADIUS,
@@ -65,9 +113,16 @@ public class EarthFlat {
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Same as above.
-    public static Point3d geodeticToCartesian(final Point3d postionToTransform, final int projection) {
-        checkPoint(postionToTransform);
-        final Point3d newPosition = new Point3d();
+    public static Tuple3d geodeticToCartesian(final Tuple3d postionToTransform, final int projection) throws UnsupportedOperationException,
+            IllegalArgumentException {
+        Tuple3d newPosition = null;
+        if (postionToTransform instanceof Point3d) {
+            newPosition = new Point3d();
+        } else if (postionToTransform instanceof Vector3d) {
+            newPosition = new Vector3d();
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
         if (projection == PLATE_CARREE_PROJECTION) {
             newPosition.set(
                     deegreeToRadians(postionToTransform.getX()) * WGS84_EARTH_EQUATORIAL_RADIUS,
@@ -159,13 +214,13 @@ public class EarthFlat {
         if (logger.isDebugEnabled()) {
             logger.debug("distance x: " + (float) (upper.getX() - lower.getX()));
             logger.debug("distance y: " + (float) (upper.getY() - lower.getY()));
-        }        
+        }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:extends bounds with distance
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: divided by 2 because the box doubles by default. 
         this.geometry = new Box(
                 (float) (((upper.getX() - lower.getX()) / 2)),
                 (float) (((upper.getY() - lower.getY()) / 2)),
-                (float)EARTH_OFFSET, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
+                (float) EARTH_OFFSET, Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS, new Appearance());
 //        this.geometry = new Box(
 //                3.0f,
 //                2.0f,
@@ -174,7 +229,7 @@ public class EarthFlat {
         if (logger.isDebugEnabled()) {
             logger.debug("box bounds: " + new BoundingBox(geometry.getBounds()));
             logger.debug("xdim: " + geometry.getXdimension());
-        }    
+        }
         geometry.setAppearance(Box.FRONT, worldAppearance);
     }
 
@@ -187,7 +242,7 @@ public class EarthFlat {
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:central place transformation
-    public static Point3d scalePoint3d(final Point3d point){
+    public static Point3d scalePoint3d(final Point3d point) {
         point.x *= ComponentBroker.getInstance().getScalingFactor();
         point.y *= ComponentBroker.getInstance().getScalingFactor();
         point.z *= ComponentBroker.getInstance().getScalingFactor();

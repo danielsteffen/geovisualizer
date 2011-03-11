@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
 public class Camera2D extends SimpleCamera implements CameraListener {
 
     private final static Logger logger = LoggerFactory.getLogger(Camera2D.class);
-    private boolean centerOn3dCamera = true;
+    private boolean centerOn3dCamera = false;
+    private boolean useReducedBoundingBox = true;
     private boolean keepZoomLevel = true;
     private final TransformGroup cameraObjectTG = new TransformGroup();
     private final Transform3D cameraObjectT = new Transform3D();
@@ -39,7 +40,7 @@ public class Camera2D extends SimpleCamera implements CameraListener {
 
     public Camera2D(Viewer viewer, BranchGroup scene) {
         super(viewer, scene);
-        setUpCameraObjects();
+//        setUpCameraObjects();
         behavior.setInteractionMode(AdvancedOrbitBehavior.TRANSLATE);
     }
 
@@ -49,8 +50,15 @@ public class Camera2D extends SimpleCamera implements CameraListener {
             logger.debug("camera moved: old:" + cameraEvent.getOldCameraPosition() + " new: " + cameraEvent.getNewCameraPosition());
             logger.debug("new viewable boundingbox: " + cameraEvent.getCameraViewableBounds());
         }
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make camera modes;
         if (centerOn3dCamera) {
-            setCameraPosition(cameraEvent.getNewCameraPosition());
+            final Point3d newPoint = new Point3d(cameraEvent.getNewCameraPosition());
+            if (keepZoomLevel && getCameraPosition() != null) {
+                newPoint.z = getCameraPosition().z;
+            }
+            setCameraPosition(newPoint);
+        } else if (useReducedBoundingBox) {
+            gotoBoundingBox(cameraEvent.getReducedBoundingBox());
         }
     }
 
@@ -65,14 +73,16 @@ public class Camera2D extends SimpleCamera implements CameraListener {
             logger.debug("camera direction: old:" + oldDirection + " new: " + newDirection + " angleDiff:" + cameraEvent.getViewAngleDifference());
             if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                 logger.debug("angle without z: " + angleDiff);
-                logger.debug("angle is NaN: " + (angleDiff==Double.NaN));
+                logger.debug("angle is NaN: " + (angleDiff == Double.NaN));
             }
         }
         if (!Double.isNaN(angleDiff)) {
-            setCameraDirection(newDirection);
+//            setCameraDirection(newDirection);
+            cameraDirectionChanged(oldDirection);
             final Transform3D tempRotate = new Transform3D();
             tempRotate.rotZ(angleDiff);
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does this let the object jump should this
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is also a camera update
             centerViewConeToOrigin();
             cameraViewObjectT.mul(tempRotate);
             centerViewConeOnPeak();
@@ -100,20 +110,9 @@ public class Camera2D extends SimpleCamera implements CameraListener {
     }
 
     @Override
-    public void setCameraPosition(Point3d cameraPosition) {
-        if (keepZoomLevel && getCameraPosition() != null) {
-            cameraPosition.z = getCameraPosition().z;
-        }
-        if (cameraPosition != null) {
-            final Vector3d newCameraObjectPosition = new Vector3d(cameraPosition);
-            newCameraObjectPosition.z = 0.0;
-            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
-                logger.debug("camera translation: " + newCameraObjectPosition);
-            }
-            cameraObjectT.setTranslation(newCameraObjectPosition);
-            cameraObjectTG.setTransform(cameraObjectT);
-        }
+    public void setCameraPosition(final Point3d cameraPosition) {
         super.setCameraPosition(cameraPosition);
+        updateCameraObjects();
     }
 
     public boolean isCenterOn3dCamera() {
@@ -163,4 +162,22 @@ public class Camera2D extends SimpleCamera implements CameraListener {
         cameraViewObjectT.mul(transTransform);
         cameraViewObjectTG.setTransform(cameraViewObjectT);
     }
+
+    private void updateCameraObjects() {
+        if (getCameraPosition() != null) {
+            final Vector3d newCameraObjectPosition = new Vector3d(getCameraPosition());
+            newCameraObjectPosition.z = 0.0;
+            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                logger.debug("camera translation: " + newCameraObjectPosition);
+            }
+            cameraObjectT.setTranslation(newCameraObjectPosition);
+            cameraObjectTG.setTransform(cameraObjectT);
+        }
+        if (getCameraPosition() != null) {
+            behavior.setRotationCenter(new Point3d(getCameraPosition().x, getCameraPosition().y, 0.0));
+        } else {
+            behavior.setRotationCenter(new Point3d());
+        }
+    }
+    
 }

@@ -14,6 +14,7 @@ import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.Camera2D;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.control.ComponentBroker;
+import com.dfki.av.sudplan.geo.GeographicCameraAdapter;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.vis.control.AdvancedOrbitBehavior;
 import com.sun.j3d.loaders.Scene;
@@ -75,6 +76,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
     private final Canvas3D canvas3D = new Canvas3D(config);
     private Camera camera3D;
+    private Camera geographicCamera;
     private final Canvas3D canvas2D = new Canvas3D(config);
     private Camera2D camera2D;
     private final JPanel panel2d = new JPanel(new BorderLayout());
@@ -87,6 +89,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not work
 //        setDoubleBuffered(false);
 //        canvas3D.setDoubleBufferEnable(true);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Field of View: " + canvas3D.getView().getFieldOfView() + " degree: " + EarthFlat.radiansToDeegree(canvas3D.getView().getFieldOfView()));
+        }
     }
 
     /** This method is called from within the constructor to
@@ -120,14 +125,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
          * default to 10
          */
         universe = new SimpleUniverse(canvas3D);
-        canvas3D.getView().setBackClipDistance(30000);
-        canvas3D.getView().setFrontClipDistance(0.1);
-        canvas3D.setPreferredSize(new Dimension(800, 600));
+
         sceneGraph = createSceneGraph();
-        configure2dView();
-        canvas2D.getView().setBackClipDistance(30000);
-        canvas2D.getView().setFrontClipDistance(0.1);
-        canvas2D.setPreferredSize(new Dimension(800, 600));
+
         mainPanel.add(canvas3D, BorderLayout.CENTER);
 
         sceneGraph.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
@@ -136,7 +136,20 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         setBackground();
         configureLight();
         createWorld();
+
         createOrthobox();
+
+
+        canvas3D.getView().setBackClipDistance(30000);
+        canvas3D.getView().setFrontClipDistance(0.1);
+        canvas3D.setPreferredSize(new Dimension(800, 600));
+
+        configure2dView();
+        canvas2D.getView().setBackClipDistance(30000);
+        canvas2D.getView().setFrontClipDistance(0.1);
+        canvas2D.setPreferredSize(new Dimension(800, 600));
+
+
 //    loadASCGeom();
 //    loadASCGeom2();
 //    initNavigation();
@@ -152,8 +165,9 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         if (logger.isDebugEnabled()) {
             logger.debug("Viewing Position: " + position);
         }
-        camera3D = new SimpleCamera(universe.getViewer(), sceneGraph);
+        camera3D = new SimpleCamera(universe.getViewer(), ComponentBroker.getInstance().getEarthBranch());
         camera3D.setCameraBounds(behaviourBounding);
+        gotoToHome();
         camera3D.addCameraListner(camera2D);
 //        camera3D.setCameraPosition(new Point3d(home));
 //        behavior.setRotationCenter(new Point3d(position));
@@ -163,7 +177,6 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         // objects in the scene can be viewed.
 //    universe.getViewingPlatform().setNominalViewingTransform();        
         universe.addBranchGraph(sceneGraph);
-        gotoToHome();
     }
 
     public void configure2dView() {
@@ -189,7 +202,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //        behavior2d.setInteractionMode(AdvancedOrbitBehavior.TRANSLATE);
 //        behavior2d.setSchedulingBounds(behaviourBounding);
 //        vwp.setViewPlatformBehavior(behavior2d);
-        camera2D = new Camera2D(viewer[0], sceneGraph);
+        camera2D = new Camera2D(viewer[0], ComponentBroker.getInstance().getEarthBranch());
         camera2D.setCameraBounds(behaviourBounding);
 //        camera2D.setCameraPosition(new Point3d(home));
     }
@@ -208,11 +221,14 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         }
         Transform3D worldTransformation = new Transform3D();
         worldTransformation.setTranslation(new Vector3f(0.0f, 0.0f, -0.08f));
+        final BranchGroup worldBranch = new BranchGroup();
         TransformGroup worldGroup = new TransformGroup(
                 worldTransformation);
         worldGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         worldGroup.addChild(earth.getGeometry());
-        sceneGraph.addChild(worldGroup);
+        worldBranch.addChild(worldGroup);
+        ComponentBroker.getInstance().setEarthBranch(worldBranch);
+        sceneGraph.addChild(worldBranch);
     }
 
     private void createOrthobox() {
@@ -537,6 +553,15 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         return camera3D;
     }
 
+    @Override
+    public Camera getGeographicCamera() {
+        if (geographicCamera == null) {
+            geographicCamera = new GeographicCameraAdapter(get3dCamera());
+        }
+        return geographicCamera;
+    }
+
+    @Override
     public void gotoToHome() {
         camera3D.setCameraPosition(new Point3d(home));
     }

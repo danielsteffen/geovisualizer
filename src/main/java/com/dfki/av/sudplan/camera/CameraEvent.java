@@ -20,35 +20,36 @@ import org.slf4j.LoggerFactory;
 public class CameraEvent {
 
     private final static Logger logger = LoggerFactory.getLogger(CameraEvent.class);
-
     private Vector3d oldCameraViewDirection;
     private Vector3d newCameraViewDirection;
-    private double viewAngleDifference=Double.NaN;
-
+    private double viewAngleDifference = Double.NaN;
     private Point3d newCameraPosition;
     private Point3d oldCameraPosition;
     private AdvancedBoundingBox cameraViewableBounds;
     private AdvancedBoundingBox camera2dContainingBounds;
+    private AdvancedBoundingBox reducedBoundingBox;
     private Camera source;
 
-    CameraEvent(final Camera source,final Point3d oldCameraPosition, final Point3d newCameraPosition, final AdvancedBoundingBox cameraViewableBounds) {
+    public CameraEvent(final Camera source, final Point3d oldCameraPosition, final Point3d newCameraPosition, final AdvancedBoundingBox cameraViewableBounds, final AdvancedBoundingBox reducedBoundingBox) {
         this.source = source;
         this.oldCameraPosition = oldCameraPosition;
         this.newCameraPosition = newCameraPosition;
         this.cameraViewableBounds = cameraViewableBounds;
+        this.reducedBoundingBox = reducedBoundingBox;
     }
 
-    CameraEvent(final Camera source,final Vector3d oldDirection, final Vector3d newDirection, final AdvancedBoundingBox cameraViewableBounds) {
+    public CameraEvent(final Camera source, final Vector3d oldDirection, final Vector3d newDirection, final AdvancedBoundingBox cameraViewableBounds, final AdvancedBoundingBox reducedBoundingBox) {
         this.source = source;
         this.oldCameraViewDirection = oldDirection;
         this.newCameraViewDirection = newDirection;
-        if(oldDirection != null && newDirection != null){
+        if (oldDirection != null && newDirection != null) {
             viewAngleDifference = oldDirection.angle(newDirection);
         }
         this.cameraViewableBounds = cameraViewableBounds;
+        this.reducedBoundingBox = reducedBoundingBox;
     }
 
-    CameraEvent(Camera source) {
+    public CameraEvent(Camera source) {
         this.source = source;
     }
 
@@ -94,5 +95,9 @@ public class CameraEvent {
 
     public void setViewAngleDifference(double viewAngleDifference) {
         this.viewAngleDifference = viewAngleDifference;
+    }
+
+    public AdvancedBoundingBox getReducedBoundingBox() {
+        return reducedBoundingBox;
     }
 }

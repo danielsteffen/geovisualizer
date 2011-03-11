@@ -37,7 +37,9 @@ public interface Camera {
 
     public void setCameraPosition(final Point3d cameraPosition);
 
-    public BoundingBox getViewBoundingBox();
+    public AdvancedBoundingBox getViewBoundingBox();
+
+    public AdvancedBoundingBox getReducedBoundingBox();
 
     public void setCameraBounds(Bounds behaviourBounding);
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:hide
@@ -50,11 +52,16 @@ public interface Camera {
 
     public void gotoPoint(final Tuple3d point);
 
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: clean concept after ATR
+
     public void addCameraListner(final CameraListener newListener);
 
     public void removeCameraListner(final CameraListener listenerToRemove);
 
     public void setCameraToInitalViewingDirection();
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove
+    public void calculateBoundingBoxes();
 
     public Vector3d getCameraRight();
 

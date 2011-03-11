@@ -6,6 +6,7 @@ package com.dfki.av.sudplan.camera;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
+import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.vis.control.AdvancedOrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.pickfast.PickCanvas;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 1.6
  */
+//ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:hole class needs to be refactored it is inconsistend regarding the syncing with the viewing platform e.g. setposition updates the viewplatform but setDirection not
 public class SimpleCamera implements Camera, TransformationListener {
 
     private final static Logger logger = LoggerFactory.getLogger(SimpleCamera.class);
@@ -42,19 +44,23 @@ public class SimpleCamera implements Camera, TransformationListener {
     private final ViewingPlatform viewingPlatform;
     private final BranchGroup scene;
     private Bounds cameraBounds;
-    private Point3d cameraPosition;
+//    private Point3d cameraPosition;
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: set default same as above
-    private Vector3d cameraDirection = new Vector3d(0.0, 0.0, -1.0);
+//    private Vector3d cameraDirection = new Vector3d(0.0, 0.0, -1.0);
     private Canvas3D canvas;
-    private double viewingDistance = 10000.0;
+    private double viewingDistance = 1.0;
     private Vector3d cameraUp;
     private Vector3d cameraDown;
     private Vector3d cameraLeft;
     private Vector3d cameraRight;
-    private Vector3d cameraView;
     private PickCanvas pickCanvas;
     private AdvancedBoundingBox viewingBoundingBox;
+    private AdvancedBoundingBox reducedBoundingBox;
     protected boolean cameraLoggingEnabled = false;
+    protected boolean boundingBoxLogging = false;
+    protected boolean resetViewLogging = false;
+    protected boolean cameraPostionLogging = false;
+    protected boolean calculateViewBoundingBoxLogging = false;
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not nice with the branchGroup
     public SimpleCamera(final Viewer viewer, final BranchGroup scene) {
@@ -76,6 +82,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         }
     }
 
+    @Override
     public void addCameraListner(final CameraListener newListener) {
         if (!cameraListeners.contains(newListener)) {
             cameraListeners.add(newListener);
@@ -83,6 +90,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         }
     }
 
+    @Override
     public void removeCameraListner(final CameraListener listenerToRemove) {
         if (cameraListeners.contains(listenerToRemove)) {
             cameraListeners.remove(listenerToRemove);
@@ -91,35 +99,43 @@ public class SimpleCamera implements Camera, TransformationListener {
     }
 
     @Override
+    public void setCameraDirection(final Vector3d newCameraDirection) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
     public Vector3d getCameraDirection() {
-        return cameraDirection;
+        final Transform3D transform = new Transform3D();
+        final Vector3d viewingVector = new Vector3d(DEFAULT_VIEW);
+        getViewingPlatform().getViewPlatformTransform().getTransform(transform);
+        transform.transform(viewingVector);
+        return viewingVector;
     }
 
     @Override
     public void setCameraPosition(final Point3d cameraPosition) {
-        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
-            logger.debug("setCameraPosition.");
-        }
-        if (cameraPosition != null) {
-            behavior.setRotationCenter(new Point3d(cameraPosition.x, cameraPosition.y, 0.0));
-        } else {
-            behavior.setRotationCenter(new Point3d());
-        }
-        final Point3d oldPoint = this.cameraPosition;
-        this.cameraPosition = cameraPosition;
+        final Point3d oldCameraPosition = getCameraPosition();
         gotoPoint(cameraPosition);
-        calculateBoundingBox();
+        cameraPositionChanged(oldCameraPosition, cameraPosition);
+    }
+
+    public void cameraPositionChanged(final Point3d oldPoint, final Point3d newPoint) {
+        calculateBoundingBoxes();
         for (CameraListener cameraListener : cameraListeners) {
-            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+            if (logger.isDebugEnabled() && cameraPostionLogging) {
                 logger.debug("camera listener");
             }
-            cameraListener.cameraMoved(new CameraEvent(this, oldPoint, getCameraPosition(), getViewBoundingBox()));
+            cameraListener.cameraMoved(new CameraEvent(this, oldPoint, getCameraPosition(), getViewBoundingBox(), getReducedBoundingBox()));
         }
     }
 
     @Override
     public Point3d getCameraPosition() {
-        return cameraPosition;
+        final Transform3D transform = new Transform3D();
+        final Vector3d translation = new Vector3d();
+        getViewingPlatform().getViewPlatformTransform().getTransform(transform);
+        transform.get(translation);
+        return new Point3d(translation);
     }
 
     @Override
@@ -127,16 +143,30 @@ public class SimpleCamera implements Camera, TransformationListener {
         return viewingBoundingBox;
     }
 
-    @Override
-    public void setCameraDirection(final Vector3d cameraDirection) {
-        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
-            logger.debug("setCameraDirection");
-        }
-        final Vector3d oldCameraDirection = this.cameraDirection;
-        this.cameraDirection = cameraDirection;
+//    @Override
+//    public void setCameraDirection(final Vector3d cameraDirection) {
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("setCameraDirection: " + cameraDirection);
+//        }
+////        final Vector3d oldCameraDirection = this.cameraDirection;
+////        this.cameraDirection = cameraDirection;
+////        updateOrientationVectors();
+////        calculateBoundingBoxes();
+////        for (CameraListener cameraListener : cameraListeners) {
+////            cameraListener.cameraViewChanged(new CameraEvent(this, oldCameraDirection, getCameraDirection(), getViewBoundingBox(), getReducedBoundingBox()));
+////        }
+////        if (logger.isDebugEnabled()) {
+////            logger.debug("setCameraDirection: " + cameraDirection);
+////        }
+//    }
+    protected void cameraDirectionChanged(final Vector3d oldCameraDirecton) {
         updateOrientationVectors();
+        calculateBoundingBoxes();
         for (CameraListener cameraListener : cameraListeners) {
-            cameraListener.cameraViewChanged(new CameraEvent(this, oldCameraDirection, getCameraDirection(), getViewBoundingBox()));
+            cameraListener.cameraViewChanged(new CameraEvent(this, oldCameraDirecton, getCameraDirection(), getViewBoundingBox(), getReducedBoundingBox()));
+        }
+        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+            logger.debug("setCameraDirection: " + getCameraDirection());
         }
     }
 
@@ -147,10 +177,14 @@ public class SimpleCamera implements Camera, TransformationListener {
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("translated: old:"+transEvent.getOldPosition()+" new:"+transEvent.getNewPosition());
 //            }
-//            setCameraPosition(transEvent.getNewPosition());
-            calculateBoundingBox();
-            for (CameraListener cameraListener : cameraListeners) {
-                cameraListener.cameraMoved(new CameraEvent(this, transEvent.getOldPosition(), transEvent.getNewPosition(), getViewBoundingBox()));
+            final Point3d oldPosition = transEvent.getOldPosition();
+            final Point3d newPosition = transEvent.getNewPosition();
+            if (!oldPosition.equals(newPosition)) {
+                cameraPositionChanged(oldPosition, newPosition);
+            } else {
+                if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                    logger.debug("same position no change:");
+                }
             }
         }
     }
@@ -161,14 +195,17 @@ public class SimpleCamera implements Camera, TransformationListener {
             logger.debug("rotation");
         }
         if (transEvent != null) {
-//            final BoundingBox viewBoundingBox = calculateBoundingBox();
-            calculateBoundingBox();
+//            final BoundingBox viewBoundingBox = calculateBoundingBox();            
             final Vector3d oldDirection = getCameraDirection();
             final Vector3d newDirection = new Vector3d(DEFAULT_VIEW);
             transEvent.getRotation().transform(newDirection);
             newDirection.normalize();
             if (!oldDirection.equals(newDirection)) {
-                setCameraDirection(newDirection);
+                cameraDirectionChanged(oldDirection);
+                if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                    logger.debug("setCameraDirection: " + getCameraDirection());
+                }
+//                setCameraDirection(newDirection);
             } else {
                 if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                     logger.debug("same direction no change:");
@@ -181,16 +218,29 @@ public class SimpleCamera implements Camera, TransformationListener {
         return cameraBounds;
     }
 
+    @Override
     public void setCameraBounds(final Bounds cameraBounds) {
         behavior.setSchedulingBounds(cameraBounds);
         this.cameraBounds = cameraBounds;
     }
 
+    @Override
     public ViewingPlatform getViewingPlatform() {
         return viewingPlatform;
     }
 
-    private void calculateBoundingBox() {
+    @Override
+    public void calculateBoundingBoxes() {
+        calculateViewBoundingBox();
+        calculcateReducedBoundingBox();
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:set private
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is no boundingbox because it is not rectangular --> fix
+    public void calculateViewBoundingBox() {
+        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+            logger.debug("Calculate view BoundingBox");
+        }
         if (scene.isLive()) {
             final Point lowerLeft = new Point(0, canvas.getHeight());
             final Point lowerRight = new Point(canvas.getWidth(), canvas.getHeight());
@@ -200,9 +250,12 @@ public class SimpleCamera implements Camera, TransformationListener {
             final Point3d virtualLowerRight = pickPoint(lowerRight);
             final Point3d virtualUpperLeft = pickPoint(upperLeft);
             final Point3d virtualUpperRight = pickPoint(upperRight);
-            if (virtualLowerLeft != null && virtualUpperRight != null) {
+            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                logger.debug("ll: " + virtualLowerLeft + " ul:" + virtualUpperLeft + " ur:" + virtualUpperRight + " lr:" + virtualLowerRight);
+            }
+            if (virtualUpperLeft != null && virtualUpperRight != null) {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: problem this is not right in 3d --> upper left could be more to the left than lower left
-                viewingBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, virtualUpperRight);
+                viewingBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, virtualUpperLeft, virtualLowerRight, virtualUpperRight);
             } else if (virtualLowerLeft != null && virtualLowerRight != null) {
                 final Point3d calculatedUpperRight = new Point3d(virtualLowerRight);
                 calculatedUpperRight.y += viewingDistance * ComponentBroker.getInstance().getScalingFactor();
@@ -228,6 +281,166 @@ public class SimpleCamera implements Camera, TransformationListener {
 //                logger.debug("bounding: "+bounding);
 //            }
 //        }
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Problems arise if this is not in the ++ sector of the lat/long fix after ATR
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:reuse points from viewable BoundingBox;
+    public void calculcateReducedBoundingBox() {
+        if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+            logger.debug("Calculate reduced BoundingBox");
+        }
+        if (scene.isLive()) {
+            final Point lowerLeft = new Point(0, canvas.getHeight());
+            final Point lowerRight = new Point(canvas.getWidth(), canvas.getHeight());
+            final Point lowerCenter = new Point((int) canvas.getWidth() / 2, canvas.getHeight());
+            final Point centerEye = new Point(canvas.getWidth() / 2, canvas.getHeight() / 2);
+
+            if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                logger.debug("Pixel: ll: " + lowerLeft + " center: " + lowerCenter + " lr: " + lowerRight);
+            }
+//            final Point3d centerCenter = new Point3d();
+//            canvas.getCenterEyeInImagePlate(centerEyeVector);
+
+//            final Point centerEye =new Point(canvas.getWidth() / 2, (canvas.getHeight()/2)+(canvas.getHeight()/4));
+            if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                logger.debug("Image: eye: " + centerEye);
+            }
+//            final Point3d virtualCenterEye = pickPoint(centerEye);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:explain the trick 
+//            final Transform3D imageToWorld = new Transform3D();
+//            canvas.getImagePlateToVworld(imageToWorld);
+
+//            imageToWorld.transform(centerEyeVector);
+
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:projected onto the plane
+
+
+            final Transform3D worldToImage = new Transform3D();
+            canvas.getVworldToImagePlate(worldToImage);
+            final Point3d virtualLowerLeft = pickPoint(lowerLeft);
+            final Point3d virtualLowerRight = pickPoint(lowerRight);
+            Point3d virtualCenterEye = pickPoint(centerEye);
+            if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                logger.debug("Pixel: eye: " + centerEye);
+                logger.debug("Virtual: eye: " + virtualCenterEye);
+            }
+            if (virtualLowerLeft != null && virtualLowerRight != null) {
+                while (centerEye.y < lowerCenter.y && virtualCenterEye == null) {
+                    centerEye.y *= 1.1;
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("try to pick new Point: " + centerEye);
+                    }
+                    virtualCenterEye = pickPoint(centerEye);
+                }
+                if (virtualCenterEye == null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("No suitable point could be found, not possible to calculate reduced boundingbox.");
+                    }
+                    reducedBoundingBox = null;
+                    return;
+                }
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Eye point bad name this is not the eye point anymore
+                if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                    logger.debug("Picked virtual eye point: " + virtualCenterEye);
+                }
+                final Point3d virtualLowerCenter = new Point3d(virtualLowerLeft.x + (virtualLowerRight.x - virtualLowerLeft.x) / 2, virtualLowerLeft.y, 0.0);
+                if (lowerCenter != null) {
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Virtual: ll: " + virtualLowerLeft + " center: " + virtualLowerCenter + " lr: " + virtualLowerRight);
+                    }
+                    final double distanceToBaseLine = virtualCenterEye.y - virtualLowerCenter.y;
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Virtual: distance base line to eye: " + distanceToBaseLine);
+                    }
+                    final Point3d virtualExtendedEyePoint = new Point3d(virtualCenterEye);
+                    virtualExtendedEyePoint.y += distanceToBaseLine;
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Virtual: extended eye Position: " + virtualExtendedEyePoint);
+                    }
+                    virtualExtendedEyePoint.z = 0.0;
+                    worldToImage.transform(virtualExtendedEyePoint);
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Image: extended eye Position: " + virtualExtendedEyePoint);
+                    }
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:some difference to the original extenden eye pos maybe missing precision in conversion
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: x does not work as expected need
+
+//                final Point upperLeft = new Point(0, (int) Math.round(virtualExtendedEyePoint.y));
+                    final Point2d upperLeft = new Point2d();
+//                final Point upperRight = new Point(canvas.getWidth(), (int) Math.round(virtualExtendedEyePoint.y));
+                    final Point2d upperRight = new Point2d();
+                    canvas.getPixelLocationFromImagePlate(virtualExtendedEyePoint, upperLeft);
+                    canvas.getPixelLocationFromImagePlate(virtualExtendedEyePoint, upperRight);
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Pixel: extended eye Position: " + upperLeft);
+                    }
+                    upperRight.x = canvas.getWidth();
+                    upperLeft.x = 0;
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Pixel: ul: " + upperLeft + " ur: " + upperRight);
+                    }
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:what if these points are null ? --> Simplification
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:then eye should be null
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:what if eye is null
+                    final Point3d virtualUpperLeft = pickPoint(upperLeft);
+                    final Point3d virtualUpperRight = pickPoint(upperRight);
+                    if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                        logger.debug("Virtual: ul: " + virtualUpperLeft + " up: " + virtualUpperRight);
+                    }
+                    if (virtualLowerLeft != null && virtualUpperLeft != null && virtualUpperRight != null && virtualLowerRight != null) {
+                        reducedBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, virtualUpperLeft, virtualUpperRight, virtualLowerRight);
+                    } else {
+                        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: if it is not possible
+                        reducedBoundingBox = null;
+                    }
+                } else {
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: if it is not possible
+                    reducedBoundingBox = null;
+                }
+                if (logger.isDebugEnabled() && calculateViewBoundingBoxLogging) {
+                    logger.debug("reducded BoundingBox :" + reducedBoundingBox);
+                }
+
+            } else {
+                if (logger.isWarnEnabled() && calculateViewBoundingBoxLogging) {
+                    logger.warn("Reduced BoundingBox could not be calculated");
+                }
+            }
+//            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+//                logger.debug("ll: " + virtualLowerLeft + " ul:" + " lr:" + virtualLowerRight);
+//            }
+//            if (virtualLowerLeft != null && virtualUpperRight != null) {
+//                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: problem this is not right in 3d --> upper left could be more to the left than lower left
+//                viewingBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, virtualUpperRight);
+//            } else if (virtualLowerLeft != null && virtualLowerRight != null) {
+//                final Point3d calculatedUpperRight = new Point3d(virtualLowerRight);
+//                calculatedUpperRight.y += viewingDistance * ComponentBroker.getInstance().getScalingFactor();
+//                viewingBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, calculatedUpperRight);
+//            } else if (virtualLowerLeft != null) {
+//                viewingBoundingBox = null;
+//            } else if (virtualLowerRight != null) {
+//                viewingBoundingBox = null;
+//            } else {
+//                viewingBoundingBox = null;
+//            }
+//        } else {
+//            viewingBoundingBox = null;
+//        }
+//        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+//            logger.debug("Viewableboundingbox: " + viewingBoundingBox);
+//        }
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: special cases contains. For now they are not valid.
+
+//        BoundingBox bounding = new BoundingBox(virtualLowerLeft,virtualUpperRight);
+//        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+//            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+//                logger.debug("bounding: "+bounding);
+//            }
+        }
+    }
+
+    private Point3d pickPoint(final Point2d screenPoint) {
+        return pickPoint(new Point((int) screenPoint.x, (int) screenPoint.y));
     }
 
     private Point3d pickPoint(final Point screenPoint) {
@@ -278,12 +491,29 @@ public class SimpleCamera implements Camera, TransformationListener {
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if the center is more often used extend Bounding box
     @Override
     public void gotoBoundingBox(AdvancedBoundingBox boundingBox) {
-        if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+        if (logger.isDebugEnabled() && boundingBoxLogging) {
             logger.debug("Goto BoundingBox: " + boundingBox);
+            logger.debug("current Bounding" + getViewBoundingBox());
         }
+        if (logger.isDebugEnabled() && resetViewLogging) {
+            logger.debug("camera direction: " + getCameraDirection());
+            logger.debug("camera position: " + getCameraPosition());
+        }
+//        setCameraToInitalViewingDirection();
+//        if (logger.isDebugEnabled() && boundingBoxLogging) {
+//            logger.debug("Goto BoundingBox: " + boundingBox);
+//            logger.debug("current Bounding" + getViewBoundingBox());
+//        }
+//        if (logger.isDebugEnabled() && resetViewLogging) {
+//            logger.debug("camera direction: " + getCameraDirection());
+//            logger.debug("camera position: " + getCameraPosition());
+//        }
         if (boundingBox != null && !boundingBox.isEmpty()) {
-            if (getViewBoundingBox() == null) {
-                calculateBoundingBox();
+//            if (getViewBoundingBox() == null) {
+            calculateBoundingBoxes();
+//            }
+            if (logger.isDebugEnabled() && boundingBoxLogging) {
+                logger.debug("old Bounding" + getViewBoundingBox());
             }
 //            final Point3d lower = new Point3d();
 //            final Point3d upper = new Point3d();
@@ -294,24 +524,74 @@ public class SimpleCamera implements Camera, TransformationListener {
 //            viewTransformation.transform(currentPoint);
 //            logger.debug("View Position: " + currentPoint);
             final AdvancedBoundingBox currentBoundingBox = getViewBoundingBox();
-            final Point2d deltaCenter = boundingBox.getDelta(currentBoundingBox);
+            if (logger.isDebugEnabled() && boundingBoxLogging) {
+                logger.debug("old/new contains : " + currentBoundingBox.containsBoundingBox(boundingBox));
+                logger.debug("new/old contains : " + boundingBox.containsBoundingBox(currentBoundingBox));
+            }
+            final Point2d deltaCenter = currentBoundingBox.getDelta(boundingBox);
             final Point3d center = boundingBox.getCenter();
-            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+            if (logger.isDebugEnabled() && boundingBoxLogging) {
+                logger.debug("center: " + center + " cameraPosition: " + getCameraPosition());
+            }
+            center.z = getCameraPosition().z;
+            final Point3d oldCenter = viewingBoundingBox.getCenter();
+
+            if (deltaCenter != null) {
+                oldCenter.x += deltaCenter.x;
+                oldCenter.y += deltaCenter.y;
+                oldCenter.z += getCameraPosition().z;
+            }
+            if (logger.isDebugEnabled() && boundingBoxLogging) {
                 logger.debug("old boundingBox: " + currentBoundingBox);
                 logger.debug("delta center: " + deltaCenter);
                 logger.debug("new center: " + center);
+                logger.debug("new center calculated with delta: " + oldCenter);
             }
-            if (deltaCenter != null) {
-                center.x += deltaCenter.x;
-                center.y += deltaCenter.y;
-                center.z += getCameraPosition().z;
-                logger.debug("delta center: " + deltaCenter);
-                viewTransformation.setTranslation(new Vector3d(center));
+            if (center != null) {
+//
+//                logger.debug("delta center: " + deltaCenter + " newCenter: " + center);
+//                viewTransformation.setTranslation(new Vector3d(center));
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:not fixed but so that all is seen
-//            gotoPoint(new Point3d(lower.x+((upper.x-lower.x)/2),lower.y+((upper.y-lower.y)/2),20));
-                gotoPoint(center);
+//                gotoPoint(center);
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not work 100 % coorectly multiple zoom to extends leads to repositioning
+//                final double s = Math.min(boundingBox.getWidth() / currentBoundingBox.getWidth(), boundingBox.getHeight() / currentBoundingBox.getHeight());
+                if (logger.isDebugEnabled() && boundingBoxLogging) {
+                    logger.debug("width/height: old: " + currentBoundingBox.getWidth() + "/" + currentBoundingBox.getHeight() + ", new: " + boundingBox.getWidth() + "/" + boundingBox.getHeight());
+//                    logger.debug("scaling factor: " + s);
+                }
+//                if (s != Double.POSITIVE_INFINITY && s != 0) {
+//                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is a ugly hack
+//                    if (center.z < 0.14) {
+//                        if (logger.isDebugEnabled() && boundingBoxLogging) {
+//                            logger.debug("z to small increasing: ");
+//                            center.z = 0.14;
+//                        }
+//                    }
+//                    center.z *= s;
+//                }
+                final double biggerBoundingSide = Math.max(boundingBox.getWidth(), boundingBox.getHeight());
+                double gamma = EarthFlat.radiansToDeegree(canvas.getView().getFieldOfView());
+                final double alpha = EarthFlat.deegreeToRadians((180 - gamma) / 2);
+                gamma = canvas.getView().getFieldOfView();
+                final double a = (biggerBoundingSide / Math.sin(gamma)) * Math.sin(alpha);
+                final double h = Math.sqrt(Math.pow(a, 2) - Math.pow(biggerBoundingSide / 2, 2));
+                if (logger.isDebugEnabled() && boundingBoxLogging) {
+                    logger.debug("c: " + biggerBoundingSide);
+                    logger.debug("sinGamma: " + Math.sin(gamma));
+                    logger.debug("c/sinGamma: " + (biggerBoundingSide / Math.sin(gamma)));
+                    logger.debug("sinApha: " + Math.sin(alpha));
+                    logger.debug("gamma: " + gamma);
+                    logger.debug("alpha: " + alpha);
+                    logger.debug("a: " + a);
+                    logger.debug("h: " + h);
+                }
+                center.z = h;
+                if (logger.isDebugEnabled() && boundingBoxLogging) {
+                    logger.debug("point: " + center);
+                }
+                setCameraPosition(center);
             } else {
-                if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                if (logger.isDebugEnabled() && boundingBoxLogging) {
                     logger.debug("do delta avail.");
                 }
             }
@@ -393,6 +673,14 @@ public class SimpleCamera implements Camera, TransformationListener {
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:clear concept what controls what does changes in vwp triggers the camera or wise versa
     @Override
     public void setCameraToInitalViewingDirection() {
+        if (logger.isDebugEnabled() && resetViewLogging) {
+            logger.debug("resetView");
+        }
+        if (logger.isDebugEnabled() && resetViewLogging) {
+            logger.debug("reset camera direction: " + getCameraDirection());
+            logger.debug("reset camera position: " + getCameraPosition());
+        }
+        final Vector3d oldCameraDirection = getCameraDirection();
         final Transform3D oldCameraTransformation = new Transform3D();
         final Vector3d position = new Vector3d();
         viewingPlatform.getViewPlatformTransform().getTransform(oldCameraTransformation);
@@ -400,6 +688,14 @@ public class SimpleCamera implements Camera, TransformationListener {
         final Transform3D newCameraTransformation = new Transform3D();
         newCameraTransformation.setTranslation(position);
         viewingPlatform.getViewPlatformTransform().setTransform(newCameraTransformation);
-        setCameraDirection(DEFAULT_VIEW);        
+        cameraDirectionChanged(oldCameraDirection);
+        if (logger.isDebugEnabled() && resetViewLogging) {
+            logger.debug("reset camera direction: " + getCameraDirection());
+            logger.debug("reset camera position: " + getCameraPosition());
+        }
+    }
+
+    public AdvancedBoundingBox getReducedBoundingBox() {
+        return reducedBoundingBox;
     }
 }

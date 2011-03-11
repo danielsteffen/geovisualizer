@@ -37,8 +37,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.vecmath.Point3d;
 import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
@@ -181,6 +183,8 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         deleteLayerButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         resetCameraDirection = new javax.swing.JButton();
+        printBoundingBox = new javax.swing.JButton();
+        gotoPoint = new javax.swing.JButton();
         frameMenueBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -386,6 +390,34 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         });
         frameToolBar.add(resetCameraDirection);
 
+        printBoundingBox.setText(bundle.getString("MainFrame.printBoundingBox.text")); // NOI18N
+        printBoundingBox.setToolTipText(bundle.getString("MainFrame.printBoundingBox.toolTipText")); // NOI18N
+        printBoundingBox.setBorderPainted(false);
+        printBoundingBox.setFocusable(false);
+        printBoundingBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        printBoundingBox.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        printBoundingBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        printBoundingBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printBoundingBoxActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(printBoundingBox);
+
+        gotoPoint.setText(bundle.getString("MainFrame.gotoPoint.text")); // NOI18N
+        gotoPoint.setToolTipText(bundle.getString("MainFrame.gotoPoint.toolTipText")); // NOI18N
+        gotoPoint.setBorderPainted(false);
+        gotoPoint.setFocusable(false);
+        gotoPoint.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gotoPoint.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        gotoPoint.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gotoPoint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gotoPointActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(gotoPoint);
+
         fileMenu.setText(bundle.getString("MainFrame.fileMenu.text")); // NOI18N
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
@@ -442,8 +474,8 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(frameMainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+            .addComponent(frameMainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -517,6 +549,47 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
       visualisationPanel.get3dCamera().setCameraToInitalViewingDirection();
   }//GEN-LAST:event_resetCameraDirectionActionPerformed
 
+  private void printBoundingBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBoundingBoxActionPerformed
+      if (logger.isDebugEnabled()) {
+          logger.debug("ViewBoundingBox: " + visualisationPanel.get3dCamera().getViewBoundingBox());
+          visualisationPanel.get3dCamera().calculateBoundingBoxes();
+          logger.debug("Recalculated ViewBoundingBox: " + visualisationPanel.get3dCamera().getViewBoundingBox());
+      }
+  }//GEN-LAST:event_printBoundingBoxActionPerformed
+
+  private void gotoPointActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoPointActionPerformed
+      final Point3d cameraPosition = visualisationPanel.get3dCamera().getCameraPosition();
+      String initialValue = "x=0.0,y=0.0,z=0.0";
+      if (cameraPosition != null) {
+          initialValue = "x=" + Math.floor(cameraPosition.x * 100) / 100 + ",y=" + Math.floor(cameraPosition.y * 100) / 100 + ",z=" + Math.floor(cameraPosition.z * 100) / 100;
+      }
+      final String input = (String) JOptionPane.showInputDialog(this, "Please enter a point.", "Goto point...", JOptionPane.QUESTION_MESSAGE, null, null, initialValue);
+      try {
+          if (input != null) {
+              String[] xyz = input.split(",");
+              Point3d newCameraPosition = new Point3d(Double.parseDouble(xyz[0].split("=")[1]), Double.parseDouble(xyz[1].split("=")[1]), Double.parseDouble(xyz[2].split("=")[1]));
+              if (logger.isDebugEnabled()) {
+                  logger.debug("Parsed point: " + newCameraPosition);
+                  visualisationPanel.get3dCamera().setCameraPosition(newCameraPosition);
+              }
+          }
+      } catch (Exception ex) {
+          try {
+              if (input != null) {
+                  String[] xyz = input.split(", ");
+                  Point3d newCameraPosition = new Point3d(Double.parseDouble(xyz[0]), Double.parseDouble(xyz[1]), Double.parseDouble(xyz[2]));
+                  if (logger.isDebugEnabled()) {
+                      logger.debug("Parsed point: " + newCameraPosition);
+                      visualisationPanel.get3dCamera().setCameraPosition(newCameraPosition);
+                  }
+              }
+          } catch (Exception ex2) {
+              if (logger.isDebugEnabled()) {
+                  logger.debug("Error while parsing Point, goto not possible: ", ex2);
+              }
+          }
+      }
+  }//GEN-LAST:event_gotoPointActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem controlMenueItem;
     private javax.swing.JButton deleteLayerButton;
@@ -528,12 +601,14 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private javax.swing.JMenuBar frameMenueBar;
     private javax.swing.JToolBar frameToolBar;
     private javax.swing.JButton gotoHomeButton;
+    private javax.swing.JButton gotoPoint;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JPanel layerControlPanel;
     private javax.swing.JMenuItem layerMenueItem;
     private javax.swing.JPanel mainToolbarPanel;
     private javax.swing.JPanel postionControlPanel;
+    private javax.swing.JButton printBoundingBox;
     private javax.swing.JButton resetCameraDirection;
     private javax.swing.JToolBar.Separator second_seperator;
     private javax.swing.JToggleButton toggleCombinedButton;
