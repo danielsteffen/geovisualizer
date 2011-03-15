@@ -253,7 +253,7 @@ public class SimpleCamera implements Camera, TransformationListener {
             if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                 logger.debug("ll: " + virtualLowerLeft + " ul:" + virtualUpperLeft + " ur:" + virtualUpperRight + " lr:" + virtualLowerRight);
             }
-            if (virtualUpperLeft != null && virtualUpperRight != null) {
+            if (virtualLowerLeft != null && virtualLowerRight != null && virtualUpperLeft != null && virtualUpperRight != null) {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: problem this is not right in 3d --> upper left could be more to the left than lower left
                 viewingBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, virtualUpperLeft, virtualLowerRight, virtualUpperRight);
             } else if (virtualLowerLeft != null && virtualLowerRight != null) {
