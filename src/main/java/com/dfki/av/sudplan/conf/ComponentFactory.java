@@ -4,8 +4,11 @@
  */
 package com.dfki.av.sudplan.conf;
 
+import com.dfki.av.sudplan.camera.CameraEvent;
+import com.dfki.av.sudplan.camera.CameraListener;
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.control.ComponentController;
+import com.dfki.av.sudplan.geo.GeographicCameraAdapter;
 import com.dfki.av.sudplan.ui.MainFrame;
 import java.util.Properties;
 import javax.swing.JFrame;
@@ -42,6 +45,32 @@ public class ComponentFactory {
             ComponentBroker.getInstance().setMainFrame(newApplicatioFrame);
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this will not work good idea to make a init method for mainframe
             newApplicatioFrame.getController().setConfiguration(configuration);
+            ComponentBroker.getInstance().getController().getVisualisationComponent().getGeographicCamera().addCameraListner(new CameraListener() {
+
+                @Override
+                public void cameraMoved(CameraEvent cameraEvent) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("old: " + cameraEvent.getOldCameraPosition());
+                        logger.debug("new: " + cameraEvent.getNewCameraPosition());
+                    }
+                }
+
+                @Override
+                public void cameraViewChanged(CameraEvent cameraEvent) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("old view: " + cameraEvent.getOldCameraViewDirection());
+                        logger.debug("new view: " + cameraEvent.getNewCameraViewDirection());
+                    }
+                }
+
+                @Override
+                public void cameraRegistered(CameraEvent cameraEvent) {
+                }
+
+                @Override
+                public void cameraUnregistered(CameraEvent cameraEvent) {
+                }
+            });
         } catch (Exception ex) {
             if (logger.isErrorEnabled()) {
                 final String message = "Error during initialisation of ComponentController.";

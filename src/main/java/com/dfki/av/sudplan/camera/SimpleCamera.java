@@ -56,7 +56,7 @@ public class SimpleCamera implements Camera, TransformationListener {
     private PickCanvas pickCanvas;
     private AdvancedBoundingBox viewingBoundingBox;
     private AdvancedBoundingBox reducedBoundingBox;
-    protected boolean cameraLoggingEnabled = false;
+    protected boolean cameraLoggingEnabled = true;
     protected boolean boundingBoxLogging = false;
     protected boolean resetViewLogging = false;
     protected boolean cameraPostionLogging = false;
@@ -123,7 +123,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         calculateBoundingBoxes();
         for (CameraListener cameraListener : cameraListeners) {
             if (logger.isDebugEnabled() && cameraPostionLogging) {
-                logger.debug("camera listener");
+                logger.debug("camera listener: old:"+oldPoint+" new: "+newPoint);
             }
             cameraListener.cameraMoved(new CameraEvent(this, oldPoint, getCameraPosition(), getViewBoundingBox(), getReducedBoundingBox()));
         }
@@ -174,9 +174,9 @@ public class SimpleCamera implements Camera, TransformationListener {
     public void translated(TransformationEvent transEvent) {
         if (transEvent != null) {
 //            final BoundingBox viewBoundingBox = calculateBoundingBox();
-//            if (logger.isDebugEnabled()) {
-//                logger.debug("translated: old:"+transEvent.getOldPosition()+" new:"+transEvent.getNewPosition());
-//            }
+            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                logger.debug("translated: old:"+transEvent.getOldPosition()+" new:"+transEvent.getNewPosition());
+            }
             final Point3d oldPosition = transEvent.getOldPosition();
             final Point3d newPosition = transEvent.getNewPosition();
             if (!oldPosition.equals(newPosition)) {
@@ -196,16 +196,16 @@ public class SimpleCamera implements Camera, TransformationListener {
         }
         if (transEvent != null) {
 //            final BoundingBox viewBoundingBox = calculateBoundingBox();            
-            final Vector3d oldDirection = getCameraDirection();
-            final Vector3d newDirection = new Vector3d(DEFAULT_VIEW);
-            transEvent.getRotation().transform(newDirection);
-            newDirection.normalize();
+            final Vector3d oldDirection = transEvent.getOldViewDirection();
+            final Vector3d newDirection =  transEvent.getNewViewDirection();
+//            transEvent.getRotation().transform(newDirection);
+//            newViewDirectionnewDirection.normalize();
+
             if (!oldDirection.equals(newDirection)) {
                 cameraDirectionChanged(oldDirection);
                 if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                     logger.debug("setCameraDirection: " + getCameraDirection());
                 }
-//                setCameraDirection(newDirection);
             } else {
                 if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                     logger.debug("same direction no change:");

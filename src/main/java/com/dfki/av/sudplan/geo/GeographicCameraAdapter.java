@@ -7,6 +7,7 @@ package com.dfki.av.sudplan.geo;
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.CameraEvent;
 import com.dfki.av.sudplan.camera.CameraListener;
+import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.sun.j3d.utils.universe.ViewingPlatform;
@@ -60,7 +61,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (cameraDirection == null) {
             return cameraDirection;
         }
-        return EarthFlat.cartesianToGeodetic(cameraDirection, EarthFlat.PLATE_CARREE_PROJECTION);
+        return cameraDirection;
     }
 
     @Override
@@ -69,7 +70,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (cameraDirection == null) {
             return cameraDirection;
         }
-        return EarthFlat.cartesianToGeodetic(cameraDirection, EarthFlat.PLATE_CARREE_PROJECTION);
+        return cameraDirection;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (cameraDirection == null) {
             return cameraDirection;
         }
-        return EarthFlat.cartesianToGeodetic(cameraDirection, EarthFlat.PLATE_CARREE_PROJECTION);
+        return cameraDirection;
     }
 
     @Override
@@ -87,6 +88,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (cameraPosition == null) {
             return cameraPosition;
         }
+        scaleTuple3d(cameraPosition, ComponentBroker.getInstance().getInverseScalingFactor());
         return EarthFlat.cartesianToGeodetic(cameraPosition, EarthFlat.PLATE_CARREE_PROJECTION);
     }
 
@@ -96,7 +98,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (cameraDirection == null) {
             return cameraDirection;
         }
-        return EarthFlat.cartesianToGeodetic(cameraDirection, EarthFlat.PLATE_CARREE_PROJECTION);
+        return cameraDirection;
     }
 
     @Override
@@ -105,7 +107,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (cameraDirection == null) {
             return cameraDirection;
         }
-        return EarthFlat.cartesianToGeodetic(cameraDirection, EarthFlat.PLATE_CARREE_PROJECTION);
+        return cameraDirection;
     }
 
     @Override
@@ -180,9 +182,14 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
     @Override
     public void cameraMoved(CameraEvent cameraEvent) {
         for (CameraListener cameraListener : cameraListeners) {
+            final Point3d oldCameraPosition = new Point3d(cameraEvent.getOldCameraPosition());
+            scaleTuple3d(oldCameraPosition, ComponentBroker.getInstance().getInverseScalingFactor());
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("old: "+oldCameraPosition);
+//            }
             cameraListener.cameraMoved(new CameraEvent(
                     this,
-                    EarthFlat.geodeticToCartesian(cameraEvent.getOldCameraPosition(), EarthFlat.PLATE_CARREE_PROJECTION),
+                    EarthFlat.cartesianToGeodetic(oldCameraPosition, EarthFlat.PLATE_CARREE_PROJECTION),
                     getCameraPosition(),
                     getViewBoundingBox(),
                     getReducedBoundingBox()));
@@ -207,5 +214,12 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
                     getViewBoundingBox(),
                     getReducedBoundingBox()));
         }
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:central place
+    private void scaleTuple3d(final Tuple3d tuple, final double factor) {
+        tuple.x *= factor;
+        tuple.y *= factor;
+//        tuple.z *= factor;
     }
 }

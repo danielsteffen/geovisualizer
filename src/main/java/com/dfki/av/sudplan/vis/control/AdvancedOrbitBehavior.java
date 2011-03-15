@@ -45,6 +45,7 @@
 package com.dfki.av.sudplan.vis.control;
 
 import com.dfki.av.sudplan.camera.Camera;
+import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.camera.TransformationEvent;
 import com.dfki.av.sudplan.camera.TransformationListener;
 import com.dfki.av.sudplan.util.EarthFlat;
@@ -250,7 +251,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private final BranchGroup scene;
     private final PickCanvas pickCanvas;
     private final ArrayList<TransformationListener> transformationListeners = new ArrayList<TransformationListener>();
-    private boolean transformationLoggingEnabled = false;
+    private boolean transformationLoggingEnabled = true;
     private final Camera camera;
 //    private boolean newValidMouseEvent = false;
 
@@ -686,16 +687,27 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
         final Point3d oldPosition = new Point3d();
         final Point3d newPosition = new Point3d();
+        final Vector3d oldViewDirection = new Vector3d(SimpleCamera.DEFAULT_VIEW);
+        final Vector3d newViewDirection = new Vector3d(SimpleCamera.DEFAULT_VIEW);
         currentXfm.transform(oldPosition);
+        currentXfm.transform(oldViewDirection);
+        oldViewDirection.normalize();
         targetTransform.transform(newPosition);
+        targetTransform.transform(newViewDirection);
+        newViewDirection.normalize();
 
         if (logger.isDebugEnabled() && transformationLoggingEnabled) {
             logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition);
         }
+        if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+            logger.debug("oldView: " + oldViewDirection + " newView: " + newViewDirection);
+        }
         if (!viewTransCheck(newPosition, oldPosition)) {
             return;
         }
-
+        if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+            logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition);
+        }
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
         targetTG.setTransform(targetTransform);
@@ -709,7 +721,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 //                logger.debug("transformation"+rotateTransform);
 //            }
             final Transform3D rotationPart = new Transform3D(targetTransform);
-            currentListener.rotated(new TransformationEvent(targetTransform));
+            currentListener.rotated(new TransformationEvent(oldViewDirection, newViewDirection));
         }
 
         for (TransformationListener currentListener : transformationListeners) {
@@ -720,8 +732,11 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("behaviour: old: "+new Point3d(oldTranslation)+" new:"+new Point3d(transVector));
 //            }
-            if (!oldTranslation.equals(transVector)) {
-                currentListener.translated(new TransformationEvent(new Point3d(oldTranslation), new Point3d(newTranslation)));
+            if (!oldPosition.equals(newPosition)) {
+                if (logger.isDebugEnabled() && transformationLoggingEnabled) {
+                    logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition);
+                }
+                currentListener.translated(new TransformationEvent(new Point3d(oldPosition), new Point3d(newPosition)));
             }
         }
     }

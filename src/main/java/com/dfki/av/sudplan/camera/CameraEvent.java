@@ -32,21 +32,21 @@ public class CameraEvent {
 
     public CameraEvent(final Camera source, final Point3d oldCameraPosition, final Point3d newCameraPosition, final AdvancedBoundingBox cameraViewableBounds, final AdvancedBoundingBox reducedBoundingBox) {
         this.source = source;
-        this.oldCameraPosition = oldCameraPosition;
-        this.newCameraPosition = newCameraPosition;
-        this.cameraViewableBounds = cameraViewableBounds;
-        this.reducedBoundingBox = reducedBoundingBox;
+        this.oldCameraPosition = new Point3d(oldCameraPosition);
+        this.newCameraPosition = new Point3d(newCameraPosition);
+        this.cameraViewableBounds = new AdvancedBoundingBox(cameraViewableBounds);
+        this.reducedBoundingBox = new AdvancedBoundingBox(reducedBoundingBox);
     }
 
     public CameraEvent(final Camera source, final Vector3d oldDirection, final Vector3d newDirection, final AdvancedBoundingBox cameraViewableBounds, final AdvancedBoundingBox reducedBoundingBox) {
         this.source = source;
-        this.oldCameraViewDirection = oldDirection;
-        this.newCameraViewDirection = newDirection;
+        this.oldCameraViewDirection = new Vector3d(oldDirection);
+        this.newCameraViewDirection = new Vector3d(newDirection);
         if (oldDirection != null && newDirection != null) {
             viewAngleDifference = oldDirection.angle(newDirection);
         }
-        this.cameraViewableBounds = cameraViewableBounds;
-        this.reducedBoundingBox = reducedBoundingBox;
+        this.cameraViewableBounds = new AdvancedBoundingBox(cameraViewableBounds);
+        this.reducedBoundingBox = new AdvancedBoundingBox(reducedBoundingBox);
     }
 
     public CameraEvent(Camera source) {
