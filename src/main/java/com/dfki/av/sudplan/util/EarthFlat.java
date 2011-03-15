@@ -112,7 +112,29 @@ public class EarthFlat {
         return newPosition;
     }
 
+    public static double cartesianToGeodetic(final double postionToTransform, final int projection) {
+        if (projection == PLATE_CARREE_PROJECTION) {
+            return (radiansToDeegree(postionToTransform) / WGS84_EARTH_EQUATORIAL_RADIUS);
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("No recognised projection. Using default " + PLATE_CARREE_NAME + ".");
+            }
+            return cartesianToGeodetic(postionToTransform, PLATE_CARREE_PROJECTION);
+        }
+    }
+
+    public static double geodeticToCartesian(final double postionToTransform, final int projection) {
+        if (projection == PLATE_CARREE_PROJECTION) {
+            return deegreeToRadians(postionToTransform) * WGS84_EARTH_EQUATORIAL_RADIUS;
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("No recognised projection. Using default " + PLATE_CARREE_NAME + ".");
+            }
+            return cartesianToGeodetic(postionToTransform, PLATE_CARREE_PROJECTION);
+        }
+    }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Same as above.
+
     public static Tuple3d geodeticToCartesian(final Tuple3d postionToTransform, final int projection) throws UnsupportedOperationException,
             IllegalArgumentException {
         Tuple3d newPosition = null;
