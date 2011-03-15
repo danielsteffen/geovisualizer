@@ -72,6 +72,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     DirectionalLight dl;
 //    private Vector3d home = new Vector3d(0.0, 0.0, 50.0);
 //    private Vector3d home = new Vector3d(16.0, 65.0, 5.0);
+//    private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
     private final Canvas3D canvas3D = new Canvas3D(config);
@@ -140,13 +141,13 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         createOrthobox();
 
 
-        canvas3D.getView().setBackClipDistance(30000);
-        canvas3D.getView().setFrontClipDistance(0.1);
+        canvas3D.getView().setBackClipDistance(3000);
+        canvas3D.getView().setFrontClipDistance(0.01);
         canvas3D.setPreferredSize(new Dimension(800, 600));
 
         configure2dView();
-        canvas2D.getView().setBackClipDistance(30000);
-        canvas2D.getView().setFrontClipDistance(0.1);
+        canvas2D.getView().setBackClipDistance(3000);
+        canvas2D.getView().setFrontClipDistance(0.01);
         canvas2D.setPreferredSize(new Dimension(800, 600));
 
 
@@ -387,7 +388,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         sceneGraph.addChild(al);
 
 //        Color3f light1Color = new Color3f(0.5f, 0.5f, 0.5f);
-        Vector3f light1Direction = new Vector3f(2011.058f, 6603.77f, -10.0f);
+        Vector3f light1Direction = new Vector3f(2016.058f, 6594.77f, -1.0f);
 //        dl = new DirectionalLight(light1Color, light1Direction);
         dl = new DirectionalLight();
         dl.setDirection(light1Direction);
