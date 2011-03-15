@@ -1,10 +1,10 @@
 package com.dfki.av.sudplan.io.dem;
 
-import com.dfki.av.sudplan.util.CoordinateTransformer;
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.FileFormatException;
 import com.dfki.av.sudplan.io.ParsingException;
 import com.dfki.av.sudplan.io.SplitNotPossibleException;
+import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.util.TimeMeasurement;
 import java.io.BufferedReader;
 
@@ -80,20 +80,20 @@ public class ArcGridParser {
             if (!currentKeyValuePair[0].equalsIgnoreCase(X_MINIMUM)) {
                 throw new FileFormatException("No x orgin value specified(" + X_MINIMUM + ")");
             }
-            arcGrid.setXMin(Float.parseFloat(currentKeyValuePair[1]));
-
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:rounding
+            arcGrid.setXMin((float)EarthFlat.geodeticToCartesian(Float.parseFloat(currentKeyValuePair[1]), EarthFlat.PLATE_CARREE_PROJECTION));
             currentKeyValuePair = doubleSplit(sr.readLine());
             if (!currentKeyValuePair[0].equalsIgnoreCase(Y_MINIMUM)) {
                 throw new FileFormatException("No y orgin value specified(" + Y_MINIMUM + ")");
-            }
-            arcGrid.setYMin(Float.parseFloat(currentKeyValuePair[1]));
+            }            
+            arcGrid.setYMin((float)EarthFlat.geodeticToCartesian(Float.parseFloat(currentKeyValuePair[1]), EarthFlat.PLATE_CARREE_PROJECTION));
 
             logger.debug("Grid origin= {}", arcGrid.getOrigin());
             currentKeyValuePair = doubleSplit(sr.readLine());
             if (!currentKeyValuePair[0].equalsIgnoreCase(CELLSIZE)) {
                 throw new FileFormatException("No cell size specified(" + CELLSIZE + ")");
             }
-            arcGrid.setCellsize(Float.parseFloat(currentKeyValuePair[1]));
+            arcGrid.setCellsize((float)EarthFlat.geodeticToCartesian(Float.parseFloat(currentKeyValuePair[1]), EarthFlat.PLATE_CARREE_PROJECTION));
             if (logger.isDebugEnabled()) {
                 logger.debug("Cellsize= {}", arcGrid.getCellsize());
             }
@@ -175,7 +175,8 @@ public class ArcGridParser {
                       transformedPoint.z*=arcGrid.getzExaggeration();
                       scalePoint3f(transformedPoint);                                            
                       //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna presentation
-                      transformedPoint.z-=0.02f;
+                      //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Where comes the offset between buildings and dem from ?
+                      transformedPoint.z-=0.01f;
 //                    if (logger.isDebugEnabled()) {
 //                        logger.debug("scaled: " + transformedPoint);
 //                    }
