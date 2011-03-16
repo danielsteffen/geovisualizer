@@ -179,5 +179,4 @@ public class Camera2D extends SimpleCamera implements CameraListener {
             behavior.setRotationCenter(new Point3d());
         }
     }
-    
 }

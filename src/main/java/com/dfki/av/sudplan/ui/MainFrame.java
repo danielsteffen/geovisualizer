@@ -19,6 +19,7 @@ import com.dfki.av.sudplan.layer.LayerSelectionEvent;
 import com.dfki.av.sudplan.layer.LayerSelectionListener;
 import com.dfki.av.sudplan.ui.vis.VisualisationComponent;
 import com.dfki.av.sudplan.ui.vis.VisualisationComponentPanel;
+import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 import java.awt.BorderLayout;
@@ -41,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
 import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
@@ -185,6 +187,8 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         resetCameraDirection = new javax.swing.JButton();
         printBoundingBox = new javax.swing.JButton();
         gotoPoint = new javax.swing.JButton();
+        gotoBoundingBox = new javax.swing.JButton();
+        setCameraDirection = new javax.swing.JButton();
         frameMenueBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -418,6 +422,34 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         });
         frameToolBar.add(gotoPoint);
 
+        gotoBoundingBox.setText(bundle.getString("MainFrame.gotoBoundingBox.text")); // NOI18N
+        gotoBoundingBox.setToolTipText(bundle.getString("MainFrame.gotoBoundingBox.toolTipText")); // NOI18N
+        gotoBoundingBox.setBorderPainted(false);
+        gotoBoundingBox.setFocusable(false);
+        gotoBoundingBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gotoBoundingBox.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        gotoBoundingBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gotoBoundingBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gotoBoundingBoxActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(gotoBoundingBox);
+
+        setCameraDirection.setText(bundle.getString("MainFrame.setCameraDirection.text")); // NOI18N
+        setCameraDirection.setToolTipText(bundle.getString("MainFrame.setCameraDirection.toolTipText")); // NOI18N
+        setCameraDirection.setBorderPainted(false);
+        setCameraDirection.setFocusable(false);
+        setCameraDirection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        setCameraDirection.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        setCameraDirection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        setCameraDirection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setCameraDirectionActionPerformed(evt);
+            }
+        });
+        frameToolBar.add(setCameraDirection);
+
         fileMenu.setText(bundle.getString("MainFrame.fileMenu.text")); // NOI18N
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
@@ -474,8 +506,8 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(frameMainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
-            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+            .addComponent(frameMainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+            .addComponent(frameToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -590,6 +622,49 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
           }
       }
   }//GEN-LAST:event_gotoPointActionPerformed
+
+  private void gotoBoundingBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoBoundingBoxActionPerformed
+      ComponentBroker.getInstance().getController().getVisualisationComponent().getGeographicCamera().gotoBoundingBox(
+              new AdvancedBoundingBox(
+              new Point3d(15.358974386418915, 58.039748350545125, 0.0),
+              new Point3d(20.072223733698287, 61.47788349763985, 0.0)));
+  }//GEN-LAST:event_gotoBoundingBoxActionPerformed
+
+  private void setCameraDirectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setCameraDirectionActionPerformed
+      final Vector3d cameraDirection = visualisationPanel.get3dCamera().getCameraDirection();
+      String initialValue = "x=0.0,y=0.0,z=0.0";
+      if (cameraDirection != null) {
+          initialValue = "x=" + Math.floor(cameraDirection.x * 100) / 100 + ",y=" + Math.floor(cameraDirection.y * 100) / 100 + ",z=" + Math.floor(cameraDirection.z * 100) / 100;
+      }
+      final String input = (String) JOptionPane.showInputDialog(this, "Please enter a view direction.", "Change view point...", JOptionPane.QUESTION_MESSAGE, null, null, initialValue);
+      try {
+          if (input != null) {
+              String[] xyz = input.split(",");
+              Vector3d newCameraDirection = new Vector3d(Double.parseDouble(xyz[0].split("=")[1]), Double.parseDouble(xyz[1].split("=")[1]), Double.parseDouble(xyz[2].split("=")[1]));
+              if (logger.isDebugEnabled()) {
+                  logger.debug("Parsed vector: " + newCameraDirection);
+                  ComponentBroker.getInstance().getController().
+                          getVisualisationComponent().getGeographicCamera().setCameraDirection(newCameraDirection);
+              }
+          }
+      } catch (Exception ex) {
+          try {
+              if (input != null) {
+                  String[] xyz = input.split(", ");
+                  Vector3d newCameraDirection = new Vector3d(Double.parseDouble(xyz[0]), Double.parseDouble(xyz[1]), Double.parseDouble(xyz[2]));
+                  if (logger.isDebugEnabled()) {
+                      logger.debug("Parsed point: " + newCameraDirection);
+                      ComponentBroker.getInstance().getController().
+                              getVisualisationComponent().getGeographicCamera().setCameraDirection(newCameraDirection);
+                  }
+              }
+          } catch (Exception ex2) {
+              if (logger.isDebugEnabled()) {
+                  logger.debug("Error while parsing Point, goto not possible: ", ex2);
+              }
+          }
+      }
+  }//GEN-LAST:event_setCameraDirectionActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem controlMenueItem;
     private javax.swing.JButton deleteLayerButton;
@@ -600,6 +675,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private javax.swing.JPanel frameMainPanel;
     private javax.swing.JMenuBar frameMenueBar;
     private javax.swing.JToolBar frameToolBar;
+    private javax.swing.JButton gotoBoundingBox;
     private javax.swing.JButton gotoHomeButton;
     private javax.swing.JButton gotoPoint;
     private javax.swing.JMenu helpMenu;
@@ -611,6 +687,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
     private javax.swing.JButton printBoundingBox;
     private javax.swing.JButton resetCameraDirection;
     private javax.swing.JToolBar.Separator second_seperator;
+    private javax.swing.JButton setCameraDirection;
     private javax.swing.JToggleButton toggleCombinedButton;
     private javax.swing.JToggleButton toggleLightButton;
     private javax.swing.JToggleButton togglePanButton;

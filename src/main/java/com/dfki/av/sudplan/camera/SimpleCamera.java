@@ -80,6 +80,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         if (viewingPlatform != null) {
             viewingPlatform.setViewPlatformBehavior(behavior);
         }
+        updateOrientationVectors();
     }
 
     @Override
@@ -100,16 +101,37 @@ public class SimpleCamera implements Camera, TransformationListener {
 
     @Override
     public void setCameraDirection(final Vector3d newCameraDirection) {
-        
+        final Point3d lookAtPoint = new Point3d(getCameraPosition());
+        final Vector3d oldDirection = getCameraDirection();
+        lookAtPoint.add(newCameraDirection);
+        if (logger.isDebugEnabled()) {
+            logger.debug("lookAtPoint: " + lookAtPoint);
+        }
+        lookAtPoint(new Point3d(lookAtPoint));
+        updateOrientationVectors();
+        calculateBoundingBoxes();
+        cameraDirectionChanged(oldDirection);
     }
 
     @Override
     public void lookAtPoint(Point3d pointToLookAt) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("lookAtPoint: " + pointToLookAt);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("CameraDirection: " + getCameraDirection());
+        }
         if (pointToLookAt != null) {
             Transform3D viewTransformation = new Transform3D();
+            if (logger.isDebugEnabled()) {
+                logger.debug("cp: " + getCameraPosition() + " pta: " + pointToLookAt + " cu. " + getCameraUp());
+            }
             viewTransformation.lookAt(getCameraPosition(), pointToLookAt, getCameraUp());
             viewTransformation.invert();
             getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("CameraDirection: " + getCameraDirection());
         }
     }
 
@@ -263,7 +285,7 @@ public class SimpleCamera implements Camera, TransformationListener {
             if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                 logger.debug("ll: " + virtualLowerLeft + " ul:" + virtualUpperLeft + " ur:" + virtualUpperRight + " lr:" + virtualLowerRight);
             }
-            if (virtualUpperLeft != null && virtualUpperRight != null) {
+            if (virtualLowerLeft != null && virtualLowerRight != null && virtualUpperLeft != null && virtualUpperRight != null) {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: problem this is not right in 3d --> upper left could be more to the left than lower left
                 viewingBoundingBox = new AdvancedBoundingBox(virtualLowerLeft, virtualUpperLeft, virtualLowerRight, virtualUpperRight);
             } else if (virtualLowerLeft != null && virtualLowerRight != null) {
@@ -515,11 +537,12 @@ public class SimpleCamera implements Camera, TransformationListener {
 //        if (logger.isDebugEnabled() && resetViewLogging) {
 //            logger.debug("camera direction: " + getCameraDirection());
 //            logger.debug("camera position: " + getCameraPosition());
-//        }
+//        }    
         if (boundingBox != null && !boundingBox.isEmpty()) {
+
 //            if (getViewBoundingBox() == null) {
             calculateBoundingBoxes();
-//            }
+//            }         
             if (logger.isDebugEnabled() && boundingBoxLogging) {
                 logger.debug("old Bounding" + getViewBoundingBox());
             }
@@ -601,6 +624,12 @@ public class SimpleCamera implements Camera, TransformationListener {
             } else {
                 if (logger.isDebugEnabled() && boundingBoxLogging) {
                     logger.debug("do delta avail.");
+                }
+            }
+        } else {
+            if (logger.isDebugEnabled()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Goto boundingBox not possible. BoundingBox is empty or null.");
                 }
             }
         }

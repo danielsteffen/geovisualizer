@@ -14,9 +14,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 import java.util.ArrayList;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3d;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,8 +148,12 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
     @Override
     public void gotoBoundingBox(final AdvancedBoundingBox boundingBox) {
         final AdvancedBoundingBox cartesianBB = EarthFlat.geodeticToCartesian(boundingBox, EarthFlat.PLATE_CARREE_PROJECTION);
-        scaleTuple3d(cartesianBB.getLower(), ComponentBroker.getInstance().getScalingFactor());
-        scaleTuple3d(cartesianBB.getUpper(), ComponentBroker.getInstance().getScalingFactor());
+        Point3d scaledLower = cartesianBB.getLower();
+        Point3d scaledUpper = cartesianBB.getUpper();
+        scaleTuple3d(scaledLower, ComponentBroker.getInstance().getScalingFactor());
+        scaleTuple3d(scaledUpper, ComponentBroker.getInstance().getScalingFactor());
+        cartesianBB.setUpper(scaledUpper);
+        cartesianBB.setLower(scaledLower);
         camera.gotoBoundingBox(cartesianBB);
     }
 
@@ -232,7 +234,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         }
         final Point3d cartesianPoint = new Point3d(pointToLookAt);
         scaleTuple3d(cartesianPoint, ComponentBroker.getInstance().getScalingFactor());
-        camera.lookAtPoint(cartesianPoint);
+        camera.lookAtPoint(EarthFlat.geodeticToCartesian(cartesianPoint, EarthFlat.PLATE_CARREE_PROJECTION));
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:central place

@@ -6,7 +6,7 @@
     <artifactId>vis-comp</artifactId>
     <packaging>jar</packaging>
 
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <name>sudplanMaint</name>
 
     <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>

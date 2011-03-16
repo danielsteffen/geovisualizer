@@ -10,9 +10,11 @@ import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.control.ComponentController;
 import com.dfki.av.sudplan.geo.GeographicCameraAdapter;
 import com.dfki.av.sudplan.ui.MainFrame;
+import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.vecmath.Point3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,24 +51,24 @@ public class ComponentFactory {
 
                 @Override
                 public void cameraMoved(CameraEvent cameraEvent) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("old: " + cameraEvent.getOldCameraPosition());
-                        logger.debug("new: " + cameraEvent.getNewCameraPosition());
-                        logger.debug("viewBB: " + cameraEvent.getViewableBoundingBox());
-                        logger.debug("orig rBB: " + ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getReducedBoundingBox());
-                        logger.debug("reducedBB: " + cameraEvent.getReducedBoundingBox());
-                    }
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("old: " + cameraEvent.getOldCameraPosition());
+//                        logger.debug("new: " + cameraEvent.getNewCameraPosition());
+//                        logger.debug("viewBB: " + cameraEvent.getViewableBoundingBox());
+//                        logger.debug("orig rBB: " + ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getReducedBoundingBox());
+//                        logger.debug("reducedBB: " + cameraEvent.getReducedBoundingBox());
+//                    }
                 }
 
                 @Override
                 public void cameraViewChanged(CameraEvent cameraEvent) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("old view: " + cameraEvent.getOldCameraViewDirection());
-                        logger.debug("new view: " + cameraEvent.getNewCameraViewDirection());
-                        logger.debug("viewBB: " + cameraEvent.getViewableBoundingBox());
-                                                logger.debug("orig rBB: " + ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getReducedBoundingBox());
-                        logger.debug("reducedBB: " + cameraEvent.getReducedBoundingBox());
-                    }
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("old view: " + cameraEvent.getOldCameraViewDirection());
+//                        logger.debug("new view: " + cameraEvent.getNewCameraViewDirection());
+//                        logger.debug("viewBB: " + cameraEvent.getViewableBoundingBox());
+//                        logger.debug("orig rBB: " + ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getReducedBoundingBox());
+//                        logger.debug("reducedBB: " + cameraEvent.getReducedBoundingBox());
+//                    }
                 }
 
                 @Override
@@ -76,7 +78,7 @@ public class ComponentFactory {
                 @Override
                 public void cameraUnregistered(CameraEvent cameraEvent) {
                 }
-            });
+            });          
         } catch (Exception ex) {
             if (logger.isErrorEnabled()) {
                 final String message = "Error during initialisation of ComponentController.";
