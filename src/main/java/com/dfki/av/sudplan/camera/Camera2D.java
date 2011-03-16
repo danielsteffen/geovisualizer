@@ -48,7 +48,7 @@ public class Camera2D extends SimpleCamera implements CameraListener {
     public void cameraMoved(final CameraEvent cameraEvent) {
         if (logger.isDebugEnabled() && cameraLoggingEnabled) {
             logger.debug("camera moved: old:" + cameraEvent.getOldCameraPosition() + " new: " + cameraEvent.getNewCameraPosition());
-            logger.debug("new viewable boundingbox: " + cameraEvent.getCameraViewableBounds());
+            logger.debug("new viewable boundingbox: " + cameraEvent.getViewableBoundingBox());
         }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make camera modes;
         if (centerOn3dCamera) {

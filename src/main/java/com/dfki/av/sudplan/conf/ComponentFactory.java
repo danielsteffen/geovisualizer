@@ -52,6 +52,9 @@ public class ComponentFactory {
                     if (logger.isDebugEnabled()) {
                         logger.debug("old: " + cameraEvent.getOldCameraPosition());
                         logger.debug("new: " + cameraEvent.getNewCameraPosition());
+                        logger.debug("viewBB: " + cameraEvent.getViewableBoundingBox());
+                        logger.debug("orig rBB: " + ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getReducedBoundingBox());
+                        logger.debug("reducedBB: " + cameraEvent.getReducedBoundingBox());
                     }
                 }
 
@@ -60,6 +63,9 @@ public class ComponentFactory {
                     if (logger.isDebugEnabled()) {
                         logger.debug("old view: " + cameraEvent.getOldCameraViewDirection());
                         logger.debug("new view: " + cameraEvent.getNewCameraViewDirection());
+                        logger.debug("viewBB: " + cameraEvent.getViewableBoundingBox());
+                                                logger.debug("orig rBB: " + ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getReducedBoundingBox());
+                        logger.debug("reducedBB: " + cameraEvent.getReducedBoundingBox());
                     }
                 }
 

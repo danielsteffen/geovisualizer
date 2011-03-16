@@ -116,16 +116,30 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         if (viewBoundingBox == null) {
             return viewBoundingBox;
         }
-        return EarthFlat.cartesianToGeodetic(viewBoundingBox, EarthFlat.PLATE_CARREE_PROJECTION);
+        final AdvancedBoundingBox geographicBB = EarthFlat.cartesianToGeodetic(viewBoundingBox, EarthFlat.PLATE_CARREE_PROJECTION);
+        Point3d scaledLower = geographicBB.getLower();
+        Point3d scaledUpper = geographicBB.getUpper();
+        scaleTuple3d(scaledLower, ComponentBroker.getInstance().getInverseScalingFactor());
+        scaleTuple3d(scaledUpper, ComponentBroker.getInstance().getInverseScalingFactor());
+        geographicBB.setUpper(scaledUpper);
+        geographicBB.setLower(scaledLower);
+        return geographicBB;
     }
 
     @Override
     public AdvancedBoundingBox getReducedBoundingBox() {
-        final AdvancedBoundingBox viewBoundingBox = camera.getReducedBoundingBox();
-        if (viewBoundingBox == null) {
-            return viewBoundingBox;
+        final AdvancedBoundingBox reducedBoundingBox = camera.getReducedBoundingBox();
+        if (reducedBoundingBox == null) {
+            return reducedBoundingBox;
         }
-        return EarthFlat.cartesianToGeodetic(viewBoundingBox, EarthFlat.PLATE_CARREE_PROJECTION);
+        final AdvancedBoundingBox geographicBB = EarthFlat.cartesianToGeodetic(reducedBoundingBox, EarthFlat.PLATE_CARREE_PROJECTION);
+        Point3d scaledLower = geographicBB.getLower();
+        Point3d scaledUpper = geographicBB.getUpper();
+        scaleTuple3d(scaledLower, ComponentBroker.getInstance().getInverseScalingFactor());
+        scaleTuple3d(scaledUpper, ComponentBroker.getInstance().getInverseScalingFactor());
+        geographicBB.setUpper(scaledUpper);
+        geographicBB.setLower(scaledLower);
+        return geographicBB;
     }
 
     @Override
@@ -135,20 +149,10 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
 
     @Override
     public void gotoBoundingBox(final AdvancedBoundingBox boundingBox) {
-        camera.gotoBoundingBox(EarthFlat.geodeticToCartesian(boundingBox, EarthFlat.PLATE_CARREE_PROJECTION));
-    }
-
-    @Override
-    public void gotoPoint(final Tuple3f point) {
-        if (point == null) {
-            camera.gotoPoint((Point3f) null);
-        }
-        camera.gotoPoint(EarthFlat.geodeticToCartesian(new Point3d(point), EarthFlat.PLATE_CARREE_PROJECTION));
-    }
-
-    @Override
-    public void gotoPoint(final Tuple3d point) {
-        camera.gotoPoint(EarthFlat.geodeticToCartesian(point, EarthFlat.PLATE_CARREE_PROJECTION));
+        final AdvancedBoundingBox cartesianBB = EarthFlat.geodeticToCartesian(boundingBox, EarthFlat.PLATE_CARREE_PROJECTION);
+        scaleTuple3d(cartesianBB.getLower(), ComponentBroker.getInstance().getScalingFactor());
+        scaleTuple3d(cartesianBB.getUpper(), ComponentBroker.getInstance().getScalingFactor());
+        camera.gotoBoundingBox(cartesianBB);
     }
 
     @Override
@@ -171,6 +175,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
 
     @Override
     public void setCameraPosition(final Point3d cameraPosition) {
+        scaleTuple3d(cameraPosition, ComponentBroker.getInstance().getScalingFactor());
         camera.setCameraPosition(EarthFlat.geodeticToCartesian(cameraPosition, EarthFlat.PLATE_CARREE_PROJECTION));
     }
 
@@ -209,7 +214,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         for (CameraListener cameraListener : cameraListeners) {
             cameraListener.cameraViewChanged(new CameraEvent(
                     this,
-                    EarthFlat.geodeticToCartesian(cameraEvent.getOldCameraViewDirection(), EarthFlat.PLATE_CARREE_PROJECTION),
+                    cameraEvent.getOldCameraViewDirection(),
                     getCameraDirection(),
                     getViewBoundingBox(),
                     getReducedBoundingBox()));

@@ -251,7 +251,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     private final BranchGroup scene;
     private final PickCanvas pickCanvas;
     private final ArrayList<TransformationListener> transformationListeners = new ArrayList<TransformationListener>();
-    private boolean transformationLoggingEnabled = true;
+    private boolean transformationLoggingEnabled = false;
     private final Camera camera;
 //    private boolean newValidMouseEvent = false;
 

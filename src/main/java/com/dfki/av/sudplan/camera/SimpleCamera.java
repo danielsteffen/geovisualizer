@@ -56,7 +56,7 @@ public class SimpleCamera implements Camera, TransformationListener {
     private PickCanvas pickCanvas;
     private AdvancedBoundingBox viewingBoundingBox;
     private AdvancedBoundingBox reducedBoundingBox;
-    protected boolean cameraLoggingEnabled = true;
+    protected boolean cameraLoggingEnabled = false;
     protected boolean boundingBoxLogging = false;
     protected boolean resetViewLogging = false;
     protected boolean cameraPostionLogging = false;
@@ -462,7 +462,6 @@ public class SimpleCamera implements Camera, TransformationListener {
 //        getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
 //
 //    }
-    @Override
     public void gotoPoint(Tuple3f point) {
         if (point == null) {
             return;
@@ -477,7 +476,6 @@ public class SimpleCamera implements Camera, TransformationListener {
         }
     }
 
-    @Override
     public void gotoPoint(Tuple3d point) {
         if (point == null) {
             return;
