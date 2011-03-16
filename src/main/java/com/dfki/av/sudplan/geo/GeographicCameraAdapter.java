@@ -170,12 +170,16 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
 
     @Override
     public void setCameraDirection(final Vector3d cameraDirection) {
-        camera.setCameraDirection(EarthFlat.geodeticToCartesian(cameraDirection, EarthFlat.PLATE_CARREE_PROJECTION));
+        camera.setCameraDirection(cameraDirection);
     }
 
     @Override
     public void setCameraPosition(final Point3d cameraPosition) {
-        scaleTuple3d(cameraPosition, ComponentBroker.getInstance().getScalingFactor());
+        if (cameraPosition == null) {
+            camera.setCameraPosition(null);
+        }
+        final Point3d cartesianPoint = new Point3d(cameraPosition);
+        scaleTuple3d(cartesianPoint, ComponentBroker.getInstance().getScalingFactor());
         camera.setCameraPosition(EarthFlat.geodeticToCartesian(cameraPosition, EarthFlat.PLATE_CARREE_PROJECTION));
     }
 
@@ -219,6 +223,16 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
                     getViewBoundingBox(),
                     getReducedBoundingBox()));
         }
+    }
+
+    @Override
+    public void lookAtPoint(final Point3d pointToLookAt) {
+        if (pointToLookAt == null) {
+            return;
+        }
+        final Point3d cartesianPoint = new Point3d(pointToLookAt);
+        scaleTuple3d(cartesianPoint, ComponentBroker.getInstance().getScalingFactor());
+        camera.lookAtPoint(cartesianPoint);
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:central place

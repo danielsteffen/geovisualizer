@@ -100,7 +100,17 @@ public class SimpleCamera implements Camera, TransformationListener {
 
     @Override
     public void setCameraDirection(final Vector3d newCameraDirection) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        
+    }
+
+    @Override
+    public void lookAtPoint(Point3d pointToLookAt) {
+        if (pointToLookAt != null) {
+            Transform3D viewTransformation = new Transform3D();
+            viewTransformation.lookAt(getCameraPosition(), pointToLookAt, getCameraUp());
+            viewTransformation.invert();
+            getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
+        }
     }
 
     @Override
@@ -123,7 +133,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         calculateBoundingBoxes();
         for (CameraListener cameraListener : cameraListeners) {
             if (logger.isDebugEnabled() && cameraPostionLogging) {
-                logger.debug("camera listener: old:"+oldPoint+" new: "+newPoint);
+                logger.debug("camera listener: old:" + oldPoint + " new: " + newPoint);
             }
             cameraListener.cameraMoved(new CameraEvent(this, oldPoint, getCameraPosition(), getViewBoundingBox(), getReducedBoundingBox()));
         }
@@ -175,7 +185,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         if (transEvent != null) {
 //            final BoundingBox viewBoundingBox = calculateBoundingBox();
             if (logger.isDebugEnabled() && cameraLoggingEnabled) {
-                logger.debug("translated: old:"+transEvent.getOldPosition()+" new:"+transEvent.getNewPosition());
+                logger.debug("translated: old:" + transEvent.getOldPosition() + " new:" + transEvent.getNewPosition());
             }
             final Point3d oldPosition = transEvent.getOldPosition();
             final Point3d newPosition = transEvent.getNewPosition();
@@ -197,7 +207,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         if (transEvent != null) {
 //            final BoundingBox viewBoundingBox = calculateBoundingBox();            
             final Vector3d oldDirection = transEvent.getOldViewDirection();
-            final Vector3d newDirection =  transEvent.getNewViewDirection();
+            final Vector3d newDirection = transEvent.getNewViewDirection();
 //            transEvent.getRotation().transform(newDirection);
 //            newViewDirectionnewDirection.normalize();
 
