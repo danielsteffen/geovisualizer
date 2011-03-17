@@ -182,7 +182,7 @@ public class GeographicCameraAdapter implements Camera, CameraListener {
         }
         final Point3d cartesianPoint = new Point3d(cameraPosition);
         scaleTuple3d(cartesianPoint, ComponentBroker.getInstance().getScalingFactor());
-        camera.setCameraPosition(EarthFlat.geodeticToCartesian(cameraPosition, EarthFlat.PLATE_CARREE_PROJECTION));
+        camera.setCameraPosition(EarthFlat.geodeticToCartesian(cartesianPoint, EarthFlat.PLATE_CARREE_PROJECTION));
     }
 
     @Override
