@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.dfki.av.sudplan.camera;
+
+import java.util.EventListener;
 
 /**
  *
@@ -11,9 +12,13 @@ package com.dfki.av.sudplan.camera;
  * @version 1.0
  * @since 1.6
  */
-public interface CameraListener {
+public interface CameraListener extends EventListener {
+
     public void cameraMoved(final CameraEvent cameraEvent);
+
     public void cameraViewChanged(final CameraEvent cameraEvent);
+
     public void cameraRegistered(final CameraEvent cameraEvent);
+
     public void cameraUnregistered(final CameraEvent cameraEvent);
 }

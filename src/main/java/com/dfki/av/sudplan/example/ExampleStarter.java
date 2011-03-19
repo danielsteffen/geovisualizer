@@ -26,7 +26,7 @@ public class ExampleStarter {
           frame.setLayout(new BorderLayout());
           frame.getRootPane().setDoubleBuffered(false);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          frame.add(new Transformation(),BorderLayout.CENTER);
+          frame.add(new LightTransformation(),BorderLayout.CENTER);
           frame.setVisible(true);
 //          GeoTiff tiff = new GeoTiff();
 //          tiff.readGeoTiff2();

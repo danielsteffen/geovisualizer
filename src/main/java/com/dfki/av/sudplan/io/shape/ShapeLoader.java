@@ -7,12 +7,9 @@ package com.dfki.av.sudplan.io.shape;
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.AbstractSceneLoader;
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
+import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.util.TimeMeasurement;
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.SceneBase;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.Stripifier;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
@@ -20,12 +17,10 @@ import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecordPolygon;
 import gov.nasa.worldwind.util.VecBuffer;
 import gov.nasa.worldwind.util.WWUtil;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.LineAttributes;
 import javax.media.j3d.Material;
@@ -36,6 +31,8 @@ import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3d;
+import net.infonode.gui.Colors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ShapeLoader extends AbstractSceneLoader {
 
-    private final static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);    
+    private final static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);
     final ArrayList<Point3f> points = new ArrayList<Point3f>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Optimise waste of memory and time
     private final ArrayList<Double> pointColors = new ArrayList<Double>();
@@ -62,6 +59,7 @@ public class ShapeLoader extends AbstractSceneLoader {
     final Color4f gray = new Color4f(0.8f, 0.8f, 0.8f, 1.0f);
     final Color4f black = new Color4f(0.0f, 0.0f, 0.0f, 1.0f);
     final Color4f red = new Color4f(1.0f, 0.0f, 0.0f, 0.9f);
+    final Color4f orange = new Color4f(1.0f, 0.6f, 0.1f, 0.9f);
     final Color4f yellow = new Color4f(8.0f, 8.0f, 0.0f, 0.9f);
     final Color4f green = new Color4f(0.0f, 1.0f, 0.0f, 0.9f);
     private final Color4f lowConcentrationColor = green;
@@ -76,7 +74,7 @@ public class ShapeLoader extends AbstractSceneLoader {
 
     public static enum SHAPE_TYPE {
 
-        POLYGON, POLYLINE
+        POLYGON_3D, POLYLINE, POLYGON_2D
     };
     private Shapefile shp = null;
     SHAPE_TYPE shapeType = null;
@@ -85,11 +83,13 @@ public class ShapeLoader extends AbstractSceneLoader {
     public void fillScene() throws Exception {
         try {
             this.shp = new Shapefile(file);
-            createPoints();            
-            if (shapeType == SHAPE_TYPE.POLYGON) {
-                createPolygons();
+            createPoints();
+            if (shapeType == SHAPE_TYPE.POLYGON_3D) {
+                createBuildings();
             } else if (shapeType == SHAPE_TYPE.POLYLINE) {
-                createPolylines();
+                createStreetLevelResults();
+            } else if (shapeType == shapeType.POLYGON_2D) {
+                createRooftopResults();
             }
         } finally {
             if (shp != null) {
@@ -97,21 +97,23 @@ public class ShapeLoader extends AbstractSceneLoader {
             }
         }
     }
-    private void createPolygons() {
+
+    private void createBuildings() {
         final TransformGroup wireGroup = new TransformGroup();
-        final Point3f[] coordinates = points.toArray(new Point3f[]{});
+        final Point3f[] coordinatesPolygon = points.toArray(new Point3f[]{});
+        final Point3f[] coordinatesWire = points.toArray(new Point3f[]{});
         final int[] stripCount = copyIntegerArray(pointIndices);
         final Color4f[] colorsPoly = polygonColors.toArray(new Color4f[]{});
         final Color4f[] colorsWire = wireColors.toArray(new Color4f[]{});
 //        final Color4f[] colors = new Color4f[]{gray};
 //        final int[] colorsIndex = copyIntegerArray(polygonColorsIndex);
         GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
-        gridGeometry.setCoordinates(coordinates);
+        gridGeometry.setCoordinates(coordinatesPolygon);
 //        gridGeometry.setColorIndices(colorsIndex);
         gridGeometry.setColors(colorsPoly);
         gridGeometry.setStripCounts(stripCount);
         GeometryInfo wireGeometry = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
-        wireGeometry.setCoordinates(coordinates);
+        wireGeometry.setCoordinates(coordinatesWire);
         wireGeometry.setColors(colorsWire);
         wireGeometry.setStripCounts(stripCount);
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
@@ -171,6 +173,8 @@ public class ShapeLoader extends AbstractSceneLoader {
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make configurable
         //Wire
         ShapefileObject wire = new ShapefileObject(wireGeometry.getGeometryArray());
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this must be simpler in java3d fix !s
+        AdvancedBoundingBox wireBounds = new AdvancedBoundingBox(wire.getBounds());
         Appearance materialAppear = new Appearance();
         Material mat = new Material();
 //        mat.setDiffuseColor(new Color3f(0.1f, 0.1f, 0.1f));
@@ -184,7 +188,7 @@ public class ShapeLoader extends AbstractSceneLoader {
         materialAppear.setPolygonAttributes(polyAttrib);
         LineAttributes lineAttribtues = new LineAttributes();
         lineAttribtues.setLineAntialiasingEnable(true);
-        lineAttribtues.setLineWidth(1.0f);
+        lineAttribtues.setLineWidth(0.1f);
         materialAppear.setLineAttributes(lineAttribtues);
 //        ColoringAttributes blackColoring = new ColoringAttributes();
 //        blackColoring.setColor(0.0f, 0.0f, 0.0f);
@@ -197,16 +201,106 @@ public class ShapeLoader extends AbstractSceneLoader {
         wire.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
         wire.setAppearance(materialAppear);
         Transform3D scaling = new Transform3D();
-//        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not work wire disapears
-//        scaling.setScale(1.1);
+        final Transform3D translateToOrigin = new Transform3D();
+        final Transform3D translateBack = new Transform3D();
+        final Vector3d originVector = new Vector3d(wireBounds.getCenter());
+        if (logger.isDebugEnabled()) {
+            logger.debug("original bounds: " + wireBounds);
+        }
+//        final AdvancedBoundingBox newBounds = new AdvancedBoundingBox(wireBounds);
+        final Vector3d backVector = new Vector3d(originVector);
+//        backVector.scale(1.01f);
+        if (logger.isDebugEnabled()) {
+            logger.debug("backVector: " + backVector);
+        }
+        translateBack.setTranslation(backVector);
+        originVector.negate();
+        if (logger.isDebugEnabled()) {
+            logger.debug("originVector: " + originVector);
+        }
+        translateToOrigin.setTranslation(originVector);
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is not correct because this must be done per object.
+//        scaling.setScale(new Vector3d(1.001, 1.001, 1.001));
+//        scaling.setScale(new Vector3d(0.9999, 0.9990, 0.9990));
         wireGroup.setTransform(scaling);
+        Transform3D wireTransformation = new Transform3D();
+//        wireTransformation.mul(translateBack);
+//        wireTransformation.mul(scaling);
+//        wireTransformation.mul(translateToOrigin);
+        wireGroup.setTransform(wireTransformation);
+        if (logger.isDebugEnabled()) {
+            logger.debug("transformed bounds: " + wireBounds);
+        }
         createdScene.getSceneGroup().addChild(landscape);
         createdScene.getSceneGroup().addChild(wireGroup);
         wireGroup.addChild(wire);
     }
 
+    private void createRooftopResults() {
+        final Point3f[] coordinatesPolygon = points.toArray(new Point3f[]{});
+        final int[] stripCount = copyIntegerArray(pointIndices);
+        final Color4f[] colorsPoly = polygonColors.toArray(new Color4f[]{});
+        GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
+        gridGeometry.setCoordinates(coordinatesPolygon);
+        gridGeometry.setColors(colorsPoly);
+        gridGeometry.setStripCounts(stripCount);
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
+        if (logger.isDebugEnabled()) {
+            logger.debug("Stripifying geometry...");
+            TimeMeasurement.getInstance().startMeasurement(this);
+        }
+        Stripifier stripifier = new Stripifier();
+        stripifier.stripify(gridGeometry);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Stripifying geometry done. Time elapsed: "
+                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
+        }
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
+        if (logger.isDebugEnabled()) {
+            logger.debug("Normalising geometry...");
+            TimeMeasurement.getInstance().startMeasurement(this);
+        }
+//        NormalGenerator normalGenerator = new NormalGenerator();
+//        normalGenerator.generateNormals(gridGeometry);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Normalising geometry done. Time elapsed: "
+                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
+        }
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this has to be configurable with a default value
+        Appearance landscapeAppearance = new Appearance();
+        PolygonAttributes pa = new PolygonAttributes();
+
+//        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
+//        landscapeAppearance.setTransparencyAttributes(ta);
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
+        pa.setCullFace(PolygonAttributes.CULL_NONE);
+        landscapeAppearance.setPolygonAttributes(pa);
+
+//        Material material = new Material();
+//        material.setDiffuseColor(new Color3f(0.2f, 0.2f, 0.2f));
+//        material.setAmbientColor(new Color3f(0.98f, 0.98f, 0.98f));
+//        material.setAmbientColor(new Color3f(0.8f, 0.8f, 0.8f));
+//        material.setColorTarget(Material.AMBIENT_AND_DIFFUSE);
+
+//        landscapeAppearance.setMaterial(material);
+
+        ShapefileObject landscape = new ShapefileObject(gridGeometry.getGeometryArray());
+        landscape.setCapability(ShapefileObject.ALLOW_GEOMETRY_WRITE);
+        landscape.setCapability(ShapefileObject.ALLOW_GEOMETRY_READ);
+        landscape.setCapability(ShapefileObject.ALLOW_APPEARANCE_OVERRIDE_WRITE);
+        landscape.setCapability(ShapefileObject.ALLOW_APPEARANCE_OVERRIDE_READ);
+        landscape.setCapability(ShapefileObject.ALLOW_APPEARANCE_WRITE);
+        landscape.setCapability(ShapefileObject.ALLOW_APPEARANCE_READ);
+        landscape.setAppearance(landscapeAppearance);
+        createdScene.getSceneGroup().addChild(landscape);
+    }
+
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: checks for valid geometries e.g. line with one point
-    private void createPolylines() {
+    private void createStreetLevelResults() {
 
 //         LineArray axisYLines = new LineArray(2,
 //        LineArray.COORDINATES | LineArray.COLOR_3 );
@@ -343,7 +437,7 @@ public class ShapeLoader extends AbstractSceneLoader {
             }
             createPointsFromShape();
         } else if (Shapefile.isPolygonType(shp.getShapeType())) {
-            shapeType = SHAPE_TYPE.POLYGON;
+            shapeType = SHAPE_TYPE.POLYGON_3D;
             if (logger.isDebugEnabled()) {
                 logger.debug("Shapefile is of type: " + shp.getShapeType());
                 logger.debug("Shapefile number of records: " + shp.getNumberOfRecords());
@@ -362,10 +456,14 @@ public class ShapeLoader extends AbstractSceneLoader {
     public void createPointsFromShape() {
         double minPerc = 9999.0;
         double maxPerc = -9999.0;
+        double minNo2dygn = 9999.0;
+        double maxNo2dygn = -9999.0;
         while (shp.hasNext()) {
             final ShapefileRecord record = shp.nextRecord();
             Double elevation = this.extractDoubleAttribute("elevation", record);
             Double perc = this.extractDoubleAttribute("perc98d", record);
+            Double no2dygn = this.extractDoubleAttribute("NO2dygn", record);
+
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is all hardcoded must work in general.
             double[] currentHeights = null;
             if (record instanceof ShapefileRecordPolygon) {
@@ -399,6 +497,9 @@ public class ShapeLoader extends AbstractSceneLoader {
 
                     if (currentHeights != null) {
                         originalPoint.setZ((float) currentHeights[coordCounter]);
+                    } else if (shapeType != shapeType.POLYLINE) {
+                        shapeType = SHAPE_TYPE.POLYGON_2D;
+                        originalPoint.setZ(100);
                     }
 //                            originalPoint.setZ((float) (originalPoint.getZ() + elevation));
 //                        }
@@ -439,17 +540,46 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                        }
                             pointColors.add(-9999.0);
                         }
-                    } else if (shapeType == SHAPE_TYPE.POLYGON) {
+                    } else if (shapeType == SHAPE_TYPE.POLYGON_3D) {
 //                        if (transformedPoint.getZ() < 0.000001f) {
 //                            polygonColors.add(new Color4f(transparent));
 //                            wireColors.add(new Color4f(transparent));
 //                        } else {
+                        Math.sin(maxPerc);
                         polygonColors.add(new Color4f(gray));
                         wireColors.add(new Color4f(black));
 //                        }
 
 //                        polygonColorsIndex.add(0);
+                    } else if (shapeType == SHAPE_TYPE.POLYGON_2D) {
+                        if (no2dygn != null) {
+                            if (no2dygn < minNo2dygn) {
+                                minNo2dygn = no2dygn;
+                            }
+                            if (no2dygn > maxNo2dygn) {
+                                maxNo2dygn = no2dygn;
+                            }
+//                        if (logger.isDebugEnabled()) {
+//                            logger.debug("perc: "+perc);
+//                        }
+                            if (no2dygn < 30.0) {
+                                polygonColors.add(new Color4f(green));
+                            } else if (no2dygn < 50.0) {
+                                polygonColors.add(new Color4f(yellow));
+                            } else if (no2dygn < 70.0) {
+                                polygonColors.add(new Color4f(orange));
+                            } else {
+                                polygonColors.add(new Color4f(red));
+                            }
+                        } else {
+//                        if (logger.isDebugEnabled()) {
+//                            logger.debug("No perc value !!");
+//
+//                        }
+                            polygonColors.add(new Color4f(black));
+                        }
                     }
+
                     if (logger.isDebugEnabled()) {
 //                            logger.debug("last point: "+polygons.get(polygons.size()-1));
                     }
@@ -463,6 +593,7 @@ public class ShapeLoader extends AbstractSceneLoader {
                     + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms.");
             if (logger.isDebugEnabled()) {
                 logger.debug("min perc: " + minPerc + " max perc: " + maxPerc);
+                logger.debug("min no2: " + minNo2dygn + " max no2: " + maxNo2dygn);
             }
         }
     }

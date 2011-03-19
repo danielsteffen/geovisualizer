@@ -75,6 +75,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //    private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+
     private final Canvas3D canvas3D = new Canvas3D(config);
     private Camera camera3D;
     private Camera geographicCamera;

@@ -84,6 +84,7 @@ public class AdvancedBoundingBox extends BoundingBox {
 //            logger.debug("getCenter: "+);
 //        }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does it make sense to make this three dimensional ?? boundings should not be dimensional
+//        final Point3d centerPoint = new Point3d(lower.x + (upper.x - lower.x) / 2, lower.y + (upper.y - lower.y) / 2, lower.z + (upper.z - lower.z) / 2);
         final Point3d centerPoint = new Point3d(lower.x + (upper.x - lower.x) / 2, lower.y + (upper.y - lower.y) / 2, lower.z + (upper.z - lower.z) / 2);
         return centerPoint;
     }

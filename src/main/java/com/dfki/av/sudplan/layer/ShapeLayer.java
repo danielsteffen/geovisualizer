@@ -7,6 +7,7 @@ package com.dfki.av.sudplan.layer;
 
 import com.dfki.av.sudplan.io.shape.ShapeLoader;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
+import com.dfki.av.sudplan.util.GeomUtils;
 import com.dfki.av.sudplan.util.IconUtil;
 import com.sun.j3d.loaders.Scene;
 import java.io.File;
@@ -50,6 +51,9 @@ public class ShapeLayer extends FileBasedLayer implements FeatureLayer{
         try {
             this.dataObject = loader.load(file);
              setBoundingBox(new AdvancedBoundingBox(dataObject.getSceneGroup().getBounds()));
+             if (logger.isDebugEnabled()) {                
+                 logger.debug("Shapelayer center: "+getBoundingBox().getCenter());
+            }
         } catch (Exception ex) {
             final String message = "Error while intialising layer.";
             if (logger.isErrorEnabled()) {

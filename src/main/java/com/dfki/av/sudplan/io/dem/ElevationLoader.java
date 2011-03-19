@@ -4,22 +4,19 @@
  */
 package com.dfki.av.sudplan.io.dem;
 
+import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.AbstractSceneLoader;
-import com.dfki.av.sudplan.io.LoadingNotPossibleException;
-import com.dfki.av.sudplan.io.ParsingException;
 import com.dfki.av.sudplan.util.TimeMeasurement;
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.SceneBase;
+import com.dfki.av.sudplan.util.Triangle;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
-import java.io.FileNotFoundException;
-import javax.media.j3d.BranchGroup;
+import java.util.Vector;
+import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import javax.vecmath.TexCoord2f;
+import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +37,9 @@ public class ElevationLoader extends AbstractSceneLoader {
     @Override
     public void fillScene() throws Exception {
         arcGrid = new ArcGridParser(reader).parseArcGrid();
+        setCellDiagonal(arcGrid.getCellsize() * Math.sqrt(2));
         createTriangle();
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: really ugly remove        
         GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
         gridGeometry.setCoordinates(triangleCoordinates);
         gridGeometry.setTextureCoordinateParams(1, 2);
@@ -70,6 +69,7 @@ public class ElevationLoader extends AbstractSceneLoader {
                     + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
         }
         ElevationShape shape = new ElevationShape(gridGeometry.getGeometryArray());
+        getHeightInterpolation(new Point2f(2010.77f, 6602.55f));
         createdScene.getSceneGroup().addChild(shape);
     }
 
@@ -127,9 +127,161 @@ public class ElevationLoader extends AbstractSceneLoader {
             }
         }
         if (logger.isDebugEnabled()) {
+            logger.debug("Triangle count: " + currentTriangle + 1);
+        }
+        if (logger.isDebugEnabled()) {
             logger.debug("Triangulating grid done. Time elapsed: "
                     + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
         }
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:check if we do for performance reasons everything in floatingpoint or double precision. We do not realy need double !
+    public Point3f getHeightInterpolation(final Point2f point) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Height interpolation for point: " + point);
+        }
+        Point3f result = null;
+        if (point == null) {
+            return result;
+        }
+        final Point3f[] triangle = getTriangle(point);
+        if (triangle == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Triangle could not be determined.");
+            }
+            return result;
+        }
+        if (comparePointsWithoutZ(triangle[0], point)) {
+            return triangle[0];
+        } else if (comparePointsWithoutZ(triangle[1], point)) {
+            return triangle[1];
+        } else if (comparePointsWithoutZ(triangle[1], point)) {
+            return triangle[2];
+        }
+        return interpolateHeight(triangle, point,getCellDiagonal());
+    }
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Check performance, other methods
+    // because of the regularity of the grid the area of the triangles is constant.
+    private double cellDiagonal;
+    private double halfCellDiagonal;
+    private double triangleArea;
+
+    private Point3f interpolateHeight(Point3f[] triangle, Point2f point) {
+        Point3f result = null;
+        if (logger.isDebugEnabled()) {
+            logger.debug("calculate barycenter");
+        }
+        if (triangle == null || point == null || triangle.length < 3) {
+            return result;
+        }
+        Triangle test = new Triangle(triangle,getCellDiagonal(),arcGrid.getCellsize(),getHalfCellDiagonal());
+        if (logger.isDebugEnabled()) {
+            final double[] centers = test.getBarycentricCoords(new Vector3f(new Point3f(point.x, point.y, 0.0f)));
+            logger.debug("barycenter: " + centers[0]+" "+centers[1]+" "+centers[2]);
+        }
+//        final Point3f interpolatedPoint = new Point3f(point.x, point.y, interpolatedZ);
+        return result;
+    }
+
+    // normal generation fails ?
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:they are already calculated learn how to use them
+//        final Vector3f p = new Vector3f(triangle[0]);
+//        final Vector3f q = new Vector3f(triangle[1]);
+//        final Vector3f r = new Vector3f(triangle[2]);
+//        final Vector3f rpDiff = new Vector3f();
+//        final Vector3f qpDiff = new Vector3f();
+//        qpDiff.sub(q, p);
+//        rpDiff.sub(r, p);
+//        final Vector3f normalVector = new Vector3f();
+////        normalVector.cross(rpDiff, qpDiff);
+//        normalVector.cross(qpDiff, rpDiff);
+//
+//          //test
+////        Point3f coordinates[] = gi.getCoordinates();
+//    Vector3f facetNorms;
+//    Vector3f a = new Vector3f();
+//    Vector3f b = new Vector3f();
+//
+//	a.sub(triangle[2], triangle[1]);
+//	b.sub(triangle[0], triangle[1]);
+//	facetNorms = new Vector3f();
+//	facetNorms.cross(a, b);
+//        facetNorms.normalize();
+//
+//        final Vector3f check1 = new Vector3f(facetNorms);
+//        final Vector3f check2 = new Vector3f(facetNorms);
+//        final Vector3f check3 = new Vector3f(facetNorms);
+//
+//
+//
+////	facetNorms[t / 3].normalize();
+//
+//
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Normal check: " +facetNorms);
+//            logger.debug("Normal check: " + p + q + r);
+//            logger.debug("Normal check: " + check1.dot(p) + check2.dot(q) +  check3.dot(r));
+//            logger.debug("Normal check: " + p.dot(check1) + q.dot(check2) +  r.dot(check3));
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("zpart: "+((normalVector.x * (point.x - p.x)) + (normalVector.y * (point.y - p.y)) / -(normalVector.z)));
+//            }
+//        }
+//        final float interpolatedZ = ((normalVector.x * (point.x - p.x)) + (normalVector.y * (point.y - p.y)) / -(normalVector.z)) + (p.z);
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("interpolated: " + interpolatedZ + " other:z's" + p.z + "/" + q.z + "/" + r.z);
+//        }
+    // scanline method idea
+//        final Point3f height1 =triangle[0];
+//        final Point3f height2 =triangle[1];
+//        final Point3f height3 =triangle[2];
+//        final float intialValue = (height1.z - (height1.z-height2.z))*((height1.y-point.y)/(height1.y-height2.y));
+//        final float finalValue = (height1.z - (height1.z-height3.z))*((height1.y-point.y)/(height1.y-height3.y));
+//        final float pointValue = finalValue -(finalValue-intialValue)*((height1.y-point.y)/(height1.y-height3.y));
+//         result;
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:performance would be better without the method and a fast case differencial in the getHeigtInterpolation
+    private boolean comparePointsWithoutZ(final Point3f point1, final Point2f point2) {
+        if (point1 == null || point2 == null) {
+            return false;
+        }
+        return (point1.x == point2.x && point1.y == point2.y);
+    }
+
+    private Point3f[] getTriangle(final Point2f point) {
+        Point3f[] triangle = null;
+        if (point == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Point is null.");
+            }
+            return triangle;
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("min x/y" + (arcGrid.getXMin() * ComponentBroker.getInstance().getScalingFactor()) + "/" + (arcGrid.getYMin() * ComponentBroker.getInstance().getScalingFactor()) + " max: " + (arcGrid.getXMax() * ComponentBroker.getInstance().getScalingFactor()) + "/" + (arcGrid.getYMax() * ComponentBroker.getInstance().getScalingFactor()));
+        }
+        if (point.x < (arcGrid.getXMin() * ComponentBroker.getInstance().getScalingFactor()) || point.x > (arcGrid.getXMax() * ComponentBroker.getInstance().getScalingFactor()) || point.y < (arcGrid.getYMin() * ComponentBroker.getInstance().getScalingFactor()) || point.y > (arcGrid.getYMax() * ComponentBroker.getInstance().getScalingFactor())) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Point not in range.");
+            }
+            return triangle;
+        }
+        final int column = (int) Math.floor(point.x / arcGrid.getCellsize());
+        final int row = (int) Math.floor(point.y / arcGrid.getCellsize());
+        int firstTriangle = (row * (column * 3) + (column * 3)) - 1;
+        if (logger.isDebugEnabled()) {
+            logger.debug("calculated row/column: " + row + "/" + column);
+            logger.debug("triangle index: " + firstTriangle);
+        }
+        if (point.x == point.y || point.x > point.y) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("First Triangle");
+            }
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Second Triangle");
+            }
+            firstTriangle += 2;
+        }
+        triangle = new Point3f[]{triangleCoordinates[firstTriangle], triangleCoordinates[firstTriangle + 1], triangleCoordinates[firstTriangle + 2]};
+        return triangle;
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: better to generate directly the triangle strip array instead of using the stripifier
@@ -139,5 +291,30 @@ public class ElevationLoader extends AbstractSceneLoader {
 
     public void setArcGrid(RawArcGrid arcGrid) {
         this.arcGrid = arcGrid;
+    }
+
+    public double getCellDiagonal() {
+        return cellDiagonal;
+    }
+
+    public void setCellDiagonal(double cellDiagonal) {
+        this.cellDiagonal = cellDiagonal;
+        setHalfCellDiagonal(cellDiagonal / 2.0);
+    }
+
+    public double getHalfCellDiagonal() {
+        return halfCellDiagonal;
+    }
+
+    public void setHalfCellDiagonal(double halfCellDiagonal) {
+        this.halfCellDiagonal = halfCellDiagonal;
+    }
+
+    public double getTriangleArea() {
+        return triangleArea;
+    }
+
+    public void setTriangleArea(double triangleArea) {
+        this.triangleArea = triangleArea;
     }
 }

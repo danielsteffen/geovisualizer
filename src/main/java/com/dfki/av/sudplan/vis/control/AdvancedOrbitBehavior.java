@@ -238,7 +238,8 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
      */
     public static final int COMBINED = 3;
     private static final double NOMINAL_ZOOM_FACTOR = .01;
-    private static final double NOMINAL_PZOOM_FACTOR = 1.0;
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make this more accurate the zoom is fast when zoomed out but not slow when zoomed in
+    private static final double NOMINAL_PZOOM_FACTOR = 0.3;
     private static final double NOMINAL_ROT_FACTOR = .01;
     public static double NOMINAL_TRANS_FACTOR = .01;
     private static final double NOMINAL_PTRANS_FACTOR = 1.0;
@@ -453,15 +454,43 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 //            newValidMouseEvent = false;
 //        }
     }
+//    private int xMoveCounter = 0;
+//    private boolean xTransformationActive = false;
+//    private int yMoveCounter = 0;
+//    private boolean yTransformationActive = false;
 
     protected void processMouseEvent(final MouseEvent evt) {
         if (evt.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseX = evt.getX();
             mouseY = evt.getY();
+//            xTransformationActive = false;
+//            yTransformationActive = false;
+//            xMoveCounter = 0;
+//            yMoveCounter = 0;
             motion = true;
         } else if (evt.getID() == MouseEvent.MOUSE_DRAGGED) {
+
             int xchange = evt.getX() - mouseX;
+
+
             int ychange = evt.getY() - mouseY;
+
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Problem --> is y rotation is not in a plane if x is rotaded  good to see if you have distinct transformations
+//            if (xTransformationActive == false && yTransformationActive == false) {
+//                xMoveCounter += Math.abs(xchange);
+//                yMoveCounter += Math.abs(ychange);
+//            }
+//
+//            if (xMoveCounter > 5) {
+//                xTransformationActive = true;
+//                ychange = 0;
+//            } else if (yMoveCounter > 5) {
+//                yTransformationActive = true;
+//                xchange = 0;
+//            } else {
+//                return;
+//            }
+
             // rotate
             if (rotate(evt)) {
                 if (reverseRotate) {
@@ -485,6 +514,10 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
             mouseY = evt.getY();
             motion = true;
         } else if (evt.getID() == MouseEvent.MOUSE_RELEASED) {
+//            xMoveCounter = 0;
+//            yMoveCounter = 0;
+//            xTransformationActive = false;
+//            yTransformationActive = false;
         } else if (evt.getID() == MouseEvent.MOUSE_WHEEL) {
             if (zoom(evt)) {
                 // if zooming is done through mouse wheel,

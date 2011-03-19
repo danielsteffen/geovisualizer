@@ -5,8 +5,10 @@
 package com.dfki.av.sudplan.io.dem;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
+import gov.nasa.worldwind.geom.Triangle;
 import java.util.ArrayList;
 import javax.vecmath.Point2f;
+import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +71,10 @@ public class RawArcGrid {
 
     public float getYMax() {
         return getYMin() + (getCellsize() * (getNumberOfRows() - 1));
+    }
+
+    public float getXMax() {
+        return getXMin() + (getCellsize() * (getNumberOfColumns() - 1));
     }
 
     public float getCellsize() {
@@ -150,30 +156,30 @@ public class RawArcGrid {
         return sparseFactor;
     }
 
-    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:naiv implementation
-    public Point3f getNearestNeighbour(final Point3f point) throws ArrayIndexOutOfBoundsException {        
-        final int xIndex = (int) Math.floor((point.x/ComponentBroker.getInstance().getScalingFactor()-getXMin())/(getCellsize()));
-        final int yIndex = (int) Math.floor((point.y/ComponentBroker.getInstance().getScalingFactor()-getYMin())/(getCellsize()));
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:naiv implementation
+    public Point3f getNearestNeighbour(final Point3f point) throws ArrayIndexOutOfBoundsException {
+        final int xIndex = (int) Math.floor((point.x / ComponentBroker.getInstance().getScalingFactor() - getXMin()) / (getCellsize()));
+        final int yIndex = (int) Math.floor((point.y / ComponentBroker.getInstance().getScalingFactor() - getYMin()) / (getCellsize()));
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:better to raise the exception than to duplicate the check method is responsible for this
         ArrayList<Point3f> points = new ArrayList<Point3f>();
-         if(xIndex  < getNumberOfColumns() && xIndex >= 0 && yIndex < getNumberOfRows() && yIndex >= 0){
+        if (xIndex < getNumberOfColumns() && xIndex >= 0 && yIndex < getNumberOfRows() && yIndex >= 0) {
             points.add(getGridPoint(xIndex, yIndex));
         }
-        if(xIndex < getNumberOfColumns() && xIndex >= 0 && yIndex+1 < getNumberOfRows() && yIndex >= 0){
-            points.add(getGridPoint(xIndex, yIndex+1));
+        if (xIndex < getNumberOfColumns() && xIndex >= 0 && yIndex + 1 < getNumberOfRows() && yIndex >= 0) {
+            points.add(getGridPoint(xIndex, yIndex + 1));
         }
-        if(xIndex +1 < getNumberOfColumns() && xIndex >= 0 && yIndex < getNumberOfRows() && yIndex >= 0){
-            points.add(getGridPoint(xIndex+1, yIndex));
+        if (xIndex + 1 < getNumberOfColumns() && xIndex >= 0 && yIndex < getNumberOfRows() && yIndex >= 0) {
+            points.add(getGridPoint(xIndex + 1, yIndex));
         }
-        if(xIndex +1 < getNumberOfColumns() && xIndex >= 0 && yIndex+1 < getNumberOfRows() && yIndex >= 0){
-            points.add(getGridPoint(xIndex+1, yIndex+1));
+        if (xIndex + 1 < getNumberOfColumns() && xIndex >= 0 && yIndex + 1 < getNumberOfRows() && yIndex >= 0) {
+            points.add(getGridPoint(xIndex + 1, yIndex + 1));
         }
         double zMax = -99999.0;
-        Point3f maxNeigbour=null;
-        for(Point3f currentPoint:points){
-            if(currentPoint.z > zMax){
-                zMax=currentPoint.z;
-                maxNeigbour=currentPoint;
+        Point3f maxNeigbour = null;
+        for (Point3f currentPoint : points) {
+            if (currentPoint.z > zMax) {
+                zMax = currentPoint.z;
+                maxNeigbour = currentPoint;
             }
         }
 //        if (logger.isDebugEnabled()) {
@@ -218,7 +224,7 @@ public class RawArcGrid {
 //            logger.debug("quad1: "+Math.pow((point2.x - point1.x),2));
 //            logger.debug("quad2: "+Math.pow((point1.y - point2.y),2));
 //        }
-        return Math.sqrt(Math.pow((point1.x - point2.x),2) + Math.pow((point1.y - point2.y),2));
+        return Math.sqrt(Math.pow((point1.x - point2.x), 2) + Math.pow((point1.y - point2.y), 2));
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: does not work properly ---> disortion of width/height
