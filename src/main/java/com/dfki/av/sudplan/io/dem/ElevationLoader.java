@@ -12,11 +12,10 @@ import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
-import java.util.Vector;
+import java.util.Arrays;
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import javax.vecmath.TexCoord2f;
-import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,7 @@ public class ElevationLoader extends AbstractSceneLoader {
         createTriangle();
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: really ugly remove        
         GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
+//        final Point3f[] coordinates = Arrays.copyOf(triangleCoordinates, triangleCoordinates.length);
         gridGeometry.setCoordinates(triangleCoordinates);
         gridGeometry.setTextureCoordinateParams(1, 2);
         gridGeometry.setTextureCoordinates(0, texCoords);
@@ -69,7 +69,7 @@ public class ElevationLoader extends AbstractSceneLoader {
                     + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
         }
         ElevationShape shape = new ElevationShape(gridGeometry.getGeometryArray());
-        getHeightInterpolation(new Point2f(2010.77f, 6602.55f));
+        getHeightInterpolation(new Point2f(2010.77f, 6602.53f));
         createdScene.getSceneGroup().addChild(shape);
     }
 
@@ -83,6 +83,9 @@ public class ElevationLoader extends AbstractSceneLoader {
             TimeMeasurement.getInstance().startMeasurement(this);
         }
         triangleCoordinates = new Point3f[arcGrid.getTriangleCount() * 3];
+        if (logger.isDebugEnabled()) {
+            logger.debug("Triangle Coord Count: " + triangleCoordinates.length);
+        }
         texCoords = new TexCoord2f[arcGrid.getTriangleCount() * 3];
         int currentTriangle = 0;
         float divider1 = (arcGrid.getNumberOfColumns() - 1);
@@ -127,7 +130,7 @@ public class ElevationLoader extends AbstractSceneLoader {
             }
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Triangle count: " + currentTriangle + 1);
+            logger.debug("Triangle count: " + currentTriangle);
         }
         if (logger.isDebugEnabled()) {
             logger.debug("Triangulating grid done. Time elapsed: "
@@ -137,28 +140,28 @@ public class ElevationLoader extends AbstractSceneLoader {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:check if we do for performance reasons everything in floatingpoint or double precision. We do not realy need double !
     public Point3f getHeightInterpolation(final Point2f point) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Height interpolation for point: " + point);
-        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Height interpolation for point: " + point);
+//        }
         Point3f result = null;
         if (point == null) {
             return result;
         }
-        final Point3f[] triangle = getTriangle(point);
+        final Triangle triangle = getTriangle(point);
         if (triangle == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Triangle could not be determined.");
-            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Triangle could not be determined.");
+//            }
             return result;
         }
-        if (comparePointsWithoutZ(triangle[0], point)) {
-            return triangle[0];
-        } else if (comparePointsWithoutZ(triangle[1], point)) {
-            return triangle[1];
-        } else if (comparePointsWithoutZ(triangle[1], point)) {
-            return triangle[2];
+        if (comparePointsWithoutZ(triangle.pointA, point)) {
+            return triangle.pointA;
+        } else if (comparePointsWithoutZ(triangle.pointB, point)) {
+            return triangle.pointB;
+        } else if (comparePointsWithoutZ(triangle.pointC, point)) {
+            return triangle.pointC;
         }
-        return interpolateHeight(triangle, point,getCellDiagonal());
+        return triangle.interpolateHeight(point);
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Check performance, other methods
     // because of the regularity of the grid the area of the triangles is constant.
@@ -166,23 +169,22 @@ public class ElevationLoader extends AbstractSceneLoader {
     private double halfCellDiagonal;
     private double triangleArea;
 
-    private Point3f interpolateHeight(Point3f[] triangle, Point2f point) {
-        Point3f result = null;
-        if (logger.isDebugEnabled()) {
-            logger.debug("calculate barycenter");
-        }
-        if (triangle == null || point == null || triangle.length < 3) {
-            return result;
-        }
-        Triangle test = new Triangle(triangle,getCellDiagonal(),arcGrid.getCellsize(),getHalfCellDiagonal());
-        if (logger.isDebugEnabled()) {
-            final double[] centers = test.getBarycentricCoords(new Vector3f(new Point3f(point.x, point.y, 0.0f)));
-            logger.debug("barycenter: " + centers[0]+" "+centers[1]+" "+centers[2]);
-        }
-//        final Point3f interpolatedPoint = new Point3f(point.x, point.y, interpolatedZ);
-        return result;
-    }
-
+//    private Point3f interpolateHeight(Point3f[] triangle, Point2f point) {
+//        Point3f result = null;
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("calculate barycenter");
+//        }
+//        if (triangle == null || point == null || triangle.length < 3) {
+//            return result;
+//        }
+//        Triangle test = new Triangle(triangle, getCellDiagonal(), arcGrid.getCellsize(), getHalfCellDiagonal());
+//        if (logger.isDebugEnabled()) {
+//            final double[] centers = test.getBarycentricCoords(new Vector3f(new Point3f(point.x, point.y, 0.0f)));
+//            logger.debug("barycenter: " + centers[0] + " " + centers[1] + " " + centers[2]);
+//        }
+////        final Point3f interpolatedPoint = new Point3f(point.x, point.y, interpolatedZ);
+//        return result;
+//    }
     // normal generation fails ?
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:they are already calculated learn how to use them
 //        final Vector3f p = new Vector3f(triangle[0]);
@@ -246,7 +248,16 @@ public class ElevationLoader extends AbstractSceneLoader {
         return (point1.x == point2.x && point1.y == point2.y);
     }
 
-    private Point3f[] getTriangle(final Point2f point) {
+    private Triangle getTriangle(final Point2f point) {
+        Point3f[] triangleCoords = getTriangleCoords(point);
+        if(triangleCoords != null){
+            return new Triangle(triangleCoords);
+        } else {
+            return null;
+        }
+    }
+
+    private Point3f[] getTriangleCoords(final Point2f point) {
         Point3f[] triangle = null;
         if (point == null) {
             if (logger.isDebugEnabled()) {
@@ -254,32 +265,53 @@ public class ElevationLoader extends AbstractSceneLoader {
             }
             return triangle;
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("min x/y" + (arcGrid.getXMin() * ComponentBroker.getInstance().getScalingFactor()) + "/" + (arcGrid.getYMin() * ComponentBroker.getInstance().getScalingFactor()) + " max: " + (arcGrid.getXMax() * ComponentBroker.getInstance().getScalingFactor()) + "/" + (arcGrid.getYMax() * ComponentBroker.getInstance().getScalingFactor()));
-        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("min x/y" + (arcGrid.getXMin() * ComponentBroker.getInstance().getScalingFactor()) + "/" + (arcGrid.getYMin() * ComponentBroker.getInstance().getScalingFactor()) + " max: " + (arcGrid.getXMax() * ComponentBroker.getInstance().getScalingFactor()) + "/" + (arcGrid.getYMax() * ComponentBroker.getInstance().getScalingFactor()));
+//        }
         if (point.x < (arcGrid.getXMin() * ComponentBroker.getInstance().getScalingFactor()) || point.x > (arcGrid.getXMax() * ComponentBroker.getInstance().getScalingFactor()) || point.y < (arcGrid.getYMin() * ComponentBroker.getInstance().getScalingFactor()) || point.y > (arcGrid.getYMax() * ComponentBroker.getInstance().getScalingFactor())) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Point not in range.");
-            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Point not in range.");
+//            }
             return triangle;
         }
-        final int column = (int) Math.floor(point.x / arcGrid.getCellsize());
-        final int row = (int) Math.floor(point.y / arcGrid.getCellsize());
-        int firstTriangle = (row * (column * 3) + (column * 3)) - 1;
+        final int column = (int) Math.floor((point.x - (arcGrid.getXMin() *ComponentBroker.getInstance().getScalingFactor())) / (arcGrid.getCellsize()*ComponentBroker.getInstance().getScalingFactor()));
+        final int row = (int) Math.floor((point.y - (arcGrid.getYMin()*ComponentBroker.getInstance().getScalingFactor())) / (arcGrid.getCellsize()*ComponentBroker.getInstance().getScalingFactor()));
+//        int firstTriangle = ((row * (arcGrid.getNumberOfColumns() * 2) * 3)+ ((column) * 2 * 3));
+//        int firstTriangle = ((row) * ((arcGrid.getNumberOfColumns() * 2) * 3)+ 0);
+         int firstTriangle = ((row) * (((arcGrid.getNumberOfColumns()-1) * 2) * 3))+ column*2*3;
         if (logger.isDebugEnabled()) {
-            logger.debug("calculated row/column: " + row + "/" + column);
-            logger.debug("triangle index: " + firstTriangle);
+//            logger.debug("calculated row/column: " + row + "/" + column);
+//            logger.debug("triangle index: " + firstTriangle);
+//            logger.debug("index: "+triangleCoordinates[firstTriangle+0]);
+//            logger.debug("index1: "+triangleCoordinates[firstTriangle+1]);
+//            logger.debug("index2: "+triangleCoordinates[firstTriangle+2]);
+//            logger.debug("index3: "+triangleCoordinates[firstTriangle+3]);
+//            logger.debug("index4: "+triangleCoordinates[firstTriangle+4]);
+//            logger.debug("index5: "+triangleCoordinates[firstTriangle+5]);
+//            logger.debug("index6: "+triangleCoordinates[firstTriangle+6]);
+//            logger.debug("index7: "+triangleCoordinates[firstTriangle+7]);
+//            logger.debug("index8: "+triangleCoordinates[firstTriangle+8]);
+//            logger.debug("index9: "+triangleCoordinates[firstTriangle+9]);
+//            logger.debug("index10: "+triangleCoordinates[firstTriangle+10]);
         }
-        if (point.x == point.y || point.x > point.y) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("First Triangle");
-            }
+        final double xInCell = point.x - (arcGrid.getXMin() *ComponentBroker.getInstance().getScalingFactor()) - column * (arcGrid.getCellsize()*ComponentBroker.getInstance().getScalingFactor());
+        final double yInCell = point.y - (arcGrid.getYMin() *ComponentBroker.getInstance().getScalingFactor()) -row * (arcGrid.getCellsize()*ComponentBroker.getInstance().getScalingFactor());
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("X in Cell: " + xInCell + " Y in Cell: " + yInCell);
+//        }
+        if (xInCell <= yInCell) {
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("First Triangle");
+//            }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Second Triangle");
-            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Second Triangle");
+//            }
             firstTriangle += 2;
         }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("coordinateCount: " + triangleCoordinates.length);
+//        }
         triangle = new Point3f[]{triangleCoordinates[firstTriangle], triangleCoordinates[firstTriangle + 1], triangleCoordinates[firstTriangle + 2]};
         return triangle;
     }

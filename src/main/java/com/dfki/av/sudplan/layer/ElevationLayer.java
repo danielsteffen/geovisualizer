@@ -24,6 +24,8 @@ import javax.media.j3d.Group;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.swing.ImageIcon;
+import javax.vecmath.Point2f;
+import javax.vecmath.Point3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +99,11 @@ public class ElevationLayer extends FileBasedLayer implements
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if not loaded not available. Redesign.
     public RawArcGrid getGrid() {
         return loader.getArcGrid();
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: clean design
+    public Point3f getHeightInterpolation(final Point3f point) {
+        return loader.getHeightInterpolation(new Point2f(point.x,point.y));
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: maybe better to register the listner on the object itself during the creation in the loader.

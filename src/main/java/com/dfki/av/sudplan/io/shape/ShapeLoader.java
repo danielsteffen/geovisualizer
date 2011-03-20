@@ -7,6 +7,7 @@ package com.dfki.av.sudplan.io.shape;
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.AbstractSceneLoader;
 import com.dfki.av.sudplan.io.dem.RawArcGrid;
+import com.dfki.av.sudplan.layer.ElevationLayer;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.util.TimeMeasurement;
@@ -70,7 +71,7 @@ public class ShapeLoader extends AbstractSceneLoader {
     private final ArrayList<ShapefileObject> shapeArray = new ArrayList<ShapefileObject>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Nasa Shapefile is not able to scoop with colon decimals. Fix!
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: remove after Vienna Demo
-    final RawArcGrid heights = ComponentBroker.getInstance().getHeights();
+    final ElevationLayer heights = ComponentBroker.getInstance().getHeights();
 
     public static enum SHAPE_TYPE {
 
@@ -507,16 +508,18 @@ public class ShapeLoader extends AbstractSceneLoader {
                     scalePoint3f(transformedPoint);
                     points.add(transformedPoint);
                     if (shapeType == SHAPE_TYPE.POLYLINE && currentHeights == null && heights != null) {
-                        final Point3f nb = heights.getNearestNeighbour(transformedPoint);
+                        final Point3f nb = heights.getHeightInterpolation(transformedPoint);
 //                        if (logger.isDebugEnabled()) {
 //                            logger.debug("point: "+transformedPoint+" nb: " + nb);
 //                        }
                         if (nb != null) {
-                            if (nb.z < 0.0f) {
-                                transformedPoint.setZ((float) (-0.039f));
+                            if (nb.z < -0.1f) {
+                                transformedPoint.setZ((float) (-0.035f));
                             } else {
-                                transformedPoint.setZ((float) (nb.z + 0.002f));
+                                transformedPoint.setZ((float) (nb.z + 0.006f));
                             }
+                        } else {
+                            transformedPoint.setZ((float) (-0.035f));
                         }
                     } else if (shapeType == SHAPE_TYPE.POLYLINE && currentHeights == null) {
                         transformedPoint.setZ((float) (-0.039f));

@@ -41,7 +41,7 @@ public class IOUtils {
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: generic version for all the loader
             }
             newLayer = new ElevationLayer(file);
-            ComponentBroker.getInstance().setHeights(((ElevationLayer) newLayer).getGrid());
+            ComponentBroker.getInstance().setHeights(((ElevationLayer) newLayer));
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:make constant and also check for shx dbf prj etc. also use suffix same above
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: make something generic with suffixes
         } else if (file.getName().endsWith(".shp")) {

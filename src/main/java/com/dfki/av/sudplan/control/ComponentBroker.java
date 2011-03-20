@@ -4,7 +4,7 @@
  */
 package com.dfki.av.sudplan.control;
 
-import com.dfki.av.sudplan.io.dem.RawArcGrid;
+import com.dfki.av.sudplan.layer.ElevationLayer;
 import javax.media.j3d.BranchGroup;
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -31,14 +31,14 @@ public class ComponentBroker {
 //    private double scalingFactor=0.00001;
     private double scalingFactor = 0.001;
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: only for Vienna demo
-    private RawArcGrid heights = null;
+    private ElevationLayer heights = null;
     private BranchGroup earthBranch;
 
-    public RawArcGrid getHeights() {
+    public ElevationLayer getHeights() {
         return heights;
     }
 
-    public void setHeights(RawArcGrid heights) {
+    public void setHeights(ElevationLayer heights) {
         this.heights = heights;
     }
 
