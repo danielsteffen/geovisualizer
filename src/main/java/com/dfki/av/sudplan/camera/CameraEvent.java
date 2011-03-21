@@ -25,28 +25,28 @@ public class CameraEvent {
     private double viewAngleDifference = Double.NaN;
     private Point3d newCameraPosition;
     private Point3d oldCameraPosition;
-    private AdvancedBoundingBox cameraViewableBounds;
+    private AdvancedBoundingBox viewableBoundingBox;
     private AdvancedBoundingBox camera2dContainingBounds;
     private AdvancedBoundingBox reducedBoundingBox;
     private Camera source;
 
     public CameraEvent(final Camera source, final Point3d oldCameraPosition, final Point3d newCameraPosition, final AdvancedBoundingBox cameraViewableBounds, final AdvancedBoundingBox reducedBoundingBox) {
         this.source = source;
-        this.oldCameraPosition = oldCameraPosition;
-        this.newCameraPosition = newCameraPosition;
-        this.cameraViewableBounds = cameraViewableBounds;
-        this.reducedBoundingBox = reducedBoundingBox;
+        this.oldCameraPosition = new Point3d(oldCameraPosition);
+        this.newCameraPosition = new Point3d(newCameraPosition);
+        this.viewableBoundingBox = new AdvancedBoundingBox(cameraViewableBounds);
+        this.reducedBoundingBox = new AdvancedBoundingBox(reducedBoundingBox);
     }
 
     public CameraEvent(final Camera source, final Vector3d oldDirection, final Vector3d newDirection, final AdvancedBoundingBox cameraViewableBounds, final AdvancedBoundingBox reducedBoundingBox) {
         this.source = source;
-        this.oldCameraViewDirection = oldDirection;
-        this.newCameraViewDirection = newDirection;
+        this.oldCameraViewDirection = new Vector3d(oldDirection);
+        this.newCameraViewDirection = new Vector3d(newDirection);
         if (oldDirection != null && newDirection != null) {
             viewAngleDifference = oldDirection.angle(newDirection);
         }
-        this.cameraViewableBounds = cameraViewableBounds;
-        this.reducedBoundingBox = reducedBoundingBox;
+        this.viewableBoundingBox = new AdvancedBoundingBox(cameraViewableBounds);
+        this.reducedBoundingBox = new AdvancedBoundingBox(reducedBoundingBox);
     }
 
     public CameraEvent(Camera source) {
@@ -77,12 +77,12 @@ public class CameraEvent {
         return oldCameraViewDirection;
     }
 
-    public AdvancedBoundingBox getCameraViewableBounds() {
-        return cameraViewableBounds;
+    public AdvancedBoundingBox getViewableBoundingBox() {
+        return viewableBoundingBox;
     }
 
-    public void setCameraViewableBounds(AdvancedBoundingBox cameraViewableBounds) {
-        this.cameraViewableBounds = cameraViewableBounds;
+    public void setViewableBoundingBox(AdvancedBoundingBox viewableBoundingBox) {
+        this.viewableBoundingBox = viewableBoundingBox;
     }
 
     public Camera getSource() {

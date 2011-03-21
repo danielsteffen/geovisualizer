@@ -37,6 +37,8 @@ public interface Camera {
 
     public void setCameraPosition(final Point3d cameraPosition);
 
+    public void lookAtPoint(Point3d pointToLookAt);
+
     public AdvancedBoundingBox getViewBoundingBox();
 
     public AdvancedBoundingBox getReducedBoundingBox();
@@ -48,12 +50,7 @@ public interface Camera {
 
     public void gotoBoundingBox(final AdvancedBoundingBox boundingBox);
 
-    public void gotoPoint(final Tuple3f point);
-
-    public void gotoPoint(final Tuple3d point);
-
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: clean concept after ATR
-
     public void addCameraListner(final CameraListener newListener);
 
     public void removeCameraListner(final CameraListener listenerToRemove);

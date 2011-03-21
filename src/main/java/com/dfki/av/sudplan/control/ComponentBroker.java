@@ -58,6 +58,10 @@ public class ComponentBroker {
         return earthBranch;
     }
 
+    public double getInverseScalingFactor() {
+        return 1/scalingFactor;
+    }
+
     private static class ComponentBrokerHolder {
 
         private static final ComponentBroker INSTANCE = new ComponentBroker();

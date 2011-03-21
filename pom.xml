@@ -6,8 +6,8 @@
     <artifactId>vis-comp</artifactId>
     <packaging>jar</packaging>
 
-    <version>0.4.0</version>
-    <name>sudplan</name>
+    <version>0.4.3</version>
+    <name>sudplanMaint</name>
 
     <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>
     <url>http://www.sudplan.eu</url>
@@ -307,7 +307,7 @@
             </plugin>
 
 <!--todo how to disable enable during dev-->
-<!--            <plugin>
+         <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
@@ -331,8 +331,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
-
+            </plugin>
         </plugins>
     </build>
 

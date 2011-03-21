@@ -80,6 +80,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         if (viewingPlatform != null) {
             viewingPlatform.setViewPlatformBehavior(behavior);
         }
+        updateOrientationVectors();
     }
 
     @Override
@@ -100,7 +101,38 @@ public class SimpleCamera implements Camera, TransformationListener {
 
     @Override
     public void setCameraDirection(final Vector3d newCameraDirection) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        final Point3d lookAtPoint = new Point3d(getCameraPosition());
+        final Vector3d oldDirection = getCameraDirection();
+        lookAtPoint.add(newCameraDirection);
+        if (logger.isDebugEnabled()) {
+            logger.debug("lookAtPoint: " + lookAtPoint);
+        }
+        lookAtPoint(new Point3d(lookAtPoint));
+        updateOrientationVectors();
+        calculateBoundingBoxes();
+        cameraDirectionChanged(oldDirection);
+    }
+
+    @Override
+    public void lookAtPoint(Point3d pointToLookAt) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("lookAtPoint: " + pointToLookAt);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("CameraDirection: " + getCameraDirection());
+        }
+        if (pointToLookAt != null) {
+            Transform3D viewTransformation = new Transform3D();
+            if (logger.isDebugEnabled()) {
+                logger.debug("cp: " + getCameraPosition() + " pta: " + pointToLookAt + " cu. " + getCameraUp());
+            }
+            viewTransformation.lookAt(getCameraPosition(), pointToLookAt, getCameraUp());
+            viewTransformation.invert();
+            getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("CameraDirection: " + getCameraDirection());
+        }
     }
 
     @Override
@@ -123,7 +155,7 @@ public class SimpleCamera implements Camera, TransformationListener {
         calculateBoundingBoxes();
         for (CameraListener cameraListener : cameraListeners) {
             if (logger.isDebugEnabled() && cameraPostionLogging) {
-                logger.debug("camera listener");
+                logger.debug("camera listener: old:" + oldPoint + " new: " + newPoint);
             }
             cameraListener.cameraMoved(new CameraEvent(this, oldPoint, getCameraPosition(), getViewBoundingBox(), getReducedBoundingBox()));
         }
@@ -174,9 +206,9 @@ public class SimpleCamera implements Camera, TransformationListener {
     public void translated(TransformationEvent transEvent) {
         if (transEvent != null) {
 //            final BoundingBox viewBoundingBox = calculateBoundingBox();
-//            if (logger.isDebugEnabled()) {
-//                logger.debug("translated: old:"+transEvent.getOldPosition()+" new:"+transEvent.getNewPosition());
-//            }
+            if (logger.isDebugEnabled() && cameraLoggingEnabled) {
+                logger.debug("translated: old:" + transEvent.getOldPosition() + " new:" + transEvent.getNewPosition());
+            }
             final Point3d oldPosition = transEvent.getOldPosition();
             final Point3d newPosition = transEvent.getNewPosition();
             if (!oldPosition.equals(newPosition)) {
@@ -196,16 +228,16 @@ public class SimpleCamera implements Camera, TransformationListener {
         }
         if (transEvent != null) {
 //            final BoundingBox viewBoundingBox = calculateBoundingBox();            
-            final Vector3d oldDirection = getCameraDirection();
-            final Vector3d newDirection = new Vector3d(DEFAULT_VIEW);
-            transEvent.getRotation().transform(newDirection);
-            newDirection.normalize();
+            final Vector3d oldDirection = transEvent.getOldViewDirection();
+            final Vector3d newDirection = transEvent.getNewViewDirection();
+//            transEvent.getRotation().transform(newDirection);
+//            newViewDirectionnewDirection.normalize();
+
             if (!oldDirection.equals(newDirection)) {
                 cameraDirectionChanged(oldDirection);
                 if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                     logger.debug("setCameraDirection: " + getCameraDirection());
                 }
-//                setCameraDirection(newDirection);
             } else {
                 if (logger.isDebugEnabled() && cameraLoggingEnabled) {
                     logger.debug("same direction no change:");
@@ -462,7 +494,6 @@ public class SimpleCamera implements Camera, TransformationListener {
 //        getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
 //
 //    }
-    @Override
     public void gotoPoint(Tuple3f point) {
         if (point == null) {
             return;
@@ -477,7 +508,6 @@ public class SimpleCamera implements Camera, TransformationListener {
         }
     }
 
-    @Override
     public void gotoPoint(Tuple3d point) {
         if (point == null) {
             return;
@@ -507,11 +537,12 @@ public class SimpleCamera implements Camera, TransformationListener {
 //        if (logger.isDebugEnabled() && resetViewLogging) {
 //            logger.debug("camera direction: " + getCameraDirection());
 //            logger.debug("camera position: " + getCameraPosition());
-//        }
+//        }    
         if (boundingBox != null && !boundingBox.isEmpty()) {
+
 //            if (getViewBoundingBox() == null) {
             calculateBoundingBoxes();
-//            }
+//            }         
             if (logger.isDebugEnabled() && boundingBoxLogging) {
                 logger.debug("old Bounding" + getViewBoundingBox());
             }
@@ -593,6 +624,12 @@ public class SimpleCamera implements Camera, TransformationListener {
             } else {
                 if (logger.isDebugEnabled() && boundingBoxLogging) {
                     logger.debug("do delta avail.");
+                }
+            }
+        } else {
+            if (logger.isDebugEnabled()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Goto boundingBox not possible. BoundingBox is empty or null.");
                 }
             }
         }
