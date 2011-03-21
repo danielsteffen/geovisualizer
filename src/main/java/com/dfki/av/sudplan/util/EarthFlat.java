@@ -112,6 +112,17 @@ public class EarthFlat {
         return newPosition;
     }
 
+    public static double cartesianToGeodetic(double value, final int projection) {
+        if (projection == PLATE_CARREE_PROJECTION) {
+            return radiansToDeegree(value) / WGS84_EARTH_EQUATORIAL_RADIUS;
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("No recognised projection. Using default " + PLATE_CARREE_NAME + ".");
+            }
+            return cartesianToGeodetic(value, PLATE_CARREE_PROJECTION);
+        }
+    }
+
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Same as above.
     public static Tuple3d geodeticToCartesian(final Tuple3d postionToTransform, final int projection) throws UnsupportedOperationException,
             IllegalArgumentException {
@@ -140,6 +151,17 @@ public class EarthFlat {
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:performance nightmare
     public static Point3f geodeticToCartesian(final Point3f postionToTransform, final int projection) {
         return new Point3f(geodeticToCartesian(new Point3d(postionToTransform), projection));
+    }
+
+    public static double geodeticToCartesian(double value, final int projection) {
+        if (projection == PLATE_CARREE_PROJECTION) {
+            return deegreeToRadians(value) * WGS84_EARTH_EQUATORIAL_RADIUS;
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("No recognised projection. Using default " + PLATE_CARREE_NAME + ".");
+            }
+            return geodeticToCartesian(value, PLATE_CARREE_PROJECTION);
+        }
     }
 
     private static void checkPoint(final Point3d postionToTransform) {

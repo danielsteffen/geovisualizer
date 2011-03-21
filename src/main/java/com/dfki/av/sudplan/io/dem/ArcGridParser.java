@@ -5,6 +5,7 @@ import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.FileFormatException;
 import com.dfki.av.sudplan.io.ParsingException;
 import com.dfki.av.sudplan.io.SplitNotPossibleException;
+import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.util.TimeMeasurement;
 import java.io.BufferedReader;
 
@@ -51,10 +52,10 @@ public class ArcGridParser {
             logger.debug("Parsing ArcInfo Grid.");
         }
         int rowCount = 0;
-        int currentColumn=0;
-        String currentValue=null;
-        String currentLineDebug=null;
-        String[] currentLineValues=null;
+        int currentColumn = 0;
+        String currentValue = null;
+        String currentLineDebug = null;
+        String[] currentLineValues = null;
         try {
             arcGrid.setScaleFactor((float) ComponentBroker.getInstance().getScalingFactor());
             BufferedReader sr = new BufferedReader(reader);
@@ -80,20 +81,21 @@ public class ArcGridParser {
             if (!currentKeyValuePair[0].equalsIgnoreCase(X_MINIMUM)) {
                 throw new FileFormatException("No x orgin value specified(" + X_MINIMUM + ")");
             }
-            arcGrid.setXMin(Float.parseFloat(currentKeyValuePair[1]));
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:check what happens if double is cast to float
+            arcGrid.setXMin((float) EarthFlat.geodeticToCartesian(Float.parseFloat(currentKeyValuePair[1]), EarthFlat.PLATE_CARREE_PROJECTION));
 
             currentKeyValuePair = doubleSplit(sr.readLine());
             if (!currentKeyValuePair[0].equalsIgnoreCase(Y_MINIMUM)) {
                 throw new FileFormatException("No y orgin value specified(" + Y_MINIMUM + ")");
             }
-            arcGrid.setYMin(Float.parseFloat(currentKeyValuePair[1]));
+            arcGrid.setYMin((float) EarthFlat.geodeticToCartesian(Float.parseFloat(currentKeyValuePair[1]), EarthFlat.PLATE_CARREE_PROJECTION));
 
             logger.debug("Grid origin= {}", arcGrid.getOrigin());
             currentKeyValuePair = doubleSplit(sr.readLine());
             if (!currentKeyValuePair[0].equalsIgnoreCase(CELLSIZE)) {
                 throw new FileFormatException("No cell size specified(" + CELLSIZE + ")");
             }
-            arcGrid.setCellsize(Float.parseFloat(currentKeyValuePair[1]));
+            arcGrid.setCellsize((float) EarthFlat.geodeticToCartesian(Float.parseFloat(currentKeyValuePair[1]), EarthFlat.PLATE_CARREE_PROJECTION));
             if (logger.isDebugEnabled()) {
                 logger.debug("Cellsize= {}", arcGrid.getCellsize());
             }
@@ -125,13 +127,13 @@ public class ArcGridParser {
             if (logger.isDebugEnabled()) {
                 logger.debug("Parsing raw coordinates...");
                 logger.debug("coordninateCount: " + arcGrid.getCoordinateCount());
-                logger.debug("Xmin: "+arcGrid.getXMin());
-                logger.debug("Ymax: "+arcGrid.getYMax());
-                logger.debug("Ymin: "+arcGrid.getYMin());
+                logger.debug("Xmin: " + arcGrid.getXMin());
+                logger.debug("Ymax: " + arcGrid.getYMax());
+                logger.debug("Ymin: " + arcGrid.getYMin());
                 TimeMeasurement.getInstance().startMeasurement(this);
             }
             int coordinateCount = 0;
-            
+
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: dangerous if one "real" coordinate row is split in several text rows. Check ESRI specification
             while (sr.ready() & rowCount < arcGrid.getNumberOfRows()) {
                 String currentLine;
@@ -141,11 +143,11 @@ public class ArcGridParser {
                     currentLine = testLine;
                     testLine = null;
                 }
-                currentLineDebug=currentLine;
+                currentLineDebug = currentLine;
                 final String[] currentRow = currentLine.split(WHITE_SPACE);
-                currentLineValues=currentRow;
-                for (currentColumn = 0; currentColumn < arcGrid.getNumberOfColumns(); currentColumn++) {                    
-                    currentValue=currentRow[currentColumn];
+                currentLineValues = currentRow;
+                for (currentColumn = 0; currentColumn < arcGrid.getNumberOfColumns(); currentColumn++) {
+                    currentValue = currentRow[currentColumn];
                     z = Float.parseFloat(currentValue);
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:evil hack only for looking at the moment
                     if (z == arcGrid.getNoDataValue()) {
@@ -154,7 +156,7 @@ public class ArcGridParser {
                     }
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna             
                     final float sourceX = (arcGrid.getXMin() + (x * (new Float(arcGrid.getCellsize()))));
-                    final float sourceY = (arcGrid.getYMin() + ((y-1) * (new Float(arcGrid.getCellsize()))));
+                    final float sourceY = (arcGrid.getYMin() + ((y - 1) * (new Float(arcGrid.getCellsize()))));
                     final float sourceZ = z;
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: the transformation is pretty expensive would be more effiecient to parse all at once check!
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: maybe there is a much simpler transformation from 4124 to 4326 --> e.g. by simply taking the values as lat/long the difference is only in the decimal check!
@@ -172,14 +174,14 @@ public class ArcGridParser {
 //                    transformedPoint.x *= arcGrid.getScaleFactor();
 //                    transformedPoint.y *= arcGrid.getScaleFactor();
 //                    transformedPoint.z *= arcGrid.getScaleFactor() * arcGrid.getzExaggeration();                    
-                      transformedPoint.z*=arcGrid.getzExaggeration();
-                      scalePoint3f(transformedPoint);                                            
-                      //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna presentation
-                      transformedPoint.z-=0.02f;
+                    transformedPoint.z *= arcGrid.getzExaggeration();
+                    scalePoint3f(transformedPoint);
+                    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna presentation
+                    transformedPoint.z -= 0.02f;
 //                    if (logger.isDebugEnabled()) {
 //                        logger.debug("scaled: " + transformedPoint);
 //                    }
-                    pointList[(((y-1)*arcGrid.getNumberOfColumns())+x)] = transformedPoint;
+                    pointList[(((y - 1) * arcGrid.getNumberOfColumns()) + x)] = transformedPoint;
 //                    if (logger.isDebugEnabled() && y==1) {
 //                        logger.debug("index: "+(((y-1)*arcGrid.getNumberOfColumns())+x)+" x: "+x+" y: "+y +" calc: "+sourceX);
 //                    }
@@ -202,9 +204,9 @@ public class ArcGridParser {
             if (logger.isDebugEnabled()) {
                 logger.debug("Coordinates successfully parsed.  Time elapsed: "
                         + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
-                        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Grid starts upperleft corner should start lower
-                logger.debug("Firstpoint: "+arcGrid.getGridPoint(0,0));
-                logger.debug("Firstpoint: "+arcGrid.getRawCoordinates()[0]);
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Grid starts upperleft corner should start lower
+                logger.debug("Firstpoint: " + arcGrid.getGridPoint(0, 0));
+                logger.debug("Firstpoint: " + arcGrid.getRawCoordinates()[0]);
             }
             sr.close();
         } catch (Exception ex) {
@@ -212,10 +214,10 @@ public class ArcGridParser {
                 ex = new FileFormatException("Grid description at file begining is not correct", ex);
             }
             if (logger.isErrorEnabled()) {
-                logger.error("currentLineDebug"+currentLineDebug+"previous value: "+currentLineValues[currentColumn-1]);
+                logger.error("currentLineDebug" + currentLineDebug + "previous value: " + currentLineValues[currentColumn - 1]);
             }
-            throw new ParsingException("Error while parsing grid file. Line: "+(rowCount+1)+" Column: "+(currentColumn+1)+" value: "+currentValue, ex);
-        }        
+            throw new ParsingException("Error while parsing grid file. Line: " + (rowCount + 1) + " Column: " + (currentColumn + 1) + " value: " + currentValue, ex);
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("Grid dimensions: coordinate count: " + arcGrid.getCoordinateCount()
                     + ", number of rows: " + arcGrid.getNumberOfRows()
@@ -252,9 +254,9 @@ public class ArcGridParser {
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:central place
-    private void scalePoint3f(final Point3f point){
+    private void scalePoint3f(final Point3f point) {
         point.x *= ComponentBroker.getInstance().getScalingFactor();
         point.y *= ComponentBroker.getInstance().getScalingFactor();
         point.z *= ComponentBroker.getInstance().getScalingFactor();
-    } 
+    }
 }
