@@ -68,7 +68,6 @@ import com.sun.j3d.utils.pickfast.PickCanvas;
 import java.util.ArrayList;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PickInfo;
-import javax.vecmath.Vector2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -746,27 +745,41 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
 
-        final Vector3d oldUpVector = new Vector3d(
-                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
-        final Vector3d oldViewVector = new Vector3d(
-                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
-        final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
-        targetTransform.transform(newUpVector);
-        oldUpVector.z = 0.0;
-        oldViewVector.z = 0.0;
-        final double deegres = EarthFlat.radiansToDeegree(oldUpVector.angle(oldViewVector));
-        Transform3D zCorrection = null;        
-//        if (logger.isDebugEnabled() && !Double.isNaN(deegres) && deegres != 0.0) {
-////            logger.debug("deegree difference: " + deegres);
-////            logger.debug("OldUp: " + oldUpVector);
-////            logger.debug("newUp: " + newUpVector);
+//        final Vector3d oldUpVector = new Vector3d(
+//                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
+//        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
+//        final Vector3d oldViewVector = new Vector3d(
+//                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
+//        final Vector3d newViewVector = new Vector3d(
+//                newViewDirection);
+//        final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
+//        final Vector3d newLeftVector = new Vector3d(SimpleCamera.DEFAULT_UP);
+//        final Vector3d newRightVector = new Vector3d(SimpleCamera.DEFAULT_UP);
+//        targetTransform.transform(newUpVector);
+//        oldUpVector.z = 0.0;
+//        oldViewVector.z = 0.0;
+//        newViewVector.z = 0.0;
+//        newUpVector.z=0.0;
+//        final double diffViewUp = EarthFlat.radiansToDeegree(newUpVector.angle(newViewVector));
+//
+//        Transform3D zCorrection = null;
+//        if (logger.isDebugEnabled() && !Double.isNaN(diffViewUp) && diffViewUp != 0.0) {
+////            logger.debug("deegree difference: " + diffViewUp);
+////            logger.debug("newUpVector: " + newUpVector);
+////            logger.debug("newViewVector: " + newViewVector);
 ////            logger.debug("oldView: " + oldViewVector);
 ////            logger.debug("correction: " + EarthFlat.radiansToDeegree(newUpVector.angle(oldUpVector)));
-//            zCorrection = new Transform3D();
-//            zCorrection.ro
+////            zCorrection = new Transform3D();
+////            zCorrection.rotZ(EarthFlat.deegreeToRadians(diffViewUp));
 //        }
-        targetTG.setTransform(targetTransform);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:events are wrong
+//        if(zCorrection != null){
+//            zCorrection.mul(zCorrection,targetTransform);
+//            targetTG.setTransform(zCorrection);
+//        } else {
+            targetTG.setTransform(targetTransform);
+//        }
+        
 
         // reset yaw and pitch angles
         longditude = 0.0;
@@ -775,8 +788,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         for (TransformationListener currentListener : transformationListeners) {
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("transformation"+rotateTransform);
-//            }
-            final Transform3D rotationPart = new Transform3D(targetTransform);
+//            }            
             currentListener.rotated(new TransformationEvent(oldViewDirection, newViewDirection));
         }
 

@@ -49,6 +49,7 @@ public class ShapeLoader extends AbstractSceneLoader {
     final ArrayList<Point3f> points = new ArrayList<Point3f>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Optimise waste of memory and time
     private final ArrayList<Double> pointColors = new ArrayList<Double>();
+    private final ArrayList<Double> pointADT = new ArrayList<Double>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna
     final ArrayList<Color4f> polygonColors = new ArrayList<Color4f>();
     final ArrayList<Color4f> wireColors = new ArrayList<Color4f>();
@@ -470,9 +471,16 @@ public class ShapeLoader extends AbstractSceneLoader {
                 lineColor[(currentLineSize - 1) + j] = lineColor[j];
 
                 final Point3f zmodifiedPoint = new Point3f(linePoints[currentIndex]);
-                zmodifiedPoint.z += 0.04;
+                //linear
+                final double height = ((pointADT.get(currentIndex) / maxADT));
+                // exp
+//                final double height = Math.pow((((pointADT.get(currentIndex) / maxADT))*100),2);
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("ADT: " + pointADT.get(currentIndex));
+//                    logger.debug("height: " + height);
+//                }
+                zmodifiedPoint.z += height;
                 line[(currentLineSize - 1) + j] = zmodifiedPoint;
-
                 currentIndex--;
             }
             currentIndex = resetIndex;
@@ -491,8 +499,9 @@ public class ShapeLoader extends AbstractSceneLoader {
             Appearance lineAppearance = new Appearance();
             PolygonAttributes pa = new PolygonAttributes();
 
-            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
-            lineAppearance.setTransparencyAttributes(ta);
+            //3d Effect disappears
+//            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
+//            lineAppearance.setTransparencyAttributes(ta);
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
             pa.setCullFace(PolygonAttributes.CULL_NONE);
             lineAppearance.setPolygonAttributes(pa);
@@ -600,17 +609,22 @@ public class ShapeLoader extends AbstractSceneLoader {
             }
         }
     }
+    double minADT = 9999.0;
+    double maxADT = -9999.0;
+    double averageADT = 0.0;
 
     public void createPointsFromShape() {
         double minPerc = 9999.0;
         double maxPerc = -9999.0;
         double minNo2dygn = 9999.0;
         double maxNo2dygn = -9999.0;
+        double allADT = 0.0;
         while (shp.hasNext()) {
             final ShapefileRecord record = shp.nextRecord();
             Double elevation = this.extractDoubleAttribute("elevation", record);
             Double perc = this.extractDoubleAttribute("perc98d", record);
             Double no2dygn = this.extractDoubleAttribute("NO2dygn", record);
+            Double adt = this.extractDoubleAttribute("ADT", record);
 
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is all hardcoded must work in general.
             double[] currentHeights = null;
@@ -690,6 +704,18 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                        }
                             pointColors.add(-9999.0);
                         }
+                        if (adt != null) {
+                            allADT += adt;
+                            if (adt < minADT) {
+                                minADT = adt;
+                            }
+                            if (adt > maxADT) {
+                                maxADT = adt;
+                            }
+                            pointADT.add(adt);
+                        } else {
+                            pointADT.add(-9999.0);
+                        }
                     } else if (shapeType == SHAPE_TYPE.POLYGON_3D) {
 //                        if (transformedPoint.getZ() < 0.000001f) {
 //                            polygonColors.add(new Color4f(transparent));
@@ -738,12 +764,16 @@ public class ShapeLoader extends AbstractSceneLoader {
                 pointIndices.add(buffer.getSize());
             }
         }
+        if (shapeType == SHAPE_TYPE.POLYLINE) {
+            averageADT = allADT / pointADT.size();
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("Creating geometry done. Time elapsed: "
                     + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms.");
             if (logger.isDebugEnabled()) {
                 logger.debug("min perc: " + minPerc + " max perc: " + maxPerc);
                 logger.debug("min no2: " + minNo2dygn + " max no2: " + maxNo2dygn);
+                logger.debug("min adt: " + minADT + " max adt: " + maxADT + " average: " + averageADT);
             }
         }
     }
