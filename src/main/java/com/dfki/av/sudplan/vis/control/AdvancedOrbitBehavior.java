@@ -336,6 +336,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     }
 
     protected synchronized void processAWTEvents(final AWTEvent[] events) {
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("process AWT Event");
+//        }
         motion = false;
         for (int i = 0; i < events.length; i++) {
             if (events[i] instanceof MouseEvent) {
@@ -650,6 +653,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
 //    private static enum INTEGRATION_TYPE {Latitude,Longitude};
     protected void integrateTransforms(Transform3D rotation) {
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("integrate transform: ");
+//        }
         if (logger.isDebugEnabled() && transformationLoggingEnabled) {
             logger.debug("distance from Center: " + distanceFromCenter);
             logger.debug("start Distance: " + startDistanceFromCenter);
@@ -686,7 +692,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
         temp2.set(invertCenterVector);
         targetTransform.mul(temp1, temp2);
-
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("after transformation");
+//        }
         final Point3d oldPosition = new Point3d();
         final Point3d newPosition = new Point3d();
         final Vector3d oldViewDirection = new Vector3d(SimpleCamera.DEFAULT_VIEW);
@@ -697,7 +705,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         targetTransform.transform(newPosition);
         targetTransform.transform(newViewDirection);
         newViewDirection.normalize();
-
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("after event variables");
+//        }
         if (logger.isDebugEnabled() && transformationLoggingEnabled) {
             logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition);
         }
@@ -713,17 +723,26 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
 
-        final Vector3d oldUpVector = new Vector3d(
-                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
-        final Vector3d oldViewVector = new Vector3d(
-                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
-        final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
-        targetTransform.transform(newUpVector);
-        oldUpVector.z = 0.0;
-        oldViewVector.z = 0.0;
-        final double deegres = EarthFlat.radiansToDeegree(oldUpVector.angle(oldViewVector));
-        Transform3D zCorrection = null;        
+//        try {
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: here is the failure
+//            final Vector3d oldUpVector = new Vector3d(
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Singelton is in not standalone not initialized. Must be initialized in not stand alone
+//                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
+//            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
+//            final Vector3d oldViewVector = new Vector3d(
+//                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
+//            final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
+//            targetTransform.transform(newUpVector);
+//            oldUpVector.z = 0.0;
+//            oldViewVector.z = 0.0;
+//            final double deegres = EarthFlat.radiansToDeegree(oldUpVector.angle(oldViewVector));
+//            Transform3D zCorrection = null;
+//        } catch (Throwable th) {
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:npe is catched only
+//            if (logger.isErrorEnabled()) {
+//                logger.error("Fehler: ", th);
+//            }
+//        }
 //        if (logger.isDebugEnabled() && !Double.isNaN(deegres) && deegres != 0.0) {
 ////            logger.debug("deegree difference: " + deegres);
 ////            logger.debug("OldUp: " + oldUpVector);
@@ -732,6 +751,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 ////            logger.debug("correction: " + EarthFlat.radiansToDeegree(newUpVector.angle(oldUpVector)));
 //            zCorrection = new Transform3D();
 //            zCorrection.ro
+//        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("transform integrated");
 //        }
         targetTG.setTransform(targetTransform);
 
