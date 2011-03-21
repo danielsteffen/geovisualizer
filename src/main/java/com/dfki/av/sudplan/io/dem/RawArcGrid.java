@@ -78,7 +78,7 @@ public class RawArcGrid {
     }
 
     public float getCellsize() {
-        return cellsize;
+        return cellsize * sparseFactor;
     }
 
     public void setCellsize(final float cellsize) {
@@ -133,7 +133,7 @@ public class RawArcGrid {
     }
 
     public int getQuadCount() {
-        return (numberOfColumns - 1) * (numberOfRows);
+        return (getNumberOfColumns() - 1) * (getNumberOfRows());
     }
 
     public int getTriangleCount() {
@@ -149,7 +149,15 @@ public class RawArcGrid {
 //            logger.debug("getGridPoint (" + x + "," + y + ")");
             throw new ArrayIndexOutOfBoundsException(y);
         }
-        return rawCoordinates[(int) (x * sparseFactor + y * sparseFactor * (getNumberOfColumns()))];
+        if (logger.isDebugEnabled()) {
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("x comp: "+x * sparseFactor);
+//                logger.debug("y comp: "+ y * sparseFactor * (numberOf()));
+//            }
+//
+//            logger.debug("index: "+x * sparseFactor + y * sparseFactor * (getNumberOfColumns()));
+        }
+        return rawCoordinates[(int) (x * sparseFactor + y * sparseFactor * (numberOfColumns))];
     }
 
     public float getSparseFactor() {

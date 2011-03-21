@@ -55,6 +55,7 @@ public class ArcGridParser {
         String currentValue = null;
         String currentLineDebug = null;
         String[] currentLineValues = null;
+//        int sparseFactor = 2;
         try {
             arcGrid.setScaleFactor((float) ComponentBroker.getInstance().getScalingFactor());
             BufferedReader sr = new BufferedReader(reader);
@@ -208,6 +209,7 @@ public class ArcGridParser {
                         + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
                 //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Grid starts upperleft corner should start lower
                 logger.debug("Firstpoint: " + arcGrid.getGridPoint(0, 0));
+                logger.debug("lastPoint: " + arcGrid.getGridPoint(arcGrid.getNumberOfColumns()-1, arcGrid.getNumberOfRows()-1));
                 logger.debug("Firstpoint: " + arcGrid.getRawCoordinates()[0]);
             }
             sr.close();
@@ -225,7 +227,8 @@ public class ArcGridParser {
                     + ", number of rows: " + arcGrid.getNumberOfRows()
                     + ", number of columns: " + arcGrid.getNumberOfColumns());
         }
-        arcGrid.setSparseFactor(1.0f);
+        arcGrid.setSparseFactor(2.0f);
+        logger.debug("lastPoint: " + arcGrid.getGridPoint(arcGrid.getNumberOfColumns()-1, arcGrid.getNumberOfRows()-1));
         if (logger.isDebugEnabled()) {
             logger.debug("Grid dimensions: coordinate count: " + arcGrid.getCoordinateCount()
                     + ", number of rows: " + arcGrid.getNumberOfRows()
