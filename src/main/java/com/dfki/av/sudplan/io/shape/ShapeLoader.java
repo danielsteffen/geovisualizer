@@ -20,6 +20,9 @@ import gov.nasa.worldwind.util.WWUtil;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import javax.media.j3d.Appearance;
@@ -73,6 +76,24 @@ public class ShapeLoader extends AbstractSceneLoader {
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Nasa Shapefile is not able to scoop with colon decimals. Fix!
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: remove after Vienna Demo
     final ElevationLayer heights = ComponentBroker.getInstance().getHeights();
+    final int buildingAlpha = 230;
+    final Color4f building1 = new Color4f(new Color(220, 220, 220, buildingAlpha));
+    final Color4f building2 = new Color4f(new Color(30, 144, 255, buildingAlpha));
+    final Color4f building3 = new Color4f(new Color(176, 196, 222, buildingAlpha));
+    final Color4f building4 = new Color4f(new Color(123, 104, 238, buildingAlpha));
+    final Color4f building5 = new Color4f(new Color(175, 238, 238, buildingAlpha));
+    final Color4f building6 = new Color4f(new Color(238, 232, 170, buildingAlpha));
+    final Color4f building7 = new Color4f(new Color(219, 112, 147, buildingAlpha));
+    final Color4f building8 = new Color4f(new Color(174, 238, 238, buildingAlpha));
+    final Color4f building9 = new Color4f(new Color(238, 213, 183, buildingAlpha));
+    final Color4f building10 = new Color4f(new Color(205, 193, 197, buildingAlpha));
+    final Color4f building11 = new Color4f(new Color(238, 213, 210, buildingAlpha));
+    final Color4f building12 = new Color4f(new Color(255, 106, 106, buildingAlpha));
+    final Color4f building13 = new Color4f(new Color(185, 211, 238, buildingAlpha));
+    final Color4f building14 = new Color4f(new Color(238, 220, 130, buildingAlpha));
+    final Color4f building15 = new Color4f(new Color(238, 238, 0, buildingAlpha));
+    final Color4f[] buildingColors = new Color4f[]{building1, building2, building3, building4, building5, building6, building7, building8, building9,
+        building10, building11, building12, building13, building14, building15};
 
     public static enum SHAPE_TYPE {
 
@@ -149,8 +170,8 @@ public class ShapeLoader extends AbstractSceneLoader {
         Appearance landscapeAppearance = new Appearance();
         PolygonAttributes pa = new PolygonAttributes();
 
-        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
-        landscapeAppearance.setTransparencyAttributes(ta);
+//        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
+//        landscapeAppearance.setTransparencyAttributes(ta);
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
         pa.setCullFace(PolygonAttributes.CULL_NONE);
         landscapeAppearance.setPolygonAttributes(pa);
@@ -609,9 +630,12 @@ public class ShapeLoader extends AbstractSceneLoader {
             }
         }
     }
-    double minADT = 9999.0;
-    double maxADT = -9999.0;
-    double averageADT = 0.0;
+    private double minADT = 9999.0;
+    private double maxADT = -9999.0;
+    private double averageADT = 0.0;
+//    private HashSet<String> layers = new HashSet<String>();
+    private final HashMap<String, Color4f> buildingColorMap = new HashMap<String, Color4f>();
+    private int currentBuildingColorIndex = 0;
 
     public void createPointsFromShape() {
         double minPerc = 9999.0;
@@ -625,6 +649,10 @@ public class ShapeLoader extends AbstractSceneLoader {
             Double perc = this.extractDoubleAttribute("perc98d", record);
             Double no2dygn = this.extractDoubleAttribute("NO2dygn", record);
             Double adt = this.extractDoubleAttribute("ADT", record);
+            String layer = this.extractStringAttribute("Layer", record);
+            if (shapeType == SHAPE_TYPE.POLYGON_3D) {
+                layer = layer.split(" ")[0];
+            }
 
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is all hardcoded must work in general.
             double[] currentHeights = null;
@@ -717,15 +745,24 @@ public class ShapeLoader extends AbstractSceneLoader {
                             pointADT.add(-9999.0);
                         }
                     } else if (shapeType == SHAPE_TYPE.POLYGON_3D) {
+                        if (layer != null) {
+                            Color4f currentColor = null;
+                            if ((currentColor = buildingColorMap.get(layer)) == null) {
+                                buildingColorMap.put(layer, buildingColors[currentBuildingColorIndex]);
+                                currentColor = buildingColors[currentBuildingColorIndex];
+                                currentBuildingColorIndex++;
+                            }
+                            polygonColors.add(currentColor);
+                        } else {
+                            polygonColors.add(new Color4f(gray));
+                        }
 //                        if (transformedPoint.getZ() < 0.000001f) {
 //                            polygonColors.add(new Color4f(transparent));
 //                            wireColors.add(new Color4f(transparent));
 //                        } else {
-                        Math.sin(maxPerc);
-                        polygonColors.add(new Color4f(gray));
+
                         wireColors.add(new Color4f(black));
 //                        }
-
 //                        polygonColorsIndex.add(0);
                     } else if (shapeType == SHAPE_TYPE.POLYGON_2D) {
                         if (no2dygn != null) {
@@ -774,6 +811,7 @@ public class ShapeLoader extends AbstractSceneLoader {
                 logger.debug("min perc: " + minPerc + " max perc: " + maxPerc);
                 logger.debug("min no2: " + minNo2dygn + " max no2: " + maxNo2dygn);
                 logger.debug("min adt: " + minADT + " max adt: " + maxADT + " average: " + averageADT);
+                logger.debug("layers: " + Arrays.deepToString(buildingColorMap.keySet().toArray()));
             }
         }
     }
@@ -826,6 +864,20 @@ public class ShapeLoader extends AbstractSceneLoader {
             }
         }
 
+        return null;
+    }
+
+    protected String extractStringAttribute(final String attributeName, final ShapefileRecord record) {
+        for (Map.Entry<String, Object> attr : record.getAttributes().getEntries()) {
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:hardcoded!!!!
+            if (!attr.getKey().trim().equalsIgnoreCase(attributeName)) {
+                continue;
+            }
+            ;
+
+            Object o = attr.getValue();
+            return o.toString();
+        }
         return null;
     }
 
