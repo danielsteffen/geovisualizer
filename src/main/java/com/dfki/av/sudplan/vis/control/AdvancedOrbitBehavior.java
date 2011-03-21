@@ -226,6 +226,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
      * Used to set the fuction for a mouse button to Rotate
      */
     public static final int ROTATE = 0;
+    public boolean switchRotateButton = true;
     /**
      * Used to set the function for a mouse button to Translate
      */
@@ -1381,11 +1382,20 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     }
 
     private void alternateInteractionMode(int newInteractionMode) {
+        setLeftButton(TRANSLATE);
+        setRightButton(ROTATE);
         if (newInteractionMode == COMBINED) {
             setZoomEnable(true);
             setTranslateEnable(true);
             setRotateEnable(true);
         } else if (newInteractionMode == ROTATE) {
+            if (switchRotateButton) {
+                setLeftButton(ROTATE);
+                setRightButton(TRANSLATE);
+            } else {
+                setLeftButton(TRANSLATE);
+                setRightButton(ROTATE);
+            }
             if (alwaysZoom) {
                 setZoomEnable(true);
             } else {
@@ -1417,5 +1427,29 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
     public void setAlwaysZoom(boolean alwaysZoom) {
         this.alwaysZoom = alwaysZoom;
+    }
+
+    public int getLeftButton() {
+        return leftButton;
+    }
+
+    public void setLeftButton(int leftButton) {
+        this.leftButton = leftButton;
+    }
+
+    public int getRightButton() {
+        return rightButton;
+    }
+
+    public void setRightButton(int rightButton) {
+        this.rightButton = rightButton;
+    }
+
+    public boolean isSwitchRotateButton() {
+        return switchRotateButton;
+    }
+
+    public void setSwitchRotateButton(boolean switchRotateButton) {
+        this.switchRotateButton = switchRotateButton;
     }
 }
