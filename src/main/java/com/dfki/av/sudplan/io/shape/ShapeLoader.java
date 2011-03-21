@@ -6,7 +6,6 @@ package com.dfki.av.sudplan.io.shape;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.io.AbstractSceneLoader;
-import com.dfki.av.sudplan.io.dem.RawArcGrid;
 import com.dfki.av.sudplan.layer.ElevationLayer;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
@@ -18,7 +17,9 @@ import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecordPolygon;
 import gov.nasa.worldwind.util.VecBuffer;
 import gov.nasa.worldwind.util.WWUtil;
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import javax.media.j3d.Appearance;
@@ -33,7 +34,6 @@ import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
-import net.infonode.gui.Colors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,8 @@ public class ShapeLoader extends AbstractSceneLoader {
             if (shapeType == SHAPE_TYPE.POLYGON_3D) {
                 createBuildings();
             } else if (shapeType == SHAPE_TYPE.POLYLINE) {
-                createStreetLevelResults();
+//                createStreetLevelResults();
+                createStreetLevel3DResults();
             } else if (shapeType == shapeType.POLYGON_2D) {
                 createRooftopResults();
             }
@@ -357,6 +358,152 @@ public class ShapeLoader extends AbstractSceneLoader {
                 currentLine.setCoordinate((j + 1), linePoints[currentIndex]);
                 setColor(currentLine, currentIndex, (j + 1));
             }
+            currentIndex++;
+//            if (logger.isDebugEnabled()) {
+//                final Point3f[] coordinates = new Point3f[currentLineSize];
+            //                currentLine.getCoordinates(0, coordinates);
+//                final Point3f first = new Point3f();
+//                currentLine.getCoordinate(0,first);
+//                logger.debug("Line points: "+Arrays.deepToString(coordinates));
+//                logger.debug("Line points: "+first);
+//            }
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("TotalIndex: " + currentIndex);
+        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Line creation done.");
+//            Enumeration<Geometry> enums = shape.getAllGeometries();
+//            int geomCounter = 0;
+//            while(enums.hasMoreElements()){
+//                enums.nextElement();
+//                geomCounter++;
+//            }
+//            logger.debug("Number of geometries: "+geomCounter);
+//        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Number of Shapes: " + shapeArray.size());
+        }
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: checks for valid geometries e.g. line with one point
+    private void createStreetLevel3DResults() {
+
+//         LineArray axisYLines = new LineArray(2,
+//        LineArray.COORDINATES | LineArray.COLOR_3 );
+//	    sceneBranch.addChild(new Shape3D(axisYLines));
+//
+//             final Color3f green = new Color3f(0.0f, 1.0f, 0.0f);
+//            final Color3f blue  = new Color3f(0.0f, 0.0f, 1.0f);
+//	    axisYLines.setCoordinate(0, new Point3f( 2000.0f,6600.0f, 10.0f));
+//	    axisYLines.setCoordinate(1, new Point3f( 2010.0f,6610.0f, 10.0f));
+//
+//             axisYLines.setColor(0, green);
+//	    axisYLines.setColor(1, blue);
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:convert these to arrays after creation this will be the same for every Method (polygons etc.)
+        final int[] lineIndices = copyIntegerArray(pointIndices);
+        final Point3f[] linePoints = points.toArray(new Point3f[]{});
+        logger.debug("line points: " + linePoints.length);
+//        final Point3f[] polygonPoints = points.toArray(new Point3f[]{});
+        final Double[] pointColorArray = pointColors.toArray(new Double[]{});
+//        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:should be made easier with a PolyLineObject
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Creating " + lineIndices.length + " lines.");
+//            logger.debug("Number of points: " + linePoints.length);
+//        }
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:index lines, this is bad performance;
+        int currentIndex = 0;
+        for (int i = 0; i < lineIndices.length; i++) {
+//          for (int i = 0; i < 2; i++) {
+            int currentLineSize;
+            if (i != lineIndices.length - 1) {
+                currentLineSize = lineIndices[i] + 1;
+            } else {
+                currentLineSize = lineIndices[i];
+            }
+//            if (currentLineSize == 2) {
+//                currentIndex++;
+//                currentIndex++;
+//                continue;
+//            }
+//            if (logger.isDebugEnabled() && currentIndex == 5934) {
+//                logger.debug("Linesize: " + currentLineSize + " points: " + lineIndices[i] + "currentIndex: " + currentIndex);
+//            }
+            final GeometryInfo currentLine = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
+//            currentLineSize, LineArray.COORDINATES | LineArray.COLOR_4
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:api problem if you set this problem on a shape 3D.
+//            currentLine.setCapability(LineArray.ALLOW_COLOR_READ);
+//            currentLine.setCapability(LineArray.ALLOW_COLOR_WRITE);
+
+            final Point3f[] line = new Point3f[((currentLineSize - 1) * 2 + 1)];
+            final Color4f[] lineColor = new Color4f[((currentLineSize - 1) * 2 + 1)];
+            for (int j = 0; j < currentLineSize - 1; j++) {
+//                if (logger.isDebugEnabled() && currentIndex == 5934) {
+//                    logger.debug("currentIndex: " + (j));
+//                }
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("Coordinate: "+j+" ="+linePoints[currentIndex]);
+//                    logger.debug("Coordinate: "+(j+1)+" ="+linePoints[currentIndex+1]);
+//                }
+                final double currentColor = pointColors.get(currentIndex);
+                if (currentColor < lowConcentrationThreshold) {
+                    lineColor[j] = lowConcentrationColor;
+                } else if (currentColor < mediumConcentrationThreshold) {
+                    lineColor[j] = mediumConcentrationColor;
+                } else {
+                    lineColor[j] = highConcentrationColor;
+                }
+                line[j] = linePoints[currentIndex];
+                currentIndex++;
+            }
+            final int resetIndex = currentIndex;
+            currentIndex--;
+            for (int j = 0; j < currentLineSize - 1; j++) {
+//                if (logger.isDebugEnabled() && currentIndex == 5934) {
+//                    logger.debug("currentIndex: " + (j));
+//                }
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("Coordinate: "+j+" ="+linePoints[currentIndex]);
+//                    logger.debug("Coordinate: "+(j+1)+" ="+linePoints[currentIndex+1]);
+//                }
+
+                lineColor[(currentLineSize - 1) + j] = lineColor[j];
+
+                final Point3f zmodifiedPoint = new Point3f(linePoints[currentIndex]);
+                zmodifiedPoint.z += 0.04;
+                line[(currentLineSize - 1) + j] = zmodifiedPoint;
+
+                currentIndex--;
+            }
+            currentIndex = resetIndex;
+            if (i != lineIndices.length - 1) {
+                currentIndex--;
+            }
+            line[line.length - 1] = line[0];
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Coordinates: " + Arrays.deepToString(line));
+//            }
+            lineColor[lineColor.length - 1] = lineColor[0];
+            currentLine.setCoordinates(line);
+            currentLine.setColors(lineColor);
+            currentLine.setStripCounts(new int[]{line.length});
+            final ShapefileObject lineShape = new ShapefileObject(currentLine.getGeometryArray());
+            Appearance lineAppearance = new Appearance();
+            PolygonAttributes pa = new PolygonAttributes();
+
+            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
+            lineAppearance.setTransparencyAttributes(ta);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
+            pa.setCullFace(PolygonAttributes.CULL_NONE);
+            lineAppearance.setPolygonAttributes(pa);
+            lineShape.setAppearance(lineAppearance);
+//            Appearance lineAppearance = new Appearance();
+//            LineAttributes lineAttributes = new LineAttributes();
+//            lineAttributes.setLineWidth(2.0f);
+//            lineAppearance.setLineAttributes(lineAttributes);
+//            lineShape.setAppearance(lineAppearance);
+            shapeArray.add(lineShape);
+            createdScene.getSceneGroup().addChild(lineShape);
             currentIndex++;
 //            if (logger.isDebugEnabled()) {
 //                final Point3f[] coordinates = new Point3f[currentLineSize];
