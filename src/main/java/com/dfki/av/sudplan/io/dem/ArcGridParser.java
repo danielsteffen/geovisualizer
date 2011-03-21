@@ -178,7 +178,7 @@ public class ArcGridParser {
                     transformedPoint.z *= arcGrid.getzExaggeration();
                     scalePoint3f(transformedPoint);
                     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna presentation
-                    transformedPoint.z -= 0.02f;
+                    transformedPoint.z -= 0.01f;
 
 //                    if (logger.isDebugEnabled()) {
 //                        logger.debug("scaled: " + transformedPoint);
