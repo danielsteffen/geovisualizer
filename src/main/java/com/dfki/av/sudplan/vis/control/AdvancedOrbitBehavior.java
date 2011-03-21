@@ -48,6 +48,7 @@ import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.camera.TransformationEvent;
 import com.dfki.av.sudplan.camera.TransformationListener;
+import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.util.EarthFlat;
 import java.awt.event.MouseEvent;
 import java.awt.AWTEvent;
@@ -62,12 +63,12 @@ import javax.vecmath.Matrix3d;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import com.sun.j3d.internal.J3dUtilsI18N;
-import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import java.util.ArrayList;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PickInfo;
+import javax.vecmath.Vector2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,6 +227,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
      * Used to set the fuction for a mouse button to Rotate
      */
     public static final int ROTATE = 0;
+    public boolean switchRotateButton = true;
     /**
      * Used to set the function for a mouse button to Translate
      */
@@ -710,6 +712,27 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         }
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
+
+        final Vector3d oldUpVector = new Vector3d(
+                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
+        final Vector3d oldViewVector = new Vector3d(
+                ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
+        final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
+        targetTransform.transform(newUpVector);
+        oldUpVector.z = 0.0;
+        oldViewVector.z = 0.0;
+        final double deegres = EarthFlat.radiansToDeegree(oldUpVector.angle(oldViewVector));
+        Transform3D zCorrection = null;        
+//        if (logger.isDebugEnabled() && !Double.isNaN(deegres) && deegres != 0.0) {
+////            logger.debug("deegree difference: " + deegres);
+////            logger.debug("OldUp: " + oldUpVector);
+////            logger.debug("newUp: " + newUpVector);
+////            logger.debug("oldView: " + oldViewVector);
+////            logger.debug("correction: " + EarthFlat.radiansToDeegree(newUpVector.angle(oldUpVector)));
+//            zCorrection = new Transform3D();
+//            zCorrection.ro
+//        }
         targetTG.setTransform(targetTransform);
 
         // reset yaw and pitch angles
@@ -1381,11 +1404,20 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
     }
 
     private void alternateInteractionMode(int newInteractionMode) {
+        setLeftButton(TRANSLATE);
+        setRightButton(ROTATE);
         if (newInteractionMode == COMBINED) {
             setZoomEnable(true);
             setTranslateEnable(true);
             setRotateEnable(true);
         } else if (newInteractionMode == ROTATE) {
+            if (switchRotateButton) {
+                setLeftButton(ROTATE);
+                setRightButton(TRANSLATE);
+            } else {
+                setLeftButton(TRANSLATE);
+                setRightButton(ROTATE);
+            }
             if (alwaysZoom) {
                 setZoomEnable(true);
             } else {
@@ -1417,5 +1449,29 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
     public void setAlwaysZoom(boolean alwaysZoom) {
         this.alwaysZoom = alwaysZoom;
+    }
+
+    public int getLeftButton() {
+        return leftButton;
+    }
+
+    public void setLeftButton(int leftButton) {
+        this.leftButton = leftButton;
+    }
+
+    public int getRightButton() {
+        return rightButton;
+    }
+
+    public void setRightButton(int rightButton) {
+        this.rightButton = rightButton;
+    }
+
+    public boolean isSwitchRotateButton() {
+        return switchRotateButton;
+    }
+
+    public void setSwitchRotateButton(boolean switchRotateButton) {
+        this.switchRotateButton = switchRotateButton;
     }
 }
