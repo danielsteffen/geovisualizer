@@ -555,6 +555,12 @@ public class SimpleCamera implements Camera, TransformationListener {
 //            viewTransformation.transform(currentPoint);
 //            logger.debug("View Position: " + currentPoint);
             final AdvancedBoundingBox currentBoundingBox = getViewBoundingBox();
+            if(currentBoundingBox == null){
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Current ViewableBoudningBox is null. Can't perform goto.");                    
+                }
+                return;
+            }
             if (logger.isDebugEnabled() && boundingBoxLogging) {
                 logger.debug("old/new contains : " + currentBoundingBox.containsBoundingBox(boundingBox));
                 logger.debug("new/old contains : " + boundingBox.containsBoundingBox(currentBoundingBox));
