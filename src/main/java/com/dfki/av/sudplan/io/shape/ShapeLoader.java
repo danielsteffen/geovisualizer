@@ -650,9 +650,7 @@ public class ShapeLoader extends AbstractSceneLoader {
             Double no2dygn = this.extractDoubleAttribute("NO2dygn", record);
             Double adt = this.extractDoubleAttribute("ADT", record);
             String layer = this.extractStringAttribute("Layer", record);
-            if (shapeType == SHAPE_TYPE.POLYGON_3D) {
-                layer = layer.split(" ")[0];
-            }
+
 
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is all hardcoded must work in general.
             double[] currentHeights = null;
@@ -691,6 +689,11 @@ public class ShapeLoader extends AbstractSceneLoader {
                         shapeType = SHAPE_TYPE.POLYGON_2D;
                         originalPoint.setZ(100);
                     }
+
+                    if (shapeType == SHAPE_TYPE.POLYGON_3D) {
+                        layer = layer.split(" ")[0];
+                    }
+
 //                            originalPoint.setZ((float) (originalPoint.getZ() + elevation));
 //                        }
                     final Point3f transformedPoint = EarthFlat.geodeticToCartesian(originalPoint, EarthFlat.PLATE_CARREE_PROJECTION);
