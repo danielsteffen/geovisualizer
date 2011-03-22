@@ -12,6 +12,8 @@ package com.dfki.av.sudplan.ui.vis;
 
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.Camera2D;
+import com.dfki.av.sudplan.camera.CameraEvent;
+import com.dfki.av.sudplan.camera.CameraListener;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.dfki.av.sudplan.geo.GeographicCameraAdapter;
@@ -56,7 +58,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Sebastian Puhl <sebastian.puhl@dfki.de>
  */
-public class VisualisationComponentPanel extends javax.swing.JPanel implements VisualisationComponent {
+public class VisualisationComponentPanel extends javax.swing.JPanel implements VisualisationComponent, CameraListener {
 
     private final Logger logger = LoggerFactory.getLogger(VisualisationComponentPanel.class);
     /*ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Not a perfect solution if the users leaves the sphere no control 
@@ -75,7 +77,6 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //    private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
     private final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-
     private final Canvas3D canvas3D = new Canvas3D(config);
     private Camera camera3D;
     private Camera geographicCamera;
@@ -141,12 +142,10 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 
         createOrthobox();
 
-
-        canvas3D.getView().setBackClipDistance(3000);
-        canvas3D.getView().setFrontClipDistance(0.01);
         canvas3D.setPreferredSize(new Dimension(800, 600));
 
         configure2dView();
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:should be dynamically
         canvas2D.getView().setBackClipDistance(3000);
         canvas2D.getView().setFrontClipDistance(0.01);
         canvas2D.setPreferredSize(new Dimension(800, 600));
@@ -171,6 +170,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
         camera3D.setCameraBounds(behaviourBounding);
         gotoToHome();
         camera3D.addCameraListner(camera2D);
+        camera3D.addCameraListner(this);
 //        camera3D.setCameraPosition(new Point3d(home));
 //        behavior.setRotationCenter(new Point3d(position));
 //        behavior.setPointOnEarth(universe.getViewingPlatform().get);       
@@ -566,5 +566,54 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     @Override
     public void gotoToHome() {
         camera3D.setCameraPosition(new Point3d(home));
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: used to set the clipping plane. This is maybe better done over an plattformbehaviour
+    @Override
+    public void cameraMoved(CameraEvent cameraEvent) {
+        if (cameraEvent != null && cameraEvent.getNewCameraPosition() != null) {
+            setClippingDistancesByHeight(cameraEvent.getNewCameraPosition().z);
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Attention: No Camera position. Can not calculate clipping distances.");
+            }
+        }
+    }
+
+    @Override
+    public void cameraRegistered(CameraEvent cameraEvent) {
+        if (cameraEvent != null && cameraEvent.getSource() != null && cameraEvent.getSource().getCameraPosition() != null) {
+            setClippingDistancesByHeight(cameraEvent.getSource().getCameraPosition().z);
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Attention: No Camera position. Can not calculate clipping distances.");
+            }
+        }
+    }
+
+    @Override
+    public void cameraUnregistered(CameraEvent cameraEvent) {
+    }
+
+    @Override
+    public void cameraViewChanged(CameraEvent cameraEvent) {
+    }
+
+    //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this should be calculated by the viewvector not the height.
+    public void setClippingDistancesByHeight(final double height) {
+        int digitLength = String.valueOf((int) height).length();
+        if (digitLength == 1 && Math.floor(height) == 0.0) {
+            digitLength = 0;
+        }
+        final double multiplier = Math.pow(10, digitLength);
+        final double nearClippingValue = 0.01 * multiplier;
+        final double farClippingValue = 30 * multiplier;
+        if (logger.isDebugEnabled()) {
+//            logger.debug("multiplier: " + multiplier);
+//            logger.debug("nearClippingValue: " + nearClippingValue);
+//            logger.debug("farClippingValue: " + farClippingValue);
+        }
+        canvas3D.getView().setBackClipDistance(farClippingValue);
+        canvas3D.getView().setFrontClipDistance(nearClippingValue);
     }
 }
