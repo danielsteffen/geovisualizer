@@ -10,8 +10,11 @@ import com.dfki.av.sudplan.layer.ElevationLayer;
 import com.dfki.av.sudplan.util.AdvancedBoundingBox;
 import com.dfki.av.sudplan.util.EarthFlat;
 import com.dfki.av.sudplan.util.TimeMeasurement;
+import com.dfki.av.sudplan.util.Triangle;
 import com.sun.j3d.utils.geometry.GeometryInfo;
+import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
+import com.sun.j3d.utils.geometry.Triangulator;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecordPolygon;
@@ -20,9 +23,7 @@ import gov.nasa.worldwind.util.WWUtil;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import javax.media.j3d.Appearance;
@@ -34,9 +35,11 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
+import javax.vecmath.Color3f;
 import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +97,60 @@ public class ShapeLoader extends AbstractSceneLoader {
     final Color4f building15 = new Color4f(new Color(238, 238, 0, buildingAlpha));
     final Color4f[] buildingColors = new Color4f[]{building1, building2, building3, building4, building5, building6, building7, building8, building9,
         building10, building11, building12, building13, building14, building15};
+
+    private void correctNormals(GeometryInfo gridGeometry, boolean all) {
+        final Vector3f up = new Vector3f(0, 0, 1);
+        if (gridGeometry == null) {
+            return;
+        }
+        int correctedVectorCount = 0;
+        final Vector3f[] normals = gridGeometry.getNormals();
+        if (normals != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Normal count: " + normals.length);
+                logger.debug("Normal indices: " + gridGeometry.getNormalIndices());
+            }
+            for (int i = 0; i < normals.length; i++) {
+//                Vector3f currentNormal = normals[i];
+//                double diff = EarthFlat.radiansToDeegree(up.angle(currentNormal));
+//                if (diff > 91) {
+//                    if (logger.isDebugEnabled() && !all) {
+//                        logger.debug("diff: " + diff);
+//                    }
+//                    if (logger.isDebugEnabled() && !all) {
+//                        logger.debug("current: "+currentNormal);
+//                    }
+//                    currentNormal.negate();
+////                     if (logger.isDebugEnabled()) {
+////                        logger.debug("current: "+currentNormal);
+////                    }
+                normals[i] = up;
+//                    correctedVectorCount++;
+//                } else {
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("diff: "+diff);
+//                    }
+//                }
+            }
+            gridGeometry.setNormals(normals);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Corrected vectors: " + correctedVectorCount);
+        }
+    }
+
+    private boolean checkLastPart(int partCounter, int startingIndex) {
+        for (int i = 0; i < partCounter - 3; i++) {
+            final double area = Triangle.getSignedTriangleArea(points.get(startingIndex + i), points.get(startingIndex + i + 1), points.get(startingIndex + i + 2));
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("part: "+partCounter+" i: "+i+" area: "+area);
+//            }
+            if (area < 0.0) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static enum SHAPE_TYPE {
 
@@ -166,13 +223,14 @@ public class ShapeLoader extends AbstractSceneLoader {
             logger.debug("Normalising geometry...");
             TimeMeasurement.getInstance().startMeasurement(this);
         }
-//        NormalGenerator normalGenerator = new NormalGenerator();
-//        normalGenerator.generateNormals(gridGeometry);
+        NormalGenerator normalGenerator = new NormalGenerator();
+        normalGenerator.generateNormals(gridGeometry);
+//        correctNormals(gridGeometry,true);
+        correctNormals(gridGeometry, true);
         if (logger.isDebugEnabled()) {
             logger.debug("Normalising geometry done. Time elapsed: "
                     + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
         }
-
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this has to be configurable with a default value
         Appearance landscapeAppearance = new Appearance();
         PolygonAttributes pa = new PolygonAttributes();
@@ -181,16 +239,19 @@ public class ShapeLoader extends AbstractSceneLoader {
 //        landscapeAppearance.setTransparencyAttributes(ta);
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
         pa.setCullFace(PolygonAttributes.CULL_NONE);
+
+//        pa.setBackFaceNormalFlip(true);
         landscapeAppearance.setPolygonAttributes(pa);
 
-        Material material = new Material();
-//        material.setDiffuseColor(new Color3f(0.2f, 0.2f, 0.2f));
-//        material.setAmbientColor(new Color3f(0.98f, 0.98f, 0.98f));
-//        material.setAmbientColor(new Color3f(0.8f, 0.8f, 0.8f));
-        material.setColorTarget(Material.AMBIENT_AND_DIFFUSE);
 
-        landscapeAppearance.setMaterial(material);
+//        material.setColorTarget(Material.AMBIENT_AND_DIFFUSE);
 
+        Color3f aColor = new Color3f(0.1f, 0.1f, 0.1f);
+        Color3f eColor = new Color3f(0.0f, 0.0f, 0.0f);
+        Color3f dColor = new Color3f(0.4f, 0.4f, 0.4f);
+        Color3f sColor = new Color3f(0.5f, 0.5f, 0.5f);
+        Material m = new Material(aColor, eColor, dColor, sColor, 10.0f);
+        landscapeAppearance.setMaterial(m);
         //full
         ShapefileObject landscape = new ShapefileObject(gridGeometry.getGeometryArray());
         landscape.setCapability(ShapefileObject.ALLOW_GEOMETRY_WRITE);
@@ -219,7 +280,7 @@ public class ShapeLoader extends AbstractSceneLoader {
         materialAppear.setPolygonAttributes(polyAttrib);
         LineAttributes lineAttribtues = new LineAttributes();
         lineAttribtues.setLineAntialiasingEnable(true);
-        lineAttribtues.setLineWidth(0.1f);
+        lineAttribtues.setLineWidth(0.2f);
         materialAppear.setLineAttributes(lineAttribtues);
 //        ColoringAttributes blackColoring = new ColoringAttributes();
 //        blackColoring.setColor(0.0f, 0.0f, 0.0f);
@@ -370,6 +431,7 @@ public class ShapeLoader extends AbstractSceneLoader {
             LineAttributes lineAttributes = new LineAttributes();
             lineAttributes.setLineWidth(2.0f);
             lineAppearance.setLineAttributes(lineAttributes);
+
             lineShape.setAppearance(lineAppearance);
             shapeArray.add(lineShape);
             createdScene.getSceneGroup().addChild(lineShape);
@@ -464,8 +526,8 @@ public class ShapeLoader extends AbstractSceneLoader {
 //            currentLine.setCapability(LineArray.ALLOW_COLOR_READ);
 //            currentLine.setCapability(LineArray.ALLOW_COLOR_WRITE);
 
-            final Point3f[] line = new Point3f[((currentLineSize - 1) * 2 + 1)];
-            final Color4f[] lineColor = new Color4f[((currentLineSize - 1) * 2 + 1)];
+            final Point3f[] line = new Point3f[((currentLineSize - 1) * 2)];
+            final Color4f[] lineColor = new Color4f[((currentLineSize - 1) * 2)];
             for (int j = 0; j < currentLineSize - 1; j++) {
 //                if (logger.isDebugEnabled() && currentIndex == 5934) {
 //                    logger.debug("currentIndex: " + (j));
@@ -515,23 +577,36 @@ public class ShapeLoader extends AbstractSceneLoader {
             if (i != lineIndices.length - 1) {
                 currentIndex--;
             }
-            line[line.length - 1] = line[0];
+//            line[line.length - 1] = line[0];
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("Coordinates: " + Arrays.deepToString(line));
 //            }
-            lineColor[lineColor.length - 1] = lineColor[0];
+//            lineColor[lineColor.length - 1] = lineColor[0];
+//            swapArray(line);
             currentLine.setCoordinates(line);
-            currentLine.setColors(lineColor);
+//            currentLine.setColors(lineColor);
             currentLine.setStripCounts(new int[]{line.length});
+
+            Stripifier stripifier = new Stripifier();
+            stripifier.stripify(currentLine);
+            NormalGenerator nGenerator = new NormalGenerator();
+            nGenerator.generateNormals(currentLine);
+
             final ShapefileObject lineShape = new ShapefileObject(currentLine.getGeometryArray());
             Appearance lineAppearance = new Appearance();
             PolygonAttributes pa = new PolygonAttributes();
-
+            Color3f aColor = new Color3f(0.3f, 0.3f, 0.3f);
+            Color3f eColor = new Color3f(0.0f, 0.0f, 0.0f);
+            Color3f dColor = new Color3f(0.5f, 0.5f, 0.5f);
+            Color3f sColor = new Color3f(1.0f, 1.0f, 1.0f);
+            Material m = new Material(aColor, eColor, dColor, sColor, 50.0f);
+            lineAppearance.setMaterial(m);
             //3d Effect disappears
 //            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
 //            lineAppearance.setTransparencyAttributes(ta);
             //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
             pa.setCullFace(PolygonAttributes.CULL_NONE);
+            pa.setBackFaceNormalFlip(true);
             lineAppearance.setPolygonAttributes(pa);
             lineShape.setAppearance(lineAppearance);
 //            Appearance lineAppearance = new Appearance();
@@ -650,6 +725,7 @@ public class ShapeLoader extends AbstractSceneLoader {
         double minNo2dygn = 9999.0;
         double maxNo2dygn = -9999.0;
         double allADT = 0.0;
+        int clockwiseCount = 0;
         while (shp.hasNext()) {
             final ShapefileRecord record = shp.nextRecord();
             Double elevation = this.extractDoubleAttribute("elevation", record);
@@ -685,6 +761,7 @@ public class ShapeLoader extends AbstractSceneLoader {
                 // extruded polygon is started.
                 VecBuffer buffer = record.getCompoundPointBuffer().subBuffer(i);
                 Iterator<double[]> coords = buffer.getCoords().iterator();
+                int partCounter = 0;
                 while (coords.hasNext()) {
                     final double[] currentCoords = coords.next();
 
@@ -771,7 +848,7 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                            wireColors.add(new Color4f(transparent));
 //                        } else {
 
-                        wireColors.add(new Color4f(black));
+                        wireColors.add(new Color4f(0.0f, 0.0f, 0.0f, 0.2f));
 //                        }
 //                        polygonColorsIndex.add(0);
                     } else if (shapeType == SHAPE_TYPE.POLYGON_2D) {
@@ -806,8 +883,14 @@ public class ShapeLoader extends AbstractSceneLoader {
                     if (logger.isDebugEnabled()) {
 //                            logger.debug("last point: "+polygons.get(polygons.size()-1));
                     }
+                    partCounter++;
                     coordCounter++;
                 }
+//                if (partCounter > 2) {
+//                    if(!checkLastPart(partCounter, coordCounter - (partCounter-1))){
+//                        clockwiseCount++;
+//                    }
+//                }
                 pointIndices.add(buffer.getSize());
             }
         }
@@ -822,6 +905,7 @@ public class ShapeLoader extends AbstractSceneLoader {
                 logger.debug("min no2: " + minNo2dygn + " max no2: " + maxNo2dygn);
                 logger.debug("min adt: " + minADT + " max adt: " + maxADT + " average: " + averageADT);
                 logger.debug("layers: " + Arrays.deepToString(buildingColorMap.keySet().toArray()));
+                logger.debug("clockwiseCount: " + clockwiseCount);
             }
         }
     }
@@ -919,4 +1003,19 @@ public class ShapeLoader extends AbstractSceneLoader {
         return highConcentrationColor;
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna
+
+//    private void swapArray(Point3f[] arrayToSwap) {
+//        if (arrayToSwap == null) {
+//            return;
+//        }
+//        if (arrayToSwap.length == 1) {
+//            return;
+//        }
+//        boolean even = (arrayToSwap.length % 2 == 0);
+//        for (int i = 0; i < arrayToSwap.length / 2; i++) {
+//            final Point3f tmp = arrayToSwap[(arrayToSwap.length - 1) - i];
+//            arrayToSwap[(arrayToSwap.length - 1) - i] = arrayToSwap[i];
+//            arrayToSwap[i] = tmp;
+//        }
+//    }
 }

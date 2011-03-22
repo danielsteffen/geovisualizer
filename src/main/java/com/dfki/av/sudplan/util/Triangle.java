@@ -150,6 +150,10 @@ public class Triangle {
     }
 
     public static double getTriangleArea(final Point3f pointA, final Point3f pointB, final Point3f pointC) {
+        return Math.abs(getSignedTriangleArea(pointA, pointB, pointC));
+    }
+
+    public static double getSignedTriangleArea(final Point3f pointA, final Point3f pointB, final Point3f pointC) {
         Vector3f vectorA = new Vector3f(pointA.x, pointA.y, 0);
         Vector3f vectorB = new Vector3f(pointB.x, pointB.y, 0);
         Vector3f vectorC = new Vector3f(pointC.x, pointC.y, 0);
@@ -182,8 +186,7 @@ public class Triangle {
 //        if (logger.isDebugEnabled()) {
 //            logger.debug("cross: " + n);
 //        }
-        Vector3f na = getAbs(n);
-        return 0.5 * na.length();
+        return 0.5 * n.length();
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:unperformant --> this does not have to be calculated every time
 //    public double[] getBarycentricCoords(Vector3f p) {

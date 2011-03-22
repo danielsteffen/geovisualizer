@@ -41,6 +41,8 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Node;
+import javax.media.j3d.PointLight;
+import javax.media.j3d.SpotLight;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
@@ -70,8 +72,13 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     private BoundingSphere backgroundBounds = new BoundingSphere(new Point3d(), 1000000.0);
     private SimpleUniverse universe;
     private BranchGroup sceneGraph;
-    private final AmbientLight al = new AmbientLight(new Color3f(0.7f, 0.7f, 0.7f));
+    private final AmbientLight al = new AmbientLight();
     DirectionalLight dl;
+//    private PointLight sunLight = new PointLight(true, new Color3f(1f, 1f, 1f),
+//            new Point3f(), new Point3f(0.8f, 0.2f, 0.1f));
+    private SpotLight spotLight;
+    private SpotLight spotLight2;
+    private BranchGroup sunBranch = new BranchGroup();
 //    private Vector3d home = new Vector3d(0.0, 0.0, 50.0);
 //    private Vector3d home = new Vector3d(16.0, 65.0, 5.0);
 //    private final Vector3d home = new Vector3d(2007.0, 6609.0, 800.0);
@@ -391,13 +398,43 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
 //        Color3f light1Color = new Color3f(0.5f, 0.5f, 0.5f);
         Vector3f light1Direction = new Vector3f(2016.058f, 6594.77f, -1.0f);
 //        dl = new DirectionalLight(light1Color, light1Direction);
-        dl = new DirectionalLight();
-        dl.setDirection(light1Direction);
-        dl.setCapability(DirectionalLight.ALLOW_STATE_WRITE);
-        dl.setCapability(DirectionalLight.ALLOW_STATE_READ);
-        dl.setInfluencingBounds(lightBounds);
-        sceneGraph.addChild(dl);
+//        dl = new DirectionalLight();
+//        dl.setDirection(light1Direction);
+//        dl.setCapability(DirectionalLight.ALLOW_STATE_WRITE);
+//        dl.setCapability(DirectionalLight.ALLOW_STATE_READ);
+//        dl.setInfluencingBounds(lightBounds);
+//        sceneGraph.addChild(dl);
 //        sceneGraph.addChild(lightTG);
+        spotLight = new SpotLight(true,
+                new Color3f(1f, 1f, 1f),
+            new Point3f(2014f, 6604f, 8f),
+            new Point3f(0.8f, 0.1f, 0.0f),
+            new Vector3f(2006,6598,0),
+            (float)Math.PI,
+            0.0f);
+        spotLight.setInfluencingBounds(lightBounds);
+        spotLight.setCapability(PointLight.ALLOW_STATE_WRITE);
+        spotLight.setCapability(PointLight.ALLOW_STATE_READ);
+
+         spotLight2 = new SpotLight(true,
+                new Color3f(0.7f, 0.7f, 0.7f),
+            new Point3f(2002f, 6604f, 14f),
+            new Point3f(0.8f, 0.1f, 0.0f),
+            new Vector3f(2014,6600,0),
+            (float)Math.PI,
+            0.0f);
+        spotLight2.setInfluencingBounds(lightBounds);
+        spotLight2.setCapability(PointLight.ALLOW_STATE_WRITE);
+        spotLight2.setCapability(PointLight.ALLOW_STATE_READ);
+
+
+//        Transform3D translate = new Transform3D();
+//        translate.setTranslation(new Vector3f());
+//        TransformGroup origin = new TransformGroup(translate);
+//        origin.addChild(spotLight);
+        sunBranch.addChild(spotLight);
+//        sunBranch.addChild(spotLight2);
+        sceneGraph.addChild(sunBranch);
     }
 
     private void setBackground() {

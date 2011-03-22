@@ -6,6 +6,7 @@ package com.dfki.av.sudplan.io.dem;
 
 import com.dfki.av.sudplan.control.ComponentBroker;
 import com.sun.j3d.utils.image.TextureLoader;
+import gov.nasa.worldwind.geom.Sphere;
 import java.net.URL;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Geometry;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class ElevationShape extends Shape3D {
 
     Appearance landscapeAppearance = new Appearance();
-    private final static Logger logger = LoggerFactory.getLogger(ElevationShape.class);    
+    private final static Logger logger = LoggerFactory.getLogger(ElevationShape.class);
 
     public ElevationShape(final Geometry geometry) {
         super(geometry);
@@ -73,11 +74,17 @@ public class ElevationShape extends Shape3D {
 ////                new TexCoordGeneration(TexCoordGeneration.OBJECT_LINEAR,
 ////                        TexCoordGeneration.TEXTURE_COORDINATE_2));
 ////        texture.setCapability(TextureUnitState.ALLOW_STATE_WRITE);
-        Material material = new Material();
-        material.setDiffuseColor(new Color3f(0.9f, 0.9f, 0.9f));
-        material.setShininess(20.0f);
-        material.setAmbientColor(new Color3f(0.8f, 0.8f, 0.8f));                
-        landscapeAppearance.setMaterial(material);
+//        Material material = new Material();
+//        material.setDiffuseColor(new Color3f(0.2f, 0.2f, 0.2f));
+//        material.setShininess(50.0f);
+//        Sphere lala = new com.sun.j3d.utils.geometry.Sphere()
+//        material.setAmbientColor(new Color3f(0.1f, 0.1f, 0.1f));
+        Color3f aColor = new Color3f(0.1f, 0.1f, 0.1f);
+        Color3f eColor = new Color3f(0.0f, 0.0f, 0.0f);
+        Color3f dColor = new Color3f(0.4f, 0.4f, 0.4f);
+        Color3f sColor = new Color3f(0.5f, 0.5f, 0.5f);
+        Material m = new Material(aColor, eColor, dColor, sColor, 10.0f);
+        landscapeAppearance.setMaterial(m);
         TextureAttributes texAttrib = new TextureAttributes();
         final Transform3D texTransform = new Transform3D();
         texAttrib.getTextureTransform(texTransform);
@@ -105,7 +112,6 @@ public class ElevationShape extends Shape3D {
         this.addGeometry(geometry);
         this.setAppearance(landscapeAppearance);
     }
-
 //    public void enableTexture(final boolean enabled){
 //        if(enabled){
 //            landscapeAppearance.setTexture(demTexture);
