@@ -562,7 +562,8 @@ public class ShapeLoader extends AbstractSceneLoader {
 
                 final Point3f zmodifiedPoint = new Point3f(linePoints[currentIndex]);
                 //linear
-                final double height = ((pointADT.get(currentIndex) / maxADT));
+                double height = Math.log10((pointADT.get(currentIndex) / maxADT)*1000);
+                height /= 50;
                 // exp
 //                final double height = Math.pow((((pointADT.get(currentIndex) / maxADT))*100),2);
 //                if (logger.isDebugEnabled()) {
