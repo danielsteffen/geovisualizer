@@ -97,9 +97,9 @@ public class ElevationLayer extends FileBasedLayer implements
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:if not loaded not available. Redesign.
-    public RawArcGrid getGrid() {
-        return loader.getArcGrid();
-    }
+//    public RawArcGrid getGrid() {
+//        return loader.getArcGrid();
+//    }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: clean design
     public Point3f getHeightInterpolation(final Point3f point) {

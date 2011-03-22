@@ -36,7 +36,6 @@ public class ElevationLoader extends AbstractSceneLoader {
     @Override
     public void fillScene() throws Exception {
         arcGrid = new ArcGridParser(reader).parseArcGrid();
-        setCellDiagonal(arcGrid.getCellsize() * Math.sqrt(2));
         createTriangle();
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: really ugly remove        
         GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
@@ -44,7 +43,8 @@ public class ElevationLoader extends AbstractSceneLoader {
         gridGeometry.setCoordinates(triangleCoordinates);
         gridGeometry.setTextureCoordinateParams(1, 2);
         gridGeometry.setTextureCoordinates(0, texCoords);
-
+        //TODO Sebastian Puhl: DIRTY MEMORY FIX
+        arcGrid.setRawCoordinates(null);
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
         if (logger.isDebugEnabled()) {
             logger.debug("Stripifying geometry...");
@@ -317,36 +317,11 @@ public class ElevationLoader extends AbstractSceneLoader {
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: better to generate directly the triangle strip array instead of using the stripifier
-    public RawArcGrid getArcGrid() {
-        return arcGrid;
-    }
-
-    public void setArcGrid(RawArcGrid arcGrid) {
-        this.arcGrid = arcGrid;
-    }
-
-    public double getCellDiagonal() {
-        return cellDiagonal;
-    }
-
-    public void setCellDiagonal(double cellDiagonal) {
-        this.cellDiagonal = cellDiagonal;
-        setHalfCellDiagonal(cellDiagonal / 2.0);
-    }
-
-    public double getHalfCellDiagonal() {
-        return halfCellDiagonal;
-    }
-
-    public void setHalfCellDiagonal(double halfCellDiagonal) {
-        this.halfCellDiagonal = halfCellDiagonal;
-    }
-
-    public double getTriangleArea() {
-        return triangleArea;
-    }
-
-    public void setTriangleArea(double triangleArea) {
-        this.triangleArea = triangleArea;
-    }
+//    public RawArcGrid getArcGrid() {
+//        return arcGrid;
+//    }
+//
+//    public void setArcGrid(RawArcGrid arcGrid) {
+//        this.arcGrid = arcGrid;
+//    }
 }
