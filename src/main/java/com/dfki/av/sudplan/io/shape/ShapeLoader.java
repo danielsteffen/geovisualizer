@@ -48,16 +48,16 @@ import org.slf4j.LoggerFactory;
  */
 public class ShapeLoader extends AbstractSceneLoader {
 
-    private final static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);
-    final ArrayList<Point3f> points = new ArrayList<Point3f>();
+    private static Logger logger = LoggerFactory.getLogger(ShapeLoader.class);
+    ArrayList<Point3f> points = new ArrayList<Point3f>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:Optimise waste of memory and time
-    private final ArrayList<Double> pointColors = new ArrayList<Double>();
-    private final ArrayList<Double> pointADT = new ArrayList<Double>();
+    private ArrayList<Double> pointColors = new ArrayList<Double>();
+    private ArrayList<Double> pointADT = new ArrayList<Double>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after Vienna
-    final ArrayList<Color4f> polygonColors = new ArrayList<Color4f>();
-    final ArrayList<Color4f> wireColors = new ArrayList<Color4f>();
-    final ArrayList<Integer> polygonColorsIndex = new ArrayList<Integer>();
-    final ArrayList<Integer> pointIndices = new ArrayList<Integer>();
+    ArrayList<Color4f> polygonColors = new ArrayList<Color4f>();
+    ArrayList<Color4f> wireColors = new ArrayList<Color4f>();
+    ArrayList<Integer> polygonColorsIndex = new ArrayList<Integer>();
+    ArrayList<Integer> pointIndices = new ArrayList<Integer>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:color class
     final Color4f transparent = new Color4f(1.0f, 1.0f, 1.0f, 0.0f);
     final Color4f white = new Color4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -119,6 +119,13 @@ public class ShapeLoader extends AbstractSceneLoader {
             if (shp != null) {
                 shp.close();
             }
+            points = null;
+            pointColors = null;
+            pointADT = null;
+            polygonColors = null;
+            wireColors = null;
+            polygonColorsIndex = null;
+            pointIndices = null;
         }
     }
 
