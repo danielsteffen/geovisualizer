@@ -14,7 +14,6 @@ import com.dfki.av.sudplan.util.Triangle;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
-import com.sun.j3d.utils.geometry.Triangulator;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecordPolygon;
@@ -30,6 +29,7 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.LineAttributes;
 import javax.media.j3d.Material;
+import javax.media.j3d.Node;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
@@ -66,10 +66,10 @@ public class ShapeLoader extends AbstractSceneLoader {
     final Color4f white = new Color4f(1.0f, 1.0f, 1.0f, 1.0f);
     final Color4f gray = new Color4f(0.8f, 0.8f, 0.8f, 1.0f);
     final Color4f black = new Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-    final Color4f red = new Color4f(1.0f, 0.0f, 0.0f, 0.9f);
+    final Color4f red = new Color4f(1.0f, 0.0f, 0.0f, 1.0f);
     final Color4f orange = new Color4f(1.0f, 0.6f, 0.1f, 0.9f);
-    final Color4f yellow = new Color4f(8.0f, 8.0f, 0.0f, 0.9f);
-    final Color4f green = new Color4f(0.0f, 1.0f, 0.0f, 0.9f);
+    final Color4f yellow = new Color4f(0.8f, 0.8f, 0.0f, 1.0f);
+    final Color4f green = new Color4f(0.0f, 1.0f, 0.0f, 1.0f);
     private final Color4f lowConcentrationColor = green;
     private final Color4f mediumConcentrationColor = yellow;
     private final Color4f highConcentrationColor = red;
@@ -106,10 +106,10 @@ public class ShapeLoader extends AbstractSceneLoader {
         int correctedVectorCount = 0;
         final Vector3f[] normals = gridGeometry.getNormals();
         if (normals != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Normal count: " + normals.length);
-                logger.debug("Normal indices: " + gridGeometry.getNormalIndices());
-            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Normal count: " + normals.length);
+//                logger.debug("Normal indices: " + gridGeometry.getNormalIndices());
+//            }
             for (int i = 0; i < normals.length; i++) {
 //                Vector3f currentNormal = normals[i];
 //                double diff = EarthFlat.radiansToDeegree(up.angle(currentNormal));
@@ -134,9 +134,9 @@ public class ShapeLoader extends AbstractSceneLoader {
             }
             gridGeometry.setNormals(normals);
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Corrected vectors: " + correctedVectorCount);
-        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Corrected vectors: " + correctedVectorCount);
+//        }
     }
 
     private boolean checkLastPart(int partCounter, int startingIndex) {
@@ -168,7 +168,8 @@ public class ShapeLoader extends AbstractSceneLoader {
                 createBuildings();
             } else if (shapeType == SHAPE_TYPE.POLYLINE) {
 //                createStreetLevelResults();
-                createStreetLevel3DResults();
+//                createStreetLevel3DResults();
+                createStreetLevelResults2();
             } else if (shapeType == shapeType.POLYGON_2D) {
                 createRooftopResults();
             }
@@ -246,10 +247,14 @@ public class ShapeLoader extends AbstractSceneLoader {
 
 //        material.setColorTarget(Material.AMBIENT_AND_DIFFUSE);
 
-        Color3f aColor = new Color3f(0.1f, 0.1f, 0.1f);
+//        Color3f aColor = new Color3f(0.1f, 0.1f, 0.1f);
+//        Color3f eColor = new Color3f(0.0f, 0.0f, 0.0f);
+//        Color3f dColor = new Color3f(0.4f, 0.4f, 0.4f);
+//        Color3f sColor = new Color3f(0.5f, 0.5f, 0.5f);
+        Color3f aColor = new Color3f(0.2f, 0.2f, 0.2f);
         Color3f eColor = new Color3f(0.0f, 0.0f, 0.0f);
-        Color3f dColor = new Color3f(0.4f, 0.4f, 0.4f);
-        Color3f sColor = new Color3f(0.5f, 0.5f, 0.5f);
+        Color3f dColor = new Color3f(0.6f, 0.6f, 0.6f);
+        Color3f sColor = new Color3f(0.8f, 0.8f, 0.8f);
         Material m = new Material(aColor, eColor, dColor, sColor, 10.0f);
         landscapeAppearance.setMaterial(m);
         //full
@@ -562,7 +567,7 @@ public class ShapeLoader extends AbstractSceneLoader {
 
                 final Point3f zmodifiedPoint = new Point3f(linePoints[currentIndex]);
                 //linear
-                double height = Math.log10((pointADT.get(currentIndex) / maxADT)*1000);
+                double height = Math.log10((pointADT.get(currentIndex) / maxADT) * 1000);
                 height /= 50;
                 // exp
 //                final double height = Math.pow((((pointADT.get(currentIndex) / maxADT))*100),2);
@@ -643,6 +648,124 @@ public class ShapeLoader extends AbstractSceneLoader {
         if (logger.isDebugEnabled()) {
             logger.debug("Number of Shapes: " + shapeArray.size());
         }
+    }
+
+    private void createStreetLevelResults2() {
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:convert these to arrays after creation this will be the same for every Method (polygons etc.)
+        final int[] lineIndices = copyIntegerArray(pointIndices);
+//        final Point3f[] linePoints = points.toArray(new Point3f[]{});
+//        final Double[] pointColorArray = pointColors.toArray(new Double[]{});
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:should be made easier with a PolyLineObject
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating " + lineIndices.length + " lines.");
+//            logger.debug("Number of points: " + linePoints.length);
+        }
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:index lines, this is bad performance;
+        int currentIndex = 0;
+        for (int i = 0; i < lineIndices.length; i++) {
+            int currentLineSize = (lineIndices[i] - 1) * 2;
+            for (int j = 0; j < currentLineSize - 1; j += 2) {
+                createdScene.getSceneGroup().addChild(createPolygonShape(j, currentIndex++));
+            }
+            currentIndex++;
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("TotalIndex: " + currentIndex);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Number of Shapes: " + shapeArray.size());
+        }
+    }
+
+    private Shape3D createPolygonShape(int loopIndex, int pointIndex) {
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Create Polygon");
+//        }
+        final GeometryInfo geomInfo = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
+
+        Color4f[] colors = new Color4f[4];
+        Point3f first = points.get(pointIndex);
+        Point3f fourth = new Point3f(first);
+        double heightFourth = Math.log10((pointADT.get(pointIndex) / maxADT) * 1000)/50;
+        fourth.z += heightFourth;
+
+        final double colorFirst = pointColors.get(pointIndex);
+        if (colorFirst < lowConcentrationThreshold) {
+            colors[0] = lowConcentrationColor;
+            colors[3] = lowConcentrationColor;
+        } else if (colorFirst < mediumConcentrationThreshold) {
+            colors[0] = mediumConcentrationColor;
+            colors[3] = mediumConcentrationColor;
+        } else {
+            colors[0] = highConcentrationColor;
+            colors[3] = highConcentrationColor;
+        }
+
+        pointIndex++;
+        Point3f second = points.get(pointIndex);
+        Point3f third = new Point3f(second);
+        double heightThird = Math.log10((pointADT.get(pointIndex) / maxADT) * 1000)/50;
+        third.z += heightThird;
+        final double colorSecend = pointColors.get(pointIndex);
+        if (colorSecend < lowConcentrationThreshold) {
+            colors[1] = lowConcentrationColor;
+            colors[2] = lowConcentrationColor;
+        } else if (colorSecend < mediumConcentrationThreshold) {
+            colors[1] = mediumConcentrationColor;
+            colors[2] = mediumConcentrationColor;
+        } else {
+            colors[1] = highConcentrationColor;
+            colors[2] = highConcentrationColor;
+        }
+        Point3f[] coordinates = new Point3f[]{first, second, third, fourth};
+        int[] stripCount = new int[]{4};
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Polygon coords: "+Arrays.deepToString(coordinates));
+//        }
+        geomInfo.setCoordinates(coordinates);
+        geomInfo.setStripCounts(stripCount);
+        geomInfo.setColors(colors);
+       
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Stripifying geometry...");
+//            TimeMeasurement.getInstance().startMeasurement(this);
+//        }
+//        Stripifier stripifier = new Stripifier();
+//        stripifier.stripify(geomInfo);
+
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Stripifying geometry done. Time elapsed: "
+//                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
+//        }
+
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Normalising geometry...");
+//            TimeMeasurement.getInstance().startMeasurement(this);
+//        }
+        NormalGenerator normalGenerator = new NormalGenerator();
+        normalGenerator.generateNormals(geomInfo);
+//        correctNormals(geomInfo, true);
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Normalising geometry done. Time elapsed: "
+//                    + TimeMeasurement.getInstance().stopMeasurement(this).getDuration() + " ms");
+//        }
+        final ShapefileObject newPolygon = new ShapefileObject(geomInfo.getGeometryArray());
+        Appearance polygonApperance = new Appearance();
+        PolygonAttributes pa = new PolygonAttributes();
+        Color3f aColor = new Color3f(0.2f, 0.2f, 0.2f);
+        Color3f eColor = new Color3f(0.0f, 0.0f, 0.0f);
+        Color3f dColor = new Color3f(0.9f, 0.9f, 0.9f);
+        Color3f sColor = new Color3f(1.0f, 1.0f, 1.0f);
+        Material m = new Material(aColor, eColor, dColor, sColor, 10.0f);
+        polygonApperance.setMaterial(m);
+        pa.setCullFace(PolygonAttributes.CULL_NONE);
+        pa.setBackFaceNormalFlip(true);
+        polygonApperance.setPolygonAttributes(pa);
+        newPolygon.setAppearance(polygonApperance);
+        return newPolygon;
     }
 
     private void setColor(final LineArray line, final int colorIndex, final int lineIndex) {
@@ -789,6 +912,9 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                        if (logger.isDebugEnabled()) {
 //                            logger.debug("point: "+transformedPoint+" nb: " + nb);
 //                        }
+//                        if (logger.isDebugEnabled()) {
+//                            logger.debug("nb: "+nb);
+//                        }
                         if (nb != null) {
                             if (nb.z < -0.1f) {
                                 transformedPoint.setZ((float) (-0.035f));
@@ -799,6 +925,9 @@ public class ShapeLoader extends AbstractSceneLoader {
                             transformedPoint.setZ((float) (-0.035f));
                         }
                     } else if (shapeType == SHAPE_TYPE.POLYLINE && currentHeights == null) {
+//                        if (logger.isDebugEnabled()) {
+//                            logger.debug("no heights");
+//                        }
                         transformedPoint.setZ((float) (-0.039f));
                     }
                     if (shapeType == SHAPE_TYPE.POLYLINE) {
@@ -1004,7 +1133,6 @@ public class ShapeLoader extends AbstractSceneLoader {
         return highConcentrationColor;
     }
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:remove after vienna
-
 //    private void swapArray(Point3f[] arrayToSwap) {
 //        if (arrayToSwap == null) {
 //            return;

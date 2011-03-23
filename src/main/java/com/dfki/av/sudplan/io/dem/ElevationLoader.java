@@ -12,7 +12,7 @@ import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
-import java.util.Arrays;
+import javax.vecmath.Color4f;
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 import javax.vecmath.TexCoord2f;
@@ -30,8 +30,10 @@ public class ElevationLoader extends AbstractSceneLoader {
     private final static Logger logger = LoggerFactory.getLogger(ElevationLoader.class);
     private RawArcGrid arcGrid;
     private Point3f[] triangleCoordinates;
+    private Color4f[] colors;
     private TexCoord2f[] texCoords;
     private ObjectFile test;
+    private Color4f gray = new Color4f(0.8f, 0.8f, 0.8f, 1.0f);
 
     @Override
     public void fillScene() throws Exception {
@@ -41,6 +43,7 @@ public class ElevationLoader extends AbstractSceneLoader {
         GeometryInfo gridGeometry = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
 //        final Point3f[] coordinates = Arrays.copyOf(triangleCoordinates, triangleCoordinates.length);
         gridGeometry.setCoordinates(triangleCoordinates);
+        gridGeometry.setColors(colors);
         gridGeometry.setTextureCoordinateParams(1, 2);
         gridGeometry.setTextureCoordinates(0, texCoords);
         //TODO Sebastian Puhl: DIRTY MEMORY FIX
@@ -83,6 +86,7 @@ public class ElevationLoader extends AbstractSceneLoader {
             TimeMeasurement.getInstance().startMeasurement(this);
         }
         triangleCoordinates = new Point3f[arcGrid.getTriangleCount() * 3];
+        colors = new Color4f[arcGrid.getTriangleCount() * 3];
         if (logger.isDebugEnabled()) {
             logger.debug("Triangle Coord Count: " + triangleCoordinates.length);
         }
@@ -104,22 +108,28 @@ public class ElevationLoader extends AbstractSceneLoader {
 //        logger.debug("triangleIndex: " + (currentTriangle * 3) + " gridpointindex: (" + currentColumn + "," + (currentRow) + ")");
                 triangleCoordinates[(currentTriangle * 3)] = arcGrid.getGridPoint(currentColumn, currentRow);
                 texCoords[(currentTriangle * 3)] = new TexCoord2f(((currentColumn) / (divider1)) * multiplier1, ((currentRow) / (divider2)) * multiplier2);
+                colors[(currentTriangle * 3)]=gray;
 //        logger.debug("triangleIndex: " + (currentTriangle * 3 + 1) + " gridpointindex: (" + (currentColumn + 1) + "," + (currentRow + 1) + ")");
                 triangleCoordinates[(currentTriangle * 3) + 1] = arcGrid.getGridPoint(currentColumn + 1, currentRow + 1);
                 texCoords[(currentTriangle * 3) + 1] = new TexCoord2f(((currentColumn + 1) / (divider1)) * multiplier1, ((currentRow + 1) / (divider2)) * multiplier2);
+                colors[(currentTriangle * 3)+1]=gray;
 //        logger.debug("triangleIndex: " + (currentTriangle * 3 + 2) + " gridpointindex: (" + currentColumn +"," + (currentRow + 1) + ")");
                 triangleCoordinates[(currentTriangle * 3) + 2] = arcGrid.getGridPoint(currentColumn, currentRow + 1);
                 texCoords[(currentTriangle * 3) + 2] = new TexCoord2f(((currentColumn) / (divider1)) * multiplier1, ((currentRow + 1) / (divider2)) * multiplier2);
+                colors[(currentTriangle * 3)+2]=gray;
                 currentTriangle++;
 //        logger.debug("triangleIndex: " + (currentTriangle * 3) + " gridpointindex: (" + currentColumn + "," + (currentRow) + ")");
                 triangleCoordinates[(currentTriangle * 3)] = arcGrid.getGridPoint(currentColumn, currentRow);
                 texCoords[(currentTriangle * 3)] = new TexCoord2f(((currentColumn) / (divider1)) * multiplier1, ((currentRow) / (divider2)) * multiplier2);
+                colors[(currentTriangle * 3)]=gray;
 //        logger.debug("triangleIndex: " + (currentTriangle * 3 + 1) + " gridpointindex: (" + (currentColumn + 1) + "," + (currentRow) + ")");
                 triangleCoordinates[(currentTriangle * 3) + 1] = arcGrid.getGridPoint(currentColumn + 1, currentRow);
                 texCoords[(currentTriangle * 3) + 1] = new TexCoord2f(((currentColumn + 1) / (divider1)) * multiplier1, ((currentRow) / (divider2)) * multiplier2);
+                colors[(currentTriangle * 3)+1]=gray;
 //        logger.debug("triangleIndex: " + (currentTriangle * 3 + 2) + " gridpointindex: (" + (currentColumn + 1) + "," + (currentRow + 1) + ")");
                 triangleCoordinates[(currentTriangle * 3) + 2] = arcGrid.getGridPoint(currentColumn + 1, currentRow + 1);
                 texCoords[(currentTriangle * 3) + 2] = new TexCoord2f(((currentColumn + 1) / (divider1)) * multiplier1, ((currentRow + 1) / (divider2)) * multiplier2);
+                colors[(currentTriangle * 3)+2]=gray;
 //                if (logger.isDebugEnabled() && (currentColumn % 100) ==0) {
 //                    logger.debug("row: "+currentRow+"divider2: "+divider2);
 //                    logger.debug("textcoord1: "+texCoords[(currentTriangle * 3)]);
