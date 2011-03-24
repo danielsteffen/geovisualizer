@@ -80,7 +80,7 @@ public class ShapeLoader extends AbstractSceneLoader {
     private final Color4f lowConcentrationColor = green;
     private final Color4f mediumConcentrationColor = yellow;
     private final Color4f highConcentrationColor = red;
-    private final float lowConcentrationThreshold = 36.0f;
+    private final float lowConcentrationThreshold = 40.0f;
     private final float mediumConcentrationThreshold = 48.0f;
     private final ArrayList<ShapefileObject> shapeArray = new ArrayList<ShapefileObject>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Nasa Shapefile is not able to scoop with colon decimals. Fix!

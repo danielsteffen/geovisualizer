@@ -121,18 +121,45 @@ public class SimpleCamera implements Camera, TransformationListener {
         if (logger.isDebugEnabled()) {
             logger.debug("CameraDirection: " + getCameraDirection());
         }
+//        Vector3d correctedUp = getCorrectedUpVector(pointToLookAt);
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("corrected up: "+correctedUp);
+//        }
         if (pointToLookAt != null) {
             Transform3D viewTransformation = new Transform3D();
             if (logger.isDebugEnabled()) {
                 logger.debug("cp: " + getCameraPosition() + " pta: " + pointToLookAt + " cu. " + getCameraUp());
             }
-            viewTransformation.lookAt(getCameraPosition(), pointToLookAt, getCameraUp());
+            viewTransformation.lookAt(getCameraPosition(), pointToLookAt, new Vector3d(SimpleCamera.DEFAULT_UP));
             viewTransformation.invert();
             getViewingPlatform().getViewPlatformTransform().setTransform(viewTransformation);
         }
         if (logger.isDebugEnabled()) {
             logger.debug("CameraDirection: " + getCameraDirection());
         }
+    }
+
+    private Vector3d getCorrectedUpVector(Point3d pointToLookAt) {
+        final Vector3d defaultUp = new Vector3d(SimpleCamera.DEFAULT_UP);
+        final Point3d  cameraPosition = getCameraPosition();
+        final Point3d lookAt = new Point3d(pointToLookAt);
+        lookAt.sub(cameraPosition);
+        final Vector3d viewDirection = new Vector3d(lookAt);
+        if (logger.isDebugEnabled()) {
+            logger.debug("recalculated view Direction: "+viewDirection);
+        }
+        Vector3d leftOrRight = new Vector3d();
+        if (logger.isDebugEnabled()) {
+            logger.debug("defaultUp: "+defaultUp);
+        }
+        leftOrRight.cross(defaultUp, viewDirection);
+        if (logger.isDebugEnabled()) {
+            logger.debug("leftOrRight: "+leftOrRight);
+        }
+        Vector3d correctedUp = new Vector3d();
+        correctedUp.cross(leftOrRight, viewDirection);
+        correctedUp.absolute();
+        return correctedUp;
     }
 
     @Override
@@ -555,9 +582,9 @@ public class SimpleCamera implements Camera, TransformationListener {
 //            viewTransformation.transform(currentPoint);
 //            logger.debug("View Position: " + currentPoint);
             final AdvancedBoundingBox currentBoundingBox = getViewBoundingBox();
-            if(currentBoundingBox == null){
+            if (currentBoundingBox == null) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Current ViewableBoudningBox is null. Can't perform goto.");                    
+                    logger.warn("Current ViewableBoudningBox is null. Can't perform goto.");
                 }
                 return;
             }

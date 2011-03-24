@@ -23,10 +23,10 @@ import javax.vecmath.Vector3d;
 public interface Camera {
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:sync with java3d this is hardcoded by knowledge;
-    public final static Vector3d DEFAULT_UP = new Vector3d(0, 1.0, 0);
-    public final static Vector3d DEFAULT_DOWN = new Vector3d(0, -1.0, 0);
+    public final static Vector3d DEFAULT_UP = new Vector3d(0, 0, 1.0);
+    public final static Vector3d DEFAULT_DOWN = new Vector3d(0, 0, -1.0);
     public final static Vector3d DEFAULT_LEFT = new Vector3d(-1.0, 0, 0);
-    public final static Vector3d DEFAULT_RIGHT = new Vector3d(1.0, 0, 0);
+    public final static Vector3d DEFAULT_RIGHT = new Vector3d(1.0, 0, 0);    
     public final static Vector3d DEFAULT_VIEW = new Vector3d(0, 0, -1.0);
 
     public Vector3d getCameraDirection();

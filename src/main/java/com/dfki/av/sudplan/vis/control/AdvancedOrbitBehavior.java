@@ -68,6 +68,8 @@ import com.sun.j3d.utils.pickfast.PickCanvas;
 import java.util.ArrayList;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PickInfo;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -463,8 +465,10 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 //    private boolean xTransformationActive = false;
 //    private int yMoveCounter = 0;
 //    private boolean yTransformationActive = false;
+    private MouseEvent currentMouseEvent = null;
 
     protected void processMouseEvent(final MouseEvent evt) {
+        currentMouseEvent = evt;
         if (evt.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseX = evt.getX();
             mouseY = evt.getY();
@@ -480,7 +484,7 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 
             int ychange = evt.getY() - mouseY;
 
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Problem --> is y rotation is not in a plane if x is rotaded  good to see if you have distinct transformations
+//            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Problem --> is y rotation is not in a plane if x is rotaded  good to see if you have distinct transformations
 //            if (xTransformationActive == false && yTransformationActive == false) {
 //                xMoveCounter += Math.abs(xchange);
 //                yMoveCounter += Math.abs(ychange);
@@ -731,12 +735,14 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         final Point3d newPosition = new Point3d();
         final Vector3d oldViewDirection = new Vector3d(SimpleCamera.DEFAULT_VIEW);
         final Vector3d newViewDirection = new Vector3d(SimpleCamera.DEFAULT_VIEW);
+
         currentXfm.transform(oldPosition);
         currentXfm.transform(oldViewDirection);
         oldViewDirection.normalize();
         targetTransform.transform(newPosition);
         targetTransform.transform(newViewDirection);
         newViewDirection.normalize();
+
 //        if (logger.isDebugEnabled()) {
 //            logger.debug("after event variables");
 //        }
@@ -754,27 +760,121 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
         }
         final Vector3d oldTranslation = new Vector3d();
         currentXfm.get(oldTranslation);
+        final Vector3d newTranslation = new Vector3d();
+        targetTransform.get(newTranslation);
+        Transform3D zCorrection = null;
+        try {
+//        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: here is the failure
+            final Vector3d oldUpVector = new Vector3d(
+                    //        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Singelton is in not standalone not initialized. Must be initialized in not stand alone
+                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
+            final Vector3d oldViewVector = new Vector3d(
+                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
+            final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
+            final Vector3d defaultUp = new Vector3d(SimpleCamera.DEFAULT_UP);
+            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:evil fix for rotation problem
+            defaultUp.y += 0.1;
+            targetTransform.transform(newUpVector);
+            oldUpVector.z = 0.0;
+            oldViewVector.z = 0.0;
+            final double deegres1 = EarthFlat.radiansToDeegree(defaultUp.angle(newViewDirection));
+//            final double deegres2 = EarthFlat.radiansToDeegree(newUpVector.angle(newViewDirection));            
+            if (true) {
+                Vector3d leftOrRight = new Vector3d();
+                if (deegres1 > 179.9 && deegres1 < 180.1) {
+                    leftOrRight.x = 1;
+                } else {
+                    leftOrRight.cross(defaultUp, newViewDirection);
+                }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("leftOrRight: " + leftOrRight);
+//            }
 
-//        try {
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: here is the failure
-//            final Vector3d oldUpVector = new Vector3d(
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Singelton is in not standalone not initialized. Must be initialized in not stand alone
-//                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraUp());
-//            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:is already calculated
-//            final Vector3d oldViewVector = new Vector3d(
-//                    ComponentBroker.getInstance().getController().getVisualisationComponent().get3dCamera().getCameraDirection());
-//            final Vector3d newUpVector = new Vector3d(SimpleCamera.DEFAULT_UP);
-//            targetTransform.transform(newUpVector);
-//            oldUpVector.z = 0.0;
-//            oldViewVector.z = 0.0;
-//            final double deegres = EarthFlat.radiansToDeegree(oldUpVector.angle(oldViewVector));
-//            Transform3D zCorrection = null;
-//        } catch (Throwable th) {
-        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:npe is catched only
+                Vector3d correctedUp = new Vector3d(defaultUp);
+//            correctedUp.cross(leftOrRight, newViewDirection);
+                double diff;
+                if (deegres1 > 90) {
+                    diff = deegres1 - 90;
+                } else {
+                    diff = 90 - deegres1;
+                }
+//            correctedUp.absolute();
+                double doubleDiffRad = EarthFlat.deegreeToRadians(diff);
+                double s = Math.sin(doubleDiffRad);
+                double c = Math.cos(doubleDiffRad);
+                double t = 1 - c;
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:unperformant
+                final Matrix3d rotMatrix = new Matrix3d();
+
+                rotMatrix.m00 = t * Math.pow(leftOrRight.x, 2) + c;
+                rotMatrix.m01 = t * leftOrRight.x * leftOrRight.y - s * leftOrRight.z;
+                rotMatrix.m02 = t * leftOrRight.x * leftOrRight.z + s * leftOrRight.y;
+
+                rotMatrix.m10 = t * leftOrRight.x * leftOrRight.y + s * leftOrRight.z;
+                rotMatrix.m11 = t * Math.pow(leftOrRight.y, 2) + c;
+                rotMatrix.m12 = t * leftOrRight.y * leftOrRight.z - s * leftOrRight.x;
+
+                rotMatrix.m20 = t * leftOrRight.x * leftOrRight.z - s * leftOrRight.y;
+                rotMatrix.m21 = t * leftOrRight.z * leftOrRight.y + s * leftOrRight.x;
+                rotMatrix.m22 = t * Math.pow(leftOrRight.z, 2) + c;
+
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("det: " + rotMatrix.determinant());
+//            }
+
+                //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:--> hubbelt angle ?
+
+                Transform3D rotTransform = new Transform3D();
+                rotTransform.set(rotMatrix);
+                rotTransform.transform(correctedUp);
+
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("correctedUp: " + correctedUp);
+//            }
+
+
+                zCorrection = new Transform3D();
+                final Point3d lookAtPoint = new Point3d(newPosition);
+                Vector3d scaledView = new Vector3d(newViewDirection);
+                scaledView.scale(100);
+                lookAtPoint.add(scaledView);
+//            correctedUp.normalize();
+//            correctedUp.absolute();
+                final double deegres3 = EarthFlat.radiansToDeegree(correctedUp.angle(newViewDirection));
+//                if (logger.isDebugEnabled()) {
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("oldView: " + oldViewDirection + " newView: " + newViewDirection);
+//                        logger.debug("oldUP: " + oldUpVector + " newUP: " + newUpVector);
+//                    }
+//                    logger.debug("deegrees Default Up/newView: " + deegres1);
+//                    logger.debug("deegrees diff 90: " + diff);
+////                logger.debug("deegrees newUp/newDirection: " + deegres2);
+//                    logger.debug("deegrees correctedUp/newDirection: " + deegres3);
+//                    Vector3d check1 = new Vector3d(leftOrRight);
+//                    double checkAngle1 = EarthFlat.radiansToDeegree(check1.angle(defaultUp));
+//                    Vector3d check2 = new Vector3d(leftOrRight);
+//                    double checkAngle2 = EarthFlat.radiansToDeegree(check2.angle(newViewDirection));
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("check view/lor: " + checkAngle2);
+//                        logger.debug("check dup/lor: " + checkAngle1);
+//                    }
+//                }
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("leftOrRight: " + leftOrRight);
+//                }
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("corrected up: " + correctedUp);
+//                }
+                zCorrection.lookAt(newPosition, lookAtPoint, correctedUp);
+                zCorrection.invert();
+            }
+        } catch (Throwable th) {
+//        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:npe is catched only
 //            if (logger.isErrorEnabled()) {
 //                logger.error("Fehler: ", th);
 //            }
-//        }
+        }
 //        if (logger.isDebugEnabled() && !Double.isNaN(deegres) && deegres != 0.0) {
 ////            logger.debug("deegree difference: " + deegres);
 ////            logger.debug("OldUp: " + oldUpVector);
@@ -784,14 +884,34 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 ////            zCorrection = new Transform3D();
 ////            zCorrection.rotZ(EarthFlat.deegreeToRadians(diffViewUp));
 //        }
-            //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:events are wrong
-//        if(zCorrection != null){
-//            zCorrection.mul(zCorrection,targetTransform);
-//            targetTG.setTransform(zCorrection);
-//        } else {
+
+
+        final Point3d oldPositionEVENT = new Point3d();
+        final Point3d newPositionEVENT = new Point3d();
+        final Vector3d oldViewDirectionEVENT = new Vector3d(SimpleCamera.DEFAULT_VIEW);
+        final Vector3d newViewDirectionEVENT = new Vector3d(SimpleCamera.DEFAULT_VIEW);
+        currentXfm.transform(oldPositionEVENT);
+        currentXfm.transform(oldViewDirectionEVENT);
+        oldViewDirectionEVENT.normalize();
+//        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:events are wrong
+        if (zCorrection != null && currentMouseEvent != null && rotate(currentMouseEvent)) {
+////            zCorrection.mul(zCorrection, targetTransform);
+//            Transform3D translation = new Transform3D();
+////            Vector3d newPos = new Vector3d(2006,2006,10);
+//            translation.set(newTranslation);
+//            Transform3D correction = new Transform3D();
+//            correction.mul(zCorrection, translation);
+            zCorrection.transform(newPositionEVENT);
+            zCorrection.transform(newViewDirectionEVENT);
+            newViewDirectionEVENT.normalize();
+            targetTG.setTransform(zCorrection);
+        } else {
+            targetTransform.transform(newPositionEVENT);
+            targetTransform.transform(newViewDirectionEVENT);
+            newViewDirectionEVENT.normalize();
             targetTG.setTransform(targetTransform);
-//        }
-        
+        }
+
         // reset yaw and pitch angles
         longditude = 0.0;
         latitude = 0.0;
@@ -800,30 +920,31 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("transformation"+rotateTransform);
 //            }            
-            currentListener.rotated(new TransformationEvent(oldViewDirection, newViewDirection));
+            currentListener.rotated(new TransformationEvent(oldViewDirectionEVENT, newViewDirectionEVENT));
         }
 
         for (TransformationListener currentListener : transformationListeners) {
 
-            final Vector3d newTranslation = new Vector3d();
+            final Vector3d newTranslationTmp = new Vector3d();
 
-            targetTransform.get(newTranslation);
+            targetTransform.get(newTranslationTmp);
 //            if (logger.isDebugEnabled()) {
 //                logger.debug("behaviour: old: "+new Point3d(oldTranslation)+" new:"+new Point3d(transVector));
 //            }
-            if (!oldPosition.equals(newPosition)) {
+            if (!oldPositionEVENT.equals(newPositionEVENT)) {
                 if (logger.isDebugEnabled() && transformationLoggingEnabled) {
-                    logger.debug("oldPosition: " + oldPosition + " newPosition: " + newPosition);
+                    logger.debug("oldPosition: " + oldPositionEVENT + " newPosition: " + newPositionEVENT);
                 }
-                currentListener.translated(new TransformationEvent(new Point3d(oldPosition), new Point3d(newPosition)));
+                currentListener.translated(new TransformationEvent(new Point3d(oldPositionEVENT), new Point3d(newPositionEVENT)));
             }
         }
     }
 
     private boolean viewTransCheck(final Point3d newPosition, final Point3d oldPosition) {
 
-        final Vector3d newCameraUp = new Vector3d(Camera.DEFAULT_UP);
-        targetTransform.transform(newCameraUp);
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: why does this work ?? 
+        final Vector3d north = new Vector3d(0, 1, 0);
+        targetTransform.transform(north);
 
         if (newPosition.z < 0.0) {
             if (logger.isDebugEnabled() && transformationLoggingEnabled) {
@@ -855,12 +976,17 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
             return false;
         }
 
-        final double upVectorDiff = Math.floor(EarthFlat.EARTH_UP.angle(newCameraUp) * 100) / 100;
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("camera up: "+north);
+//            logger.debug("EarthFlat.EARTH_UP: "+EarthFlat.EARTH_UP);
+//        }
+        final double upVectorDiff = Math.floor(EarthFlat.EARTH_UP.angle(north) * 100) / 100;
         if (logger.isDebugEnabled() && transformationLoggingEnabled) {
-            logger.debug("upVectorDiff: " + upVectorDiff);
+            logger.debug("upVectorDiff rad: " + upVectorDiff);
+            logger.debug("upVectorDiff deg: " + EarthFlat.radiansToDeegree(upVectorDiff));
         }
 
-        if ((upVectorDiff > (Math.PI / 2) || upVectorDiff < 0.0)) {
+        if ((upVectorDiff > (Math.PI / 2) || upVectorDiff <= 0.0)) {
             if (logger.isDebugEnabled() && transformationLoggingEnabled) {
                 logger.debug("View transformation not allowed angle between camera and earth must be between 0...PI/2: " + upVectorDiff);
             }

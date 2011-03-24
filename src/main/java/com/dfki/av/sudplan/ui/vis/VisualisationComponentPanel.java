@@ -661,6 +661,7 @@ public class VisualisationComponentPanel extends javax.swing.JPanel implements V
     @Override
     public void gotoToHome() {
         camera3D.setCameraPosition(new Point3d(home));
+
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: used to set the clipping plane. This is maybe better done over an plattformbehaviour
