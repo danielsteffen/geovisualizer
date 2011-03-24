@@ -9,6 +9,7 @@ import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class AdvancedBoundingBox extends BoundingBox {
 
     private final static Logger logger = LoggerFactory.getLogger(AdvancedBoundingBox.class);
-    
+
     public AdvancedBoundingBox(Bounds[] bounds) {
         super(bounds);
     }
@@ -87,6 +88,11 @@ public class AdvancedBoundingBox extends BoundingBox {
 //        final Point3d centerPoint = new Point3d(lower.x + (upper.x - lower.x) / 2, lower.y + (upper.y - lower.y) / 2, lower.z + (upper.z - lower.z) / 2);
         final Point3d centerPoint = new Point3d(lower.x + (upper.x - lower.x) / 2, lower.y + (upper.y - lower.y) / 2, lower.z + (upper.z - lower.z) / 2);
         return centerPoint;
+    }
+
+    public Point3f getCenter3f() {
+        final Point3d center = getCenter();
+        return new Point3f((float) center.x, (float) center.y, (float) center.z);
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:use a datastructure with width / height

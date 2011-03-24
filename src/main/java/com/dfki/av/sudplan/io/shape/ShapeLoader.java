@@ -20,6 +20,7 @@ import gov.nasa.worldwind.formats.shapefile.ShapefileRecordPolygon;
 import gov.nasa.worldwind.util.VecBuffer;
 import gov.nasa.worldwind.util.WWUtil;
 import java.awt.Color;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color3f;
 import javax.vecmath.Color4f;
+import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
@@ -68,13 +70,18 @@ public class ShapeLoader extends AbstractSceneLoader {
     final Color4f black = new Color4f(0.0f, 0.0f, 0.0f, 1.0f);
     final Color4f red = new Color4f(1.0f, 0.0f, 0.0f, 1.0f);
     final Color4f orange = new Color4f(1.0f, 0.6f, 0.1f, 0.9f);
-    final Color4f yellow = new Color4f(0.8f, 0.8f, 0.0f, 1.0f);
+    final Color4f yellow = new Color4f(1.0f, 1.0f, 0.0f, 1.0f);
     final Color4f green = new Color4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+//    final Color4f lightGreen = new Color4f(new Color(144, 238, 144, 255));
+    final Color4f darkGreen = new Color4f(new Color(34, 139, 34, 255));
+    final Color4f lightBlue = new Color4f(new Color(00, 191, 255, 255));
+    final Color4f blue = new Color4f(new Color(0, 0, 255, 255));
     private final Color4f lowConcentrationColor = green;
     private final Color4f mediumConcentrationColor = yellow;
     private final Color4f highConcentrationColor = red;
-    private final float lowConcentrationThreshold = 40.0f;
-    private final float mediumConcentrationThreshold = 50.0f;
+    private final float lowConcentrationThreshold = 36.0f;
+    private final float mediumConcentrationThreshold = 48.0f;
     private final ArrayList<ShapefileObject> shapeArray = new ArrayList<ShapefileObject>();
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: Nasa Shapefile is not able to scoop with colon decimals. Fix!
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: remove after Vienna Demo
@@ -341,7 +348,9 @@ public class ShapeLoader extends AbstractSceneLoader {
         gridGeometry.setCoordinates(coordinatesPolygon);
         gridGeometry.setColors(colorsPoly);
         gridGeometry.setStripCounts(stripCount);
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("points: " + coordinatesPolygon.length + " colors: " + colorsPoly.length + " strips: " + stripCount.length);
+        }
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
         if (logger.isDebugEnabled()) {
             logger.debug("Stripifying geometry...");
@@ -371,8 +380,8 @@ public class ShapeLoader extends AbstractSceneLoader {
         Appearance landscapeAppearance = new Appearance();
         PolygonAttributes pa = new PolygonAttributes();
 
-//        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.15f);
-//        landscapeAppearance.setTransparencyAttributes(ta);
+        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.3f);
+        landscapeAppearance.setTransparencyAttributes(ta);
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:wrong triangulation ??
         pa.setCullFace(PolygonAttributes.CULL_NONE);
         landscapeAppearance.setPolygonAttributes(pa);
@@ -686,9 +695,9 @@ public class ShapeLoader extends AbstractSceneLoader {
         Color4f[] colors = new Color4f[4];
         Point3f first = points.get(pointIndex);
         Point3f fourth = new Point3f(first);
-        double heightFourth = Math.log10((pointADT.get(pointIndex) / (maxADT/100)))/15;
-        if(heightFourth < 0.01){
-            heightFourth=0.01;
+        double heightFourth = Math.log10((pointADT.get(pointIndex) / (maxADT / 100))) / 15;
+        if (heightFourth < 0.01) {
+            heightFourth = 0.01;
         }
         fourth.z += heightFourth;
 
@@ -703,15 +712,12 @@ public class ShapeLoader extends AbstractSceneLoader {
             colors[0] = highConcentrationColor;
             colors[3] = highConcentrationColor;
         }
-  if (logger.isDebugEnabled()) {
-            logger.debug("height: "+heightFourth);
-        }
         pointIndex++;
         Point3f second = points.get(pointIndex);
         Point3f third = new Point3f(second);
-        double heightThird = Math.log10((pointADT.get(pointIndex) / (maxADT/100)))/15;
-        if(heightThird < 0.01){
-            heightThird=0.01;
+        double heightThird = Math.log10((pointADT.get(pointIndex) / (maxADT / 100))) / 15;
+        if (heightThird < 0.01) {
+            heightThird = 0.01;
         }
         third.z += heightThird;
         final double colorSecend = pointColors.get(pointIndex);
@@ -733,7 +739,7 @@ public class ShapeLoader extends AbstractSceneLoader {
         geomInfo.setCoordinates(coordinates);
         geomInfo.setStripCounts(stripCount);
         geomInfo.setColors(colors);
-       
+
 
         //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>: this is pretty expensive look into source code I think this could be done more performant for grids.
 //        if (logger.isDebugEnabled()) {
@@ -894,6 +900,7 @@ public class ShapeLoader extends AbstractSceneLoader {
                 VecBuffer buffer = record.getCompoundPointBuffer().subBuffer(i);
                 Iterator<double[]> coords = buffer.getCoords().iterator();
                 int partCounter = 0;
+                Point3f[] currentPolygon = new Point3f[4];
                 while (coords.hasNext()) {
                     final double[] currentCoords = coords.next();
 
@@ -903,7 +910,6 @@ public class ShapeLoader extends AbstractSceneLoader {
                         originalPoint.setZ((float) currentHeights[coordCounter]);
                     } else if (shapeType != shapeType.POLYLINE) {
                         shapeType = SHAPE_TYPE.POLYGON_2D;
-                        originalPoint.setZ(100);
                     }
 
                     if (shapeType == SHAPE_TYPE.POLYGON_3D) {
@@ -914,7 +920,24 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                        }
                     final Point3f transformedPoint = EarthFlat.geodeticToCartesian(originalPoint, EarthFlat.PLATE_CARREE_PROJECTION);
                     scalePoint3f(transformedPoint);
-                    points.add(transformedPoint);
+
+                    if (shapeType == SHAPE_TYPE.POLYGON_2D) {
+                        if (partCounter == 4) {
+                            AdvancedBoundingBox bbox = new AdvancedBoundingBox(new Point3d(currentPolygon[0]), new Point3d(currentPolygon[2]));
+//                            if (logger.isDebugEnabled()) {
+//                                logger.debug("boundingBox: "+bbox);
+//                                logger.debug("center: "+);
+//
+//                            }
+                            final Point3f center = bbox.getCenter3f();
+                            center.z = 0.1f;
+                            points.add(center);
+                        } else {
+                            currentPolygon[partCounter] = transformedPoint;
+                        }
+                    } else {
+                        points.add(transformedPoint);
+                    }
                     if (shapeType == SHAPE_TYPE.POLYLINE && currentHeights == null && heights != null) {
                         final Point3f nb = heights.getHeightInterpolation(transformedPoint);
 //                        if (logger.isDebugEnabled()) {
@@ -990,34 +1013,42 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                        }
 //                        polygonColorsIndex.add(0);
                     } else if (shapeType == SHAPE_TYPE.POLYGON_2D) {
-                        if (no2dygn != null) {
-                            if (no2dygn < minNo2dygn) {
-                                minNo2dygn = no2dygn;
-                            }
-                            if (no2dygn > maxNo2dygn) {
-                                maxNo2dygn = no2dygn;
-                            }
+                        if (partCounter == 4) {
+                            if (no2dygn != null) {
+                                if (no2dygn < minNo2dygn) {
+                                    minNo2dygn = no2dygn;
+                                }
+                                if (no2dygn > maxNo2dygn) {
+                                    maxNo2dygn = no2dygn;
+                                }
 //                        if (logger.isDebugEnabled()) {
 //                            logger.debug("perc: "+perc);
 //                        }
-                            if (no2dygn < 30.0) {
-                                polygonColors.add(new Color4f(green));
-                            } else if (no2dygn < 50.0) {
-                                polygonColors.add(new Color4f(yellow));
-                            } else if (no2dygn < 70.0) {
-                                polygonColors.add(new Color4f(orange));
+                                if (no2dygn < 18.0) {
+                                    polygonColors.add(blue);
+                                } else if (no2dygn < 24.0) {
+                                    polygonColors.add(lightBlue);
+                                } else if (no2dygn < 30) {
+                                    polygonColors.add(green);
+                                } else if (no2dygn < 36) {
+                                    polygonColors.add(darkGreen);
+                                } else if (no2dygn < 48) {
+                                    polygonColors.add(yellow);
+                                } else if (no2dygn < 60) {
+                                    polygonColors.add(orange);
+                                } else {
+                                    polygonColors.add(red);
+                                }
+
                             } else {
-                                polygonColors.add(new Color4f(red));
-                            }
-                        } else {
 //                        if (logger.isDebugEnabled()) {
 //                            logger.debug("No perc value !!");
 //
 //                        }
-                            polygonColors.add(new Color4f(black));
+                                polygonColors.add(new Color4f(black));
+                            }
                         }
                     }
-
                     if (logger.isDebugEnabled()) {
 //                            logger.debug("last point: "+polygons.get(polygons.size()-1));
                     }
@@ -1027,11 +1058,56 @@ public class ShapeLoader extends AbstractSceneLoader {
 //                if (partCounter > 2) {
 //                    if(!checkLastPart(partCounter, coordCounter - (partCounter-1))){
 //                        clockwiseCount++;
-//                    }
-//                }
-                pointIndices.add(buffer.getSize());
+//                    }//                }
+
+                if (shapeType != shapeType.POLYGON_2D) {
+                    pointIndices.add(buffer.getSize());
+                }
             }
         }
+        shp.close();
+        //postprocess Centerpoints
+        if (shapeType == SHAPE_TYPE.POLYGON_2D) {
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("length: " + points.size());
+//                logger.debug("lengthSQRT: " + Math.sqrt(points.size()));
+//            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("points: " + points.size() + " pointsColors: " + polygonColors.size());
+            }
+            final ArrayList<Point3f> centerPoints = new ArrayList<Point3f>(points);
+            final ArrayList<Color4f> centerColors = new ArrayList<Color4f>(polygonColors);
+            points = new ArrayList<Point3f>();
+            polygonColors = new ArrayList<Color4f>();
+            final int rowSize = (int) Math.sqrt(centerPoints.size());
+            final int columnSize = (int) rowSize;
+            for (int i = 0; i < rowSize - 1; i++) {
+                for (int j = 0; j < columnSize - 1; j++) {
+                    final int rowOffset = i * (columnSize);
+                    final int rowOffset2 = (i + 1) * (columnSize);
+                    points.add(centerPoints.get(rowOffset + j));
+                    polygonColors.add(centerColors.get(rowOffset + j));
+                    points.add(centerPoints.get(rowOffset2 + j));
+                    polygonColors.add(centerColors.get(rowOffset2 + j));
+                    points.add(centerPoints.get(rowOffset2 + j + 1));
+                    polygonColors.add(centerColors.get(rowOffset2 + j + 1));
+                    points.add(centerPoints.get(rowOffset + j + 1));
+                    polygonColors.add(centerColors.get(rowOffset + j + 1));
+//                    if (logger.isDebugEnabled()) {
+//                        logger.debug("first: "+(rowOffset + j)+
+//                                " second: "+(rowOffset2 + j)+
+//                                " third: "+(rowOffset2 + j + 1)+
+//                                "fourth: "+(rowOffset + j + 1));
+//                        logger.debug("first: "+centerPoints.get(rowOffset + j)+
+//                                " second: "+centerPoints.get(rowOffset2 + j)+
+//                                " third: "+centerPoints.get(rowOffset2 + j + 1)+
+//                                "fourth: "+centerPoints.get(rowOffset + j + 1));
+//                    }
+                    pointIndices.add(4);
+                }
+            }
+        }
+
         if (shapeType == SHAPE_TYPE.POLYLINE) {
             averageADT = allADT / pointADT.size();
         }
