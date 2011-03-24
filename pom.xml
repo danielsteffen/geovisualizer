@@ -5,7 +5,7 @@
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>vis-comp</artifactId>
     <packaging>jar</packaging>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <name>sudplan</name>
 
     <description>Sustainable Urban Development Planner for Climate Change Adaptation</description>

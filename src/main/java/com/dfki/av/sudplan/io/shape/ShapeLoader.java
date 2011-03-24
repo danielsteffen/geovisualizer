@@ -686,7 +686,10 @@ public class ShapeLoader extends AbstractSceneLoader {
         Color4f[] colors = new Color4f[4];
         Point3f first = points.get(pointIndex);
         Point3f fourth = new Point3f(first);
-        double heightFourth = Math.log10((pointADT.get(pointIndex) / maxADT) * 1000)/50;
+        double heightFourth = Math.log10((pointADT.get(pointIndex) / (maxADT/100)))/15;
+        if(heightFourth < 0.01){
+            heightFourth=0.01;
+        }
         fourth.z += heightFourth;
 
         final double colorFirst = pointColors.get(pointIndex);
@@ -700,11 +703,16 @@ public class ShapeLoader extends AbstractSceneLoader {
             colors[0] = highConcentrationColor;
             colors[3] = highConcentrationColor;
         }
-
+  if (logger.isDebugEnabled()) {
+            logger.debug("height: "+heightFourth);
+        }
         pointIndex++;
         Point3f second = points.get(pointIndex);
         Point3f third = new Point3f(second);
-        double heightThird = Math.log10((pointADT.get(pointIndex) / maxADT) * 1000)/50;
+        double heightThird = Math.log10((pointADT.get(pointIndex) / (maxADT/100)))/15;
+        if(heightThird < 0.01){
+            heightThird=0.01;
+        }
         third.z += heightThird;
         final double colorSecend = pointColors.get(pointIndex);
         if (colorSecend < lowConcentrationThreshold) {
