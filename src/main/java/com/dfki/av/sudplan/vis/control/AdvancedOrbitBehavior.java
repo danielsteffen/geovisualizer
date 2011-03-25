@@ -68,8 +68,6 @@ import com.sun.j3d.utils.pickfast.PickCanvas;
 import java.util.ArrayList;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PickInfo;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -871,9 +869,9 @@ public class AdvancedOrbitBehavior extends ViewPlatformAWTBehavior {
             }
         } catch (Throwable th) {
 //        ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:npe is catched only
-//            if (logger.isErrorEnabled()) {
-//                logger.error("Fehler: ", th);
-//            }
+            if (logger.isErrorEnabled()) {
+                logger.error("Error in horizontal correction: ", th);
+            }
         }
 //        if (logger.isDebugEnabled() && !Double.isNaN(deegres) && deegres != 0.0) {
 ////            logger.debug("deegree difference: " + deegres);

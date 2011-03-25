@@ -86,6 +86,9 @@ public class ComponentController implements DropTargetListener, LayerListener {
             }
             throw new InitialisationException(message, ex);
         }
+        //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:this is ugly e.g. if you use multiple ComponentController
+        //This will overwrite --> use lookup.
+        ComponentBroker.getInstance().setController(this);
     }
 
     //ToDo Sebastian Puhl <sebastian.puhl@dfki.de>:does not happen and

@@ -136,7 +136,7 @@ public class MainFrame extends javax.swing.JFrame implements LayerSelectionListe
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setSize(1024, 768);
             componentController.getLayerManager().addLayerListener(layerPanel);
-            ComponentBroker.getInstance().setController(componentController);
+//            ComponentBroker.getInstance().setController(componentController);
             componentController.setMainFrame(this);
             componentController.setVisualisationComponent(getVisualisationComponent());
         } catch (Exception ex) {
