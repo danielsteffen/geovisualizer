@@ -1,0 +1,134 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.dfki.av.sudplan</groupId>
+    <artifactId>worldwind</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>sudplanWW</name>
+    <url>http://maven.apache.org</url>
+    
+    <organization>
+        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <url>http://www.dfki.de</url>
+    </organization>
+    
+    <developers>
+        <developer>
+            <name>Daniel Steffen</name>
+            <organization>DFKI GmbH</organization>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>worldwind</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>worldwindx</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>gdal</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>gluegen-rt</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>jogl</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <profiles>
+        <profile>
+            <id>dfki</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+                <distribution.server>dfki-artifactory</distribution.server>
+            </properties>
+        </profile>
+    </profiles>  
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>${sudplan.main}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>${repository.url}</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>${repository.url}</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>snapshots</id>
+            <url>${repository.url}</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+    
+</project>
