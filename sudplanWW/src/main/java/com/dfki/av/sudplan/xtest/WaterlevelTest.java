@@ -3,7 +3,7 @@
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.waterlevel;
+package com.dfki.av.sudplan.xtest;
 
 /* Copyright (C) 2001, 2009 United States Government as represented by
 the Administrator of the National Aeronautics and Space Administration.

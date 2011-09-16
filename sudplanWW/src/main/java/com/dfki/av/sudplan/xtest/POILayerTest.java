@@ -3,10 +3,10 @@
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.wfs.copy;
+package com.dfki.av.sudplan.xtest;
 
-import com.dfki.av.sudplan.fog.FogLayer;
-import com.dfki.av.sudplan.textureLayer.ElevatedImage;
+import com.dfki.av.sudplan.xtest.FogLayer;
+import com.dfki.av.sudplan.xtest.ElevatedImage;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
@@ -80,7 +80,7 @@ public class POILayerTest extends ApplicationTemplate {
         protected static final double HUE_RED = 0d / 360d;
         protected RenderableLayer analyticSurfaceLayer;
         private static final String[] servers = new String[]{
-            "http://localhost:8080/geoserver/wms","http://pc-2162:8080/geoserver/ows?service=wms&version=1.1.1&request=GetCapabilities"};
+            /*"http://localhost:8080/geoserver/wms",*/"http://pc-2162:8080/geoserver/ows?service=wms&version=1.1.1&request=GetCapabilities"};
 
         public AppFrame() {
             super(true, true, false);
@@ -90,7 +90,7 @@ public class POILayerTest extends ApplicationTemplate {
             setUpFogLayer();
 //            setUpNewYorkPOILayer();
 //            setUpOrthoLayer();
-//            setUpSoedermalmPOILayer();
+            setUpSoedermalmPOILayer();
             setUpSoedermalmBuildingLayer();
 //            setUpRooftopResultsOnGroundTest();
             setUpFloodLayer();
@@ -100,7 +100,7 @@ public class POILayerTest extends ApplicationTemplate {
         }
 
         public void setUpNewYorkPOILayer() {
-            WFSServiceCopy localWFSService = new WFSServiceCopy("http://localhost:8080/geoserver/wfs", "tiger:poi", Sector.FULL_SPHERE, AbstractWFSCopy.DEFAULT_TILE_DELTA);
+            WFSServiceCopy localWFSService = new WFSServiceCopy("http://pc-2162:8080/geoserver/wfs", "tiger:poi", Sector.FULL_SPHERE, AbstractWFSCopy.DEFAULT_TILE_DELTA);
             localWFSService.setMinDisplayDistance(0.0D);
             localWFSService.setMaxDisplayDistance(300000.0D);
             localWFSService.setEnabled(true);
@@ -113,7 +113,7 @@ public class POILayerTest extends ApplicationTemplate {
         }
 
         public void setUpSoedermalmPOILayer() {
-            WFSServiceCopy localWFSService = new WFSServiceCopy("http://localhost:8080/geoserver/wfs", "dfki:poi", Sector.FULL_SPHERE, AbstractWFSCopy.DEFAULT_TILE_DELTA);
+            WFSServiceCopy localWFSService = new WFSServiceCopy("http://pc-2162:8080/geoserver/wfs", "dfki:poi", Sector.FULL_SPHERE, AbstractWFSCopy.DEFAULT_TILE_DELTA);
             localWFSService.setMinDisplayDistance(0.0D);
             localWFSService.setMaxDisplayDistance(300000.0D);
             localWFSService.setEnabled(true);
@@ -125,7 +125,7 @@ public class POILayerTest extends ApplicationTemplate {
         }
 
         private void setUpSoedermalmBuildingLayer() {
-            WFSServiceCopy localWFSService = new WFSServiceCopy("http://localhost:8080/geoserver/wfs", "dfki:building", Sector.FULL_SPHERE, AbstractWFSCopy.DEFAULT_TILE_DELTA);
+            WFSServiceCopy localWFSService = new WFSServiceCopy("http://pc-2162:8080/geoserver/wfs", "dfki:building", Sector.FULL_SPHERE, AbstractWFSCopy.DEFAULT_TILE_DELTA);
             localWFSService.setMinDisplayDistance(0.0D);
             localWFSService.setMaxDisplayDistance(3000.0D);
             localWFSService.setEnabled(true);

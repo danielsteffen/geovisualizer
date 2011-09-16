@@ -4,7 +4,7 @@ as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 */
-package com.dfki.av.sudplan.textureLayer;
+package com.dfki.av.sudplan.xtest;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.texture.Texture;

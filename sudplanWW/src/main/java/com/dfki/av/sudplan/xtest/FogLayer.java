@@ -3,7 +3,7 @@
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.fog;
+package com.dfki.av.sudplan.xtest;
 
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.geom.*;
