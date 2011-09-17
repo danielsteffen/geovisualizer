@@ -26,31 +26,66 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>sudplan-webstart</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+                <distribution.server>dfki-artifactory</distribution.server>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>dfki</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+                <distribution.server>dfki-artifactory</distribution.server>
+            </properties>
+        </profile>
+    </profiles>  
+    
     <dependencies>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwind</artifactId>
             <version>1.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwindx</artifactId>
             <version>1.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gdal</artifactId>
             <version>1.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gluegen-rt</artifactId>
             <version>1.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>jogl</artifactId>
             <version>1.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -68,31 +103,7 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.2</version>
         </dependency>
-        <!--dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>1.6.1</version>
-        </dependency-->
     </dependencies>
-    
-    <profiles>
-        <profile>
-            <id>dfki</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
-                <distribution.server>dfki-artifactory</distribution.server>
-            </properties>
-        </profile>
-    </profiles>  
     
     <build>
         <plugins>
@@ -109,13 +120,45 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>${sudplan.main}</mainClass>
+                            <mainClass>${main-class}</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo.webstart</groupId>
+                <artifactId>webstart-maven-plugin</artifactId>
+                <version>1.0-beta-1</version>
+                <configuration>
+                    <jnlp>
+                        <outputFile>sudplan.jnlp</outputFile>
+                        <mainClass>${main-class}</mainClass>
+                    </jnlp>
+                    <sign>
+                        <keystore>/tmp/sudplan.jks</keystore>
+                        <keypass>sudplan</keypass>
+                        <storepass>sudplan</storepass>
+                        <alias>sudplan</alias>
+                        <validity>3650</validity>
+                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameOu>AV</dnameOu>
+                        <dnameO>DFKI</dnameO>
+                        <dnameL>KL</dnameL>
+                        <dnameSt>RLP</dnameSt>
+                        <dnameC>DE</dnameC>
+                        <verify>true</verify>
+                        <keystoreConfig>
+                            <delete>true</delete> <!-- delete the keystore -->
+                            <gen>true</gen>       <!-- optional shortcut to generate the store. -->
+                        </keystoreConfig>
+                    </sign>
+                    <verbose>true</verbose>
                 </configuration>
             </plugin>
 
@@ -169,4 +212,9 @@
             <url>${distribution.url}</url>
         </repository>
     </distributionManagement>    
+    
+    <ciManagement>
+        <system>hudson</system>
+        <url>http://serv-2110.kl.dfki.de:8080/</url>
+    </ciManagement>    
 </project>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="$codebase" href="$outputFile">
+ <information>
+    <title>Sudplan</title>
+    <vendor>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</vendor>
+    <homepage href="http://av.dfki.de"/>
+    <description kind="one-line">Sudplan</description>
+    <description kind="tooltip">Sudplan</description>
+    <description kind="short">Sudplan</description>
+    <icon kind="default" href="img/sudplan64x64px.jpg"/>
+    <shortcut online="true">
+      <desktop/>
+      <menu submenu="sudplan"/>
+    </shortcut>
+    <offline-allowed/>
+ </information>
+ <security>
+ <all-permissions/>
+ </security>
+ <resources>
+	<j2se version="1.6+" initial-heap-size="1024m" max-heap-size="1024m" />
+    <property name="jnlp.versionEnabled" value="true"/>
+    $dependencies
+	<extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/>
+	<extension name="worldwindx" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwindx.jnlp"/>
+	<extension name="gdal" href="http://worldwind.arc.nasa.gov/java/gdal/webstart/gdal.jnlp"/>
+ </resources>
+ <application-desc main-class="$mainClass">
+ </application-desc>
+</jnlp>

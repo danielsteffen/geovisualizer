@@ -1,6 +1,9 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  VisualizationPanel.java 
+ *
+ *  Created by DFKI AV on 15.09.2011.
+ *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis;
 
@@ -14,6 +17,8 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.ViewControlsLayer;
+import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
@@ -47,6 +52,10 @@ public class VisualizationPanel extends JPanel implements VisualisationComponent
 
         // Setup a select listener for the worldmap click-and-go feature
         this.wwd.addSelectListener(new ClickAndGoSelectListener(this.wwd, WorldMapLayer.class));
+
+        ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
+        this.getWwd().getModel().getLayers().add(viewControlsLayer);
+        this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 
         this.add(this.wwd, BorderLayout.CENTER);
 
