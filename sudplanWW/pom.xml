@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dfki.av.sudplan</groupId>
-    <artifactId>sudplanWW</artifactId>
+    <artifactId>sudplan3D</artifactId>
     <version>0.7.0</version>
     <packaging>jar</packaging>
-    <name>sudplanWW</name>
+    <name>sudplan3D</name>
     <url>http://maven.apache.org</url>
     
     <organization>
@@ -28,11 +28,12 @@
 
     <profiles>
         <profile>
-            <id>sudplan-webstart</id>
+            <id>sudplan3D-webstart-netbeans</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <ww-scope>compile</ww-scope>                   
                 <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
@@ -42,11 +43,12 @@
         </profile>
 
         <profile>
-            <id>dfki</id>
+            <id>sudplan3D-webstart</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <ww-scope>provided</ww-scope>                
                 <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
@@ -54,6 +56,7 @@
                 <distribution.server>dfki-artifactory</distribution.server>
             </properties>
         </profile>
+
     </profiles>  
     
     <dependencies>
@@ -61,31 +64,31 @@
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwind</artifactId>
             <version>1.2.0</version>
-            <scope>provided</scope>
+            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwindx</artifactId>
             <version>1.2.0</version>
-            <scope>provided</scope>
+            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gdal</artifactId>
             <version>1.2.0</version>
-            <scope>provided</scope>
+            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gluegen-rt</artifactId>
             <version>1.2.0</version>
-            <scope>provided</scope>
+            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>jogl</artifactId>
             <version>1.2.0</version>
-            <scope>provided</scope>
+            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -175,6 +178,32 @@
             
         </plugins>
     </build>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>  
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                </configuration>
+            </plugin>            
+        </plugins>
+    </reporting>
+    
     <repositories>
         <repository>
             <id>central</id>

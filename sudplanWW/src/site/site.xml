@@ -1,0 +1,22 @@
+<project name="SUDPLAN 3D">
+	<publishDate position="navigation-bottom"/>
+	<version position="left"/>
+    <bannerLeft>
+        <name>SUDPLAN 3D</name>
+        <src>images/sudplan3dlogo.png</src>
+        <href>http://sudplan.kl.dfki.de</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>Augemented Vision</name>
+        <src>images/avdfkilogo.png</src>
+        <href>http://av.dfki.de</href>
+    </bannerRight>
+    <body>
+        <menu name="SUDPLAN 3D">
+            <item name="About" href="index.html"/>
+            <item name="Demo" href="demo.html"/>
+			<item name="News" href="news.html"/>
+		</menu>
+        <menu ref="reports"/>
+    </body>	
+</project>
