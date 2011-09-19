@@ -240,6 +240,10 @@
             <name>${distribution.url}</name>
             <url>${distribution.url}</url>
         </repository>
+        <site>
+            <id>steffen.website</id>
+            <url>scp://serv-2100/home/steffen/etc/www/sudplan</url>
+        </site>		
     </distributionManagement>    
     
     <ciManagement>
