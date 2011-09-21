@@ -8,7 +8,8 @@
     <version>0.7.0</version>
     <packaging>jar</packaging>
     <name>sudplan3D</name>
-    <url>http://maven.apache.org</url>
+    <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
+    <url>http://www.smhi.se/sudplan</url>
     
     <organization>
         <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
@@ -18,7 +19,12 @@
     <developers>
         <developer>
             <name>Daniel Steffen</name>
+            <email>daniel.steffen::at::dfki.de</email>
+            <roles>
+                <role>Developer</role>
+            </roles>            
             <organization>DFKI GmbH</organization>
+            <timezone>+2</timezone>
         </developer>
     </developers>
 
@@ -192,7 +198,7 @@
                 </configuration>
             </plugin>  
             
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8</version>
@@ -200,7 +206,29 @@
                     <show>private</show>
                     <nohelp>true</nohelp>
                 </configuration>
-            </plugin>            
+            </plugin-->     
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <targetJdk>1.5</targetJdk>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            
+            <!--plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
+            </plugin-->              
+                   
         </plugins>
     </reporting>
     
