@@ -49,9 +49,24 @@
         </profile>
 
         <profile>
-            <id>sudplan3D-webstart</id>
+            <id>sudplan3D-webstart-steffen</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <ww-scope>provided</ww-scope>                
+                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+                <distribution.server>dfki-artifactory</distribution.server>
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>sudplan3D-deploy-dfki</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                
@@ -63,6 +78,20 @@
             </properties>
         </profile>
 
+        <profile>
+            <id>sudplan3D-deploy-cismet</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <ww-scope>provided</ww-scope>                
+                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+                <codebase></codebase>
+                <repository.url>http://flexo.cismet.de:8081/artifactory/repo</repository.url>
+                <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>
+                <distribution.server>cismet-artifactory</distribution.server>
+            </properties>
+        </profile>
     </profiles>  
     
     <dependencies>
