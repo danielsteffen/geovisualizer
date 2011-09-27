@@ -7,12 +7,15 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.camera.Camera;
+import com.dfki.av.sudplan.camera.SimpleCamera;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
@@ -24,20 +27,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author steffen
+ * Class containing the <code>WorldWindowGLCanvas</code> to render the virtual
+ * globe.
+ * 
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisualizationPanel extends JPanel implements VisualisationComponent {
 
+    /*
+     * Logger.
+     */
     private final Logger log = LoggerFactory.getLogger(getClass());
-    protected WorldWindowGLCanvas wwd;
-
+    /**
+     * The world wind GL canvas.
+     */
+    private WorldWindowGLCanvas wwd;
+    
+    /**
+     * Constructs a visualization panel of the defined <code>Dimension</code>.
+     * 
+     * @param canvasSize size of the <code>WorldWindowGLCanvas</code>.
+     */
     public VisualizationPanel(Dimension canvasSize) {
         super(new BorderLayout());
 
         this.wwd = new WorldWindowGLCanvas();
         this.wwd.setPreferredSize(canvasSize);
-        this.wwd.setMinimumSize(new Dimension(800, 600));
 
         // Create the default model as described in the current worldwind properties.
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
@@ -53,33 +68,94 @@ public class VisualizationPanel extends JPanel implements VisualisationComponent
         this.add(this.wwd, BorderLayout.CENTER);
     }
 
-    protected WorldWindowGLCanvas createWorldWindow() {
-        return new WorldWindowGLCanvas();
-    }
-
+    /**
+     * Returns the <code>WorldWindowGLCanvas</code>.
+     * 
+     * @return the <code>WorldWindowGLCanvas</code> to return.
+     */
     public WorldWindowGLCanvas getWwd() {
-        return wwd;
+        return this.wwd;
     }
 
-    @Override
-    public void addContent(Object scene) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void enableDirectedLight(boolean enabled) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeContent(Object dataObject) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
+    /**
+     * Animates viewer to home position.
+     */
     public void goToHome() {
+        goTo(37.0, 27.0, 19000000.0, true);
+    }
+
+    /**
+     * Sets view to the specified position defined by <code>latitude</code>, 
+     * <code>longitude</code>, and <code>altitude</code>. If the flag
+     * <code>altitude</code> is set to true the movement is animated. Otherwise
+     * not.
+     * 
+     * @param latitude the latitude position in degrees.
+     * @param longitude the longitude position in degrees.
+     * @param altitude the altitude position in meters?
+     * @param animated wheter the change should be animated or not.
+     */
+    public void goTo(double latitude, double longitude, double altitude, boolean animated) {
         View view = this.wwd.getView();
-        view.goTo(Position.fromDegrees(37, 27), 19000000.0);
+        if (animated) {
+            view.goTo(Position.fromDegrees(latitude, longitude), altitude);
+        } else {
+            view.setEyePosition(Position.fromDegrees(latitude, longitude, altitude));
+            wwd.redraw();
+        }
+    }
+
+    @Override
+    public void addLayer(Object layer) {
+        if (layer == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Object trying to add equals to null.");
+            }
+            return;
+        }
+
+        if (layer instanceof Layer) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        } else {
+            if (log.isWarnEnabled()) {
+                log.warn("Can't add object. Currently, only objects of type Layer are supported.");
+            }
+        }
+    }
+
+    @Override
+    public void removeLayer(Object layer) {
+        if (layer == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Object trying to add equals to null.");
+            }
+            return;
+        }
+
+        if (layer instanceof Layer) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        } else {
+            if (log.isWarnEnabled()) {
+                log.warn("Can't remove object. Currently, only objects of type Layer are supported.");
+            }
+        }
+    }
+
+    @Override
+    public Camera getCamera() {
+        Position p = this.wwd.getView().getEyePosition();
+        return new SimpleCamera(p);
+    }
+
+    @Override
+    public void setCamera(Camera c) {
+        if( c == null ){
+            if (log.isWarnEnabled()) {
+                log.warn("Camera trying to add equals to null.");
+            }
+            return;
+        }
+        goTo(c.getLatitude(), c.getLongitude(), c.getAltitude(), true);
     }
 
     @Override
@@ -100,11 +176,5 @@ public class VisualizationPanel extends JPanel implements VisualisationComponent
     @Override
     public void setModeCombined() {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void goTo(double latitude, double longitude, double elevation) {
-        View view = this.wwd.getView();
-        view.goTo(Position.fromDegrees(latitude, longitude), elevation);
     }
 }

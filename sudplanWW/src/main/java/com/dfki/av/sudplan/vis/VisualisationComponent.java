@@ -7,24 +7,20 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.camera.Camera;
+
 /**
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface VisualisationComponent {
     
-  //public Component getDnDComponent();
-  public void addContent(final Object scene);
-  public void enableDirectedLight(boolean enabled);
-  public void removeContent(final Object dataObject);
-  public void goToHome();
-  public void goTo(double latitude, double longitude, double elevation);
+  public void addLayer(final Object layer);
+  public void removeLayer(final Object layer);
+  public Camera getCamera();  
+  public void setCamera(Camera c);
   public void setModeZoom();
   public void setModePan();
   public void setModeRotate();
   public void setModeCombined();
-  //public Camera get3dCamera();
-  //public Camera get2dCamera();
-  //public Camera getGeographicCamera();  
-  
 }

@@ -40,11 +40,11 @@ public class SödermalmRooftopLayer extends RenderableLayer{
         Sector imageSector = Sector.boundingSector(corners);
         String roofTopResultImage = "rooftop.png";
         SurfaceImage si = new SurfaceImage(roofTopResultImage, imageSector);
-        si.setOpacity(0.7);
+        si.setOpacity(0.6);
 
         this.setName("Roof Top Results (Södermalm)");
         this.setPickEnabled(false);
-        this.setEnabled(true);
+        this.setEnabled(false);
         this.addRenderable(si);
     }
  }

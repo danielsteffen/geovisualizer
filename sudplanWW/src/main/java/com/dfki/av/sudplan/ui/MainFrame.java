@@ -371,15 +371,15 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGoStockholmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoStockholmActionPerformed
-        wwPanel.goTo(59.328, 18.047, 20000.0);
+        wwPanel.goTo(59.328, 18.047, 20000.0, true);
     }//GEN-LAST:event_btnGoStockholmActionPerformed
 
     private void btnGoLinzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoLinzActionPerformed
-        wwPanel.goTo(48.2323, 14.3350, 20000.0);
+        wwPanel.goTo(48.2323, 14.3350, 20000.0, true);
     }//GEN-LAST:event_btnGoLinzActionPerformed
 
     private void btnGoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoWuppertalActionPerformed
-        wwPanel.goTo(51.2665, 7.1832, 20000.0);
+        wwPanel.goTo(51.2665, 7.1832, 20000.0, true);
     }//GEN-LAST:event_btnGoWuppertalActionPerformed
 
     private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
@@ -398,7 +398,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             double lat = Double.parseDouble(txtLatitude.getText());
             double lon = Double.parseDouble(txtLongitude.getText());
-            wwPanel.goTo(lat, lon, 20000.0);
+            wwPanel.goTo(lat, lon, 20000.0, true);
             dGoTo.setVisible(false);
         } catch (NumberFormatException nfe) {
             if (log.isWarnEnabled()) {
@@ -452,7 +452,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    protected void fill() {
+    private void fill() {
         
         for (Layer layer : wwPanel.getWwd().getModel().getLayers()) {
             LayerAction action = new LayerAction(layer, wwPanel.getWwd(), layer.isEnabled());
@@ -494,6 +494,7 @@ public class MainFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 new MainFrame().setVisible(true);
             }
