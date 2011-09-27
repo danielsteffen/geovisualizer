@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class VisualizationPanel extends JPanel implements VisualisationComponent {
+public class VisualizationPanel extends JPanel implements VisualizationComponent {
 
     /*
      * Logger.

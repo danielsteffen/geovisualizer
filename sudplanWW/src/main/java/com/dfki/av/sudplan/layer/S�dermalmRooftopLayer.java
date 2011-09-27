@@ -29,16 +29,19 @@ public class SödermalmRooftopLayer extends RenderableLayer{
     private final Logger log = LoggerFactory.getLogger(getClass());
     
     public SödermalmRooftopLayer(){
+        
         if (log.isDebugEnabled()) {
             log.debug("Initializing södermalm Rooftop results.");
         }
+        // TODO <steffen>: Get sector corners from converted image file.
+        String roofTopResultImage = "rooftop3.tif";
         List corners = Arrays.asList(
                 LatLon.fromDegrees(59.2940608, 17.9849627), // lower left
                 LatLon.fromDegrees(59.2940608, 18.119758), // lower right
                 LatLon.fromDegrees(59.3589690, 18.119758), // upper right
                 LatLon.fromDegrees(59.3589690, 17.9849627)); // upper left
         Sector imageSector = Sector.boundingSector(corners);
-        String roofTopResultImage = "rooftop.png";
+        
         SurfaceImage si = new SurfaceImage(roofTopResultImage, imageSector);
         si.setOpacity(0.6);
 

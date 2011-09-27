@@ -1,5 +1,5 @@
 /*
- *  VisualisationComponent.java 
+ *  VisualizationComponent.java 
  *
  *  Created by DFKI AV on 15.09.2011.
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -13,7 +13,7 @@ import com.dfki.av.sudplan.camera.Camera;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public interface VisualisationComponent {
+public interface VisualizationComponent {
     
   public void addLayer(final Object layer);
   public void removeLayer(final Object layer);
