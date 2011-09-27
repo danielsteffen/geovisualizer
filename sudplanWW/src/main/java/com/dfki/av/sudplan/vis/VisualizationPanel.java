@@ -12,20 +12,13 @@ import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
-import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.List;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,37 +47,10 @@ public class VisualizationPanel extends JPanel implements VisualisationComponent
         this.wwd.addSelectListener(new ClickAndGoSelectListener(this.wwd, WorldMapLayer.class));
 
         ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-        this.getWwd().getModel().getLayers().add(viewControlsLayer);
-        this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
+        this.wwd.getModel().getLayers().add(viewControlsLayer);
+        this.wwd.addSelectListener(new ViewControlsSelectListener(this.wwd, viewControlsLayer));
 
         this.add(this.wwd, BorderLayout.CENTER);
-
-        initStockholmRoofTopResults();
-    }
-
-    private void initStockholmRoofTopResults() {
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing södermalm Rooftop results.");
-        }
-        List corners = Arrays.asList(
-                LatLon.fromDegrees(59.2941, 17.985),
-                LatLon.fromDegrees(59.2941, 18.112),
-                LatLon.fromDegrees(59.359, 18.112),
-                LatLon.fromDegrees(59.359, 17.985));
-        Sector imageSector = Sector.boundingSector(corners);
-        String roofTopResultImage = "rooftop.png";
-        SurfaceImage si = new SurfaceImage(roofTopResultImage, imageSector);
-        si.setOpacity(0.5);
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.setName("Roof Top Results (Stockholm)");
-        layer.setPickEnabled(false);
-        layer.setEnabled(true);
-        layer.addRenderable(si);
-
-        LayerList layers = wwd.getModel().getLayers();
-        layers.add(layer);
     }
 
     protected WorldWindowGLCanvas createWorldWindow() {

@@ -1,0 +1,203 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.dfki.av.sudplanX</groupId>
+    <artifactId>sudplanX</artifactId>
+    <version>0.0.1</version>
+    <packaging>jar</packaging>
+    <name>sudplanX</name>
+    <description>Examples and tests for the SUDPLAN project.</description>
+    <url>http://www.smhi.se/sudplan</url>
+    
+    <organization>
+        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <url>http://www.dfki.de</url>
+    </organization>
+    
+    <developers>
+        <developer>
+            <name>Daniel Steffen</name>
+            <email>daniel.steffen::at::dfki.de</email>
+            <roles>
+                <role>Developer</role>
+            </roles>            
+            <organization>DFKI GmbH</organization>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>sudplanX-webstart-netbeans</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <ww-scope>compile</ww-scope>                   
+                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+                <distribution.server>dfki-artifactory</distribution.server>
+            </properties>
+        </profile>
+
+    </profiles>  
+    
+    <dependencies>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>worldwind</artifactId>
+            <version>1.2.0</version>
+            <scope>${ww-scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>worldwindx</artifactId>
+            <version>1.2.0</version>
+            <scope>${ww-scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>gdal</artifactId>
+            <version>1.2.0</version>
+            <scope>${ww-scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>gluegen-rt</artifactId>
+            <version>1.2.0</version>
+            <scope>${ww-scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa.worldwind</groupId>
+            <artifactId>jogl</artifactId>
+            <version>1.2.0</version>
+            <scope>${ww-scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>${main-class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo.webstart</groupId>
+                <artifactId>webstart-maven-plugin</artifactId>
+                <version>1.0-beta-1</version>
+                <configuration>
+                    <jnlp>
+                        <outputFile>sudplan.jnlp</outputFile>
+                        <mainClass>${main-class}</mainClass>
+                    </jnlp>
+                    <sign>
+                        <keystore>/tmp/sudplan.jks</keystore>
+                        <keypass>sudplan</keypass>
+                        <storepass>sudplan</storepass>
+                        <alias>sudplan</alias>
+                        <validity>3650</validity>
+                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameOu>AV</dnameOu>
+                        <dnameO>DFKI</dnameO>
+                        <dnameL>KL</dnameL>
+                        <dnameSt>RLP</dnameSt>
+                        <dnameC>DE</dnameC>
+                        <verify>true</verify>
+                        <keystoreConfig>
+                            <delete>true</delete> <!-- delete the keystore -->
+                            <gen>true</gen>       <!-- optional shortcut to generate the store. -->
+                        </keystoreConfig>
+                    </sign>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+    </build>
+    
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>${repository.url}</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>${repository.url}</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>snapshots</id>
+            <url>${repository.url}</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+    
+</project>

@@ -26,4 +26,5 @@ public interface VisualisationComponent {
   //public Camera get3dCamera();
   //public Camera get2dCamera();
   //public Camera getGeographicCamera();  
+  
 }
