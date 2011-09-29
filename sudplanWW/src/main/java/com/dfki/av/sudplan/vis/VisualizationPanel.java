@@ -157,24 +157,4 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
         goTo(c.getLatitude(), c.getLongitude(), c.getAltitude(), true);
     }
-
-    @Override
-    public void setModeZoom() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setModePan() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setModeRotate() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setModeCombined() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

@@ -19,8 +19,4 @@ public interface VisualizationComponent {
   public void removeLayer(final Object layer);
   public Camera getCamera();  
   public void setCamera(Camera c);
-  public void setModeZoom();
-  public void setModePan();
-  public void setModeRotate();
-  public void setModeCombined();
 }

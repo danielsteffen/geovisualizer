@@ -9,25 +9,9 @@
     </layout>
   </appender>
 
-  <appender name="SOCKET" class="org.apache.log4j.net.SocketAppender">
-      <param name="Port" value="4445"/>
-      <param name="RemoteHost" value="localhost"/>
-      <param name="ReconnectionDelay" value="60000"/>
-      <param name="Threshold" value="DEBUG"/>
-      <param name="LocationInfo" value="true"/>
-   </appender>
-
-
   <root>
     <priority value ="debug" />
     <appender-ref ref="console" />
-    <appender-ref ref="SOCKET" />
   </root>
-  <logger name="org.deegree">
-    <priority value ="error" />
-  </logger>
-   <logger name="org.apache">
-    <priority value ="error" />
-  </logger>
 
 </log4j:configuration>

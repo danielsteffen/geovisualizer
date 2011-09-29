@@ -19,7 +19,4 @@ public interface CameraListener extends EventListener {
 
     public void cameraViewChanged(final CameraEvent cameraEvent);
 
-    public void cameraRegistered(final CameraEvent cameraEvent);
-
-    public void cameraUnregistered(final CameraEvent cameraEvent);
 }
