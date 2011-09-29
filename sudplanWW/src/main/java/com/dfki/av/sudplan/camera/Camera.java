@@ -33,4 +33,18 @@ public interface Camera {
      * @return the altidue to return.
      */
     public double getAltitude();
+
+    /**
+     * Returns the viewing direction of the camera.
+     * 
+     * @return the viewing direction to return.
+     */
+    public Vector3D getViewingDirection();
+    
+    /**
+     * Return the <code>BoundingVolume</code> of the camera.
+     * 
+     * @return the {@link BoundingVolume} of the camera to return.
+     */
+    public BoundingVolume getBoundingVolume();
 }

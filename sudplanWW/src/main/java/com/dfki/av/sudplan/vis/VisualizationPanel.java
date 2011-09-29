@@ -8,7 +8,9 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.camera.Camera;
+import com.dfki.av.sudplan.camera.CameraListener;
 import com.dfki.av.sudplan.camera.SimpleCamera;
+import com.dfki.av.sudplan.camera.Vector3D;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -22,6 +24,8 @@ import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +47,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     private WorldWindowGLCanvas wwd;
     
+    /**
+     * List of {@link CameraListener}.
+     */
+    private List<CameraListener> cameraListener = new ArrayList<CameraListener>();
+
     /**
      * Constructs a visualization panel of the defined <code>Dimension</code>.
      * 
@@ -109,9 +118,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void addLayer(Object layer) {
         if (layer == null) {
             if (log.isWarnEnabled()) {
-                log.warn("Object trying to add equals to null.");
+                log.warn("Parameter 'layer' is null.");
             }
-            return;
+            throw new IllegalArgumentException("Parameter 'layer' is null.");
         }
 
         if (layer instanceof Layer) {
@@ -129,7 +138,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             if (log.isWarnEnabled()) {
                 log.warn("Object trying to add equals to null.");
             }
-            return;
+            throw new IllegalArgumentException("Parameter 'layer' is null.");
         }
 
         if (layer instanceof Layer) {
@@ -144,17 +153,34 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public Camera getCamera() {
         Position p = this.wwd.getView().getEyePosition();
-        return new SimpleCamera(p);
+        Vector3D vec = new Vector3D(wwd.getView().getForwardVector());
+        return new SimpleCamera(p, vec);
     }
 
     @Override
     public void setCamera(Camera c) {
-        if( c == null ){
+        if (c == null) {
             if (log.isWarnEnabled()) {
                 log.warn("Camera trying to add equals to null.");
             }
-            return;
+            throw new IllegalArgumentException("Parameter camera is null.");
         }
         goTo(c.getLatitude(), c.getLongitude(), c.getAltitude(), true);
+    }
+
+    @Override
+    public synchronized void addCameraListener(CameraListener cl) {
+        if (cl == null) {
+            throw new IllegalArgumentException("Parameter CameraListener is null.");
+        }
+        this.cameraListener.add(cl);
+    }
+
+    @Override
+    public synchronized void removeCameraListener(CameraListener cl) {
+        if (cl == null) {
+            throw new IllegalArgumentException("Parameter CameraListener is null.");
+        }
+        this.cameraListener.remove(cl);
     }
 }
