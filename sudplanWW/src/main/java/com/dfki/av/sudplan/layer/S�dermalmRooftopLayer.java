@@ -34,7 +34,7 @@ public class SödermalmRooftopLayer extends RenderableLayer{
             log.debug("Initializing södermalm Rooftop results.");
         }
         // TODO <steffen>: Get sector corners from converted image file.
-        String roofTopResultImage = "rooftop3.tif";
+        String roofTopResultImage = "rooftop3.tiff";
         List corners = Arrays.asList(
                 LatLon.fromDegrees(59.2940608, 17.9849627), // lower left
                 LatLon.fromDegrees(59.2940608, 18.119758), // lower right

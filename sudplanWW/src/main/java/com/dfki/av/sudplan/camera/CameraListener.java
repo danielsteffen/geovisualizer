@@ -7,16 +7,11 @@
  */
 package com.dfki.av.sudplan.camera;
 
-import java.util.EventListener;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public interface CameraListener extends EventListener {
-
-    public void cameraMoved(final CameraEvent cameraEvent);
-
-    public void cameraViewChanged(final CameraEvent cameraEvent);
-
+public interface CameraListener extends PropertyChangeListener {
 }

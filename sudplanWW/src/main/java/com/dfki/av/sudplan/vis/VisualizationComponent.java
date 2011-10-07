@@ -9,12 +9,13 @@ package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.CameraListener;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public interface VisualizationComponent {
+public interface VisualizationComponent extends PropertyChangeListener{
 
     /**
      * 

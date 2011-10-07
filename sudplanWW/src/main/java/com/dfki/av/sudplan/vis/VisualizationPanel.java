@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.CameraListener;
 import com.dfki.av.sudplan.camera.SimpleCamera;
@@ -24,14 +25,13 @@ import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.PropertyChangeEvent;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class containing the <code>WorldWindowGLCanvas</code> to render the virtual
+ * Class containing the {@link WorldWindowGLCanvas} to render the virtual
  * globe.
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
@@ -46,11 +46,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * The world wind GL canvas.
      */
     private WorldWindowGLCanvas wwd;
-    
-    /**
-     * List of {@link CameraListener}.
-     */
-    private List<CameraListener> cameraListener = new ArrayList<CameraListener>();
 
     /**
      * Constructs a visualization panel of the defined <code>Dimension</code>.
@@ -73,7 +68,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
         this.wwd.getModel().getLayers().add(viewControlsLayer);
         this.wwd.addSelectListener(new ViewControlsSelectListener(this.wwd, viewControlsLayer));
-
         this.add(this.wwd, BorderLayout.CENTER);
     }
 
@@ -86,62 +80,31 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         return this.wwd;
     }
 
-    /**
-     * Animates viewer to home position.
-     */
-    public void goToHome() {
-        goTo(37.0, 27.0, 19000000.0, true);
-    }
+    @Override
+    public void addLayer(Object source) {
 
-    /**
-     * Sets view to the specified position defined by <code>latitude</code>, 
-     * <code>longitude</code>, and <code>altitude</code>. If the flag
-     * <code>altitude</code> is set to true the movement is animated. Otherwise
-     * not.
-     * 
-     * @param latitude the latitude position in degrees.
-     * @param longitude the longitude position in degrees.
-     * @param altitude the altitude position in meters?
-     * @param animated wheter the change should be animated or not.
-     */
-    public void goTo(double latitude, double longitude, double altitude, boolean animated) {
-        View view = this.wwd.getView();
-        if (animated) {
-            view.goTo(Position.fromDegrees(latitude, longitude), altitude);
-        } else {
-            view.setEyePosition(Position.fromDegrees(latitude, longitude, altitude));
-            wwd.redraw();
+        if (source == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Parameter 'object' of method 'addLayer()' is null.");
+            }
+            throw new IllegalArgumentException("Parameter 'ocject' of method "
+                    + "'addLayer()' is null.");
         }
+
+        LayerWorker worker = new LayerWorker(source, wwd);
+        worker.execute();
     }
 
     @Override
-    public void addLayer(Object layer) {
-        if (layer == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Parameter 'layer' is null.");
-            }
-            throw new IllegalArgumentException("Parameter 'layer' is null.");
-        }
-
-        if (layer instanceof Layer) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        } else {
-            if (log.isWarnEnabled()) {
-                log.warn("Can't add object. Currently, only objects of type Layer are supported.");
-            }
-        }
-    }
-
-    @Override
-    public void removeLayer(Object layer) {
-        if (layer == null) {
+    public void removeLayer(Object source) {
+        if (source == null) {
             if (log.isWarnEnabled()) {
                 log.warn("Object trying to add equals to null.");
             }
             throw new IllegalArgumentException("Parameter 'layer' is null.");
         }
 
-        if (layer instanceof Layer) {
+        if (source instanceof Layer) {
             throw new UnsupportedOperationException("Not supported yet.");
         } else {
             if (log.isWarnEnabled()) {
@@ -163,9 +126,16 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             if (log.isWarnEnabled()) {
                 log.warn("Camera trying to add equals to null.");
             }
-            throw new IllegalArgumentException("Parameter camera is null.");
+            throw new IllegalArgumentException("Parameter Camera is null.");
         }
-        goTo(c.getLatitude(), c.getLongitude(), c.getAltitude(), true);
+        if (c instanceof AnimatedCamera) {
+            View view = this.wwd.getView();
+            view.goTo(Position.fromDegrees(c.getLatitude(), c.getLongitude()), c.getAltitude());
+        } else if (c instanceof SimpleCamera) {
+            View view = this.wwd.getView();
+            view.setEyePosition(Position.fromDegrees(c.getLatitude(), c.getLongitude(), c.getAltitude()));
+            wwd.redraw();
+        }
     }
 
     @Override
@@ -173,7 +143,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         if (cl == null) {
             throw new IllegalArgumentException("Parameter CameraListener is null.");
         }
-        this.cameraListener.add(cl);
+        this.wwd.getView().addPropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
     }
 
     @Override
@@ -181,6 +151,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         if (cl == null) {
             throw new IllegalArgumentException("Parameter CameraListener is null.");
         }
-        this.cameraListener.remove(cl);
+        this.wwd.getView().removePropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

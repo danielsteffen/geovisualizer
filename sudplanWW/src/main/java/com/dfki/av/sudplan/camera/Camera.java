@@ -30,7 +30,7 @@ public interface Camera {
     /**
      * Returns the altitude position of the camera in degrees.
      * 
-     * @return the altidue to return.
+     * @return the altidue in meter to return.
      */
     public double getAltitude();
 

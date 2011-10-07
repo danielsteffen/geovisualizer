@@ -11,7 +11,7 @@ import gov.nasa.worldwind.geom.Position;
 
 /**
  * Provides a data container of the most interesting data used by any 
- * other component.
+ * other component. This camera is not animated.
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
@@ -26,7 +26,7 @@ public class SimpleCamera implements Camera {
      */
     private double longitude;
     /**
-     * The <code>altitude</code> position of the camera in degrees.
+     * The <code>altitude</code> position of the camera in meter.
      */
     private double altitude;
     /**
@@ -61,7 +61,7 @@ public class SimpleCamera implements Camera {
      * 
      * @param lat the latitude position in degrees to set.
      * @param lon the longitude position in degrees to set.
-     * @param alt the altitude poisition in degrees to set.
+     * @param alt the altitude poisition in meter to set.
      */
     public SimpleCamera(double lat, double lon, double alt) {
         this(lat, lon, alt, new Vector3D());
@@ -90,7 +90,7 @@ public class SimpleCamera implements Camera {
      * 
      * @param lat the latitude position in degrees to set.
      * @param lon the longitude position in degrees to set.
-     * @param alt the altitude poisition in degrees to set.
+     * @param alt the altitude poisition in meter to set.
      * @param vec the viewing direction to set.
      * 
      * @throws IllegalArgumentException If <code>vec</code> is null.
@@ -99,8 +99,7 @@ public class SimpleCamera implements Camera {
         this.latitude = lat;
         this.longitude = lon;
         this.altitude = alt;
-        
-        if(vec==null){
+        if (vec == null) {
             throw new IllegalArgumentException("Vector3D is null.");
         }
         this.viewingDirection = new Vector3D(vec);
@@ -125,15 +124,15 @@ public class SimpleCamera implements Camera {
     public Vector3D getViewingDirection() {
         return this.viewingDirection;
     }
-    
+
     @Override
     public BoundingVolume getBoundingVolume() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
-    public String toString(){
-        String tmp = "lat: " + latitude 
+    public String toString() {
+        String tmp = "lat: " + latitude
                 + " lon: " + longitude
                 + " alt: " + altitude
                 + viewingDirection.toString();
