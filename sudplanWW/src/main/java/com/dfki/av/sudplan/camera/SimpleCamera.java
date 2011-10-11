@@ -7,11 +7,15 @@
  */
 package com.dfki.av.sudplan.camera;
 
+import com.dfki.av.sudplan.vis.VisualizationComponent;
 import gov.nasa.worldwind.geom.Position;
 
 /**
  * Provides a data container of the most interesting data used by any 
- * other component. This camera is not animated.
+ * other component. 
+ * <p>
+ * Note: If used in {@link VisualizationComponent#setCamera(com.dfki.av.sudplan.camera.Camera) }
+ * the movement of the camera is not animated.
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */

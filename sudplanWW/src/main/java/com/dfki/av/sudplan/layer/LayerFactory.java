@@ -127,7 +127,9 @@ public class LayerFactory {
             }
         } finally {
             try {
-                in.close();
+                if(in != null){
+                    in.close();
+                }
             } catch (IOException ex) {
                 if (log.isErrorEnabled()) {
                     log.error("{}", ex);

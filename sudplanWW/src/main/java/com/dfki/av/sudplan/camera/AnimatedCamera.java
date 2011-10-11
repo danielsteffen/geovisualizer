@@ -7,10 +7,16 @@
  */
 package com.dfki.av.sudplan.camera;
 
+import com.dfki.av.sudplan.vis.VisualizationComponent;
 import gov.nasa.worldwind.geom.Position;
 
 /**
- *
+ * The <i>AnimatedCamera</i> class is extended from {@link SimpleCamera}. It 
+ * provides the same methods and constructors. However, when used in
+ * {@link VisualizationComponent#setCamera(com.dfki.av.sudplan.camera.Camera) }
+ * the camera is animated to the specified endposition.
+ * <p>
+ * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class AnimatedCamera extends SimpleCamera{

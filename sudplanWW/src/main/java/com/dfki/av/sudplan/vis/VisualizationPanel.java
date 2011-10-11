@@ -8,6 +8,7 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.camera.AnimatedCamera;
+import com.dfki.av.sudplan.camera.BoundingVolume;
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.CameraListener;
 import com.dfki.av.sudplan.camera.SimpleCamera;
@@ -17,8 +18,13 @@ import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Box;
+import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
@@ -105,7 +111,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
 
         if (source instanceof Layer) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Layer layer = (Layer) source;
+            this.wwd.getModel().getLayers().remove(layer);
         } else {
             if (log.isWarnEnabled()) {
                 log.warn("Can't remove object. Currently, only objects of type Layer are supported.");
@@ -113,8 +120,44 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
     }
 
+    /**
+     * Removes all layers from the World Wind visualization component.
+     * <p>
+     * Note: This implementation keeps the following layers: 
+     * <ul> <li>Atmosphere</li> <li>NASA Blue Marble Image</li> <li>Blue Marble (WMS) 2004</li> 
+     * <li>i-cubed Landsat</li> <li>Place Names</li> <li>Scale bar</li>  <li>Compass</li> 
+     * <li>View Controls</li> </ul>
+     */
+    @Override
+    public void removeAllLayers() {
+        LayerList layerList = this.wwd.getModel().getLayers();
+        for (Object object : layerList) {
+            Layer layer = (Layer) object;
+            // TODO <steffen>: Check usage of World Wind constants here.
+            if (layer.getName().equalsIgnoreCase("Atmosphere")
+                    || layer.getName().equalsIgnoreCase("NASA Blue Marble Image")
+                    || layer.getName().equalsIgnoreCase("Blue Marble (WMS) 2004")
+                    || layer.getName().equalsIgnoreCase("i-cubed Landsat")
+                    || layer.getName().equalsIgnoreCase("Place Names")
+                    || layer.getName().equalsIgnoreCase("Scale bar")
+                    || layer.getName().equalsIgnoreCase("Compass")
+                    || layer.getName().equalsIgnoreCase("View Controls")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Not removing layer: {}", layer.getName());
+                }
+                continue;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing layer: {}", layer.getName());
+                }
+                removeLayer(layer);
+            }
+        }
+    }
+
     @Override
     public Camera getCamera() {
+        Sector s = new Sector(Angle.ZERO, Angle.ZERO, Angle.ZERO, Angle.ZERO);
         Position p = this.wwd.getView().getEyePosition();
         Vector3D vec = new Vector3D(wwd.getView().getForwardVector());
         return new SimpleCamera(p, vec);
@@ -155,7 +198,27 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     @Override
+    public void setBoundingVolume(BoundingVolume bv) {
+        if (bv == null) {
+            throw new IllegalArgumentException("Parameter BoundingVolume is null.");
+        }
+        
+        Sector sector = bv.getSector();
+        Box extent = Sector.computeBoundingBox(wwd.getModel().getGlobe(),
+                wwd.getSceneController().getVerticalExaggeration(), sector);
+        Angle fov = wwd.getView().getFieldOfView();
+        double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
+
+        LatLon latLon = sector.getCentroid();
+        AnimatedCamera ac = new AnimatedCamera(latLon.getLatitude().getDegrees(),
+                latLon.getLongitude().getDegrees(), zoom);
+        setCamera(ac);
+    }
+
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
-//        throw new UnsupportedOperationException("Not supported yet.");
+        if(log.isDebugEnabled()){
+            log.debug("Not supported!");
+        }
     }
 }

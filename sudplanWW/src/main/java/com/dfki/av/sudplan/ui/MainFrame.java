@@ -6,6 +6,7 @@
 package com.dfki.av.sudplan.ui;
 
 import com.dfki.av.sudplan.camera.AnimatedCamera;
+import com.dfki.av.sudplan.camera.BoundingBox;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
@@ -82,7 +83,8 @@ public class MainFrame extends javax.swing.JFrame {
         btnGoStockholm = new javax.swing.JButton();
         btnGoLinz = new javax.swing.JButton();
         btnGoWuppertal = new javax.swing.JButton();
-        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0));
+        filler4 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        btnSetBoundingBox = new javax.swing.JButton();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
@@ -92,6 +94,7 @@ public class MainFrame extends javax.swing.JFrame {
         miExit = new javax.swing.JMenuItem();
         mEdit = new javax.swing.JMenu();
         miGoto = new javax.swing.JMenuItem();
+        miRemoveAllLayer = new javax.swing.JMenuItem();
         mAdd = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
@@ -304,7 +307,18 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         tbMain.add(btnGoWuppertal);
-        tbMain.add(filler2);
+        tbMain.add(filler4);
+
+        btnSetBoundingBox.setText(bundle.getString("MainFrame.btnSetBoundingBox.text")); // NOI18N
+        btnSetBoundingBox.setFocusable(false);
+        btnSetBoundingBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSetBoundingBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSetBoundingBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSetBoundingBoxActionPerformed(evt);
+            }
+        });
+        tbMain.add(btnSetBoundingBox);
 
         pMain.setPreferredSize(new java.awt.Dimension(800, 600));
 
@@ -361,6 +375,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         mEdit.add(miGoto);
+
+        miRemoveAllLayer.setText(bundle.getString("MainFrame.miRemoveAllLayer.text")); // NOI18N
+        miRemoveAllLayer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveAllLayerActionPerformed(evt);
+            }
+        });
+        mEdit.add(miRemoveAllLayer);
 
         mbMain.add(mEdit);
 
@@ -576,6 +598,15 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_miAddURLActionPerformed
 
+    private void miRemoveAllLayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveAllLayerActionPerformed
+        wwPanel.removeAllLayers();
+    }//GEN-LAST:event_miRemoveAllLayerActionPerformed
+
+    private void btnSetBoundingBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetBoundingBoxActionPerformed
+        BoundingBox bb = new BoundingBox(59.2940608, 59.3589690, 17.9849627, 18.119758);
+        wwPanel.setBoundingVolume(bb);
+    }//GEN-LAST:event_btnSetBoundingBoxActionPerformed
+
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -638,11 +669,12 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnGoStockholm;
     private javax.swing.JButton btnGoWuppertal;
     private javax.swing.JButton btnHome;
+    private javax.swing.JButton btnSetBoundingBox;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWizard;
     private javax.swing.Box.Filler filler1;
-    private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
+    private javax.swing.Box.Filler filler4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -671,6 +703,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miAddURL;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miGoto;
+    private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pFileChooser;
     private javax.swing.JPanel pGoTo;
