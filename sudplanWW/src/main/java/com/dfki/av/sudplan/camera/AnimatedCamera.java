@@ -7,12 +7,35 @@
  */
 package com.dfki.av.sudplan.camera;
 
+import gov.nasa.worldwind.geom.Position;
+
 /**
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class AnimatedCamera extends SimpleCamera{
     
+    /**
+     * Creates a <code>AnimatedCamera</code> object at {@link Position} <code>(0.0, 0.0, 0.0)</code>
+     * and a {@link #viewingDirection} of <code>(0.0, 0.0, 0.0)</code>.
+     */
+    public AnimatedCamera() {
+        super(0.0, 0.0, 0.0, new Vector3D());
+    }
+
+    /**
+     * Creates a <code>AnimatedCamera</code> object at {@link Position} <code>p</code>
+     * and a {@link #viewingDirection} of <code>(0.0, 0.0, 0.0)</code>.
+     * 
+     * @param p the {@link Position} to set.
+     */
+    public AnimatedCamera(Position p) {
+        super(p.getLatitude().getDegrees(),
+                p.getLongitude().getDegrees(),
+                p.getAltitude(),
+                new Vector3D());
+    }
+
     /**
      * Creates a <code>AnimatedCamera</code> object at {@link Position} 
      * <code>(lat, lon, alt)</code> and a {@link #viewingDirection} 
@@ -25,4 +48,36 @@ public class AnimatedCamera extends SimpleCamera{
     public AnimatedCamera(double lat, double lon, double alt) {
         super(lat, lon, alt, new Vector3D());
     }
+    
+    /**
+     * Creates a <code>AnimatedCamera</code> object at {@link Position} <code>p</code>
+     * and a {@link #viewingDirection} of <code>vec</code>.
+     * 
+     * @param p the {@link Position} to set.
+     * @param vec the viewing direction to set.
+     */
+    public AnimatedCamera(Position p, Vector3D vec) {
+        super(p.getLatitude().getDegrees(),
+                p.getLongitude().getDegrees(),
+                p.getAltitude(),
+                vec);
+        // TODO <steffen>: Consider p to be null as well!
+    }
+
+    /**
+     * Creates a <code>AnimatedCamera</code> object at {@link Position} <code>(lat, lon, alt)</code>
+     * and a {@link #viewingDirection} of <code>vec</code>.
+     * <p>
+     * Note: The <code>vec</code> is copied by value not by reference.
+     * 
+     * @param lat the latitude position in degrees to set.
+     * @param lon the longitude position in degrees to set.
+     * @param alt the altitude poisition in meter to set.
+     * @param vec the viewing direction to set.
+     * 
+     * @throws IllegalArgumentException If <code>vec</code> is null.
+     */
+    public AnimatedCamera(double lat, double lon, double alt, Vector3D vec) {
+        super(lat, lon, alt, vec);
+    }    
 }

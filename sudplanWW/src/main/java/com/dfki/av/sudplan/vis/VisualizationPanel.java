@@ -156,6 +156,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet.");
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
