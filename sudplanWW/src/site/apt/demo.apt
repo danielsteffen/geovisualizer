@@ -8,6 +8,8 @@
 		 
 SUDPLAN 3D Java Web Start Application
 
+[images/Sudplan3D-v0704-2.jpg] The demo application of the SUDPLAN 3D component showing results of Södermalm (Stockholm).  
+
   The following JNLP Demo shows the SUDPLAN visualization component as a Java Web Start application.
   
   {{{http://www.dfki.uni-kl.de/~steffen/sudplan/sudplan.jnlp}SUDPLAN.jnlp}} - launch with Java Web Start.

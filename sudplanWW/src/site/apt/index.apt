@@ -10,6 +10,8 @@ Welcome to the SUDPLAN 3D Project
 
   Welcome to the SUDPLAN 3D Project, we hope you enjoy your time on this project site. The SUDPLAN 3D is one challenging part of the SUDPLAN project. The official website of SUDPLAN can be found {{{http://www.smhi.se/sudplan}here}}. The SUDPLAN 3D visualization component will be integrated in the SUDPLAN Scenario Management System (SMS) and will handle the visualisation of SUDPLAN data/results in a geographical three-dimensional context. The datatypes which will be handled by the SUDPLAN Visualisation Component reach from 1D data, e.g. georeferenced measurements of precipitation, to temporal 3D datasets, e.g. 3D air pollution time series.
 
+[images/Sudplan3D-v0704-1.jpg] The User Interface (UI) of the SUDPLAN 3D component showing results of Södermalm (Stockholm).  
+  
   The SUDPLAN Visualisation Component will utilise the capabilities of the SUDPLAN SMS for data and scenario management and tightly integrate with the 2D map component of the SMS. This allows for an easy transition between the 2D and 3D views. The 3D visualisation will allow the user to relate spatial data/results directly to the underlying terrain model which has, for example when looking at hydrological simulation results, a big influence on the data and thus can give more insight and understanding of the simulated results.
 
   The SUDPLAN Visualisation Component will, at a later stage, also include different viewing modes, e.g. for large screens, stereoscopic displays, to enable the user to utilise such hardware and reach a higher level of immersion into, and understanding of, the data.
