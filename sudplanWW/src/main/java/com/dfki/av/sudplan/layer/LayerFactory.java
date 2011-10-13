@@ -254,6 +254,7 @@ public class LayerFactory {
         int i = 0;
         for (Layer layer : layerList) {
             layer.setName("Buildings Södermalm (L " + i + ")");
+            layer.setEnabled(true);
             i++;
         }
         return layerList;
