@@ -70,32 +70,32 @@ public class MyShapefileLoader extends ShapefileLoader{
     //**************************************************************//
     protected void createPolygon(ShapefileRecord record, ShapeAttributes attrs, RenderableLayer layer) {
 
-        // In order to visualize and classify the rooftop results.
-        Double no2dygn = this.getNO2dygn(record);
-        if (no2dygn != null) {
-            SurfacePolygons shape = new SurfacePolygons(
-                    Sector.fromDegrees(((ShapefileRecordPolygon) record).getBoundingRectangle()),
-                    record.getCompoundPointBuffer());
-            // This is the hard coded transfer function for 
-            // the classification of the results.
-            if (no2dygn.doubleValue() < 40) {
-                shape.setAttributes(bsag);
-            } else if (no2dygn.doubleValue() < 50) {
-                shape.setAttributes(bsay);
-            } else {
-                shape.setAttributes(bsar);                
-            }
+//        // In order to visualize and classify the rooftop results.
+//        Double no2dygn = this.getNO2dygn(record);
+//        if (no2dygn != null) {
+//            SurfacePolygons shape = new SurfacePolygons(
+//                    Sector.fromDegrees(((ShapefileRecordPolygon) record).getBoundingRectangle()),
+//                    record.getCompoundPointBuffer());
+//            // This is the hard coded transfer function for 
+//            // the classification of the results.
+//            if (no2dygn.doubleValue() < 40) {
+//                shape.setAttributes(bsag);
+//            } else if (no2dygn.doubleValue() < 50) {
+//                shape.setAttributes(bsay);
+//            } else {
+//                shape.setAttributes(bsar);                
+//            }
+//
+////            shape.setWindingRule(AVKey.CLOCKWISE);
+////            shape.setPolygonRingGroups(new int[]{0});
+////            shape.setPolygonRingGroups(new int[]{0});
+//            layer.addRenderable(shape);
+//        } else {
+//            System.out.println("Value: no value.");
+//        }
 
-//            shape.setWindingRule(AVKey.CLOCKWISE);
-//            shape.setPolygonRingGroups(new int[]{0});
-//            shape.setPolygonRingGroups(new int[]{0});
-            layer.addRenderable(shape);
-        } else {
-            System.out.println("Value: no value.");
-        }
 
-
-        Double height = this.getHeight(record);
+        Double height = this.getElevation(record);
         if (height != null) // create extruded polygons
         {
             ExtrudedPolygon ep = new ExtrudedPolygon(height);
@@ -163,6 +163,29 @@ public class MyShapefileLoader extends ShapefileLoader{
 
         for (Map.Entry<String, Object> attr : record.getAttributes().getEntries()) {
             if (!attr.getKey().equals("NO2dygn")) {
+                continue;
+            }
+
+            Object o = attr.getValue();
+            if (o instanceof Number) {
+                return ((Number) o).doubleValue();
+            }
+
+            if (o instanceof String) {
+                return WWUtil.convertStringToDouble(o.toString());
+            }
+        }
+
+        return null;
+    }
+
+    protected Double getElevation(ShapefileRecord record) {
+        if (record.getAttributes() == null) {
+            return null;
+        }
+
+        for (Map.Entry<String, Object> attr : record.getAttributes().getEntries()) {
+            if (!attr.getKey().equals("Elevation")) {
                 continue;
             }
 

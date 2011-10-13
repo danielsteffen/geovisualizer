@@ -6,7 +6,6 @@
 package com.dfki.av.sudplan.ui;
 
 import com.dfki.av.sudplan.camera.AnimatedCamera;
-import com.dfki.av.sudplan.camera.BoundingBox;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
@@ -76,15 +75,6 @@ public class MainFrame extends javax.swing.JFrame {
         lFile = new javax.swing.JLabel();
         txtFile = new javax.swing.JTextField();
         btnFile = new javax.swing.JButton();
-        tbMain = new javax.swing.JToolBar();
-        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
-        btnHome = new javax.swing.JButton();
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
-        btnGoStockholm = new javax.swing.JButton();
-        btnGoLinz = new javax.swing.JButton();
-        btnGoWuppertal = new javax.swing.JButton();
-        filler4 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
-        btnSetBoundingBox = new javax.swing.JButton();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
@@ -110,7 +100,18 @@ public class MainFrame extends javax.swing.JFrame {
         mView = new javax.swing.JMenu();
         mLayers = new javax.swing.JMenu();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        mChangeOrder = new javax.swing.JMenuItem();
+        miChangeOrder = new javax.swing.JMenuItem();
+        miFullSphere = new javax.swing.JMenuItem();
+        mStockholm = new javax.swing.JMenu();
+        miGoToStockhom = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        miAddRooftopResults = new javax.swing.JMenuItem();
+        miAddStreetLevelResults = new javax.swing.JMenuItem();
+        miAddBuildings = new javax.swing.JMenuItem();
+        mLinz = new javax.swing.JMenu();
+        miGotoLinz = new javax.swing.JMenuItem();
+        mWuppertal = new javax.swing.JMenu();
+        miGotoWuppertal = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
 
@@ -256,70 +257,6 @@ public class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
 
-        tbMain.setFloatable(false);
-        tbMain.setRollover(true);
-        tbMain.add(filler3);
-
-        btnHome.setText(bundle.getString("MainFrame.btnHome.text")); // NOI18N
-        btnHome.setFocusable(false);
-        btnHome.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnHome.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnHome.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHomeActionPerformed(evt);
-            }
-        });
-        tbMain.add(btnHome);
-        tbMain.add(filler1);
-
-        btnGoStockholm.setText(bundle.getString("MainFrame.btnGoStockholm.text")); // NOI18N
-        btnGoStockholm.setToolTipText(bundle.getString("MainFrame.btnGoStockholm.toolTipText")); // NOI18N
-        btnGoStockholm.setFocusable(false);
-        btnGoStockholm.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnGoStockholm.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnGoStockholm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGoStockholmActionPerformed(evt);
-            }
-        });
-        tbMain.add(btnGoStockholm);
-
-        btnGoLinz.setText(bundle.getString("MainFrame.btnGoLinz.text")); // NOI18N
-        btnGoLinz.setToolTipText(bundle.getString("MainFrame.btnGoLinz.toolTipText")); // NOI18N
-        btnGoLinz.setFocusable(false);
-        btnGoLinz.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnGoLinz.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnGoLinz.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGoLinzActionPerformed(evt);
-            }
-        });
-        tbMain.add(btnGoLinz);
-
-        btnGoWuppertal.setText(bundle.getString("MainFrame.btnGoWuppertal.text")); // NOI18N
-        btnGoWuppertal.setToolTipText(bundle.getString("MainFrame.btnGoWuppertal.toolTipText")); // NOI18N
-        btnGoWuppertal.setFocusable(false);
-        btnGoWuppertal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnGoWuppertal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnGoWuppertal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGoWuppertalActionPerformed(evt);
-            }
-        });
-        tbMain.add(btnGoWuppertal);
-        tbMain.add(filler4);
-
-        btnSetBoundingBox.setText(bundle.getString("MainFrame.btnSetBoundingBox.text")); // NOI18N
-        btnSetBoundingBox.setFocusable(false);
-        btnSetBoundingBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSetBoundingBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSetBoundingBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSetBoundingBoxActionPerformed(evt);
-            }
-        });
-        tbMain.add(btnSetBoundingBox);
-
         pMain.setPreferredSize(new java.awt.Dimension(800, 600));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -330,7 +267,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 561, Short.MAX_VALUE)
+            .addGap(0, 608, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -349,7 +286,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         pMainLayout.setVerticalGroup(
             pMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
         );
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
@@ -453,11 +390,80 @@ public class MainFrame extends javax.swing.JFrame {
         mView.add(mLayers);
         mView.add(jSeparator1);
 
-        mChangeOrder.setText(bundle.getString("MainFrame.mChangeOrder.text")); // NOI18N
-        mChangeOrder.setEnabled(false);
-        mView.add(mChangeOrder);
+        miChangeOrder.setText(bundle.getString("MainFrame.miChangeOrder.text")); // NOI18N
+        miChangeOrder.setEnabled(false);
+        mView.add(miChangeOrder);
+
+        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
+        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miFullSphereActionPerformed(evt);
+            }
+        });
+        mView.add(miFullSphere);
 
         mbMain.add(mView);
+
+        mStockholm.setText(bundle.getString("MainFrame.mStockholm.text")); // NOI18N
+
+        miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
+        miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGoToStockhomActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miGoToStockhom);
+        mStockholm.add(jSeparator2);
+
+        miAddRooftopResults.setText(bundle.getString("MainFrame.miAddRooftopResults.text")); // NOI18N
+        miAddRooftopResults.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddRooftopResultsActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miAddRooftopResults);
+
+        miAddStreetLevelResults.setText(bundle.getString("MainFrame.miAddStreetLevelResults.text")); // NOI18N
+        miAddStreetLevelResults.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddStreetLevelResultsActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miAddStreetLevelResults);
+
+        miAddBuildings.setText(bundle.getString("MainFrame.miAddBuildings.text")); // NOI18N
+        miAddBuildings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddBuildingsActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miAddBuildings);
+
+        mbMain.add(mStockholm);
+
+        mLinz.setText(bundle.getString("MainFrame.mLinz.text")); // NOI18N
+
+        miGotoLinz.setText(bundle.getString("MainFrame.miGotoLinz.text")); // NOI18N
+        miGotoLinz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoLinzActionPerformed(evt);
+            }
+        });
+        mLinz.add(miGotoLinz);
+
+        mbMain.add(mLinz);
+
+        mWuppertal.setText(bundle.getString("MainFrame.mWuppertal.text")); // NOI18N
+
+        miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
+        miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoWuppertalActionPerformed(evt);
+            }
+        });
+        mWuppertal.add(miGotoWuppertal);
+
+        mbMain.add(mWuppertal);
 
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
 
@@ -477,31 +483,15 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tbMain, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
             .addComponent(pMain, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(tbMain, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pMain, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE))
+            .addComponent(pMain, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnGoStockholmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoStockholmActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(59.328, 18.047, 20000.0));
-    }//GEN-LAST:event_btnGoStockholmActionPerformed
-
-    private void btnGoLinzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoLinzActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(48.2323, 14.3350, 20000.0));
-    }//GEN-LAST:event_btnGoLinzActionPerformed
-
-    private void btnGoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoWuppertalActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(51.2665, 7.1832, 20000.0));
-    }//GEN-LAST:event_btnGoWuppertalActionPerformed
 
     private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
         System.exit(0);
@@ -543,10 +533,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_miAddServerActionPerformed
-
-    private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(37.0, 27.0, 19000000.0));
-    }//GEN-LAST:event_btnHomeActionPerformed
 
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
         JOptionPane.showMessageDialog(this, "This is the sudplan3D application."
@@ -602,10 +588,33 @@ public class MainFrame extends javax.swing.JFrame {
         wwPanel.removeAllLayers();
     }//GEN-LAST:event_miRemoveAllLayerActionPerformed
 
-    private void btnSetBoundingBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetBoundingBoxActionPerformed
-        BoundingBox bb = new BoundingBox(59.2940608, 59.3589690, 17.9849627, 18.119758);
-        wwPanel.setBoundingVolume(bb);
-    }//GEN-LAST:event_btnSetBoundingBoxActionPerformed
+    private void miAddBuildingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddBuildingsActionPerformed
+        wwPanel.addBuildings();
+    }//GEN-LAST:event_miAddBuildingsActionPerformed
+
+    private void miGoToStockhomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGoToStockhomActionPerformed
+        wwPanel.setCamera(new AnimatedCamera(59.328, 18.047, 20000.0));
+    }//GEN-LAST:event_miGoToStockhomActionPerformed
+
+    private void miGotoLinzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoLinzActionPerformed
+        wwPanel.setCamera(new AnimatedCamera(48.2323, 14.3350, 20000.0));
+    }//GEN-LAST:event_miGotoLinzActionPerformed
+
+    private void miGotoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoWuppertalActionPerformed
+        wwPanel.setCamera(new AnimatedCamera(51.2665, 7.1832, 20000.0));
+    }//GEN-LAST:event_miGotoWuppertalActionPerformed
+
+    private void miFullSphereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFullSphereActionPerformed
+        wwPanel.setCamera(new AnimatedCamera(37.0, 27.0, 19000000.0));
+    }//GEN-LAST:event_miFullSphereActionPerformed
+
+    private void miAddStreetLevelResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddStreetLevelResultsActionPerformed
+        wwPanel.addStreetLevelResults();
+    }//GEN-LAST:event_miAddStreetLevelResultsActionPerformed
+
+    private void miAddRooftopResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddRooftopResultsActionPerformed
+        wwPanel.addRooftopResults();
+    }//GEN-LAST:event_miAddRooftopResultsActionPerformed
 
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -665,18 +674,11 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelGoToDialoag;
     private javax.swing.JButton btnFile;
     private javax.swing.JButton btnGo;
-    private javax.swing.JButton btnGoLinz;
-    private javax.swing.JButton btnGoStockholm;
-    private javax.swing.JButton btnGoWuppertal;
-    private javax.swing.JButton btnHome;
-    private javax.swing.JButton btnSetBoundingBox;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWizard;
-    private javax.swing.Box.Filler filler1;
-    private javax.swing.Box.Filler filler3;
-    private javax.swing.Box.Filler filler4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
@@ -688,28 +690,37 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu mAdd;
     private javax.swing.JMenu mAddDEM;
     private javax.swing.JMenu mAddLayer;
-    private javax.swing.JMenuItem mChangeOrder;
     private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mLayers;
+    private javax.swing.JMenu mLinz;
+    private javax.swing.JMenu mStockholm;
     private javax.swing.JMenu mView;
+    private javax.swing.JMenu mWuppertal;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
+    private javax.swing.JMenuItem miAddBuildings;
     private javax.swing.JMenuItem miAddElevation;
     private javax.swing.JMenuItem miAddGeoTiff;
+    private javax.swing.JMenuItem miAddRooftopResults;
     private javax.swing.JMenuItem miAddServer;
     private javax.swing.JMenuItem miAddShape;
+    private javax.swing.JMenuItem miAddStreetLevelResults;
     private javax.swing.JMenuItem miAddURL;
+    private javax.swing.JMenuItem miChangeOrder;
     private javax.swing.JMenuItem miExit;
+    private javax.swing.JMenuItem miFullSphere;
+    private javax.swing.JMenuItem miGoToStockhom;
     private javax.swing.JMenuItem miGoto;
+    private javax.swing.JMenuItem miGotoLinz;
+    private javax.swing.JMenuItem miGotoWuppertal;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pFileChooser;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pMain;
     private javax.swing.JPanel pVisualization;
-    private javax.swing.JToolBar tbMain;
     private javax.swing.JTextField txtFile;
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;

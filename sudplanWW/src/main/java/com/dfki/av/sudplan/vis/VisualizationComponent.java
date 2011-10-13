@@ -82,7 +82,7 @@ public interface VisualizationComponent extends PropertyChangeListener{
     
     /**
      * Sets the bounding volume that should be contained in the 
-     * camera view.
+     * camera view and animates the view to the desired area.
      * 
      * @param bv the {@link BoundingVolume} to set.
      * @throws IllegalArgumentException If <code>bv</code> is null.

@@ -7,12 +7,9 @@
  */
 package com.dfki.av.sudplan.layer;
 
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.SurfaceImage;
-import java.util.Arrays;
-import java.util.List;
+import gov.nasa.worldwind.layers.SurfaceImageLayer;
+import java.io.IOException;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,32 +19,28 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class SödermalmRooftopLayer extends RenderableLayer{
+public class SödermalmRooftopLayer extends SurfaceImageLayer {
     /*
      * Logger.
      */
+
     private final Logger log = LoggerFactory.getLogger(getClass());
-    
-    public SödermalmRooftopLayer(){
-        
+
+    public SödermalmRooftopLayer() {
         if (log.isDebugEnabled()) {
             log.debug("Initializing södermalm Rooftop results.");
         }
-        // TODO <steffen>: Get sector corners from converted image file.
-        String roofTopResultImage = "rooftop3.tiff";
-        List corners = Arrays.asList(
-                LatLon.fromDegrees(59.2940608, 17.9849627), // lower left
-                LatLon.fromDegrees(59.2940608, 18.119758), // lower right
-                LatLon.fromDegrees(59.3589690, 18.119758), // upper right
-                LatLon.fromDegrees(59.3589690, 17.9849627)); // upper left
-        Sector imageSector = Sector.boundingSector(corners);
-        
-        SurfaceImage si = new SurfaceImage(roofTopResultImage, imageSector);
-        si.setOpacity(0.6);
-
-        this.setName("Roof Top Results (Södermalm)");
+        ClassLoader cl = this.getClass().getClassLoader();
+        URL url = cl.getResource("rooftop3.tiff");
+        this.setOpacity(0.8);
         this.setPickEnabled(false);
-        this.setEnabled(false);
-        this.addRenderable(si);
+        this.setName("Rooftop results Södermalm");
+        try {
+            this.addImage(url.toString());
+        } catch (IOException ex) {
+            if (log.isErrorEnabled()) {
+                log.error("Could not add image from url: {}", ex);
+            }
+        }
     }
- }
+}

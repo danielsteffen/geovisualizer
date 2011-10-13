@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.layer.LayerWorker;
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.BoundingVolume;
 import com.dfki.av.sudplan.camera.Camera;
@@ -32,6 +33,7 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
+import java.net.URL;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +95,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             if (log.isWarnEnabled()) {
                 log.warn("Parameter 'object' of method 'addLayer()' is null.");
             }
-            throw new IllegalArgumentException("Parameter 'ocject' of method "
+            throw new IllegalArgumentException("Parameter 'object' of method "
                     + "'addLayer()' is null.");
         }
 
@@ -157,7 +159,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public Camera getCamera() {
-        Sector s = new Sector(Angle.ZERO, Angle.ZERO, Angle.ZERO, Angle.ZERO);
         Position p = this.wwd.getView().getEyePosition();
         Vector3D vec = new Vector3D(wwd.getView().getForwardVector());
         return new SimpleCamera(p, vec);
@@ -165,6 +166,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void setCamera(Camera c) {
+        // TODO <steffen>: Move behaviour into camera classes.
         if (c == null) {
             if (log.isWarnEnabled()) {
                 log.warn("Camera trying to add equals to null.");
@@ -184,6 +186,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public synchronized void addCameraListener(CameraListener cl) {
         if (cl == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("CameraListener trying to add is null.");
+            }
             throw new IllegalArgumentException("Parameter CameraListener is null.");
         }
         this.wwd.getView().addPropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
@@ -192,6 +197,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public synchronized void removeCameraListener(CameraListener cl) {
         if (cl == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("CameraListener trying to remove is null.");
+            }
             throw new IllegalArgumentException("Parameter CameraListener is null.");
         }
         this.wwd.getView().removePropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
@@ -202,7 +210,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         if (bv == null) {
             throw new IllegalArgumentException("Parameter BoundingVolume is null.");
         }
-        
+
         Sector sector = bv.getSector();
         Box extent = Sector.computeBoundingBox(wwd.getModel().getGlobe(),
                 wwd.getSceneController().getVerticalExaggeration(), sector);
@@ -217,8 +225,29 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("Not supported!");
         }
+    }
+
+    // TODO <steffen>: Remove fake methods afterwards.
+    public void addBuildings() {
+        URL url = getClass().getClassLoader().getResource("atr-buildings.zip");
+        addLayer(url);
+    }
+
+    // TODO <steffen>: Remove fake methods afterwards.
+    public void addRooftopResults() {
+        URL url = getClass().getClassLoader().getResource("rooftop3.tiff");
+        if(log.isDebugEnabled()){
+            log.debug("URL to load from: {}", url.toString());
+        }
+        addLayer(url);
+    }
+
+    // TODO <steffen>: Remove fake methods afterwards.
+    public void addStreetLevelResults() {
+        URL url = getClass().getClassLoader().getResource("streetlevel.zip");
+        addLayer(url);        
     }
 }

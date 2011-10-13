@@ -5,9 +5,8 @@
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis;
+package com.dfki.av.sudplan.layer;
 
-import com.dfki.av.sudplan.layer.LayerFactory;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
@@ -73,7 +72,7 @@ public class LayerWorker extends SwingWorker<List<Layer>, Void> {
             }
         } catch (Exception ex) {
             if (log.isErrorEnabled()) {
-                log.error("{}", ex.getMessage());
+                log.error("{}", ex.toString());
             }
         }
     }
