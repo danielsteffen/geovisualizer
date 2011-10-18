@@ -1,11 +1,11 @@
 /*
- *  SödermalmRooftopLayer.java 
+ *  SödermalmRooftopLayer2.java 
  *
  *  Created by DFKI AV on 27.09.2011.
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.layer;
+package com.dfki.av.sudplanX.test;
 
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import java.io.IOException;
@@ -19,14 +19,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class SödermalmRooftopLayer extends SurfaceImageLayer {
+public class SödermalmRooftopLayer2 extends SurfaceImageLayer {
     /*
      * Logger.
      */
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public SödermalmRooftopLayer() {
+    public SödermalmRooftopLayer2() {
         if (log.isDebugEnabled()) {
             log.debug("Initializing södermalm Rooftop results.");
         }

@@ -9,6 +9,7 @@ package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.layer.LayerWorker;
 import com.dfki.av.sudplan.camera.AnimatedCamera;
+import com.dfki.av.sudplan.camera.BoundingBox;
 import com.dfki.av.sudplan.camera.BoundingVolume;
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.CameraListener;
@@ -21,6 +22,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Box;
+import gov.nasa.worldwind.geom.Frustum.Corners;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
@@ -29,6 +31,7 @@ import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -224,6 +227,13 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     @Override
+    public BoundingVolume getBoundingVolume() {
+        SectorGeometryList sectorGeometryList = wwd.getSceneController().getTerrain();
+        Sector sector = sectorGeometryList.getSector();
+        return new BoundingBox(sector);
+    }
+
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (log.isDebugEnabled()) {
             log.debug("Not supported!");
@@ -237,17 +247,62 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     // TODO <steffen>: Remove fake methods afterwards.
+    public void removeBuildings() {
+        LayerList layerList = this.wwd.getModel().getLayers();
+        for (Object object : layerList) {
+            Layer layer = (Layer) object;
+            // TODO <steffen>: Check usage of World Wind constants here.
+            if (layer.getName().startsWith("Building")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing layer: {}", layer.getName());
+                }
+                removeLayer(layer);
+            }
+        }
+    }
+
+    // TODO <steffen>: Remove fake methods afterwards.
     public void addRooftopResults() {
         URL url = getClass().getClassLoader().getResource("rooftop3.tiff");
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("URL to load from: {}", url.toString());
         }
         addLayer(url);
     }
 
     // TODO <steffen>: Remove fake methods afterwards.
+    public void removeRooftopResults() {
+        LayerList layerList = this.wwd.getModel().getLayers();
+        for (Object object : layerList) {
+            Layer layer = (Layer) object;
+            // TODO <steffen>: Check usage of World Wind constants here.
+            if (layer.getName().endsWith("tiff")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing layer: {}", layer.getName());
+                }
+                removeLayer(layer);
+            }
+        }
+    }
+
+    // TODO <steffen>: Remove fake methods afterwards.
     public void addStreetLevelResults() {
         URL url = getClass().getClassLoader().getResource("streetlevel.zip");
-        addLayer(url);        
+        addLayer(url);
+    }
+
+    // TODO <steffen>: Remove fake methods afterwards.
+    public void removeStreetLevelResults() {
+        LayerList layerList = this.wwd.getModel().getLayers();
+        for (Object object : layerList) {
+            Layer layer = (Layer) object;
+            // TODO <steffen>: Check usage of World Wind constants here.
+            if (layer.getName().startsWith("Street level")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing layer: {}", layer.getName());
+                }
+                removeLayer(layer);
+            }
+        }
     }
 }

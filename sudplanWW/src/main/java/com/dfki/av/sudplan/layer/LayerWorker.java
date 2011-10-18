@@ -49,6 +49,8 @@ public class LayerWorker extends SwingWorker<List<Layer>, Void> {
         } else if (object instanceof URI) {
             URI uri = (URI) object;
             layerList = LayerFactory.createLayersFromURI(uri);
+        } else if (object instanceof Layer) {
+            layerList.add((Layer) object);
         } else {
             throw new IllegalArgumentException("Parameter 'object' is not a "
                     + "valid input for method 'addLayer()'. Must be of type "

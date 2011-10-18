@@ -5,8 +5,9 @@
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.layer;
+package com.dfki.av.sudplanX.test;
 
+//import com.dfki.av.sudplan.layer.TexturedLayer;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -72,9 +73,9 @@ public class SödermalmRooftopLayerWithElevation extends RenderableLayer {
 //        this.setPickEnabled(false);
 //        this.setEnabled(false);
 
-        TexturedLayer tl = new TexturedLayer(roofTopResultImage, imageSector);
-        tl.setOpacity(0.6);
-        tl.setElevation(150.0);
-        this.addRenderable(tl);
+//        TexturedLayer tl = new TexturedLayer(roofTopResultImage, imageSector);
+//        tl.setOpacity(0.6);
+//        tl.setElevation(150.0);
+//        this.addRenderable(tl);
     }
 }

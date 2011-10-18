@@ -26,7 +26,7 @@ import gov.nasa.worldwind.util.WWUtil;
  */
 public class BuildingShapefileLoader extends ShapefileLoader2 {
 
-    public static final BasicShapeAttributes buildingAttr;
+    private static final BasicShapeAttributes buildingAttr;
 
     static {
         buildingAttr = new BasicShapeAttributes();
@@ -35,28 +35,31 @@ public class BuildingShapefileLoader extends ShapefileLoader2 {
         buildingAttr.setInteriorMaterial(Material.DARK_GRAY);
     }
 
+    public BuildingShapefileLoader(String attr) {
+        super(attr);
+    }
+
     @Override
     protected void createPolygon(ShapefileRecord record, ShapeAttributes attrs, RenderableLayer layer) {
 
-        Object object = getValue(record, "Elevation");
-        Double height = null;
+        Object object = getValue(record, attribute);
+        Double value = null;
         if (object instanceof Number) {
-            height = ((Number) object).doubleValue();
+            value = ((Number) object).doubleValue();
         }
 
         if (object instanceof String) {
-            height = WWUtil.convertStringToDouble(object.toString());
+            value = WWUtil.convertStringToDouble(object.toString());
         }
-        
-        if (height != null) // create extruded polygons
-        {
+
+        if (value != null) {// create extruded polygons        
             ExtrudedPolygon ep = new ExtrudedPolygon();
-            if (height < 0) {
-                height = height * -1;
-            } else if (height == 0) {
-                height += 0.01;
+            if (value < 0) {
+                value = value * -1;
+            } else if (value == 0) {
+                value += 0.01;
             }
-            ep.setHeight(height);
+            ep.setHeight(value);
             ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ep.setAttributes(attrs);
             layer.addRenderable(ep);
@@ -84,9 +87,8 @@ public class BuildingShapefileLoader extends ShapefileLoader2 {
                     ep.addInnerBoundary(buffer.getLocations());
                 }
             }
-        } 
+        }
     }
-
 
     @Override
     protected ShapeAttributes createPolygonAttributes(gov.nasa.worldwind.formats.shapefile.ShapefileRecord record) {
