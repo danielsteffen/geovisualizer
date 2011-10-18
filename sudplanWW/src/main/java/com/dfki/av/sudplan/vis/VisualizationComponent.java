@@ -89,4 +89,11 @@ public interface VisualizationComponent extends PropertyChangeListener{
      */
     public void setBoundingVolume(BoundingVolume bv);
     
+    /**
+     * Returns the {@link BoundingVolume) contained by the camera view.
+     * 
+     * @return the bounding volume to return.
+     */
+    public BoundingVolume getBoundingVolume();
+    
 }

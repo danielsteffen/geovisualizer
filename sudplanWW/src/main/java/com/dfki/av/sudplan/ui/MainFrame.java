@@ -33,10 +33,13 @@ public class MainFrame extends javax.swing.JFrame {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private Dimension canvasSize;
     protected VisualizationPanel wwPanel;
-
+    private VisualizationWizard wizard; 
+    
     /** Creates new form MainFrame */
     public MainFrame() {
         this.canvasSize = new Dimension(1200, 800);
+        this.wizard = new VisualizationWizard(this, true);
+        
         this.wwPanel = new VisualizationPanel(canvasSize);
         this.wwPanel.setPreferredSize(canvasSize);
         this.wwPanel.getWwd().getModel().addPropertyChangeListener(new PropertyChangeListener() {
@@ -49,6 +52,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         initComponents();
+        
         this.updateLayerMenu();
     }
 
@@ -70,11 +74,6 @@ public class MainFrame extends javax.swing.JFrame {
         btnCancelGoToDialoag = new javax.swing.JButton();
         btnGo = new javax.swing.JButton();
         jopAddServer = new javax.swing.JOptionPane();
-        dWizard = new javax.swing.JDialog();
-        pFileChooser = new javax.swing.JPanel();
-        lFile = new javax.swing.JLabel();
-        txtFile = new javax.swing.JTextField();
-        btnFile = new javax.swing.JButton();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
@@ -106,8 +105,11 @@ public class MainFrame extends javax.swing.JFrame {
         miGoToStockhom = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         miAddRooftopResults = new javax.swing.JMenuItem();
+        miRemoveRooftopResults = new javax.swing.JMenuItem();
         miAddStreetLevelResults = new javax.swing.JMenuItem();
+        miRemoveStreetLevelResults = new javax.swing.JMenuItem();
         miAddBuildings = new javax.swing.JMenuItem();
+        miRemoveBuildings = new javax.swing.JMenuItem();
         mLinz = new javax.swing.JMenu();
         miGotoLinz = new javax.swing.JMenuItem();
         mWuppertal = new javax.swing.JMenu();
@@ -200,58 +202,6 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(btnCancelGoToDialoag)
                     .addComponent(btnGo))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        dWizard.setTitle(bundle.getString("MainFrame.dWizard.title")); // NOI18N
-        dWizard.setAlwaysOnTop(true);
-        dWizard.setMinimumSize(new java.awt.Dimension(536, 367));
-        dWizard.setResizable(false);
-
-        lFile.setText(bundle.getString("MainFrame.lFile.text")); // NOI18N
-
-        txtFile.setText(bundle.getString("MainFrame.txtFile.text")); // NOI18N
-
-        btnFile.setText(bundle.getString("MainFrame.btnFile.text")); // NOI18N
-
-        javax.swing.GroupLayout pFileChooserLayout = new javax.swing.GroupLayout(pFileChooser);
-        pFileChooser.setLayout(pFileChooserLayout);
-        pFileChooserLayout.setHorizontalGroup(
-            pFileChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pFileChooserLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtFile, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnFile)
-                .addContainerGap())
-        );
-        pFileChooserLayout.setVerticalGroup(
-            pFileChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pFileChooserLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pFileChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lFile)
-                    .addComponent(txtFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFile))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout dWizardLayout = new javax.swing.GroupLayout(dWizard.getContentPane());
-        dWizard.getContentPane().setLayout(dWizardLayout);
-        dWizardLayout.setHorizontalGroup(
-            dWizardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dWizardLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        dWizardLayout.setVerticalGroup(
-            dWizardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dWizardLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(311, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -423,6 +373,14 @@ public class MainFrame extends javax.swing.JFrame {
         });
         mStockholm.add(miAddRooftopResults);
 
+        miRemoveRooftopResults.setText(bundle.getString("MainFrame.miRemoveRooftopResults.text")); // NOI18N
+        miRemoveRooftopResults.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveRooftopResultsActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miRemoveRooftopResults);
+
         miAddStreetLevelResults.setText(bundle.getString("MainFrame.miAddStreetLevelResults.text")); // NOI18N
         miAddStreetLevelResults.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -431,6 +389,14 @@ public class MainFrame extends javax.swing.JFrame {
         });
         mStockholm.add(miAddStreetLevelResults);
 
+        miRemoveStreetLevelResults.setText(bundle.getString("MainFrame.miRemoveStreetLevelResults.text")); // NOI18N
+        miRemoveStreetLevelResults.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveStreetLevelResultsActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miRemoveStreetLevelResults);
+
         miAddBuildings.setText(bundle.getString("MainFrame.miAddBuildings.text")); // NOI18N
         miAddBuildings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -438,6 +404,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         mStockholm.add(miAddBuildings);
+
+        miRemoveBuildings.setText(bundle.getString("MainFrame.miRemoveBuildings.text")); // NOI18N
+        miRemoveBuildings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveBuildingsActionPerformed(evt);
+            }
+        });
+        mStockholm.add(miRemoveBuildings);
 
         mbMain.add(mStockholm);
 
@@ -513,7 +487,8 @@ public class MainFrame extends javax.swing.JFrame {
             dGoTo.setVisible(false);
         } catch (NumberFormatException nfe) {
             if (log.isWarnEnabled()) {
-                log.warn("The content of the \"latitude\" and \"longitude\" component must be a double value.");
+                log.warn("The content of the \"latitude\" and \"longitude\" "
+                        + "component must be a double value.");
             }
         }
     }//GEN-LAST:event_btnGoActionPerformed
@@ -564,7 +539,10 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_miAddShapeActionPerformed
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
-        dWizard.setVisible(true);
+        
+        wizard.setAlwaysOnTop(true);
+        wizard.setVisible(true);
+        
     }//GEN-LAST:event_miWizardActionPerformed
 
     private void miAddURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddURLActionPerformed
@@ -615,6 +593,18 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAddRooftopResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddRooftopResultsActionPerformed
         wwPanel.addRooftopResults();
     }//GEN-LAST:event_miAddRooftopResultsActionPerformed
+
+    private void miRemoveBuildingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveBuildingsActionPerformed
+        wwPanel.removeBuildings();
+    }//GEN-LAST:event_miRemoveBuildingsActionPerformed
+
+    private void miRemoveStreetLevelResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveStreetLevelResultsActionPerformed
+        wwPanel.removeStreetLevelResults();
+    }//GEN-LAST:event_miRemoveStreetLevelResultsActionPerformed
+
+    private void miRemoveRooftopResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveRooftopResultsActionPerformed
+        wwPanel.removeRooftopResults();
+    }//GEN-LAST:event_miRemoveRooftopResultsActionPerformed
 
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -672,10 +662,8 @@ public class MainFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelGoToDialoag;
-    private javax.swing.JButton btnFile;
     private javax.swing.JButton btnGo;
     private javax.swing.JDialog dGoTo;
-    private javax.swing.JDialog dWizard;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
@@ -684,7 +672,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JOptionPane jopAddServer;
-    private javax.swing.JLabel lFile;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;
     private javax.swing.JMenu mAdd;
@@ -716,12 +703,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miGotoLinz;
     private javax.swing.JMenuItem miGotoWuppertal;
     private javax.swing.JMenuItem miRemoveAllLayer;
+    private javax.swing.JMenuItem miRemoveBuildings;
+    private javax.swing.JMenuItem miRemoveRooftopResults;
+    private javax.swing.JMenuItem miRemoveStreetLevelResults;
     private javax.swing.JMenuItem miWizard;
-    private javax.swing.JPanel pFileChooser;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pMain;
     private javax.swing.JPanel pVisualization;
-    private javax.swing.JTextField txtFile;
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;
     // End of variables declaration//GEN-END:variables

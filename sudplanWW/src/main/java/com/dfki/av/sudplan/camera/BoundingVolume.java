@@ -20,4 +20,32 @@ public interface BoundingVolume {
      * @return the {@link Sector} to return.
      */
     public Sector getSector();
+
+    /**
+     * Return the minimum latitude.
+     * 
+     * @return the {@link BoundingVolume}s minimum latitude in degrees.
+     */
+    public double getMinLatitude();
+
+    /**
+     * Return the maximum latitude.
+     * 
+     * @return the {@link BoundingVolume}s maximum latitude in degrees.
+     */
+    public double getMaxLatitude();
+
+    /**
+     * Return the minimum longitude.
+     * 
+     * @return the {@link BoundingVolume}s minimum longitude in degrees.
+     */
+    public double getMinLongitude();
+
+    /**
+     * Return the maximum longitude.
+     * 
+     * @return the {@link BoundingVolume}s maximum longitude in degrees.
+     */
+    public double getMaxLongitude();
 }

@@ -24,9 +24,9 @@ import gov.nasa.worldwind.util.WWUtil;
  */
 public class RooftopShapefileLoader extends ShapefileLoader2 {
 
-    public static final BasicShapeAttributes bsay;
-    public static final BasicShapeAttributes bsag;
-    public static final BasicShapeAttributes bsar;
+    private static final BasicShapeAttributes bsay;
+    private static final BasicShapeAttributes bsag;
+    private static final BasicShapeAttributes bsar;
 
     static {
         bsay = new BasicShapeAttributes();
@@ -45,29 +45,33 @@ public class RooftopShapefileLoader extends ShapefileLoader2 {
         bsar.setInteriorMaterial(Material.RED);
     }
 
+    public RooftopShapefileLoader(String attr) {
+        super(attr);
+    }
+    
     @Override
     protected void createPolygon(ShapefileRecord record, ShapeAttributes attrs, RenderableLayer layer) {
 
-        Object object = getValue(record, "NO2dygn");
-        Double no2dygn = null;
+        Object object = getValue(record, attribute);
+        Double value = null;
         if (object instanceof Number) {
-            no2dygn = ((Number) object).doubleValue();
+            value = ((Number) object).doubleValue();
         }
 
         if (object instanceof String) {
-            no2dygn = WWUtil.convertStringToDouble(object.toString());
+            value = WWUtil.convertStringToDouble(object.toString());
         }
 
-        if (no2dygn != null) // create extruded polygons
+        if (value != null) // create extruded polygons
         {
             SurfacePolygons shape = new SurfacePolygons(
                     Sector.fromDegrees(((ShapefileRecordPolygon) record).getBoundingRectangle()),
                     record.getCompoundPointBuffer());
             // This is the hard coded transfer function for 
             // the classification of the results.
-            if (no2dygn.doubleValue() < 40) {
+            if (value.doubleValue() < 40) {
                 shape.setAttributes(bsag);
-            } else if (no2dygn.doubleValue() < 50) {
+            } else if (value.doubleValue() < 50) {
                 shape.setAttributes(bsay);
             } else {
                 shape.setAttributes(bsar);                

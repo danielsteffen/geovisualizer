@@ -23,7 +23,13 @@ public class ShapefileLoader2 extends ShapefileLoader {
      * Logger.
      */
     private final Logger log = LoggerFactory.getLogger(getClass());
-
+    protected String attribute;
+    
+    public ShapefileLoader2(String attribute){
+        super();
+        this.attribute = attribute;
+    }
+    
     /**
      * 
      * @param record

@@ -9,24 +9,17 @@ package com.dfki.av.sudplan.layer;
 
 import com.dfki.av.sudplan.layer.fake.BuildingShapefileLoader;
 import com.dfki.av.sudplan.layer.fake.StreetLevelShapefileLoader;
+import com.dfki.av.utils.AVUtils;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwindx.examples.util.ShapefileLoader;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +34,15 @@ public class LayerFactory {
      */
     private static final Logger log = LoggerFactory.getLogger(LayerFactory.class);
     private static final String SUDPLAN_3D_USER_HOME;
+    private static final String FAKE_BUILDING = "buildings.zip";
+    private static final String BUILDINGS_SHAPEFILE = "Buildings.shp";
+    private static final String FAKE_STREET_LEVEL = "streetlevel.zip";
+    private static final String STREET_LEVEL_SHAPEFILE = "Air Quality Street Level.shp";
+    public static final String ESRI_SHAPE_FILE_EXTENSION = ".shp";
+    public static final String GEOTIFF_FILE_EXTENSION = ".tiff";
+    public static final String ARC_GRID_FILE_EXTENSION = ".arc";
+    public static final String DEM_FILE_EXTENSION = ".dem";
+    public static final String ZIP_FILE_EXTENSION = ".zip";
 
     static {
         String seperator = System.getProperty("file.separator");
@@ -54,25 +56,15 @@ public class LayerFactory {
             }
         }
     }
-    public static final String ESRI_SHAPE_FILE_EXTENSION = ".shp";
-    public static final String GEOTIFF_FILE_EXTENSION = ".tiff";
-    public static final String ARC_GRID_FILE_EXTENSION = ".arc";
-    public static final String DEM_FILE_EXTENSION = ".dem";
-    public static final String ZIP_FILE_EXTENSION = ".zip";
-    private static final String FAKE_BUILDING = "buildings.zip";
-    private static final String BUILDINGS_SHAPEFILE = "Buildings.shp";
-    private static final String FAKE_STREET_LEVEL = "streetlevel.zip";
-    private static final String STREET_LEVEL_SHAPEFILE = "Air Quality Street Level.shp";
 
     /**
+     * Creates a list of {@link Layer} from a {@link File}. 
      * 
-     * @param file
-     * @return 
+     * @param file the source file.
+     * @return the list of created {@link Layer}s to return.
+     * @throws IllegalArgumentException If <code>file</code> is null.
      */
     public static List<Layer> createLayersFromFile(File file) {
-        if (log.isDebugEnabled()) {
-            log.debug("createLayersFromFile()");
-        }
 
         if (file == null) {
             if (log.isWarnEnabled()) {
@@ -83,15 +75,14 @@ public class LayerFactory {
         }
 
         String filename = file.getName();
-        List<Layer> layerList = new ArrayList<Layer>();
         if (filename.endsWith(BUILDINGS_SHAPEFILE)) {
-            layerList.addAll(createBuidlingLayerFromShapefile(file));
+            return createBuidlingLayerFromShapefile(file);
         } else if (filename.endsWith(STREET_LEVEL_SHAPEFILE)) {
-            layerList.addAll(createStreetLevelLayersFromShapefile(file));
+            return createStreetLevelLayersFromShapefile(file);
         } else if (filename.endsWith(ESRI_SHAPE_FILE_EXTENSION)) {
-            layerList.addAll(createLayersFromShapefile(file));
+            return createLayersFromShapefile(file);
         } else if (filename.endsWith(GEOTIFF_FILE_EXTENSION)) {
-            layerList.addAll(createSurfaceImageLayer(file));
+            return createSurfaceImageLayer(file);
         } else if (filename.endsWith(ARC_GRID_FILE_EXTENSION)) {
             throw new IllegalArgumentException("The file could not be added. "
                     + "The file type " + ARC_GRID_FILE_EXTENSION
@@ -104,88 +95,70 @@ public class LayerFactory {
             throw new IllegalArgumentException("The file could not be added. "
                     + "The file type is not supported.");
         }
-        return layerList;
     }
 
     /**
+     * Creates a list of {@link Layer}s from a {@link URL}. 
      * 
-     * @param url
-     * @return 
+     * @param url the source url.
+     * @return the list of created {@link Layer}s to return.
+     * @throws IllegalArgumentException If <code>url</code> is null.
      */
     public static List<Layer> createLayersFromURL(URL url) {
-        if (log.isDebugEnabled()) {
-            log.debug("createLayersFromURL()");
+
+        if (url == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not create layer. Parameter 'url' is null.");
+            }
+            throw new IllegalArgumentException("Could not create layer. "
+                    + "Parameter 'url' is null.");
         }
 
-        List<Layer> layerList = new ArrayList<Layer>();
-        BufferedInputStream in = null;
         try {
-            if (url == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Could not create layer. Parameter 'url' is null.");
-                }
-                throw new IllegalArgumentException("Could not create layer. "
-                        + "Parameter 'url' is null.");
-            }
-
-            in = new BufferedInputStream(url.openStream());
             File file = null;
             if (url.toString().endsWith(DEM_FILE_EXTENSION)) {
-                file = downloadToTempFile(url, DEM_FILE_EXTENSION);
+                file = AVUtils.DownloadToTempFile(url, "Sudplan3D-", DEM_FILE_EXTENSION);
             } else if (url.toString().endsWith(ESRI_SHAPE_FILE_EXTENSION)) {
-                file = downloadToTempFile(url, ESRI_SHAPE_FILE_EXTENSION);
+                file = AVUtils.DownloadToTempFile(url, "Sudplan3D-", ESRI_SHAPE_FILE_EXTENSION);
             } else if (url.toString().endsWith(GEOTIFF_FILE_EXTENSION)) {
-                file = downloadToTempFile(url, GEOTIFF_FILE_EXTENSION);
+                file = AVUtils.DownloadToTempFile(url, "Sudplan3D-", GEOTIFF_FILE_EXTENSION);
             } else if (url.toString().endsWith(ZIP_FILE_EXTENSION)) {
-                File tmpFile = downloadToTempFile(url, ZIP_FILE_EXTENSION);
-                unzip(tmpFile);
-                // Finally, do the fake.
+                File tmpFile = AVUtils.DownloadToTempFile(url, "Sudplan3D-", ZIP_FILE_EXTENSION);
+                AVUtils.Unzip(tmpFile, SUDPLAN_3D_USER_HOME);
                 // TODO <steffen>: Remove the fake.
                 file = fake(url);
             } else {
                 throw new IllegalArgumentException("Could not create layer. "
-                        + "File type is not supported.");
+                        + "URL type is not supported.");
             }
 
-            layerList.addAll(createLayersFromFile(file));
+            return createLayersFromFile(file);
         } catch (IOException ex) {
             if (log.isErrorEnabled()) {
-                log.error("Could not create Layer from URL: {}", ex.toString());
-            }
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                if (log.isErrorEnabled()) {
-                    log.error("Could not close InputStream: {}", ex);
-                }
+                log.error("Could not create layer from URL. {}", ex.toString());
             }
         }
-        return layerList;
+        return null;
     }
 
     /**
+     * Creates a list of {@link Layer}s from a {@link URI}. 
      * 
-     * @param uri
-     * @return 
+     * @param uri the source uri.
+     * @return the list of created {@link Layer}s to return.
+     * @throws IllegalArgumentException If <code>uri</code> is null.
      */
     public static List<Layer> createLayersFromURI(URI uri) {
-        if (log.isDebugEnabled()) {
-            log.debug("createLayersFromURI()");
-        }
+
         if (uri == null) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not create Layer. Parameter 'uri' is null.");
             }
-            throw new IllegalArgumentException("Could not create Layer. "
+            throw new IllegalArgumentException("Could not create layer. "
                     + "Parameter 'uri' is null.");
         }
 
-        List<Layer> layerList = new ArrayList<Layer>();
-        layerList.addAll(createLayersFromFile(new File(uri)));
-        return layerList;
+        return createLayersFromFile(new File(uri));
     }
 
     /**
@@ -194,10 +167,6 @@ public class LayerFactory {
      * @return 
      */
     private static List<Layer> createLayersFromShapefile(final File file) {
-        if (log.isDebugEnabled()) {
-            log.debug("createLayersFromShapefile(): {}", 
-                    file.getAbsolutePath());
-        }
         ShapefileLoader shpLoader = new ShapefileLoader();
         Shapefile shpFile = new Shapefile(file);
         List<Layer> layerList = shpLoader.createLayersFromShapefile(shpFile);
@@ -215,10 +184,6 @@ public class LayerFactory {
      * @return 
      */
     private static List<Layer> createSurfaceImageLayer(final File file) {
-        if (log.isDebugEnabled()) {
-            log.debug("createSurfaceImageLayer(): {}", 
-                    file.getAbsolutePath());
-        }
         SurfaceImageLayer sul = new SurfaceImageLayer();
         sul.setOpacity(0.8);
         sul.setPickEnabled(false);
@@ -236,19 +201,9 @@ public class LayerFactory {
         return layerList;
     }
 
-
-    /**
-     * 
-     * @param file
-     * @return 
-     */
+    // TODO <steffen>: remove fake
     private static List<Layer> createBuidlingLayerFromShapefile(final File file) {
-        if (log.isDebugEnabled()) {
-            log.debug("createBuildingLayersFromShapefile(): {}", 
-                    file.getAbsolutePath());
-        }
-
-        ShapefileLoader shpLoader = new BuildingShapefileLoader();
+        ShapefileLoader shpLoader = new BuildingShapefileLoader("Elevation");
         Shapefile shpFile = new Shapefile(file);
         List<Layer> layerList = shpLoader.createLayersFromShapefile(shpFile);
         int i = 0;
@@ -260,19 +215,9 @@ public class LayerFactory {
         return layerList;
     }
 
-    /**
-     * 
-     * @param file
-     * @return 
-     */
+    // TODO <steffen>: remove fake
     private static List<Layer> createStreetLevelLayersFromShapefile(final File file) {
-        if (log.isDebugEnabled()) {
-            log.debug("createStreetLevelLayersFromShapefile(): {}",
-                    file.getAbsolutePath());
-        }
-
-        ShapefileLoader shpLoader = new StreetLevelShapefileLoader();
-//        ShapefileLoader shpLoader = new ShapefileLoader();
+        ShapefileLoader shpLoader = new StreetLevelShapefileLoader("Perc98d");
         Shapefile shpFile = new Shapefile(file);
         List<Layer> layerList = shpLoader.createLayersFromShapefile(shpFile);
         int i = 0;
@@ -283,89 +228,7 @@ public class LayerFactory {
         return layerList;
     }
 
-    /**
-     * 
-     * @param url
-     * @return
-     * @throws IOException 
-     */
-    private static File downloadToTempFile(URL url, String ext) throws IOException {
-        BufferedInputStream in = new BufferedInputStream(url.openStream());
-        File tmpFile = File.createTempFile("sudplan3D-", ext);
-        if (log.isDebugEnabled()) {
-            log.debug("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
-        }
-        FileOutputStream out = new FileOutputStream(tmpFile);
-        byte[] data = new byte[1024];
-        int count;
-        while ((count = in.read(data, 0, 1024)) != -1) {
-            out.write(data, 0, count);
-        }
-        in.close();
-        out.close();
-
-        if (log.isDebugEnabled()) {
-            log.debug("Download finished.");
-        }
-        return tmpFile;
-    }
-
-    /**
-     * 
-     * @param tmpFile
-     * @throws IOException 
-     */
-    private static void unzip(File tmpFile) throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Unzipping ... {}", tmpFile.getName());
-        }
-
-        // Unpack files into directory.
-        ZipFile zipFile = new ZipFile(tmpFile);
-        Enumeration zipEntries = zipFile.entries();
-        String seperator = System.getProperty("file.separator");
-        while (zipEntries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) zipEntries.nextElement();
-            if (log.isDebugEnabled()) {
-                log.debug("Unzipping entry {}", entry.getName());
-            }
-
-            if (entry.isDirectory()) {
-                // Assume directories are stored parents first then children.
-                // This is not robust, just for demonstration purposes.
-                (new File(SUDPLAN_3D_USER_HOME + seperator + entry.getName())).mkdir();
-                continue;
-            }
-
-            copyInputStream(zipFile.getInputStream(entry), 
-                    new BufferedOutputStream(new FileOutputStream(
-                            SUDPLAN_3D_USER_HOME + seperator + entry.getName())));
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Unzipping finished.");
-        }
-
-    }
-
-    /**
-     * 
-     * @param in
-     * @param out
-     * @throws IOException 
-     */
-    private static void copyInputStream(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int len;
-
-        while ((len = in.read(buffer)) >= 0) {
-            out.write(buffer, 0, len);
-        }
-
-        in.close();
-        out.close();
-    }
-
+    // TODO <steffen>: remove fake
     private static File fake(URL url) {
         String seperator = System.getProperty("file.separator");
         File file = null;
