@@ -1,17 +1,22 @@
+/*
+ *  VisTimeseries.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.io.shapefile.ShapefileUtils;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.util.BufferFactory;
-import gov.nasa.worldwind.util.BufferWrapper;
 import gov.nasa.worldwind.util.WWMath;
 import gov.nasa.worldwindx.examples.analytics.AnalyticSurface;
 import gov.nasa.worldwindx.examples.analytics.AnalyticSurfaceAttributes;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -23,31 +28,33 @@ import org.gdal.ogr.Feature;
  *
  * @author steffen
  */
-public class VisTimeseries extends VisAlgorithm {
+public class VisTimeseries extends VisAlgorithmAbstract {
 
-    private String[] attributes;
-
-    public VisTimeseries(String[] timesteps) {
+    public VisTimeseries() {
         super("Timeseries Visualization");
-        if(timesteps.length != 2){
-            throw new IllegalArgumentException();
-        }
-        this.attributes = timesteps;
     }
 
     @Override
-    public List<Layer> createLayersFromData(Object data) {
+    public List<Layer> createLayersFromData(Object data, Object[] attributes) {
+
+        if (attributes == null || attributes.length != 2) {
+            throw new IllegalArgumentException();
+        }
 
         List<Layer> layers = new ArrayList<Layer>();
-        if (data instanceof Shapefile) {
+        if (data instanceof Shapefile
+                && attributes[0] instanceof String
+                && attributes[1] instanceof String) {
             Shapefile shpfile = (Shapefile) data;
+            String attribute0 = (String) attributes[0];
+            String attribute1 = (String) attributes[1];
             RenderableLayer layer = new RenderableLayer();
-
-            createTimeSeriesSurface(shpfile, layer);
+            createTimeSeriesSurface(shpfile, layer, attribute0, attribute1);
 
             layer.setPickEnabled(false);
             layer.setName(shpfile.getLayerName());
             layers.add(layer);
+
         }
         return layers;
     }
@@ -57,9 +64,9 @@ public class VisTimeseries extends VisAlgorithm {
      * @param shpfile
      * @param layer
      */
-    private void createTimeSeriesSurface(Shapefile shpfile, RenderableLayer layer) {
+    private void createTimeSeriesSurface(Shapefile shpfile, RenderableLayer layer, String attribute0, String attribute1) {
         double minHue = 240d / 360d;
-        double maxHue = 0d / 360d;
+        double maxHue = 0.d / 360d;
         int width = 140;
         int height = 140;
 
@@ -70,14 +77,15 @@ public class VisTimeseries extends VisAlgorithm {
         log.debug("Bounding box: {}", shpfile.getExtent());
         double[] extend = shpfile.getExtent();
         surface.setSector(Sector.fromDegrees(extend[2], extend[3], extend[0], extend[1]));
-        surface.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+        surface.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         surface.setDimensions(width, height);
         surface.setClientLayer(layer);
         layer.addRenderable(surface);
 
-        List<Double> firstValues = GridValues(shpfile, attributes[0]);
-        List<Double> secondValues = GridValues(shpfile, attributes[1]);
-        mixValuesOverTime(2000L, firstValues, secondValues, minValue, maxValue, minHue, maxHue, surface);
+        List<Double> firstValues = GridValues(shpfile, attribute0);
+        List<Double> secondValues = GridValues(shpfile, attribute1);
+
+        interpolateValuesOverTime(3000L, firstValues, secondValues, minValue, maxValue, minHue, maxHue, surface);
 
         AnalyticSurfaceAttributes attr = new AnalyticSurfaceAttributes();
         attr.setDrawShadow(false);
@@ -86,7 +94,18 @@ public class VisTimeseries extends VisAlgorithm {
         surface.setSurfaceAttributes(attr);
     }
 
-    protected void mixValuesOverTime(
+    /**
+     *
+     * @param timeToMix
+     * @param firstBuffer
+     * @param secondBuffer
+     * @param minValue
+     * @param maxValue
+     * @param minHue
+     * @param maxHue
+     * @param surface
+     */
+    private void interpolateValuesOverTime(
             final long timeToMix,
             final List<Double> firstBuffer, final List<Double> secondBuffer,
             final double minValue, final double maxValue, final double minHue, final double maxHue,
@@ -109,7 +128,7 @@ public class VisTimeseries extends VisAlgorithm {
                     a = 1d - a;
                 }
 
-                surface.setValues(createMixedColorGradientGridValues(
+                surface.setValues(createColorGradientGridValues(
                         a, firstBuffer, secondBuffer, minValue, maxValue, minHue, maxHue));
 
                 if (surface.getClientLayer() != null) {
@@ -120,49 +139,73 @@ public class VisTimeseries extends VisAlgorithm {
         timer.start();
     }
 
-    public Iterable<? extends AnalyticSurface.GridPointAttributes> createMixedColorGradientGridValues(double a,
+    /**
+     *
+     * @param a
+     * @param firstBuffer
+     * @param secondBuffer
+     * @param minValue
+     * @param maxValue
+     * @param minHue
+     * @param maxHue
+     * @return
+     */
+    private Iterable<? extends AnalyticSurface.GridPointAttributes> createColorGradientGridValues(double a,
             List<Double> firstBuffer, List<Double> secondBuffer, double minValue, double maxValue,
             double minHue, double maxHue) {
         ArrayList<AnalyticSurface.GridPointAttributes> attributesList = new ArrayList<AnalyticSurface.GridPointAttributes>();
-
-        long length = Math.min(firstBuffer.size(), secondBuffer.size());
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < firstBuffer.size(); i++) {
             double value = WWMath.mixSmooth(a, firstBuffer.get(i).doubleValue(), secondBuffer.get(i).doubleValue());
-            attributesList.add(
-                    AnalyticSurface.createColorGradientAttributes(value, minValue, maxValue, minHue, maxHue));
+            Color color;
+            if (value < 5.0) {
+                color = Color.GREEN;
+            } else if (value < 6.0) {
+                color = Color.YELLOW;
+            } else {
+                color = Color.RED;
+            }
+            attributesList.add(AnalyticSurface.createGridPointAttributes(2.0, color));
         }
 
         return attributesList;
     }
 
-    public static List<Double> GridValues(Shapefile shpfile, String timestep) {
+    /**
+     *
+     * @param shpfile
+     * @param timestep
+     * @return
+     */
+    private List<Double> GridValues(Shapefile shpfile, String timestep) {
         int width = 140;
         int height = 140;
-        double min = -200e3;
-        double max = 200e3;
-        int numIterations = 1000;
-        double smoothness = 0.2d;
-        int numValues = 140 * 140;
+        int numValues = width * height;
 
         double[] values = new double[shpfile.getFeatureCount()];
-        for (int i = 0; i < shpfile.getFeatureCount(); i++) {
-            Feature f = shpfile.getFeature(i);
+        for (int i = 0; i < numValues; i++) {
+            int index = (height - (i / height)) * 140 - (width - (i % width));
+            Feature f = shpfile.getFeature(index);
             values[i] = f.GetFieldAsDouble(timestep);
         }
 
-//        smoothValues(width, height, values, smoothness);
-        scaleValues(values, numValues, min, max);
         List list = new ArrayList<Double>(numValues);
         for (int i = 0; i < numValues; i++) {
             list.add(new Double(values[i]));
         }
+
         return list;
     }
 
-    protected static void scaleValues(double[] values, int count, double minValue, double maxValue) {
+    /**
+     *
+     * @param values
+     * @param minValue
+     * @param maxValue
+     */
+    private void minmax(double[] values, double minValue, double maxValue) {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < values.length; i++) {
             if (min > values[i]) {
                 min = values[i];
             }
@@ -170,10 +213,18 @@ public class VisTimeseries extends VisAlgorithm {
                 max = values[i];
             }
         }
-
-        for (int i = 0; i < count; i++) {
-            values[i] = (values[i] - min) / (max - min);
-            values[i] = minValue + values[i] * (maxValue - minValue);
-        }
     }
+//    /**
+//     *
+//     * @param values
+//     * @param minValue
+//     * @param maxValue
+//     */
+//    private void scaleValues(double[] values, double lowerValue, double upperValue) {
+//        for (int i = 0; i < values.length; i++) {
+//            values[i] = (values[i] - min) / (max - min);
+//            values[i] = lowerValue + values[i] * (upperValue - lowerValue);
+//        }
+//    }
+
 }

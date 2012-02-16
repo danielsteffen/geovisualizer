@@ -15,6 +15,7 @@
     </Layer>
     <Layer href="config/Earth/BMNGWMSLayer.xml" actuate="onLoad"/>
     <Layer href="config/Earth/LandsatI3WMSLayer.xml" actuate="onLoad"/>
+    <Layer href="config/Stockholm/StockholmWMSLayer.xml" actuate="onLoad"/>
     <Layer className="gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer"/>
     <Layer className="gov.nasa.worldwind.layers.ScalebarLayer"/>
     <Layer className="gov.nasa.worldwind.layers.CompassLayer"/>	

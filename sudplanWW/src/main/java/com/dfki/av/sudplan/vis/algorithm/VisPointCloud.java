@@ -1,3 +1,10 @@
+/*
+ *  VisPointCloud.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
@@ -13,7 +20,7 @@ import org.gdal.ogr.Geometry;
  *
  * @author steffen
  */
-public class VisPointCloud extends VisAlgorithm {
+public class VisPointCloud extends VisAlgorithmAbstract {
 
     /**
      *
@@ -23,7 +30,7 @@ public class VisPointCloud extends VisAlgorithm {
     }
 
     @Override
-    public List<Layer> createLayersFromData(Object data) {
+    public List<Layer> createLayersFromData(Object data, Object[] attriutes) {
 
         List<Layer> layers = new ArrayList<Layer>();
         if (data instanceof Shapefile) {
@@ -54,7 +61,7 @@ public class VisPointCloud extends VisAlgorithm {
                 Geometry g = list.get(j);
                 for (int u = 0; u < g.GetPointCount(); u++) {
                     double[] point = g.GetPoint_2D(u);
-                    String iconSource = "dot-icon.png";
+                    String iconSource = "icons/dot8x8.png";
                     UserFacingIcon icon = new UserFacingIcon(iconSource, Position.fromDegrees(point[1], point[0]));
                     layer.addIcon(icon);
                 }

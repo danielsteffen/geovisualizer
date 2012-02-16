@@ -1,29 +1,36 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.dfki.av.sudplan.ui.viswiz;
 
+package com.dfki.av.sudplan.vis.viswiz;
+
+import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class VisWizWizardPanel3 implements WizardDescriptor.Panel {
+public class VisualizationSelectionController implements WizardDescriptor.Panel {
 
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
      */
     private Component component;
+    private IVisAlgorithm visAlgorithms;
+    private static Logger log = LoggerFactory.getLogger(VisualizationSelectionController.class);
+    
+    public VisualizationSelectionController() {
+        super();
+    }
 
+    
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
     public Component getComponent() {
         if (component == null) {
-            component = new VisWizVisualPanel3();
+            component = new VisualizationSelectionPanel();
         }
         return component;
     }
@@ -79,6 +86,8 @@ public class VisWizWizardPanel3 implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
+        WizardDescriptor wiz = (WizardDescriptor) settings;
+
     }
 
     public void storeSettings(Object settings) {

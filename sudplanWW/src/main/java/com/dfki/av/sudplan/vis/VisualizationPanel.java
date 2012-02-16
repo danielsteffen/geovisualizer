@@ -8,7 +8,10 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.camera.*;
-import com.dfki.av.sudplan.vis.algorithm.*;
+import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
+import com.dfki.av.sudplan.vis.algorithm.VisWorker;
+import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -81,19 +84,17 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void addLayer(Object data) {
-        addLayer(data, new VisPointCloud());
+        addLayer(data, Visualization.POINT_CLOUD, null);
     }
 
-    protected void addLayer(Object data, IVisAlgorithm vis) {
-        if (data == null) {
-            log.warn("Illegal argument for parameter 'source'.");
-            throw new IllegalArgumentException("Illegal argument for parameter 'source'.");
-        }
-        if (vis == null) {
-            log.warn("Illegal argument for parameter 'vis'.");
-            throw new IllegalArgumentException("Illegal argument for parameter vis.");
-        }
-        VisProducer producer = new VisProducer(data, vis, wwd);
+    /**
+     * 
+     * @param data
+     * @param vis
+     * @param attributes 
+     */
+    public void addLayer(Object data, IVisAlgorithm vis, Object[] attributes) {
+        VisWorker producer = new VisWorker(data, vis, attributes, wwd);
         producer.execute();
     }
 
@@ -220,8 +221,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void addTimeseries() {
         URL url = getClass().getClassLoader().getResource("ts_nox_2m.zip");
         log.debug("URL to load from: {}", url.toString());
-        String[] timesteps = new String[]{"Val_200503", "Val_200500"};
-        addLayer(url, new VisTimeseries(timesteps));
+        String[] attributes = new String[]{"Val_200503","Val_20050"};
+        addLayer(url, Visualization.TIMESERIES, attributes);
     }
 
     @Deprecated
@@ -240,7 +241,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void addBuildings() {
         URL url = getClass().getClassLoader().getResource("Buildings.zip");
         log.debug("URL to load from: {}", url.toString());
-        addLayer(url, new VisExtrudePolygon("Elevation"));
+        String[] attributes = new String[]{"Elevation"};
+        addLayer(url, Visualization.EXTRUDE_POLYGON, attributes);
     }
 
     @Deprecated
@@ -260,7 +262,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void addRooftopResults() {
         URL url = getClass().getClassLoader().getResource("rooftop3.tiff");
         log.debug("URL to load from: {}", url.toString());
-        addLayer(url, new VisCreateTexture());
+        addLayer(url, new VisCreateTexture(), null);
     }
 
     @Deprecated
@@ -280,7 +282,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void addStreetLevelResults() {
         URL url = getClass().getClassLoader().getResource("AirQualityStreetLevel.zip");
         String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-        addLayer(url, new VisExtrudePolyline(attributes));
+        addLayer(url, Visualization.EXTRUDE_POLYLINE, attributes);
     }
 
     @Deprecated

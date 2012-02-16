@@ -1,5 +1,5 @@
 /*
- *  LayerWorker.java 
+ *  VisWorker.java 
  *
  *  Created by DFKI AV on 07.10.2011.
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -25,14 +25,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class VisProducer extends SwingWorker<List<Layer>, Void> {
+public class VisWorker extends SwingWorker<List<Layer>, Void> {
 
     /*
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(VisProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(VisWorker.class);
     /**
-     * User home directory of sudplan 3D component.
+     * User home directory of SUDPLAN 3D component.
      */
     private static final String SUDPLAN_3D_USER_HOME;
 
@@ -51,6 +51,7 @@ public class VisProducer extends SwingWorker<List<Layer>, Void> {
             }
         }
     }
+    
     /**
      * Data source for the layer to be produced.
      */
@@ -63,14 +64,18 @@ public class VisProducer extends SwingWorker<List<Layer>, Void> {
      * The visualization algorithm used to create the layer.
      */
     private IVisAlgorithm algo;
-
+    /**
+     * The attributes / settings for the visualization technique to consider.
+     */
+    private Object[] attributes;
+    
     /**
      *
      * @param data
      * @param vis
      * @param canvas
      */
-    public VisProducer(Object data, IVisAlgorithm vis, WorldWindowGLCanvas canvas) {
+    public VisWorker(Object data, IVisAlgorithm vis, final Object[] attributes, WorldWindowGLCanvas canvas) {
         if (data == null) {
             log.error("Parameter 'data' is null.");
             throw new IllegalArgumentException("Parameter 'data' is null.");
@@ -79,12 +84,16 @@ public class VisProducer extends SwingWorker<List<Layer>, Void> {
             log.error("Parameter 'vis' is null.");
             throw new IllegalArgumentException("Parameter 'vis' is null.");
         }
-        if (data == null) {
+        if (canvas == null) {
             log.error("Parameter 'canvas' is null.");
             throw new IllegalArgumentException("Parameter 'canvas' is null.");
         }
+        if (attributes == null){
+            
+        }
         this.dataSource = data;
         this.algo = vis;
+        this.attributes = attributes;
         this.wwd = canvas;
     }
 
@@ -133,7 +142,7 @@ public class VisProducer extends SwingWorker<List<Layer>, Void> {
         String path = file.getAbsolutePath().replace(File.separator, "/");
         log.debug("Path to shapefile: {}", path);
         Shapefile shapefile = new Shapefile(path);
-        layerList = algo.createLayersFromData(shapefile);
+        layerList = algo.createLayersFromData(shapefile, attributes);
 
         return layerList;
     }

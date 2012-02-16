@@ -237,4 +237,46 @@ public class Shapefile {
 
         return tmp;
     }
+    
+    /**
+     *
+     * @param shp
+     * @param attribute
+     * @return
+     */
+    public static double Min(Shapefile shp, String attribute) {
+        double minValue = Double.MAX_VALUE;
+        for (int i = 0; i < shp.getFeatureCount(); i++) {
+            Object object = shp.getAttributeOfFeature(i, attribute);
+            if (object instanceof Number) {
+                double value = ((Number) object).doubleValue();
+                if (value < minValue) {
+                    minValue = value;
+                }
+            }
+        }
+        return minValue;
+    }
+
+    /**
+     *
+     * @param shp
+     * @param attribute
+     * @return
+     */
+    public static double Max(Shapefile shp, String attribute) {
+        double maxValue = Double.MIN_VALUE;
+
+        for (int i = 0; i < shp.getFeatureCount(); i++) {
+            Object object = shp.getAttributeOfFeature(i, attribute);
+            if (object instanceof Number) {
+                double value = ((Number) object).doubleValue();
+                if (value > maxValue) {
+                    maxValue = value;
+                }
+            }
+        }
+        return maxValue;
+    }
+    
 }

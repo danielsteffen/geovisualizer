@@ -2,20 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.ui.viswiz;
+package com.dfki.av.sudplan.vis.viswiz;
 
 import javax.swing.JPanel;
 
-public final class VisWizVisualPanel3 extends JPanel {
+public final class VisWizVisualPanel4 extends JPanel {
 
-    /** Creates new form VisWizVisualPanel3 */
-    public VisWizVisualPanel3() {
+    /** Creates new form VisWizVisualPanel4 */
+    public VisWizVisualPanel4() {
         initComponents();
     }
 
     @Override
     public String getName() {
-        return "Step #3";
+        return "Step #4";
     }
 
     /** This method is called from within the constructor to

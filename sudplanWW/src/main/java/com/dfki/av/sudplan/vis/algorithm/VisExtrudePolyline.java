@@ -1,7 +1,13 @@
+/*
+ *  VisExtrudePolyline.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.io.shapefile.ShapefileUtils;
 import com.dfki.av.utils.ColorUtils;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Position;
@@ -12,6 +18,7 @@ import gov.nasa.worldwind.util.WWUtil;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.gdal.ogr.Geometry;
 
 /**
@@ -20,16 +27,12 @@ import org.gdal.ogr.Geometry;
  *
  * @author steffen
  */
-public class VisExtrudePolyline extends VisAlgorithm {
+public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
     /**
      *
      */
     private static final int DEFAULT_NUM_CLASSES = 4;
-    /**
-     *
-     */
-    protected String[] attributes;
     /**
      *
      */
@@ -41,36 +44,37 @@ public class VisExtrudePolyline extends VisAlgorithm {
 
     /**
      *
-     * @param attr
      */
-    public VisExtrudePolyline(String[] attr) {
-        super("Extrude polyline visualization");
-
-        if (attr == null || attr.length != 2) {
-            throw new IllegalArgumentException("Need at 2 attributes "
-                    + "to define visualization parameters.");
-        }
-
-        this.attributes = new String[2];
-        for (int i = 0; i < attr.length; i++) {
-            if (attr[i] == null || attr[i].isEmpty()) {
-                throw new IllegalArgumentException("Parameter" + i + " no valid argument.");
-            }
-            this.attributes[i] = attr[i];
-        }
+    public VisExtrudePolyline() {
+        super("Extrude polyline visualization", "You have to select 2 attributes for this visualization technique.\nThe Polyline technique maps one scalar attribute 'a' of your data source to the parameter color. The second attirbute 'b' is used for the extrution.",
+                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+                getResource("icons/vis_color_height.png")));
+        VisParameter parameter0 = new VisParameter("Height");
+        parameters.add(parameter0);
+        VisParameter parameter1 = new VisParameter("Color");
+        parameters.add(parameter1);
     }
 
     @Override
-    public List<Layer> createLayersFromData(Object data) {
+    public List<Layer> createLayersFromData(Object data, Object[] attributes) {
+
+        if (attributes == null || attributes.length != 2) {
+            throw new IllegalArgumentException("Need 2 attributes "
+                    + "to define visualization parameters.");
+        }
 
         List<Layer> layers = new ArrayList<Layer>();
 
-        if (data instanceof Shapefile) {
+        if (data instanceof Shapefile
+                && attributes[0] instanceof String
+                && attributes[1] instanceof String) {
             Shapefile shapefile = (Shapefile) data;
+            String attribute0 = (String) attributes[0];
+            String attribute1 = (String) attributes[1];
 
             // Pre-processing data
-            this.boundaries = ShapefileUtils.AutoClassificationOfNumberAttribute(shapefile, attributes[0], DEFAULT_NUM_CLASSES);
-            Color[] colors = ColorUtils.GetRedGreenColorGradient(DEFAULT_NUM_CLASSES);
+            this.boundaries = DataAttributeUtils.AutoClassificationOfNumberAttribute(shapefile, attribute0, DEFAULT_NUM_CLASSES);
+            Color[] colors = ColorUtils.CreateRedGreenColorGradientAttributes(DEFAULT_NUM_CLASSES);
 
             this.materials = new Material[DEFAULT_NUM_CLASSES];
             for (int i = 0; i < materials.length; i++) {
@@ -81,7 +85,7 @@ public class VisExtrudePolyline extends VisAlgorithm {
             if (Shapefile.isPolylineType(shapefile.getShapeType())) {
                 RenderableLayer layer = new RenderableLayer();
                 for (int i = 0; i < shapefile.getFeatureCount(); i++) {
-                    Renderable r = createPolyline(shapefile, i);
+                    Renderable r = createExtrudedPolyline(shapefile, i, attribute0, attribute1);
                     layer.addRenderable(r);
                 }
                 layer.setName(shapefile.getLayerName());
@@ -89,6 +93,7 @@ public class VisExtrudePolyline extends VisAlgorithm {
             } else {
                 log.warn("Extrude Polyline Visualization does not support shape type {}.", shapefile.getShapeType());
             }
+
         } else {
             log.debug("Data type not supported.");
         }
@@ -102,12 +107,12 @@ public class VisExtrudePolyline extends VisAlgorithm {
      * @param featureId
      * @return
      */
-    private Renderable createPolyline(Shapefile shpfile, int featureId) {
+    private Renderable createExtrudedPolyline(Shapefile shpfile, int featureId, String attribute0, String attribute1) {
 
         //
         // Mapping for visualization parameter COLOR
         //
-        Object object0 = shpfile.getAttributeOfFeature(featureId, attributes[0]);
+        Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
         Double value0 = null;
         if (object0 instanceof Number) {
             value0 = ((Number) object0).doubleValue();
@@ -118,7 +123,6 @@ public class VisExtrudePolyline extends VisAlgorithm {
         }
 
         ShapeAttributes sa = new BasicShapeAttributes();
-        sa.setOutlineMaterial(new Material(Color.BLACK));
         sa.setOutlineWidth(0.3);
         sa.setInteriorOpacity(0.6);
         sa.setOutlineOpacity(0.3);
@@ -127,18 +131,20 @@ public class VisExtrudePolyline extends VisAlgorithm {
             for (int i = 1; i < boundaries.length; i++) {
                 if (value0 < boundaries[i]) {
                     sa.setInteriorMaterial(materials[i - 1]);
+                    sa.setOutlineMaterial(materials[i - 1]);
                     break;
                 }
             }
         } else {
             log.debug("Setting attribute 'color' to gray.");
             sa.setInteriorMaterial(Material.GRAY);
+            sa.setOutlineMaterial(Material.GRAY);
         }
 
         //
         // Mapping for visiulization parameter HEIGHT
         //
-        Object object1 = shpfile.getAttributeOfFeature(featureId, attributes[1]);
+        Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         Double value1 = null;
         if (object1 instanceof Number) {
             value1 = ((Number) object1).doubleValue();
@@ -161,7 +167,7 @@ public class VisExtrudePolyline extends VisAlgorithm {
             for (int j = 0; j < g.GetPointCount(); j++) {
                 double[] point = g.GetPoint_2D(j);
                 // ... swap geo positions ???! why
-                positionList.add(Position.fromDegrees(point[1], point[0], value1 / 150.0));
+                positionList.add(Position.fromDegrees(point[1], point[0], value1/120.0));
             }
         }
 

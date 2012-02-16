@@ -2,22 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.ui.viswiz;
+package com.dfki.av.sudplan.vis.viswiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import java.awt.Component;
-import java.util.List;
 import java.util.NoSuchElementException;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 
-public final class VisWizWizardIterator implements WizardDescriptor.Iterator {
+public final class VisWizIterator implements WizardDescriptor.Iterator {
 
     // To invoke this wizard, copy-paste and run the following code, e.g. from
     // SomeAction.performAction():
     /*
-    WizardDescriptor.Iterator iterator = new VisWizWizardIterator();
+    WizardDescriptor.Iterator iterator = new VisWizIterator();
     WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
     // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
     // {1} will be replaced by WizardDescriptor.Iterator.name()
@@ -33,11 +32,11 @@ public final class VisWizWizardIterator implements WizardDescriptor.Iterator {
      */
     private int index;
     private WizardDescriptor.Panel[] panels;
-    private List<IVisAlgorithm> algorithms;
+    private Iterable<IVisAlgorithm> visList;
     
-    public VisWizWizardIterator(List<IVisAlgorithm> list){
+    public VisWizIterator(Iterable<IVisAlgorithm> list){
         super();
-        this.algorithms = list;
+        this.visList = list;
     }
 
     /**
@@ -47,11 +46,11 @@ public final class VisWizWizardIterator implements WizardDescriptor.Iterator {
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {
             panels = new WizardDescriptor.Panel[]{
-                new VisWizWizardPanel1(),
-                new VisWizWizardPanel2(),
-                new VisWizWizardPanel3(),
+                new DataSourceSelectionController(),
+                new VisualizationSelectionController(),
+                new ParameterMappingController()/*,
                 new VisWizWizardPanel4(),
-                new VisWizWizardPanel5()
+                new VisWizWizardPanel5()*/
             };
             String[] steps = new String[panels.length];
             for (int i = 0; i < panels.length; i++) {
@@ -68,7 +67,7 @@ public final class VisWizWizardIterator implements WizardDescriptor.Iterator {
                     // Turn on subtitle creation on each step
                     jc.putClientProperty("WizardPanel_autoWizardStyle", Boolean.TRUE);
                     // Show steps on the left side with the image on the background
-                    jc.putClientProperty("WizardPanel_contentDisplayed", Boolean.TRUE);
+                    jc.putClientProperty("WizardPanel_contentDisplayed", Boolean.FALSE);
                     // Turn on numbering of all steps
                     jc.putClientProperty("WizardPanel_contentNumbered", Boolean.FALSE);
                 }

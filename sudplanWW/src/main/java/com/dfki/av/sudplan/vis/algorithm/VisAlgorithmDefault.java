@@ -1,3 +1,10 @@
+/*
+ *  VisAlgorithmDefault.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
 package com.dfki.av.sudplan.vis.algorithm;
 
 import gov.nasa.worldwind.avlist.AVKey;
@@ -11,12 +18,13 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwindx.examples.util.RandomShapeAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
   
 /**
  *
  * @author steffen
  */
-public class VisAlgorithmDefault extends VisAlgorithm {
+public class VisAlgorithmDefault extends VisAlgorithmAbstract {
 
     /**
      * 
@@ -30,11 +38,14 @@ public class VisAlgorithmDefault extends VisAlgorithm {
      *
      */
     public VisAlgorithmDefault() {
-        super("Default Vis Algorithm");
+        super("Default Visualization",
+                "No description available.",
+                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+                getResource("icons/VisAlgorithmDefault.png")));
     }
 
     @Override
-    public List<Layer> createLayersFromData(Object data) {
+    public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
         log.debug("Creating layer from data: {}", data);
         List<Layer> layers = new ArrayList<Layer>();
@@ -77,7 +88,7 @@ public class VisAlgorithmDefault extends VisAlgorithm {
             }
 
             double[] point = ((ShapefileRecordPoint) record).getPoint();
-            layer.addIcon(new UserFacingIcon("images/load-dot.png", Position.fromDegrees(point[1], point[0], 0)));
+            layer.addIcon(new UserFacingIcon("icons/dot8x8.png", Position.fromDegrees(point[1], point[0], 0)));
         }
     }
 
@@ -97,7 +108,7 @@ public class VisAlgorithmDefault extends VisAlgorithm {
             Iterable<double[]> iterable = ((ShapefileRecordMultiPoint) record).getPoints(0);
 
             for (double[] point : iterable) {
-                layer.addIcon(new UserFacingIcon("images/load-dot.png", Position.fromDegrees(point[1], point[0], 0)));
+                layer.addIcon(new UserFacingIcon("icons/dot8x8.png", Position.fromDegrees(point[1], point[0], 0)));
             }
         }
     }

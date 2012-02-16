@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.ui.viswiz;
+package com.dfki.av.sudplan.vis.viswiz;
 
 import java.awt.Component;
 import javax.swing.event.ChangeListener;

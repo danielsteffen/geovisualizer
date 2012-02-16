@@ -9,9 +9,11 @@ import com.dfki.av.sudplan.vis.algorithm.VisExtrudePolygon;
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
-import com.dfki.av.sudplan.ui.viswiz.VisWizWizardIterator;
+import com.dfki.av.sudplan.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.viswiz.VisWizIterator;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
+import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import java.awt.Dialog;
@@ -233,7 +235,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 608, Short.MAX_VALUE)
+            .addGap(0, 606, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -257,7 +259,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
 
-        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_MASK));
         miExit.setText(bundle.getString("MainFrame.miExit.text")); // NOI18N
         miExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -291,8 +293,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         mAdd.setText(bundle.getString("MainFrame.mAdd.text")); // NOI18N
 
+        miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
-        miWizard.setEnabled(false);
         miWizard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miWizardActionPerformed(evt);
@@ -580,25 +582,23 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_miAddShapeActionPerformed
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
-//        // Check all vis algos and collect them somehow.
-//        List<IVisAlgorithm> algos = new ArrayList<IVisAlgorithm>();
-//        algos.add(new ExtrudePolygon());
-//        WizardDescriptor.Iterator iterator = new VisWizWizardIterator(algos);
-//        WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
-//        // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
-//        // {1} will be replaced by WizardDescriptor.Iterator.name()
-//        wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
-//        wizardDescriptor.setTitle("VisWiz");
-//        Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
-//        dialog.setVisible(true);
-//        dialog.toFront();
-//        boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
-//        if (!cancelled) {
-//            // do something
-//        }
-//        
-//        wizard.setAlwaysOnTop(true);
-//        wizard.setVisible(true);
+        // Check all vis algos and collect them somehow.
+        WizardDescriptor.Iterator iterator = new VisWizIterator(Visualization.LIST);
+        WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
+        // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
+        // {1} will be replaced by WizardDescriptor.Iterator.name()
+        wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
+        wizardDescriptor.setTitle("VisWiz");
+        Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
+        dialog.setVisible(true);
+        dialog.toFront();
+        boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
+        if (!cancelled) {
+            Object zipData = wizardDescriptor.getProperty("ShapeZipFile");
+            IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("VisAlgorithm");
+            String[] visAttributes = (String[]) wizardDescriptor.getProperty("Attributes");
+            wwPanel.addLayer(zipData, visAlgo, visAttributes);
+        }
     }//GEN-LAST:event_miWizardActionPerformed
 
     private void miAddURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddURLActionPerformed

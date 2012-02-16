@@ -1,3 +1,10 @@
+/*
+ *  ColorUtils.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
 package com.dfki.av.utils;
 
 import java.awt.Color;
@@ -9,13 +16,13 @@ import java.awt.Color;
 public class ColorUtils {
 
     /**
-     * Returns an color array of size numClasses for. green is the frist
-     * color and red the last color in the array.
+     * Returns an color array of size {@link #numColors}. {@link Color#GREEN} is 
+     * the first color and {@link Color#RED} the last color in the array.
      * 
      * @param numColors the number of colors to return 
      * @return the array of colors
      */
-    public static Color[] GetRedGreenColorGradient(int numColors) {
+    public static Color[] CreateRedGreenColorGradientAttributes(int numColors) {
         // Color interpolation from Red (0° degree) to Green (120°)
         Color[] colors = new Color[numColors];
         float green = 120.0f;
@@ -26,6 +33,7 @@ public class ColorUtils {
         }
         return colors;
     }
+
 
     /**
      * r,g,b values are from 0 to 1 h = [0,360], s = [0,1], v = [0,1] if s == 0,

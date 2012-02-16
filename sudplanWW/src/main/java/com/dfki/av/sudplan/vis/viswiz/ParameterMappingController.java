@@ -2,15 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.ui.viswiz;
+package com.dfki.av.sudplan.vis.viswiz;
 
+import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class VisWizWizardPanel2 implements WizardDescriptor.Panel {
+public class ParameterMappingController implements WizardDescriptor.Panel {
 
+    private static Logger log = LoggerFactory.getLogger(ParameterMappingController.class);
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
@@ -23,7 +27,7 @@ public class VisWizWizardPanel2 implements WizardDescriptor.Panel {
     // create only those which really need to be visible.
     public Component getComponent() {
         if (component == null) {
-            component = new VisWizVisualPanel2();
+            component = new ParameterMappingPanel(Visualization.EXTRUDE_POLYLINE);
         }
         return component;
     }
@@ -82,5 +86,6 @@ public class VisWizWizardPanel2 implements WizardDescriptor.Panel {
     }
 
     public void storeSettings(Object settings) {
+        log.debug("Finished");
     }
 }

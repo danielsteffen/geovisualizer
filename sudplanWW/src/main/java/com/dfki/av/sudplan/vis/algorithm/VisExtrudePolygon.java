@@ -1,5 +1,5 @@
 /*
- *  ExtrudePolygon.java 
+ *  VisExtrudePolygon.java 
  *
  *  Created by DFKI AV on 26.01.2012.
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -26,50 +26,51 @@ import org.gdal.ogr.Geometry;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class VisExtrudePolygon extends VisAlgorithm {
+public class VisExtrudePolygon extends VisAlgorithmAbstract {
 
     private static final BasicShapeAttributes bsa;
-
     static {
         bsa = new BasicShapeAttributes();
         bsa.setDrawOutline(false);
         bsa.setInteriorOpacity(1.0);
         bsa.setInteriorMaterial(Material.GRAY);
     }
+            
     /**
      *
      */
     private final int numPolygonsPerLayer = 10000;
-    /**
-     *
-     */
-    private String extrudeAttribute;
 
     /**
      *
      * @param attribute
      */
-    public VisExtrudePolygon(String attribute) {
-        super("Extrude polygon visualization");
-        this.extrudeAttribute = attribute;
+    public VisExtrudePolygon() {
+        super("Extrude Polygon Visualization");
+        VisParameter parameter = new VisParameter("Height");
+        parameters.add(parameter);
     }
 
     @Override
-    public List<Layer> createLayersFromData(Object data) {
+    public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
-        List<Layer> layers = new ArrayList<Layer>();
-        if (data instanceof Shapefile) {
-            Shapefile shapefile = (Shapefile) data;
-
-            // Pre-processing data
-
-            // Create visualization
-            log.debug("ShapeType: {}", shapefile.getShapeType());
-            addRenderablesForPolygons(shapefile, layers);
-        } else {
-            log.warn("Data type not supported for Extrude Polygon Visualization.");
+        if (attributes == null || attributes.length != 1) {
+            throw new IllegalArgumentException("Need 2 attributes "
+                    + "to define visualization parameters.");
         }
 
+        List<Layer> layers = new ArrayList<Layer>();
+        if (data instanceof Shapefile
+                && attributes[0] instanceof String) {
+            Shapefile shapefile = (Shapefile) data;
+            String attribute = (String) attributes[0];
+            // Pre-processing data
+            // .. here the preporcessing of the data should take place, or?
+            // Create visualization
+            addRenderablesForPolygons(shapefile, attribute, layers);
+        } else {
+            log.warn("Data type or attribute types not supported for Extrude Polygon Visualization.");
+        }
         return layers;
     }
 
@@ -82,7 +83,7 @@ public class VisExtrudePolygon extends VisAlgorithm {
      * @param layers a list in which to place the layers created. May not be
      * null.
      */
-    private void addRenderablesForPolygons(Shapefile shp, List<Layer> layers) {
+    private void addRenderablesForPolygons(Shapefile shp, String attribute, List<Layer> layers) {
         RenderableLayer layer = new RenderableLayer();
         int numLayers = 0;
         layer.setName(shp.getLayerName() + "-" + numLayers);
@@ -91,7 +92,7 @@ public class VisExtrudePolygon extends VisAlgorithm {
 
         for (int i = 0; i < shp.getFeatureCount(); i++) {
 
-            this.createExtrudedPolygon(shp, i, extrudeAttribute, layer);
+            createExtrudedPolygon(shp, i, attribute, layer);
 
             if (layer.getNumRenderables() > this.numPolygonsPerLayer) {
                 layer = new RenderableLayer();
