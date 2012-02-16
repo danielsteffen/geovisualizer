@@ -7,30 +7,15 @@
  */
 package com.dfki.av.sudplan.vis;
 
-import com.dfki.av.sudplan.layer.LayerWorker;
-import com.dfki.av.sudplan.camera.AnimatedCamera;
-import com.dfki.av.sudplan.camera.BoundingBox;
-import com.dfki.av.sudplan.camera.BoundingVolume;
-import com.dfki.av.sudplan.camera.Camera;
-import com.dfki.av.sudplan.camera.CameraListener;
-import com.dfki.av.sudplan.camera.SimpleCamera;
-import com.dfki.av.sudplan.camera.Vector3D;
+import com.dfki.av.sudplan.camera.*;
+import com.dfki.av.sudplan.vis.algorithm.*;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.Box;
-import gov.nasa.worldwind.geom.Frustum.Corners;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.layers.ViewControlsLayer;
-import gov.nasa.worldwind.layers.ViewControlsSelectListener;
-import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
@@ -42,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class containing the {@link WorldWindowGLCanvas} to render the virtual
- * globe.
- * 
+ * Class containing the {@link WorldWindowGLCanvas} to render the virtual globe.
+ *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisualizationPanel extends JPanel implements VisualizationComponent {
@@ -52,16 +36,18 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     /*
      * Logger.
      */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(VisualizationPanel.class);
     /**
      * The world wind GL canvas.
      */
     private WorldWindowGLCanvas wwd;
 
     /**
-     * Constructs a visualization panel of the defined <code>Dimension</code>.
-     * 
-     * @param canvasSize size of the <code>WorldWindowGLCanvas</code>.
+     * Constructs a visualization panel of the defined
+     * <code>Dimension</code>.
+     *
+     * @param canvasSize size of the
+     * <code>WorldWindowGLCanvas</code>.
      */
     public VisualizationPanel(Dimension canvasSize) {
         super(new BorderLayout());
@@ -83,35 +69,38 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Returns the <code>WorldWindowGLCanvas</code>.
-     * 
-     * @return the <code>WorldWindowGLCanvas</code> to return.
+     * Returns the
+     * <code>WorldWindowGLCanvas</code>.
+     *
+     * @return the
+     * <code>WorldWindowGLCanvas</code> to return.
      */
     public WorldWindowGLCanvas getWwd() {
         return this.wwd;
     }
 
     @Override
-    public void addLayer(Object source) {
+    public void addLayer(Object data) {
+        addLayer(data, new VisPointCloud());
+    }
 
-        if (source == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Parameter 'object' of method 'addLayer()' is null.");
-            }
-            throw new IllegalArgumentException("Parameter 'object' of method "
-                    + "'addLayer()' is null.");
+    protected void addLayer(Object data, IVisAlgorithm vis) {
+        if (data == null) {
+            log.warn("Illegal argument for parameter 'source'.");
+            throw new IllegalArgumentException("Illegal argument for parameter 'source'.");
         }
-
-        LayerWorker worker = new LayerWorker(source, wwd);
-        worker.execute();
+        if (vis == null) {
+            log.warn("Illegal argument for parameter 'vis'.");
+            throw new IllegalArgumentException("Illegal argument for parameter vis.");
+        }
+        VisProducer producer = new VisProducer(data, vis, wwd);
+        producer.execute();
     }
 
     @Override
     public void removeLayer(Object source) {
         if (source == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Object trying to add equals to null.");
-            }
+            log.warn("Object sourc equals to null.");
             throw new IllegalArgumentException("Parameter 'layer' is null.");
         }
 
@@ -119,19 +108,16 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             Layer layer = (Layer) source;
             this.wwd.getModel().getLayers().remove(layer);
         } else {
-            if (log.isWarnEnabled()) {
-                log.warn("Can't remove object. Currently, only objects of type Layer are supported.");
-            }
+            log.warn("Can't remove object.");
         }
     }
 
     /**
-     * Removes all layers from the World Wind visualization component.
-     * <p>
-     * Note: This implementation keeps the following layers: 
-     * <ul> <li>Atmosphere</li> <li>NASA Blue Marble Image</li> <li>Blue Marble (WMS) 2004</li> 
-     * <li>i-cubed Landsat</li> <li>Place Names</li> <li>Scale bar</li>  <li>Compass</li> 
-     * <li>View Controls</li> </ul>
+     * Removes all layers from the World Wind visualization component. <p> Note:
+     * This implementation keeps the following layers: <ul> <li>Atmosphere</li>
+     * <li>NASA Blue Marble Image</li> <li>Blue Marble (WMS) 2004</li>
+     * <li>i-cubed Landsat</li> <li>Place Names</li> <li>Scale bar</li>
+     * <li>Compass</li> <li>View Controls</li> </ul>
      */
     @Override
     public void removeAllLayers() {
@@ -147,14 +133,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     || layer.getName().equalsIgnoreCase("Scale bar")
                     || layer.getName().equalsIgnoreCase("Compass")
                     || layer.getName().equalsIgnoreCase("View Controls")) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Not removing layer: {}", layer.getName());
-                }
+                log.debug("Not removing layer: {}", layer.getName());
                 continue;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Removing layer: {}", layer.getName());
-                }
+                log.debug("Removing layer: {}", layer.getName());
                 removeLayer(layer);
             }
         }
@@ -171,9 +153,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void setCamera(Camera c) {
         // TODO <steffen>: Move behaviour into camera classes.
         if (c == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Camera trying to add equals to null.");
-            }
             throw new IllegalArgumentException("Parameter Camera is null.");
         }
         if (c instanceof AnimatedCamera) {
@@ -189,9 +168,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public synchronized void addCameraListener(CameraListener cl) {
         if (cl == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("CameraListener trying to add is null.");
-            }
             throw new IllegalArgumentException("Parameter CameraListener is null.");
         }
         this.wwd.getView().addPropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
@@ -200,9 +176,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public synchronized void removeCameraListener(CameraListener cl) {
         if (cl == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("CameraListener trying to remove is null.");
-            }
             throw new IllegalArgumentException("Parameter CameraListener is null.");
         }
         this.wwd.getView().removePropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
@@ -235,72 +208,89 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (log.isDebugEnabled()) {
-            log.debug("Not supported!");
+        log.debug("Not supported!");
+    }
+
+    //------------------------------------------------------------------------
+    //
+    //  Following a list of internal test methods. Will be removed soon or later.
+    //
+    //------------------------------------------------------------------------
+    @Deprecated
+    public void addTimeseries() {
+        URL url = getClass().getClassLoader().getResource("ts_nox_2m.zip");
+        log.debug("URL to load from: {}", url.toString());
+        String[] timesteps = new String[]{"Val_200503", "Val_200500"};
+        addLayer(url, new VisTimeseries(timesteps));
+    }
+
+    @Deprecated
+    public void removeTimeseries() {
+        LayerList layerList = this.wwd.getModel().getLayers();
+        for (Object object : layerList) {
+            Layer layer = (Layer) object;
+            if (layer.getName().startsWith("ts_nox_2m")) {
+                log.debug("Removing layer: {}", layer.getName());
+                removeLayer(layer);
+            }
         }
     }
 
-    // TODO <steffen>: Remove fake methods afterwards.
+    @Deprecated
     public void addBuildings() {
-        URL url = getClass().getClassLoader().getResource("atr-buildings.zip");
-        addLayer(url);
+        URL url = getClass().getClassLoader().getResource("Buildings.zip");
+        log.debug("URL to load from: {}", url.toString());
+        addLayer(url, new VisExtrudePolygon("Elevation"));
     }
 
-    // TODO <steffen>: Remove fake methods afterwards.
+    @Deprecated
     public void removeBuildings() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
             Layer layer = (Layer) object;
             // TODO <steffen>: Check usage of World Wind constants here.
             if (layer.getName().startsWith("Building")) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Removing layer: {}", layer.getName());
-                }
+                log.debug("Removing layer: {}", layer.getName());
                 removeLayer(layer);
             }
         }
     }
 
-    // TODO <steffen>: Remove fake methods afterwards.
+    @Deprecated
     public void addRooftopResults() {
         URL url = getClass().getClassLoader().getResource("rooftop3.tiff");
-        if (log.isDebugEnabled()) {
-            log.debug("URL to load from: {}", url.toString());
-        }
-        addLayer(url);
+        log.debug("URL to load from: {}", url.toString());
+        addLayer(url, new VisCreateTexture());
     }
 
-    // TODO <steffen>: Remove fake methods afterwards.
+    @Deprecated
     public void removeRooftopResults() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
             Layer layer = (Layer) object;
             // TODO <steffen>: Check usage of World Wind constants here.
             if (layer.getName().endsWith("tiff")) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Removing layer: {}", layer.getName());
-                }
+                log.debug("Removing layer: {}", layer.getName());
                 removeLayer(layer);
             }
         }
     }
 
-    // TODO <steffen>: Remove fake methods afterwards.
+    @Deprecated
     public void addStreetLevelResults() {
-        URL url = getClass().getClassLoader().getResource("streetlevel.zip");
-        addLayer(url);
+        URL url = getClass().getClassLoader().getResource("AirQualityStreetLevel.zip");
+        String[] attributes = new String[]{"Perc98d", "NrVehTot"};
+        addLayer(url, new VisExtrudePolyline(attributes));
     }
 
-    // TODO <steffen>: Remove fake methods afterwards.
+    @Deprecated
     public void removeStreetLevelResults() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
             Layer layer = (Layer) object;
             // TODO <steffen>: Check usage of World Wind constants here.
-            if (layer.getName().startsWith("Street level")) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Removing layer: {}", layer.getName());
-                }
+            if (layer.getName().startsWith("AirQuality")) {
+                log.debug("Removing layer: {}", layer.getName());
                 removeLayer(layer);
             }
         }

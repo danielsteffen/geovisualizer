@@ -7,13 +7,7 @@
  */
 package com.dfki.av.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -32,20 +26,40 @@ public class AVUtils {
     private static final Logger log = LoggerFactory.getLogger(AVUtils.class);
 
     /**
-     * 
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public static File DownloadToFile(URL url) throws IOException {
+        // Get filename form url.
+        String urlPath = url.getFile();
+        String fileName = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length());
+        File tmpFile = new File(fileName);
+        tmpFile.deleteOnExit();
+        // Start downloading.
+        FileOutputStream out = new FileOutputStream(tmpFile);
+        BufferedInputStream in = new BufferedInputStream(url.openStream());
+        log.info("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
+        copyInputStream(in, out);
+        log.info("Download finished.");
+
+        return tmpFile;
+    }
+
+    /**
+     *
      * @param url
      * @param prefix
      * @param suffix
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public static File DownloadToTempFile(URL url, String prefix, String suffix) throws IOException {
         BufferedInputStream in = new BufferedInputStream(url.openStream());
         File tmpFile = File.createTempFile(prefix, suffix);
         tmpFile.deleteOnExit();
-        if (log.isDebugEnabled()) {
-            log.debug("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
-        }
+        log.debug("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
         FileOutputStream out = new FileOutputStream(tmpFile);
         byte[] data = new byte[1024];
         int count;
@@ -55,32 +69,24 @@ public class AVUtils {
         in.close();
         out.close();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Download finished.");
-        }
+        log.debug("Download finished.");
         return tmpFile;
     }
 
     /**
-     * 
+     *
      * @param file
      * @param directory
-     * @throws IOException 
+     * @throws IOException
      */
     public static void Unzip(File file, String directory) throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Unzipping ... {}", file.getName());
-        }
-
-        // Unpack files into directory.
+        log.debug("Unzipping ... {}", file.getName());
         ZipFile zipFile = new ZipFile(file);
         Enumeration zipEntries = zipFile.entries();
         String seperator = System.getProperty("file.separator");
         while (zipEntries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) zipEntries.nextElement();
-            if (log.isDebugEnabled()) {
-                log.debug("Unzipping entry {}", entry.getName());
-            }
+            log.debug("Unzipping entry {}", entry.getName());
 
             if (entry.isDirectory()) {
                 // Assume directories are stored parents first then children.
@@ -93,17 +99,14 @@ public class AVUtils {
                     new BufferedOutputStream(new FileOutputStream(
                     directory + seperator + entry.getName())));
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Unzipping finished.");
-        }
+        log.debug("Unzipping finished.");
     }
 
     /**
-     * 
+     *
      * @param in
      * @param out
-     * @throws IOException 
+     * @throws IOException
      */
     private static void copyInputStream(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
