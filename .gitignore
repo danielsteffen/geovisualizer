@@ -6,7 +6,6 @@ VS08/
 .settings/
 .project
 .test
+.DS_Store
 target/
-target/
-nbactions.xml
-Userspuhl.netbeans*
+nbactions.xml
