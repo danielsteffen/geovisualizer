@@ -4,23 +4,42 @@
  */
 package com.dfki.av.sudplan.vis.viswiz;
 
-import com.dfki.av.sudplan.ui.VisualizationWizard;
+import gov.nasa.worldwind.formats.shapefile.Shapefile;
+import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
+import java.awt.Dimension;
 import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DataSourceSelectionPanel extends JPanel {
 
     private static Logger log = LoggerFactory.getLogger(DataSourceSelectionController.class);
+    private AttributeTableModel tableModel;
+    private JTable tabAttributes;
+    private File file;
+    private JScrollPane spAttributeTable;
 
     /**
      * Creates new form DataSourceSelectionPanel
      */
     public DataSourceSelectionPanel() {
         initComponents();
+        this.file = null;
+        // init my components here:
+        this.tableModel = new AttributeTableModel();
+        this.tabAttributes = new JTable(tableModel);
+        this.tabAttributes.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        this.tabAttributes.setFillsViewportHeight(true);
+        this.spAttributeTable = new JScrollPane(this.tabAttributes);
+        jPanel2.add(this.spAttributeTable);
     }
 
     @Override
@@ -40,12 +59,14 @@ public final class DataSourceSelectionPanel extends JPanel {
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(DataSourceSelectionPanel.class, "DataSourceSelectionPanel.jPanel1.border.title"))); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DataSourceSelectionPanel.class, "DataSourceSelectionPanel.jLabel1.text")); // NOI18N
 
         jTextField1.setText(org.openide.util.NbBundle.getMessage(DataSourceSelectionPanel.class, "DataSourceSelectionPanel.jTextField1.text")); // NOI18N
+        jTextField1.setEnabled(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(DataSourceSelectionPanel.class, "DataSourceSelectionPanel.jButton1.text")); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -62,7 +83,7 @@ public final class DataSourceSelectionPanel extends JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -76,13 +97,18 @@ public final class DataSourceSelectionPanel extends JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(DataSourceSelectionPanel.class, "DataSourceSelectionPanel.jPanel2.border.title"))); // NOI18N
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -90,21 +116,25 @@ public final class DataSourceSelectionPanel extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         JFileChooser jfc = new JFileChooser();
-        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile", "shp"));
+        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (.shp)", "shp"));
+        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (.zip)", "zip"));
         int retValue = jfc.showOpenDialog(this);
 
         if (retValue == JFileChooser.APPROVE_OPTION) {
-            File file = jfc.getSelectedFile();
-            if (file != null) {
-                jTextField1.setText(file.getAbsolutePath());
-//                VisualizationWizard.ShapefileLoader shapefileLoader = new VisualizationWizard.ShapefileLoader(file);
-//                shapefileLoader.execute();
+            File f = jfc.getSelectedFile();
+            if (f != null) {
+                jTextField1.setText(f.getAbsolutePath());
+                file = f;
+                ShapefileLoader shapefileLoader = new ShapefileLoader(file);
+                shapefileLoader.execute();
             }
         } else {
             if (log.isDebugEnabled()) {
@@ -116,6 +146,71 @@ public final class DataSourceSelectionPanel extends JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
+    public File getSelectedDataSource() {
+        return this.file;
+    }
+
+    /**
+     *
+     * @author Daniel Steffen <daniel.steffen at dfki.de>
+     */
+    public class ShapefileLoader extends SwingWorker<List<Map.Entry<String, Object>>, Void> {
+
+        /*
+         * Logger.
+         */
+        private final Logger log = LoggerFactory.getLogger(ShapefileLoader.class);
+        private File file;
+
+        public ShapefileLoader(File file) {
+            this.file = file;
+        }
+
+        @Override
+        protected List<Map.Entry<String, Object>> doInBackground() throws Exception {
+            ArrayList<Map.Entry<String, Object>> list = new ArrayList<Map.Entry<String, Object>>();
+            Shapefile shapefile = new Shapefile(file);
+            if (shapefile.hasNext()) {
+                ShapefileRecord record = shapefile.nextRecord();
+                Set<Map.Entry<String, Object>> set = record.getAttributes().getEntries();
+                for (Map.Entry<String, Object> entry : set) {
+                    if (entry.getValue() != null) {
+                        list.add(entry);
+                    } else {
+                        log.debug("Skipping entry: {}", entry.getKey());
+                    }
+                }
+            }
+            return list;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                List<Map.Entry<String, Object>> attributeList = get();
+                TableModel tModel = tabAttributes.getModel();
+                if (tModel instanceof AttributeTableModel) {
+                    AttributeTableModel model = (AttributeTableModel) tModel;
+                    model.removeAllRows();
+                    for (Map.Entry<String, Object> value : attributeList) {
+                        Object[] rowData = new Object[model.getColumnCount()];
+                        rowData[0] = false;
+                        rowData[1] = value.getKey();
+                        rowData[2] = value.getValue().getClass().getSimpleName();
+                        model.addRow(rowData);
+                    }
+                }
+                tabAttributes.updateUI();
+            } catch (InterruptedException ex) {
+                log.error(ex.toString());
+            } catch (ExecutionException ex) {
+                log.error(ex.toString());
+            }
+            jPanel2.updateUI();
+        }
+    }
 }

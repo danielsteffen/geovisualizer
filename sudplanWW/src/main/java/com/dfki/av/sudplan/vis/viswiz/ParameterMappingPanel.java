@@ -2,18 +2,19 @@ package com.dfki.av.sudplan.vis.viswiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.VisParameter;
+import java.io.File;
 import java.util.Iterator;
 import javax.swing.JPanel;
 
 public final class ParameterMappingPanel extends JPanel {
 
+    private File file;
+    private IVisAlgorithm visAlgorithm;
+    private String[] attributes;
+    
     /** Creates new form ParameterMappingPanel */
     public ParameterMappingPanel(IVisAlgorithm algo) {
         initComponents();
-        for (Iterator<VisParameter> it = algo.getVisParameter().iterator(); it.hasNext();) {
-            VisParameter param = it.next();
-            this.add(new AttributePanel(param.getName()));
-        }
     }
 
     @Override
@@ -33,4 +34,23 @@ public final class ParameterMappingPanel extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+
+    public String[] getAttributes(){
+        return this.attributes;
+    }
+    
+    public void setSelectedFile(File f){
+        this.file = f;
+    }
+    
+    public void setSelectedVisualization(IVisAlgorithm i){
+        this.visAlgorithm = i;
+        this.removeAll();
+        for (Iterator<VisParameter> it = visAlgorithm.getVisParameter().iterator(); it.hasNext();) {
+            VisParameter param = it.next();
+            AttributePanel p = new AttributePanel(param.getName());
+            this.add(p);
+        }
+        this.updateUI();
+    }
 }

@@ -1,4 +1,3 @@
-
 package com.dfki.av.sudplan.vis.viswiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
@@ -16,14 +15,12 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
      * component from this class, just use getComponent().
      */
     private Component component;
-    private IVisAlgorithm visAlgorithms;
     private static Logger log = LoggerFactory.getLogger(VisualizationSelectionController.class);
-    
+
     public VisualizationSelectionController() {
         super();
     }
 
-    
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
@@ -58,27 +55,15 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
-    public final void addChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.add(l);
-    }
-    }
-    public final void removeChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.remove(l);
-    }
-    }
-    protected final void fireChangeEvent() {
-    Iterator<ChangeListener> it;
-    synchronized (listeners) {
-    it = new HashSet<ChangeListener>(listeners).iterator();
-    }
-    ChangeEvent ev = new ChangeEvent(this);
-    while (it.hasNext()) {
-    it.next().stateChanged(ev);
-    }
-    }
+     * private final Set<ChangeListener> listeners = new
+     * HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0 public
+     * final void addChangeListener(ChangeListener l) { synchronized (listeners)
+     * { listeners.add(l); } } public final void
+     * removeChangeListener(ChangeListener l) { synchronized (listeners) {
+     * listeners.remove(l); } } protected final void fireChangeEvent() {
+     * Iterator<ChangeListener> it; synchronized (listeners) { it = new
+     * HashSet<ChangeListener>(listeners).iterator(); } ChangeEvent ev = new
+     * ChangeEvent(this); while (it.hasNext()) { it.next().stateChanged(ev); } }
      */
 
     // You can use a settings object to keep track of state. Normally the
@@ -86,10 +71,13 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
-        WizardDescriptor wiz = (WizardDescriptor) settings;
-
+       
     }
 
     public void storeSettings(Object settings) {
+        WizardDescriptor wiz = (WizardDescriptor) settings;
+        IVisAlgorithm algo = ((VisualizationSelectionPanel)getComponent()).getSelectedVisualization();
+        wiz.putProperty("Visualization", algo);
     }
+    
 }

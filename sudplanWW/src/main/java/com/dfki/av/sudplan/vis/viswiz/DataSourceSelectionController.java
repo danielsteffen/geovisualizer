@@ -5,6 +5,7 @@
 package com.dfki.av.sudplan.vis.viswiz;
 
 import java.awt.Component;
+import java.io.File;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
@@ -79,8 +80,12 @@ public class DataSourceSelectionController implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
+        WizardDescriptor descriptor = (WizardDescriptor)settings;
     }
 
     public void storeSettings(Object settings) {
+        WizardDescriptor descriptor = (WizardDescriptor)settings;
+        File f = ((DataSourceSelectionPanel)getComponent()).getSelectedDataSource();
+        descriptor.putProperty("DataSourceFile", f);
     }
 }

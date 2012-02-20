@@ -5,15 +5,13 @@
  */
 package com.dfki.av.sudplan.ui;
 
-import com.dfki.av.sudplan.vis.algorithm.VisExtrudePolygon;
-import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
-import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.viswiz.VisWizIterator;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
+import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.Visualization;
+import com.dfki.av.sudplan.vis.viswiz.VisWizIterator;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import java.awt.Dialog;
@@ -23,8 +21,6 @@ import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -44,14 +40,12 @@ public class MainFrame extends javax.swing.JFrame {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private Dimension canvasSize;
     protected VisualizationPanel wwPanel;
-    private VisualizationWizard wizard;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         this.canvasSize = new Dimension(1200, 800);
-        this.wizard = new VisualizationWizard(this, true);
 
         this.wwPanel = new VisualizationPanel(canvasSize);
         this.wwPanel.setPreferredSize(canvasSize);
@@ -594,7 +588,7 @@ public class MainFrame extends javax.swing.JFrame {
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
-            Object zipData = wizardDescriptor.getProperty("ShapeZipFile");
+            Object zipData = wizardDescriptor.getProperty("DataSourceFile");
             IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("VisAlgorithm");
             String[] visAttributes = (String[]) wizardDescriptor.getProperty("Attributes");
             wwPanel.addLayer(zipData, visAlgo, visAttributes);

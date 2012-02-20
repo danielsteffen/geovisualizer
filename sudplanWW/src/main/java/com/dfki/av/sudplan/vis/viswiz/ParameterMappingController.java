@@ -4,6 +4,7 @@
  */
 package com.dfki.av.sudplan.vis.viswiz;
 
+import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
@@ -83,6 +84,9 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
+        WizardDescriptor wiz = (WizardDescriptor) settings;
+        IVisAlgorithm algo = (IVisAlgorithm)wiz.getProperty("Visualization");
+        ((ParameterMappingPanel)getComponent()).setSelectedVisualization(algo);
     }
 
     public void storeSettings(Object settings) {

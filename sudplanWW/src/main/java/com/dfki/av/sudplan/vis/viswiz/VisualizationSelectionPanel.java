@@ -24,11 +24,14 @@ public final class VisualizationSelectionPanel extends JPanel {
      */
     private static final Logger log = LoggerFactory.getLogger(VisualizationSelectionPanel.class);
 
+    public IVisAlgorithm visAlgorithm;
     /**
      * Creates new form VisualizationSelectionPanel
      */
     public VisualizationSelectionPanel() {
         initComponents();
+        this.visAlgorithm=null;
+                
         for (Iterator<IVisAlgorithm> it = Visualization.LIST.iterator(); it.hasNext();) {
             final IVisAlgorithm algo = it.next();
             JButton label = new JButton(algo.getIcon());
@@ -39,6 +42,7 @@ public final class VisualizationSelectionPanel extends JPanel {
                 public void focusGained(FocusEvent fe) {
                     jTextField1.setText(algo.getName());
                     jTextPane1.setText(algo.getDescription());
+                    visAlgorithm = algo;
                 }
 
                 @Override
@@ -162,4 +166,8 @@ public final class VisualizationSelectionPanel extends JPanel {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
+
+    public IVisAlgorithm getSelectedVisualization(){
+        return this.visAlgorithm;
+    }
 }
