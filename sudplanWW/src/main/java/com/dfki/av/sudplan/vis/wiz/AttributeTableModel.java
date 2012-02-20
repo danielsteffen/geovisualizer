@@ -5,7 +5,7 @@
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.viswiz;
+package com.dfki.av.sudplan.vis.wiz;
 
 import javax.swing.table.DefaultTableModel;
 import org.slf4j.Logger;

@@ -2,20 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.vis.viswiz;
+package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ParameterMappingController implements WizardDescriptor.Panel {
+public class VisWizWizardPanel5 implements WizardDescriptor.Panel {
 
-    private static Logger log = LoggerFactory.getLogger(ParameterMappingController.class);
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
@@ -28,7 +23,7 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     // create only those which really need to be visible.
     public Component getComponent() {
         if (component == null) {
-            component = new ParameterMappingPanel(Visualization.EXTRUDE_POLYLINE);
+            component = new VisWizVisualPanel5();
         }
         return component;
     }
@@ -84,12 +79,8 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
-        WizardDescriptor wiz = (WizardDescriptor) settings;
-        IVisAlgorithm algo = (IVisAlgorithm)wiz.getProperty("Visualization");
-        ((ParameterMappingPanel)getComponent()).setSelectedVisualization(algo);
     }
 
     public void storeSettings(Object settings) {
-        log.debug("Finished");
     }
 }

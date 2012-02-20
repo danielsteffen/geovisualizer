@@ -1,4 +1,4 @@
-package com.dfki.av.sudplan.vis.viswiz;
+package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.VisParameter;
