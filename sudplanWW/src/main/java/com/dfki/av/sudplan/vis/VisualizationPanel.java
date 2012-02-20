@@ -219,9 +219,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     //------------------------------------------------------------------------
     @Deprecated
     public void addTimeseries() {
-        URL url = getClass().getClassLoader().getResource("ts_nox_2m.zip");
+        URL url = getClass().getClassLoader().getResource("data/ts_nox_2m.zip");
         log.debug("URL to load from: {}", url.toString());
-        String[] attributes = new String[]{"Val_200503","Val_20050"};
+        String[] attributes = new String[]{"Val_200503","Val_200501"};
         addLayer(url, Visualization.TIMESERIES, attributes);
     }
 
@@ -239,7 +239,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Deprecated
     public void addBuildings() {
-        URL url = getClass().getClassLoader().getResource("Buildings.zip");
+        URL url = getClass().getClassLoader().getResource("data/Buildings.zip");
         log.debug("URL to load from: {}", url.toString());
         String[] attributes = new String[]{"Elevation"};
         addLayer(url, Visualization.EXTRUDE_POLYGON, attributes);
@@ -260,7 +260,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Deprecated
     public void addRooftopResults() {
-        URL url = getClass().getClassLoader().getResource("rooftop3.tiff");
+        URL url = getClass().getClassLoader().getResource("data/rooftop3.tiff");
         log.debug("URL to load from: {}", url.toString());
         addLayer(url, new VisCreateTexture(), null);
     }
@@ -280,7 +280,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Deprecated
     public void addStreetLevelResults() {
-        URL url = getClass().getClassLoader().getResource("AirQualityStreetLevel.zip");
+        URL url = getClass().getClassLoader().getResource("data/AirQualityStreetLevel.zip");
         String[] attributes = new String[]{"Perc98d", "NrVehTot"};
         addLayer(url, Visualization.EXTRUDE_POLYLINE, attributes);
     }
