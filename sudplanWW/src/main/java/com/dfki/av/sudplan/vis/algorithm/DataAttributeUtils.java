@@ -28,7 +28,7 @@ public class DataAttributeUtils {
     public static double[] AutoClassificationOfNumberAttribute(Shapefile shpfile, String attribute, int numClasses) {
 
         log.debug("Auto classification of attribute <{}>.", attribute);
-        log.debug("Searching min and max value for attribute <{]>.", attribute);
+        log.debug("Searching min and max value for attribute <{}>.", attribute);
         double minValue = Shapefile.Min(shpfile, attribute);
         double maxValue = Shapefile.Max(shpfile, attribute);
         log.debug("Attribute {} min value is {}.", attribute, minValue);
