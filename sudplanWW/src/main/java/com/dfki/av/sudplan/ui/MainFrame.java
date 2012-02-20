@@ -126,6 +126,8 @@ public class MainFrame extends javax.swing.JFrame {
         miGotoLinz = new javax.swing.JMenuItem();
         mWuppertal = new javax.swing.JMenu();
         miGotoWuppertal = new javax.swing.JMenuItem();
+        mPraque = new javax.swing.JMenu();
+        miGotoPraque = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
 
@@ -229,7 +231,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 606, Short.MAX_VALUE)
+            .addGap(0, 608, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -289,6 +291,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
+        miWizard.setEnabled(false);
         miWizard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miWizardActionPerformed(evt);
@@ -298,6 +301,7 @@ public class MainFrame extends javax.swing.JFrame {
         mAdd.add(jSeparator4);
 
         mAddLayer.setText(bundle.getString("MainFrame.mAddLayer.text")); // NOI18N
+        mAddLayer.setEnabled(false);
 
         miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
         miAddGeoTiff.addActionListener(new java.awt.event.ActionListener() {
@@ -475,6 +479,18 @@ public class MainFrame extends javax.swing.JFrame {
         mWuppertal.add(miGotoWuppertal);
 
         mbMain.add(mWuppertal);
+
+        mPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mPraque.text")); // NOI18N
+
+        miGotoPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoPraque.text")); // NOI18N
+        miGotoPraque.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoPraqueActionPerformed(evt);
+            }
+        });
+        mPraque.add(miGotoPraque);
+
+        mbMain.add(mPraque);
 
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
 
@@ -664,6 +680,10 @@ public class MainFrame extends javax.swing.JFrame {
         wwPanel.removeTimeseries();
     }//GEN-LAST:event_miRemoveTimeseriesActionPerformed
 
+    private void miGotoPraqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoPraqueActionPerformed
+        wwPanel.setCamera(new AnimatedCamera(50.08781, 14.42046, 20000.0));
+    }//GEN-LAST:event_miGotoPraqueActionPerformed
+
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -748,6 +768,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mLayers;
     private javax.swing.JMenu mLinz;
+    private javax.swing.JMenu mPraque;
     private javax.swing.JMenu mStockholm;
     private javax.swing.JMenu mView;
     private javax.swing.JMenu mWuppertal;
@@ -769,6 +790,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miGoToStockhom;
     private javax.swing.JMenuItem miGoto;
     private javax.swing.JMenuItem miGotoLinz;
+    private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miRemoveBuildings;

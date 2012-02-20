@@ -34,7 +34,7 @@
 
     <profiles>
         <profile>
-            <id>sudplan3D-webstart-netbeans</id>
+            <id>sudplan3D-webstart-develop</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -49,14 +49,14 @@
         </profile>
 
         <profile>
-            <id>sudplan3D-webstart-steffen</id>
+            <id>sudplan3D-webstart</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                
                 <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
                 <distribution.server>dfki-artifactory</distribution.server>
@@ -71,7 +71,7 @@
             <properties>
                 <ww-scope>provided</ww-scope>                
                 <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <codebase>http://sudplan.kl.dfki.de/</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
                 <distribution.server>dfki-artifactory</distribution.server>
