@@ -14,7 +14,6 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.WWUtil;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +28,32 @@ import org.gdal.ogr.Geometry;
  */
 public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
-    private double[] boundaries;
+    /**
+     * 
+     */
     private Material[] materials;
+    /**
+     * 
+     */
     private List<Category> categories;
-
+    
     /**
      *
      */
     public VisExtrudePolyline() {
-        super("Extrude Polylines", "You have to select 2 attributes for this visualization technique.\nThe Polyline technique maps one scalar attribute 'a' of your data source to the parameter color. The second attirbute 'b' is used for the extrution.",
+        super("Extrude Polylines", "You have to select 2 attributes for this "
+                + "visualization technique.\nThe Polyline technique maps one "
+                + "scalar attribute 'a' of your data source to the parameter "
+                + "color. The second attirbute 'b' is used for the extrution.",
                 new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
                 getResource("icons/vis_color_height.png")));
-        VisParameter parameter0 = new VisParameter("Color");
+        
+        VisParameter parameter0 = new VisParameter("Color", true);
+        parameter0.setCategorization(new CategorizationAuto(5));
         parameters.add(parameter0);
+        
         VisParameter parameter1 = new VisParameter("Height");
         parameters.add(parameter1);
-
     }
 
     @Override
@@ -58,7 +67,6 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         }
 
         List<Layer> layers = new ArrayList<Layer>();
-
         if (data instanceof Shapefile
                 && attributes[0] instanceof String
                 && attributes[1] instanceof String) {
@@ -66,17 +74,24 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
             String attribute0 = (String) attributes[0];
             String attribute1 = (String) attributes[1];
 
-            // Pre-processing data for parameter color.
-            log.debug("Paramter {} is classifiable.", parameters.get(0).getName());
-
-            this.categories = DataAttributeUtils.AutoClassificationOfAttribute(shapefile, attribute0);
+            //
+            // Pre-processing data for attribute 0 (color) if needed.
+            //
+            Categorization cat = parameters.get(0).getCategorization();
+            this.categories = cat.execute(shapefile, attribute0);
+            
+            //
+            // Mapping of data categories to visual categories.
+            //
             Color[] colors = ColorUtils.CreateRedGreenColorGradientAttributes(categories.size());
             this.materials = new Material[categories.size()];
             for (int i = 0; i < materials.length; i++) {
                 materials[i] = new Material(colors[i]);
             }
 
+            //
             // Create the visualization
+            //
             if (Shapefile.isPolylineType(shapefile.getShapeType())) {
                 RenderableLayer layer = new RenderableLayer();
                 for (int i = 0; i < shapefile.getFeatureCount(); i++) {
@@ -88,7 +103,6 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
             } else {
                 log.warn("Extrude Polyline Visualization does not support shape type {}.", shapefile.getShapeType());
             }
-
         } else {
             log.debug("Data type not supported.");
         }
@@ -161,7 +175,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
         for (int i = 0; i < categories.size(); i++) {
             Category c = categories.get(i);
-            if (c.elementOf(o)) {
+            if (c.includes(o)) {
                 return materials[i];
             }
         }

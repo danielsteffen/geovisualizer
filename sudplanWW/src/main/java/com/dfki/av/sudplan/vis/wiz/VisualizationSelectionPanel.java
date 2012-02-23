@@ -84,7 +84,10 @@ public final class VisualizationSelectionPanel extends JPanel {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(VisualizationSelectionPanel.class, "VisualizationSelectionPanel.jPanel2.border.title"))); // NOI18N
 
+        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField1.setEditable(false);
         jTextField1.setText(org.openide.util.NbBundle.getMessage(VisualizationSelectionPanel.class, "VisualizationSelectionPanel.jTextField1.text")); // NOI18N
+        jTextField1.setFocusable(false);
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
@@ -109,6 +112,8 @@ public final class VisualizationSelectionPanel extends JPanel {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(VisualizationSelectionPanel.class, "VisualizationSelectionPanel.jPanel1.border.title"))); // NOI18N
 
+        jTextPane1.setEditable(false);
+        jTextPane1.setFocusable(false);
         jScrollPane2.setViewportView(jTextPane1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

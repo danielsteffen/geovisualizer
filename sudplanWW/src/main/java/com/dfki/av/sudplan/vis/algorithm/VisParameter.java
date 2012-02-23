@@ -18,9 +18,13 @@ public class VisParameter {
      */
     private String name;
     /**
-     * The transfer function for the visualization parameter.
+     *
      */
-    private TransferFunction transferFunction;
+    private Categorization categorization;
+    /**
+     *
+     */
+    private boolean categorizable;
 
     /**
      * Creates object
@@ -33,11 +37,16 @@ public class VisParameter {
      * <code>null</code>.
      */
     public VisParameter(String name) {
+        this(name, false);
+    }
+    
+    public VisParameter(String name, boolean categorizable){
         if (name == null) {
             throw new IllegalArgumentException("Parameter name for VisParameter equals null.");
         }
         this.name = name;
-        this.transferFunction = new DefaultTransferFunction();
+        this.categorization = new CategorizationOff();
+        this.categorizable = categorizable;
     }
 
     /**
@@ -50,22 +59,28 @@ public class VisParameter {
     }
 
     /**
-     * 
-     * @param c 
+     *
+     * @param c
      */
-    public void setTransferFunction(TransferFunction c) {
+    public void setCategorization(Categorization c) {
         if (c == null) {
-            throw new IllegalArgumentException("Can't set classification to null.");
+            throw new IllegalArgumentException("Can't set categorization to null.");
         }
-        this.transferFunction = c;
+        this.categorization = c;
     }
 
     /**
      *
      * @return
      */
-    public TransferFunction getTransferFunction() {
-        return this.transferFunction;
+    public Categorization getCategorization() {
+        return this.categorization;
     }
 
+    /**
+     *
+     */
+    public boolean isCategorizable() {
+        return categorizable;
+    }
 }

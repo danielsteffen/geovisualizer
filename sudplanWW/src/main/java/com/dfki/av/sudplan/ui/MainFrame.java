@@ -603,10 +603,10 @@ public class MainFrame extends javax.swing.JFrame {
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
-            Object zipData = wizardDescriptor.getProperty("DataSourceFile");
-            IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("Visualization");
-            String[] visAttributes = (String[]) wizardDescriptor.getProperty("Attributes");
-            wwPanel.addLayer(zipData, visAlgo, visAttributes);
+            Object data = wizardDescriptor.getProperty("SelectedDataSource");
+            IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("SelectedVisualization");
+            String[] dataAttributes = (String[]) wizardDescriptor.getProperty("SelectedDataAttributes");
+            wwPanel.addLayer(data, visAlgo, dataAttributes);
         }
     }//GEN-LAST:event_miWizardActionPerformed
 

@@ -88,7 +88,7 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     // by the user.
     public void readSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
-        IVisAlgorithm algo = (IVisAlgorithm)wiz.getProperty("Visualization");
+        IVisAlgorithm algo = (IVisAlgorithm)wiz.getProperty("SelectedVisualization");
         List<String> attributes = (List<String>)wiz.getProperty("DataAttributes");        
         ((ParameterMappingPanel)getComponent()).setSelectedVisualization(algo, attributes);
     }
@@ -96,6 +96,6 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     public void storeSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
         String[] attributes = ((ParameterMappingPanel)getComponent()).getAttributes();
-        wiz.putProperty("Attributes", attributes);
+        wiz.putProperty("SelectedDataAttributes", attributes);
     }
 }

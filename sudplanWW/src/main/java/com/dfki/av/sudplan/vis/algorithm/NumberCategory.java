@@ -6,7 +6,13 @@ package com.dfki.av.sudplan.vis.algorithm;
  */
 public class NumberCategory implements Category {
 
+    /**
+     * 
+     */
     private double minValue;
+    /**
+     * 
+     */
     private double maxValue;
 
     /**
@@ -15,12 +21,15 @@ public class NumberCategory implements Category {
      * @param max 
      */
     public NumberCategory(Number min, Number max) {
+        if(min == null || max == null){
+            throw new IllegalArgumentException("Parameter for NumberCategory null.");
+        }
         this.minValue = min.doubleValue();
         this.maxValue = max.doubleValue();
     }
 
     @Override
-    public boolean elementOf(Object o) {
+    public boolean includes(Object o) {
         if (o == null) {
             throw new IllegalArgumentException();
         }

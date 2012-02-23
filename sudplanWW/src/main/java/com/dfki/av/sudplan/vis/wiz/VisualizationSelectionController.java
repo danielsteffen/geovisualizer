@@ -84,7 +84,7 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
     public void storeSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
         IVisAlgorithm algo = ((VisualizationSelectionPanel)getComponent()).getSelectedVisualization();
-        wiz.putProperty("Visualization", algo);
+        wiz.putProperty("SelectedVisualization", algo);
     }
     
 }

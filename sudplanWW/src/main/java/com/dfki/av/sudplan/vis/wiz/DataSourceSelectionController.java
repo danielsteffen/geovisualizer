@@ -89,11 +89,7 @@ public class DataSourceSelectionController implements WizardDescriptor.Panel {
     public void storeSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor)settings;
         File f = ((DataSourceSelectionPanel)getComponent()).getSelectedDataSource();
-//        if(f.getAbsolutePath().endsWith(".zip")){
-//            String path = f.getAbsolutePath().replace(".zip", ".shp");
-//            f = new File(path);
-//        }
-        descriptor.putProperty("DataSourceFile", f);
+        descriptor.putProperty("SelectedDataSource", f);
         List<String> l = ((DataSourceSelectionPanel)getComponent()).getSelectedAttributes();
         descriptor.putProperty("DataAttributes", l);
     }

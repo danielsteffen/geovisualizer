@@ -7,7 +7,11 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
+import com.dfki.av.sudplan.vis.algorithm.CategorizationAuto;
+import com.dfki.av.sudplan.vis.algorithm.CategorizationOff;
 import com.dfki.av.sudplan.vis.algorithm.VisParameter;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +21,9 @@ import java.util.List;
  */
 public class AttributePanel extends javax.swing.JPanel {
 
+    /**
+     *
+     */
     private String attributeName;
 
     /**
@@ -25,14 +32,33 @@ public class AttributePanel extends javax.swing.JPanel {
     public AttributePanel(final VisParameter param, final List<String> list) {
         this.attributeName = param.getName();
         initComponents();
+        
         jComboBox1.removeAllItems();
         for (Iterator<String> it = list.iterator(); it.hasNext();) {
             String string = it.next();
             jComboBox1.addItem(string);
         }
-//        if(!param.hasTransferFunction()){
-        jCheckBox1.setVisible(false);
-//        }
+        
+        if (param.isCategorizable()) {
+            if (param.getCategorization() instanceof CategorizationOff) {
+                jCheckBox1.setSelected(false);
+            } else {
+                jCheckBox1.setSelected(true);
+            }
+            jCheckBox1.setSelected(true);
+            jCheckBox1.addItemListener(new ItemListener() {
+
+                public void itemStateChanged(ItemEvent e) {
+                    if (jCheckBox1.isSelected()) {
+                        param.setCategorization(new CategorizationAuto(5));
+                    } else {
+                        param.setCategorization(new CategorizationOff());
+                    }
+                }
+            });
+        } else {
+            jCheckBox1.setVisible(false);
+        }
     }
 
     /**
