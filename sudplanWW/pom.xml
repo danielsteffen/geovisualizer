@@ -34,7 +34,7 @@
 
     <profiles>
         <profile>
-            <id>sudplan3D-webstart-develop</id>
+            <id>sudplan3D-develop</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -49,7 +49,22 @@
         </profile>
 
         <profile>
-            <id>sudplan3D-webstart</id>
+            <id>www.dfki.uni-kl.de</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <ww-scope>compile</ww-scope>                   
+                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+                <distribution.server>dfki-artifactory</distribution.server>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>sudplan.kl.dfki.de</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -150,6 +165,11 @@
             <groupId>org.swinglabs</groupId>
             <artifactId>swing-layout</artifactId>
             <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdesktop</groupId>
+            <artifactId>beansbinding</artifactId>
+            <version>1.2.1</version>
         </dependency>
     </dependencies>
     
@@ -281,6 +301,12 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <url>http://download.java.net/maven/2/</url>
+            <id>beans-binding</id>
+            <layout>default</layout>
+            <name>Repository for library Library[beans-binding]</name>
         </repository>
     </repositories>
 
