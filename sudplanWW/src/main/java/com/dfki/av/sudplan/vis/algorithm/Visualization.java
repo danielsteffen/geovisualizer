@@ -29,7 +29,7 @@ public class Visualization {
         list.add(DEFAULT);
         list.add(EXTRUDE_POLYGON);
         list.add(EXTRUDE_POLYLINE);
-        list.add(POINT_CLOUD);
+//        list.add(POINT_CLOUD);
         list.add(TIMESERIES);
 
         return list;

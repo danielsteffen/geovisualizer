@@ -26,7 +26,9 @@ public class VisPointCloud extends VisAlgorithmAbstract {
      *
      */
     public VisPointCloud() {
-        super("Point cloud visualization");
+        super("Point Cloud Visualization");
+        VisParameter parameter0 = new VisParameter("Default");
+        parameters.add(parameter0);
     }
 
     @Override

@@ -7,6 +7,10 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
+import com.dfki.av.sudplan.vis.algorithm.VisParameter;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  *
  * @author steffen
@@ -14,16 +18,21 @@ package com.dfki.av.sudplan.vis.wiz;
 public class AttributePanel extends javax.swing.JPanel {
 
     private String attributeName;
+
     /**
      * Creates new form AttributePanel
      */
-    public AttributePanel() {
-        this("Default Attribute");
-    }
-    
-    public AttributePanel(String name){
-        this.attributeName = name;
+    public AttributePanel(final VisParameter param, final List<String> list) {
+        this.attributeName = param.getName();
         initComponents();
+        jComboBox1.removeAllItems();
+        for (Iterator<String> it = list.iterator(); it.hasNext();) {
+            String string = it.next();
+            jComboBox1.addItem(string);
+        }
+//        if(!param.hasTransferFunction()){
+        jCheckBox1.setVisible(false);
+//        }
     }
 
     /**
@@ -37,6 +46,7 @@ public class AttributePanel extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(this.attributeName));
 
@@ -44,15 +54,23 @@ public class AttributePanel extends javax.swing.JPanel {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jCheckBox1.setSelected(true);
+        jCheckBox1.setText(org.openide.util.NbBundle.getMessage(AttributePanel.class, "AttributePanel.jCheckBox1.text")); // NOI18N
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jComboBox1, 0, 461, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(jLabel1)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jComboBox1, 0, 461, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(jCheckBox1)
+                        .add(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -62,11 +80,18 @@ public class AttributePanel extends javax.swing.JPanel {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
                     .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jCheckBox1)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+    public String getSelectedAttribute() {
+        return (String) jComboBox1.getSelectedItem();
+    }
 }

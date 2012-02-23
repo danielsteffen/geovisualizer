@@ -66,7 +66,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;VisualizationSelectionPanel.jPanel2.border.title&gt;">
+            <TitledBorder title="Name">
               <ResourceString PropertyName="titleX" bundle="com/dfki/av/sudplan/vis/wiz/Bundle.properties" key="VisualizationSelectionPanel.jPanel2.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
@@ -109,7 +109,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;VisualizationSelectionPanel.jPanel1.border.title&gt;">
+            <TitledBorder title="Description">
               <ResourceString PropertyName="titleX" bundle="com/dfki/av/sudplan/vis/wiz/Bundle.properties" key="VisualizationSelectionPanel.jPanel1.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>

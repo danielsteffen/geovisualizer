@@ -42,6 +42,8 @@ public class VisAlgorithmDefault extends VisAlgorithmAbstract {
                 "No description available.",
                 new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
                 getResource("icons/VisAlgorithmDefault.png")));
+        VisParameter parameter0 = new VisParameter("Default");
+        parameters.add(parameter0);
     }
 
     @Override

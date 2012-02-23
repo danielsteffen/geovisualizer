@@ -291,7 +291,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
-        miWizard.setEnabled(false);
         miWizard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miWizardActionPerformed(evt);
@@ -605,7 +604,7 @@ public class MainFrame extends javax.swing.JFrame {
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
             Object zipData = wizardDescriptor.getProperty("DataSourceFile");
-            IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("VisAlgorithm");
+            IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("Visualization");
             String[] visAttributes = (String[]) wizardDescriptor.getProperty("Attributes");
             wwPanel.addLayer(zipData, visAlgo, visAttributes);
         }

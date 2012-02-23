@@ -26,7 +26,7 @@ public class ColorUtils {
         // Color interpolation from Red (0° degree) to Green (120°)
         Color[] colors = new Color[numColors];
         float green = 120.0f;
-        float upperLimit = 180.0f;//green;
+        float upperLimit = green;
         for (int i = 0; i < colors.length; i++) {
             float hue = upperLimit * (1 - (i / (float) (numColors - 1)));
             colors[i] = ColorUtils.HSVtoRGB(hue, 1.0f, 1.0f);

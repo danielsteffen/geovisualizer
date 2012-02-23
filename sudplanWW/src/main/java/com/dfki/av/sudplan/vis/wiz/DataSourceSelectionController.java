@@ -1,11 +1,15 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  DataSourceSelectionController.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis.wiz;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
@@ -80,12 +84,17 @@ public class DataSourceSelectionController implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
-        WizardDescriptor descriptor = (WizardDescriptor)settings;
     }
 
     public void storeSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor)settings;
         File f = ((DataSourceSelectionPanel)getComponent()).getSelectedDataSource();
+//        if(f.getAbsolutePath().endsWith(".zip")){
+//            String path = f.getAbsolutePath().replace(".zip", ".shp");
+//            f = new File(path);
+//        }
         descriptor.putProperty("DataSourceFile", f);
+        List<String> l = ((DataSourceSelectionPanel)getComponent()).getSelectedAttributes();
+        descriptor.putProperty("DataAttributes", l);
     }
 }

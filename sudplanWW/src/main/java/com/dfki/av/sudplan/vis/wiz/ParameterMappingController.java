@@ -1,12 +1,15 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  ParameterMappingController.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import java.awt.Component;
+import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
@@ -28,7 +31,7 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     // create only those which really need to be visible.
     public Component getComponent() {
         if (component == null) {
-            component = new ParameterMappingPanel(Visualization.EXTRUDE_POLYLINE);
+            component = new ParameterMappingPanel();
         }
         return component;
     }
@@ -86,10 +89,13 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     public void readSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
         IVisAlgorithm algo = (IVisAlgorithm)wiz.getProperty("Visualization");
-        ((ParameterMappingPanel)getComponent()).setSelectedVisualization(algo);
+        List<String> attributes = (List<String>)wiz.getProperty("DataAttributes");        
+        ((ParameterMappingPanel)getComponent()).setSelectedVisualization(algo, attributes);
     }
 
     public void storeSettings(Object settings) {
-        log.debug("Finished");
+        WizardDescriptor wiz = (WizardDescriptor) settings;
+        String[] attributes = ((ParameterMappingPanel)getComponent()).getAttributes();
+        wiz.putProperty("Attributes", attributes);
     }
 }

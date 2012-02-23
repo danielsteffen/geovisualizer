@@ -20,7 +20,7 @@ public class AttributeTableModel extends DefaultTableModel {
     /*
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(AttributeTableModel.class);
+    private final static Logger log = LoggerFactory.getLogger(AttributeTableModel.class);
     private final static Object[] DATA_TYPES = new Object[]{
         Boolean.FALSE,
         "none",
@@ -37,13 +37,9 @@ public class AttributeTableModel extends DefaultTableModel {
     }
 
     public void removeAllRows() {
-        int numRows = getRowCount();
-        log.debug("Row count: {}", numRows);
-        for (int i = 0; i < numRows; i++) {
-            log.debug("Removing row {}", i);
-            removeRow(i);
-        }
-        fireTableRowsDeleted(0, numRows);
+        final int rowCount = getRowCount(); 
+        dataVector.clear();
+        fireTableRowsDeleted(0, rowCount);
     }
 
     @Override

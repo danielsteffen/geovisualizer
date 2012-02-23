@@ -8,6 +8,7 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.Settings;
 import com.dfki.av.utils.AVUtils;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.Layer;
@@ -32,27 +33,6 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
      */
     private static final Logger log = LoggerFactory.getLogger(VisWorker.class);
     /**
-     * User home directory of SUDPLAN 3D component.
-     */
-    private static final String SUDPLAN_3D_USER_HOME;
-
-    static {
-        String seperator = System.getProperty("file.separator");
-        String userHome = System.getProperty("user.home");
-        SUDPLAN_3D_USER_HOME = userHome + seperator + ".sudplan3D";
-        File sudplanDirectory = new File(SUDPLAN_3D_USER_HOME);
-        if (sudplanDirectory.exists()) {
-            log.debug("Directory already existing.");
-        } else {
-            if (sudplanDirectory.mkdir()) {
-                log.debug("Directory: {} created.", SUDPLAN_3D_USER_HOME);
-            } else {
-                log.debug("Could not create directory {}.", SUDPLAN_3D_USER_HOME);
-            }
-        }
-    }
-    
-    /**
      * Data source for the layer to be produced.
      */
     private Object dataSource;
@@ -68,7 +48,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
      * The attributes / settings for the visualization technique to consider.
      */
     private Object[] attributes;
-    
+
     /**
      *
      * @param data
@@ -88,8 +68,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
             log.error("Parameter 'canvas' is null.");
             throw new IllegalArgumentException("Parameter 'canvas' is null.");
         }
-        if (attributes == null){
-            
+        if (attributes == null) {
         }
         this.dataSource = data;
         this.algo = vis;
@@ -109,28 +88,28 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
             tmpFile = (File) dataSource;
         } else if (dataSource instanceof URL) {
             URL url = (URL) dataSource;
-            tmpFile = AVUtils.DownloadToFile(url);
+            tmpFile = AVUtils.DownloadFileToDirectory(url, Settings.SUDPLAN_3D_USER_HOME);
         } else if (dataSource instanceof URI) {
             URI uri = (URI) dataSource;
-            tmpFile = AVUtils.DownloadToFile(uri.toURL());
+            tmpFile = AVUtils.DownloadFileToDirectory(uri.toURL(), Settings.SUDPLAN_3D_USER_HOME);
         } else if (dataSource instanceof Layer) {
             layerList.add((Layer) dataSource);
             return layerList;
         } else {
-            log.error("No valid data source for LayerWorker. "
+            log.error("No valid data source. "
                     + "Must be of type File, URL, or URI.");
             throw new IllegalArgumentException("No valid data source for LayerWorker. "
                     + "Must be of type File, URL, or URI.");
         }
 
         String fileName = tmpFile.getName();
-        File file = null;        
+        File file = null;
         if (fileName.endsWith(".zip")) {
-            AVUtils.Unzip(tmpFile, SUDPLAN_3D_USER_HOME);
+            AVUtils.Unzip(tmpFile, Settings.SUDPLAN_3D_USER_HOME);
             // Here, we assume that the name of the shape file equals
             // the name of the zip and vice versa.
             String shpFileName = fileName.replace(".zip", ".shp");
-            file = new File(SUDPLAN_3D_USER_HOME + File.separator + shpFileName);
+            file = new File(Settings.SUDPLAN_3D_USER_HOME + File.separator + shpFileName);
             log.debug("Source file: {}", file.getAbsolutePath());
         } else if (fileName.endsWith(".shp")) {
             file = tmpFile;
@@ -139,9 +118,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
             return layerList;
         }
 
-        String path = file.getAbsolutePath().replace(File.separator, "/");
-        log.debug("Path to shapefile: {}", path);
-        Shapefile shapefile = new Shapefile(path);
+        Shapefile shapefile = new Shapefile(file.getAbsolutePath());
         layerList = algo.createLayersFromData(shapefile, attributes);
 
         return layerList;

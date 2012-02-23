@@ -32,6 +32,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
     public VisTimeseries() {
         super("Timeseries Visualization");
+        VisParameter parameter0 = new VisParameter("Timestep t_0");
+        parameters.add(parameter0);
+        VisParameter parameter1 = new VisParameter("Timestep t_1");
+        parameters.add(parameter1);        
     }
 
     @Override
@@ -195,36 +199,4 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
         return list;
     }
-
-    /**
-     *
-     * @param values
-     * @param minValue
-     * @param maxValue
-     */
-    private void minmax(double[] values, double minValue, double maxValue) {
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
-        for (int i = 0; i < values.length; i++) {
-            if (min > values[i]) {
-                min = values[i];
-            }
-            if (max < values[i]) {
-                max = values[i];
-            }
-        }
-    }
-//    /**
-//     *
-//     * @param values
-//     * @param minValue
-//     * @param maxValue
-//     */
-//    private void scaleValues(double[] values, double lowerValue, double upperValue) {
-//        for (int i = 0; i < values.length; i++) {
-//            values[i] = (values[i] - min) / (max - min);
-//            values[i] = lowerValue + values[i] * (upperValue - lowerValue);
-//        }
-//    }
-
 }

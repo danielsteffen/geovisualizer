@@ -1,9 +1,17 @@
+/*
+ *  ParameterMappingPanel.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
 package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.VisParameter;
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JPanel;
 
 public final class ParameterMappingPanel extends JPanel {
@@ -13,7 +21,10 @@ public final class ParameterMappingPanel extends JPanel {
     private String[] attributes;
     
     /** Creates new form ParameterMappingPanel */
-    public ParameterMappingPanel(IVisAlgorithm algo) {
+    public ParameterMappingPanel() {
+        this.attributes = new String[]{};
+        this.file = null;
+        this.visAlgorithm = null;
         initComponents();
     }
 
@@ -30,25 +41,30 @@ public final class ParameterMappingPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
+        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 
     public String[] getAttributes(){
+        
+        for(int i = 0, j = 0; i< this.getComponentCount(); i++){
+            if(getComponent(i) instanceof AttributePanel){
+                AttributePanel attrPanel = (AttributePanel)getComponent(i);
+                attributes[j] = attrPanel.getSelectedAttribute();
+                j++;
+            }
+        }
         return this.attributes;
     }
     
-    public void setSelectedFile(File f){
-        this.file = f;
-    }
-    
-    public void setSelectedVisualization(IVisAlgorithm i){
+    public void setSelectedVisualization(IVisAlgorithm i, List<String> attributes){
         this.visAlgorithm = i;
+        this.attributes = new String[visAlgorithm.getVisParameter().size()];
         this.removeAll();
         for (Iterator<VisParameter> it = visAlgorithm.getVisParameter().iterator(); it.hasNext();) {
             VisParameter param = it.next();
-            AttributePanel p = new AttributePanel(param.getName());
+            AttributePanel p = new AttributePanel(param, attributes);
             this.add(p);
         }
         this.updateUI();

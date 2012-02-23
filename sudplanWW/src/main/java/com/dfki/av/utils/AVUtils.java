@@ -31,16 +31,20 @@ public class AVUtils {
      * @return
      * @throws IOException
      */
-    public static File DownloadToFile(URL url) throws IOException {
+    public static File DownloadFileToDirectory(URL url, String directory) throws IOException {
         // Get filename form url.
-        String urlPath = url.getFile();
-        String fileName = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length());
+        String urlFile = url.getFile();
+        log.debug("URL file: {}", urlFile);
+        String urlPath = url.getPath();
+        log.debug("URL path: {}", urlFile);
+        String fileName = urlPath.substring(urlFile.lastIndexOf('/') + 1, urlPath.length());
+        fileName = directory + File.separator + fileName;
+        log.debug("Creating file with filename: {}", fileName);
         File tmpFile = new File(fileName);
-        tmpFile.deleteOnExit();
-        // Start downloading.
+
+        log.info("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
         FileOutputStream out = new FileOutputStream(tmpFile);
         BufferedInputStream in = new BufferedInputStream(url.openStream());
-        log.info("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
         copyInputStream(in, out);
         log.info("Download finished.");
 
@@ -61,14 +65,7 @@ public class AVUtils {
         tmpFile.deleteOnExit();
         log.debug("Downloading from {} to {}", url.toString(), tmpFile.getAbsolutePath());
         FileOutputStream out = new FileOutputStream(tmpFile);
-        byte[] data = new byte[1024];
-        int count;
-        while ((count = in.read(data, 0, 1024)) != -1) {
-            out.write(data, 0, count);
-        }
-        in.close();
-        out.close();
-
+        copyInputStream(in, out);
         log.debug("Download finished.");
         return tmpFile;
     }
@@ -80,7 +77,7 @@ public class AVUtils {
      * @throws IOException
      */
     public static void Unzip(File file, String directory) throws IOException {
-        log.debug("Unzipping ... {}", file.getName());
+        log.debug("Unzipping {}", file.getName());
         ZipFile zipFile = new ZipFile(file);
         Enumeration zipEntries = zipFile.entries();
         String seperator = System.getProperty("file.separator");
@@ -111,11 +108,9 @@ public class AVUtils {
     private static void copyInputStream(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int len;
-
         while ((len = in.read(buffer)) >= 0) {
             out.write(buffer, 0, len);
         }
-
         in.close();
         out.close();
     }

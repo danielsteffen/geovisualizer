@@ -1,6 +1,9 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  VisWizIterator.java 
+ *
+ *  Created by DFKI AV on 01.01.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis.wiz;
 
@@ -67,7 +70,7 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
                     // Turn on subtitle creation on each step
                     jc.putClientProperty("WizardPanel_autoWizardStyle", Boolean.TRUE);
                     // Show steps on the left side with the image on the background
-                    jc.putClientProperty("WizardPanel_contentDisplayed", Boolean.FALSE);
+                    jc.putClientProperty("WizardPanel_contentDisplayed", Boolean.TRUE);
                     // Turn on numbering of all steps
                     jc.putClientProperty("WizardPanel_contentNumbered", Boolean.FALSE);
                 }

@@ -1,7 +1,11 @@
 package com.dfki.av.sudplan.io.shapefile;
 
+import com.dfki.av.sudplan.io.DataInput;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.gdal.ogr.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class Shapefile {
+public class Shapefile implements DataInput{
 
     static {
         ogr.RegisterAll();
@@ -41,7 +45,8 @@ public class Shapefile {
         if (filename == null || filename.isEmpty()) {
             throw new IllegalArgumentException("No valid filename for shapefile.");
         }
-        data = ogr.Open(filename, true);
+        String path = filename.replace(File.separator, "/");
+        data = ogr.OpenShared(path, 1);
         if (data == null) {
             throw new RuntimeException("Could not open shapefile.");
         }
@@ -215,6 +220,27 @@ public class Shapefile {
         return data.GetLayer(0).GetExtent();
     }
 
+    /**
+     * 
+     * @return 
+     */
+    public Map<String, Object> getAttributes() {
+
+        if (data == null || data.GetLayerCount() == 0) {
+            log.error("Shapefile has no layers.");
+            throw new RuntimeException("Shapefile has no layers.");
+        }
+        HashMap<String, Object> attributes = new HashMap<String, Object>();
+        FeatureDefn fdef = data.GetLayer(0).GetLayerDefn();
+       
+        for (int i = 0; i < fdef.GetFieldCount(); i++) {
+            FieldDefn fielddef = fdef.GetFieldDefn(i);
+            attributes.put(fielddef.GetName(), fielddef.GetTypeName());
+        }
+        
+        return attributes;
+    }
+
     @Override
     public String toString() {
 
@@ -237,7 +263,7 @@ public class Shapefile {
 
         return tmp;
     }
-    
+
     /**
      *
      * @param shp
@@ -278,5 +304,4 @@ public class Shapefile {
         }
         return maxValue;
     }
-    
 }
