@@ -12,7 +12,7 @@ SUDPLAN 3D Java Web Start Application
 
   The following JNLP Demo shows the SUDPLAN visualization component as a Java Web Start application.
   
-  {{{http://www.dfki.uni-kl.de/~steffen/sudplan/sudplan.jnlp}SUDPLAN.jnlp}} - launch with Java Web Start.
+  {{{http://sudplan.kl.dfki.de/jnlp/sudplan.jnlp}SUDPLAN.jnlp}} - launch with Java Web Start.
   
-  The general application called SUDPLAN Scenario Managmenet System can be found {{{http://sudplanwp3.cismet.de/sms/}here}}.
+  The general application called SUDPLAN Scenario Managmenet System can be found {{{http://sudplanwp3.cismet.de/sms/}here}}. A demo video can be found {{{http://sudplan.kl.dfki.de/videos.html}here}}.
   
