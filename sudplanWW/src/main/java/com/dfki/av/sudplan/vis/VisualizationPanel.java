@@ -24,6 +24,7 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
@@ -88,10 +89,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * 
+     *
      * @param data
      * @param vis
-     * @param attributes 
+     * @param attributes
      */
     public void addLayer(Object data, IVisAlgorithm vis, Object[] attributes) {
         VisWorker producer = new VisWorker(data, vis, attributes, wwd);
@@ -212,20 +213,17 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         log.debug("Not supported!");
     }
 
-    //------------------------------------------------------------------------
-    //
-    //  Following a list of internal test methods. Will be removed soon or later.
-    //
-    //------------------------------------------------------------------------
-    @Deprecated
     public void addTimeseries() {
-        URL url = getClass().getClassLoader().getResource("data/ts_nox_2m.zip");
-        log.debug("URL to load from: {}", url.toString());
-        String[] attributes = new String[]{"Val_200503","Val_200501"};
-        addLayer(url, Visualization.TIMESERIES, attributes);
+        try {
+            URL url = new URL("http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip");
+            log.debug("URL to load from: {}", url.toString());
+            String[] attributes = new String[]{"Val_200503", "Val_200501"};
+            addLayer(url, Visualization.TIMESERIES, attributes);
+        } catch (MalformedURLException ex) {
+            log.error(ex.toString());
+        }
     }
 
-    @Deprecated
     public void removeTimeseries() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
@@ -237,15 +235,17 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
     }
 
-    @Deprecated
     public void addBuildings() {
-        URL url = getClass().getClassLoader().getResource("data/Buildings.zip");
-        log.debug("URL to load from: {}", url.toString());
-        String[] attributes = new String[]{"Elevation"};
-        addLayer(url, Visualization.EXTRUDE_POLYGON, attributes);
+        try {
+            URL url = new URL("http://sudplan.kl.dfki.de/testdata/Buildings.zip");
+            log.debug("URL to load from: {}", url.toString());
+            String[] attributes = new String[]{"Elevation"};
+            addLayer(url, Visualization.EXTRUDE_POLYGON, attributes);
+        } catch (MalformedURLException ex) {
+            log.error(ex.toString());
+        }
     }
 
-    @Deprecated
     public void removeBuildings() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
@@ -258,14 +258,16 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
     }
 
-    @Deprecated
     public void addRooftopResults() {
-        URL url = getClass().getClassLoader().getResource("data/rooftop3.tiff");
-        log.debug("URL to load from: {}", url.toString());
-        addLayer(url, new VisCreateTexture(), null);
+        try {
+            URL url = new URL("http://sudplan.kl.dfki.de/testdata/rooftop3.tiff");
+            log.debug("URL to load from: {}", url.toString());
+            addLayer(url, new VisCreateTexture(), null);
+        } catch (MalformedURLException ex) {
+            log.error(ex.toString());
+        }
     }
 
-    @Deprecated
     public void removeRooftopResults() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
@@ -278,14 +280,16 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
     }
 
-    @Deprecated
     public void addStreetLevelResults() {
-        URL url = getClass().getClassLoader().getResource("data/AirQualityStreetLevel.zip");
-        String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-        addLayer(url, Visualization.EXTRUDE_POLYLINE, attributes);
+        try {
+            URL url = new URL("http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip");
+            String[] attributes = new String[]{"Perc98d", "NrVehTot"};
+            addLayer(url, Visualization.EXTRUDE_POLYLINE, attributes);
+        } catch (MalformedURLException ex) {
+            log.error(ex.toString());
+        }
     }
 
-    @Deprecated
     public void removeStreetLevelResults() {
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
