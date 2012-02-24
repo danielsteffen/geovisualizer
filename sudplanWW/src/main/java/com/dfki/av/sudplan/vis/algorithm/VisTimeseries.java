@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
 import org.gdal.ogr.Feature;
 
@@ -31,7 +32,10 @@ import org.gdal.ogr.Feature;
 public class VisTimeseries extends VisAlgorithmAbstract {
 
     public VisTimeseries() {
-        super("Timeseries Visualization");
+        super("Timeseries Visualization",
+                "No description available.",
+                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+                getResource("icons/VisTimeseries.png")));
         VisParameter parameter0 = new VisParameter("Timestep t_0");
         parameters.add(parameter0);
         VisParameter parameter1 = new VisParameter("Timestep t_1");

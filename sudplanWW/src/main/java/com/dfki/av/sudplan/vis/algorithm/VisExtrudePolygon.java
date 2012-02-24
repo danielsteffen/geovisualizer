@@ -20,6 +20,7 @@ import gov.nasa.worldwind.util.WWMath;
 import gov.nasa.worldwind.util.WWUtil;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.gdal.ogr.Geometry;
 
 /**
@@ -29,13 +30,13 @@ import org.gdal.ogr.Geometry;
 public class VisExtrudePolygon extends VisAlgorithmAbstract {
 
     private static final BasicShapeAttributes bsa;
+
     static {
         bsa = new BasicShapeAttributes();
         bsa.setDrawOutline(false);
         bsa.setInteriorOpacity(1.0);
         bsa.setInteriorMaterial(Material.GRAY);
     }
-            
     /**
      *
      */
@@ -46,7 +47,9 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
      * @param attribute
      */
     public VisExtrudePolygon() {
-        super("Extrude Polygons");
+        super("Extrude Polygons", "", 
+                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+                getResource("icons/VisExtrudePolygon.png")));
         VisParameter parameter = new VisParameter("Height");
         parameters.add(parameter);
     }
