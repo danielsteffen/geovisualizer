@@ -8,11 +8,12 @@
 package com.dfki.av.sudplan.vis.wiz;
 
 import java.awt.Component;
+import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-public class DataSourceSelectionController implements WizardDescriptor.Panel {
+public class AttributeSelectionController implements WizardDescriptor.Panel {
 
     /**
      * The visual component that displays this panel. If you need to access the
@@ -26,7 +27,7 @@ public class DataSourceSelectionController implements WizardDescriptor.Panel {
     // create only those which really need to be visible.
     public Component getComponent() {
         if (component == null) {
-            component = new DataSourceSelectionPanel();
+            component = new AttributeSelectionPanel();
         }
         return component;
     }
@@ -47,7 +48,7 @@ public class DataSourceSelectionController implements WizardDescriptor.Panel {
         // fireChangeEvent();
         // and uncomment the complicated stuff below.
     }
-    
+
     public final void addChangeListener(ChangeListener l) {
     }
 
@@ -82,11 +83,14 @@ public class DataSourceSelectionController implements WizardDescriptor.Panel {
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
     public void readSettings(Object settings) {
+        WizardDescriptor descriptor = (WizardDescriptor)settings;
+        Object o = descriptor.getProperty("SelectedDataSource");
+        ((AttributeSelectionPanel)getComponent()).setSelectedDataSource(o);
     }
 
     public void storeSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor)settings;
-        Object o = ((DataSourceSelectionPanel)getComponent()).getSelectedDataSource();
-        descriptor.putProperty("SelectedDataSource", o);
+        List<String> l = ((AttributeSelectionPanel)getComponent()).getSelectedAttributes();
+        descriptor.putProperty("DataAttributes", l);
     }
 }

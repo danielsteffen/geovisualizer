@@ -50,10 +50,9 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
         if (panels == null) {
             panels = new WizardDescriptor.Panel[]{
                 new DataSourceSelectionController(),
+                new AttributeSelectionController(),
                 new VisualizationSelectionController(),
-                new ParameterMappingController()/*,
-                new VisWizWizardPanel4(),
-                new VisWizWizardPanel5()*/
+                new ParameterMappingController()
             };
             String[] steps = new String[panels.length];
             for (int i = 0; i < panels.length; i++) {
