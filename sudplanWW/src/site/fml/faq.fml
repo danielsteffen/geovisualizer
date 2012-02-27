@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  title="Frequently Asked Questions"
+  toplink="false">
+
+  <part id="general">
+    <title>General</title>
+
+    <faq id="using-mac">
+      <question>
+        I am running the SUDPLAN 3D Web Start Application on my Mac. The drop down menu seems to be below the 3D canvas. What can I do?
+      </question>
+      <answer>
+        <p>The problem is caused by mixing Heavyweight and Lightweight Components in Java. We are currently using the
+		WorldWindGLCanvas which is an AWT component since it is more stable than the lightweight Swing component. 
+		Recently this doesn't cause any problems on most operating systems. However, using a MAC may sometimes result in 
+		the above mentioned problem. As solution we integrated a sliding panel. Further information
+		on mixing components can be found at <a href="http://java.sun.com/developer/technicalArticles/GUI/mixing_components/">here</a>.</p>
+        <!--source>some source code</source-->
+        <!--p>some markup goes here</p-->
+      </answer>
+    </faq>
+
+    <faq id="where-are-dataset">
+      <question>
+        Where can I find some data sets to test the SUDPLAN 3D application?
+      </question>
+      <answer>
+        <p>Some data sets for testing the SUDPLAN 3D visualisation component can be found <a href="./demo.html">here</a>.</p>
+      </answer>
+    </faq>
+	
+  </part>
+
+</faqs>

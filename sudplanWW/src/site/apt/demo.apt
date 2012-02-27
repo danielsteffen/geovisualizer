@@ -14,5 +14,19 @@ SUDPLAN 3D Java Web Start Application
   
   {{{http://sudplan.kl.dfki.de/jnlp/sudplan.jnlp}SUDPLAN.jnlp}} - launch with Java Web Start.
   
-  The general application called SUDPLAN Scenario Managmenet System can be found {{{http://sudplanwp3.cismet.de/sms/}here}}. A demo video can be found {{{http://sudplan.kl.dfki.de/videos.html}here}}.
+  The general application called SUDPLAN Scenario Managmenet System can be found {{{http://sudplanwp3.cismet.de/sms/}here}}. A demo video can be found {{{./videos.html}here}}.
+  
+Test Data Sets
+
+  The following lists some data sets for testing the SUDPLAN 3D component:
+  
+--------------------------------------------
+http://sudplan.kl.dfki.de/testdata/AirQualityRooftop.zip
+http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip
+http://sudplan.kl.dfki.de/testdata/Buildings.zip
+http://sudplan.kl.dfki.de/testdata/rooftop3.tiff
+http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip
+--------------------------------------------
+
+  You can copy and paste the above listed URLs or download the datasets to your local storage.
   

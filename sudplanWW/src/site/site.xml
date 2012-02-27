@@ -4,7 +4,7 @@
     <bannerLeft>
         <name>SUDPLAN 3D</name>
         <src>images/sudplan3dlogo.png</src>
-        <href>http://www.dfki.uni-kl.de/~steffen/sudplan</href>
+        <href>http://sudplan.kl.dfki.de</href>
     </bannerLeft>
     <bannerRight>
         <name>Augemented Vision</name>
@@ -15,8 +15,9 @@
         <menu name="SUDPLAN 3D">
             <item name="About" href="index.html"/>
             <item name="Demo" href="demo.html"/>
-			<item name="News" href="news.html"/>
-		</menu>
+			<item name="Videos" href="videos.html"/>
+			<item name="FAQ" href="faq.html"/>
+    	</menu>
         <menu ref="reports"/>
     </body>	
 </project>
