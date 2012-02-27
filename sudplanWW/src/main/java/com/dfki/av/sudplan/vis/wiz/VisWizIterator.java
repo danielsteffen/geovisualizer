@@ -35,11 +35,9 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
      */
     private int index;
     private WizardDescriptor.Panel[] panels;
-    private Iterable<IVisAlgorithm> visList;
     
-    public VisWizIterator(Iterable<IVisAlgorithm> list){
+    public VisWizIterator(){
         super();
-        this.visList = list;
     }
 
     /**

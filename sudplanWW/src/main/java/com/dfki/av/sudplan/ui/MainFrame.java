@@ -592,7 +592,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
         // Check all vis algos and collect them somehow.
-        WizardDescriptor.Iterator iterator = new VisWizIterator(Visualization.LIST);
+        WizardDescriptor.Iterator iterator = new VisWizIterator();
         WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
         // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
         // {1} will be replaced by WizardDescriptor.Iterator.name()
