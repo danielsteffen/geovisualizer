@@ -42,6 +42,7 @@ public class VisPointCloud extends VisAlgorithmAbstract {
         if (data instanceof Shapefile) {
             Shapefile shapefile = (Shapefile) data;
             IconLayer layer = new IconLayer();
+            layer.setName(shapefile.getLayerName());
             // 1 - Pre-processing data
             // 2 - Create visualization
             addIconsForPoints(shapefile, layer);

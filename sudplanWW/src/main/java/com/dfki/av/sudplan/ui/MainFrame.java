@@ -10,6 +10,8 @@ import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
+import com.dfki.av.sudplan.vis.algorithm.VisPointCloud;
 import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import com.dfki.av.sudplan.vis.wiz.VisWizIterator;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -99,8 +101,6 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         miAddShape = new javax.swing.JMenuItem();
         miAddShapeZip = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JPopupMenu.Separator();
-        miAddURL = new javax.swing.JMenuItem();
         mAddDEM = new javax.swing.JMenu();
         miAddElevation = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
@@ -300,7 +300,6 @@ public class MainFrame extends javax.swing.JFrame {
         mAdd.add(jSeparator4);
 
         mAddLayer.setText(bundle.getString("MainFrame.mAddLayer.text")); // NOI18N
-        mAddLayer.setEnabled(false);
 
         miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
         miAddGeoTiff.addActionListener(new java.awt.event.ActionListener() {
@@ -320,17 +319,12 @@ public class MainFrame extends javax.swing.JFrame {
         mAddLayer.add(miAddShape);
 
         miAddShapeZip.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddShapeZip.text")); // NOI18N
-        mAddLayer.add(miAddShapeZip);
-        mAddLayer.add(jSeparator5);
-
-        miAddURL.setText(bundle.getString("MainFrame.miAddURL.text")); // NOI18N
-        miAddURL.setEnabled(false);
-        miAddURL.addActionListener(new java.awt.event.ActionListener() {
+        miAddShapeZip.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddURLActionPerformed(evt);
+                miAddShapeZipActionPerformed(evt);
             }
         });
-        mAddLayer.add(miAddURL);
+        mAddLayer.add(miAddShapeZip);
 
         mAdd.add(mAddLayer);
 
@@ -568,12 +562,12 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File (*.tiff)", "tiff"));
+        fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff"));
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        wwPanel.addLayer(fc.getSelectedFile());
+        wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
 
     }//GEN-LAST:event_miAddGeoTiffActionPerformed
 
@@ -584,8 +578,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        wwPanel.addLayer(fc.getSelectedFile());
-
+        wwPanel.addLayer(fc.getSelectedFile(), new VisPointCloud(), null);
     }//GEN-LAST:event_miAddShapeActionPerformed
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
@@ -607,23 +600,6 @@ public class MainFrame extends javax.swing.JFrame {
             wwPanel.addLayer(data, visAlgo, dataAttributes);
         }
     }//GEN-LAST:event_miWizardActionPerformed
-
-    private void miAddURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddURLActionPerformed
-        try {
-            String urlString = JOptionPane.showInputDialog(this, "Enter URL:");
-            if (urlString != null && !urlString.isEmpty()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Using URL: {}", urlString);
-                }
-                URL url = new URL(urlString);
-                wwPanel.addLayer(url);
-            }
-        } catch (MalformedURLException ex) {
-            if (log.isErrorEnabled()) {
-                log.error("Not a valid URL: {}", ex.getMessage());
-            }
-        }
-    }//GEN-LAST:event_miAddURLActionPerformed
 
     private void miRemoveAllLayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveAllLayerActionPerformed
         wwPanel.removeAllLayers();
@@ -680,6 +656,16 @@ public class MainFrame extends javax.swing.JFrame {
     private void miGotoPraqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoPraqueActionPerformed
         wwPanel.setCamera(new AnimatedCamera(50.08781, 14.42046, 20000.0));
     }//GEN-LAST:event_miGotoPraqueActionPerformed
+
+    private void miAddShapeZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeZipActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip"));
+        int ret = fc.showOpenDialog(this);
+        if (ret != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        wwPanel.addLayer(fc.getSelectedFile(), new VisPointCloud(), null);
+    }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -750,7 +736,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
-    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JSplitPane jSplitPane1;
@@ -780,7 +765,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miAddShapeZip;
     private javax.swing.JMenuItem miAddStreetLevelResults;
     private javax.swing.JMenuItem miAddTimeseries;
-    private javax.swing.JMenuItem miAddURL;
     private javax.swing.JMenuItem miChangeOrder;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
