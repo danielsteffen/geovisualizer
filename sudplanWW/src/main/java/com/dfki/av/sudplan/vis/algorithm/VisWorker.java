@@ -13,7 +13,9 @@ import com.dfki.av.utils.AVUtils;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,20 +57,21 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
      * @param vis
      * @param canvas
      */
-    public VisWorker(Object data, IVisAlgorithm vis, final Object[] attributes, WorldWindowGLCanvas canvas) {
+    public VisWorker(final Object data, final IVisAlgorithm vis, final Object[] attributes, WorldWindowGLCanvas canvas) {
         if (data == null) {
             log.error("Parameter 'data' is null.");
             throw new IllegalArgumentException("Parameter 'data' is null.");
-        }
-        if (vis == null) {
-            log.error("Parameter 'vis' is null.");
-            throw new IllegalArgumentException("Parameter 'vis' is null.");
         }
         if (canvas == null) {
             log.error("Parameter 'canvas' is null.");
             throw new IllegalArgumentException("Parameter 'canvas' is null.");
         }
+        if (vis == null) {
+            log.error("Parameter 'vis' is null.");
+            throw new IllegalArgumentException("Parameter 'vis' is null.");
+        }
         if (attributes == null) {
+            log.warn("Parameter 'attributes' is null.");
         }
         this.dataSource = data;
         this.algo = vis;
@@ -103,23 +106,25 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
         }
 
         String fileName = tmpFile.getName();
-        File file = null;
+        Object data = null;
         if (fileName.endsWith(".zip")) {
             AVUtils.Unzip(tmpFile, Settings.SUDPLAN_3D_USER_HOME);
-            // Here, we assume that the name of the shape file equals
-            // the name of the zip and vice versa.
+            // Here, we assume that the name of the shapefile contained in the
+            // zip file equals the name of the zip and vice versa.
             String shpFileName = fileName.replace(".zip", ".shp");
-            file = new File(Settings.SUDPLAN_3D_USER_HOME + File.separator + shpFileName);
-            log.debug("Source file: {}", file.getAbsolutePath());
+            File tmp = new File(Settings.SUDPLAN_3D_USER_HOME + File.separator + shpFileName);
+            data = new Shapefile(tmp.getAbsolutePath());
         } else if (fileName.endsWith(".shp")) {
-            file = tmpFile;
+            data = new Shapefile(tmpFile.getAbsolutePath());
+        } else if (fileName.endsWith(".tif")
+                || fileName.endsWith(".tiff")) {
+            data = tmpFile;
         } else {
             log.debug("Data type not supported yet.");
             return layerList;
         }
 
-        Shapefile shapefile = new Shapefile(file.getAbsolutePath());
-        layerList = algo.createLayersFromData(shapefile, attributes);
+        layerList = algo.createLayersFromData(data, attributes);
 
         return layerList;
     }

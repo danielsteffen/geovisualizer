@@ -387,7 +387,6 @@ public class MainFrame extends javax.swing.JFrame {
         mStockholm.add(jSeparator2);
 
         miAddRooftopResults.setText(bundle.getString("MainFrame.miAddRooftopResults.text")); // NOI18N
-        miAddRooftopResults.setEnabled(false);
         miAddRooftopResults.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miAddRooftopResultsActionPerformed(evt);
@@ -396,7 +395,6 @@ public class MainFrame extends javax.swing.JFrame {
         mStockholm.add(miAddRooftopResults);
 
         miRemoveRooftopResults.setText(bundle.getString("MainFrame.miRemoveRooftopResults.text")); // NOI18N
-        miRemoveRooftopResults.setEnabled(false);
         miRemoveRooftopResults.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miRemoveRooftopResultsActionPerformed(evt);

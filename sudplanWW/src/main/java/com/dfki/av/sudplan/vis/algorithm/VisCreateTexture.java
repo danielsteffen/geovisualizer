@@ -8,6 +8,10 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.SurfaceImageLayer;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +21,7 @@ import java.util.List;
 public class VisCreateTexture extends VisAlgorithmAbstract {
 
     /**
-     * 
+     *
      */
     public VisCreateTexture() {
         super("CreateTexture", "Creates a texture visualization");
@@ -25,7 +29,28 @@ public class VisCreateTexture extends VisAlgorithmAbstract {
 
     @Override
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+        ArrayList<Layer> list = new ArrayList<Layer>();
+        if (attributes == null || attributes.length == 0) {
+            log.warn("No attributes specified.");
+        }
+        if (data instanceof File) {
+            File file = (File) data;
+            SurfaceImageLayer sul = new SurfaceImageLayer();
+            sul.setOpacity(0.8);
+            sul.setPickEnabled(false);
+            sul.setName(file.getName());
+            try {
+                sul.addImage(file.getAbsolutePath());
+            } catch (IOException ex) {
+                log.error("Could not add image {}", ex.toString());
+                sul = null;
+            }
+            list.add(sul);
 
+        } else {
+            log.error("Data type not supported.");
+        }
+
+        return list;
+    }
 }
