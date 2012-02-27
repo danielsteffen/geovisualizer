@@ -47,8 +47,8 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
      * @param attribute
      */
     public VisExtrudePolygon() {
-        super("Extrude Polygons", "", 
-                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+        super("Extrude Polygons", "No description available.", 
+                new ImageIcon(VisExtrudePolygon.class.getClassLoader().
                 getResource("icons/VisExtrudePolygon.png")));
         VisParameter parameter = new VisParameter("Height");
         parameters.add(parameter);

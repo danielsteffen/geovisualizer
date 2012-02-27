@@ -34,7 +34,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
     public VisTimeseries() {
         super("Timeseries Visualization",
                 "No description available.",
-                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+                new ImageIcon(VisTimeseries.class.getClassLoader().
                 getResource("icons/VisTimeseries.png")));
         VisParameter parameter0 = new VisParameter("Timestep t_0");
         parameters.add(parameter0);

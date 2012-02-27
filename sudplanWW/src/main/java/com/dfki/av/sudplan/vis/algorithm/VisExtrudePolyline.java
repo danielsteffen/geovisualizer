@@ -45,7 +45,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
                 + "visualization technique.\n\nThe Polyline technique maps one "
                 + "scalar attribute 'a' of your data source to the parameter "
                 + "color. The second attirbute 'b' is used for the extrution.",
-                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+                new ImageIcon(VisExtrudePolyline.class.getClassLoader().
                 getResource("icons/VisExtrudePolyline.png")));
         
         VisParameter parameter0 = new VisParameter("Color", true);

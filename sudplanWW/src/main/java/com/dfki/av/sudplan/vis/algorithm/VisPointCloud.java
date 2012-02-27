@@ -14,6 +14,7 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.UserFacingIcon;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.gdal.ogr.Geometry;
 
 /**
@@ -26,7 +27,10 @@ public class VisPointCloud extends VisAlgorithmAbstract {
      *
      */
     public VisPointCloud() {
-        super("Point Cloud Visualization");
+        super("Point Cloud Visualization",
+                "No description available.",
+                new ImageIcon(VisPointCloud.class.getClassLoader().
+                getResource("icons/VisPointCloud.png")));
         VisParameter parameter0 = new VisParameter("Default");
         parameters.add(parameter0);
     }
