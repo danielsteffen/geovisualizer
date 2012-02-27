@@ -24,7 +24,7 @@ public final class VisualizationSelectionPanel extends JPanel {
      */
     private static final Logger log = LoggerFactory.getLogger(VisualizationSelectionPanel.class);
 
-    public IVisAlgorithm visAlgorithm;
+    private IVisAlgorithm visAlgorithm;
     /**
      * Creates new form VisualizationSelectionPanel
      */

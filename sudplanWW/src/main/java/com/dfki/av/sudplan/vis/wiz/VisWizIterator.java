@@ -7,7 +7,6 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import java.awt.Component;
 import java.util.NoSuchElementException;
 import javax.swing.JComponent;
