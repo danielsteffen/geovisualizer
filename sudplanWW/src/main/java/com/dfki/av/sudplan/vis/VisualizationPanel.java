@@ -20,6 +20,7 @@ import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
+import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -45,6 +46,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * The world wind GL canvas.
      */
     private WorldWindowGLCanvas wwd;
+    protected StatusBar statusBar;
 
     /**
      * Constructs a visualization panel of the defined
@@ -70,6 +72,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         this.wwd.getModel().getLayers().add(viewControlsLayer);
         this.wwd.addSelectListener(new ViewControlsSelectListener(this.wwd, viewControlsLayer));
         this.add(this.wwd, BorderLayout.CENTER);
+        
+        this.statusBar = new StatusBar();
+        this.statusBar.setEventSource(wwd);
+        this.add(statusBar, BorderLayout.PAGE_END);
     }
 
     /**

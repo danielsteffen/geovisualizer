@@ -12,21 +12,18 @@ import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
 import com.dfki.av.sudplan.vis.algorithm.VisPointCloud;
-import com.dfki.av.sudplan.vis.algorithm.Visualization;
 import com.dfki.av.sudplan.vis.wiz.VisWizIterator;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwindx.examples.WMSLayersPanel;
+import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
@@ -39,16 +36,21 @@ import org.slf4j.LoggerFactory;
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
+    private static final String[] servers = new String[]{
+        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"
+    };
     private Dimension canvasSize;
-    protected VisualizationPanel wwPanel;
+    private VisualizationPanel wwPanel;
+    private int previousTabIndex;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
-        this.canvasSize = new Dimension(1200, 800);
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
+        this.canvasSize = new Dimension(1200, 800);
         this.wwPanel = new VisualizationPanel(canvasSize);
         this.wwPanel.setPreferredSize(canvasSize);
         this.wwPanel.getWwd().getModel().addPropertyChangeListener(new PropertyChangeListener() {
@@ -61,8 +63,64 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         initComponents();
+        initWMSPanel();
+        updateLayerMenu();
+    }
 
-        this.updateLayerMenu();
+    /**
+     * Initialize the WMS server panel. 
+     */
+    private void initWMSPanel() {
+        jTabbedPane1.setTitleAt(0, "+");
+        for (int i = 0; i < servers.length; i++) {
+            // i+1 to place all server tabs to the right of the Add Server tab
+            addTab(i + 1, servers[i]);
+        }
+        // Display the first server pane by default.
+        jTabbedPane1.setSelectedIndex(this.jTabbedPane1.getTabCount() > 0 ? 1 : 0);
+        previousTabIndex = this.jTabbedPane1.getSelectedIndex();
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+
+            @Override
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPaneStateChanged(evt);
+            }
+        });
+    }
+
+    /**
+     * Add a server to the tabbed dialog at position
+     * <code>position</code>.
+     *
+     * @param position
+     * @param server
+     * @return
+     */
+    private WMSLayersPanel addTab(int position, String server) {
+
+        try {
+            WMSLayersPanel layersPanel = new WMSLayersPanel(this.wwPanel.getWwd(), server, new Dimension(100, 100));
+            this.jTabbedPane1.add(layersPanel, BorderLayout.CENTER);
+            String title = layersPanel.getServerDisplayString();
+            this.jTabbedPane1.setTitleAt(position, title != null && title.length() > 0 ? title : server);
+
+            // Add a listener to notice wms layer selections and tell the layer panel to reflect the new state.
+            layersPanel.addPropertyChangeListener("LayersPanelUpdated", new PropertyChangeListener() {
+
+                @Override
+                public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+//                    this.getLayerPanel().update(wwPanel.getWwd());
+                    log.debug("property change event from layers panel");
+                }
+            });
+
+            return layersPanel;
+        } catch (URISyntaxException e) {
+            JOptionPane.showMessageDialog(null, "Server URL is invalid", "Invalid Server URL",
+                    JOptionPane.ERROR_MESSAGE);
+            jTabbedPane1.setSelectedIndex(previousTabIndex);
+            return null;
+        }
     }
 
     /**
@@ -85,6 +143,8 @@ public class MainFrame extends javax.swing.JFrame {
         jopAddServer = new javax.swing.JOptionPane();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
+        pServer = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         pVisualization = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
@@ -103,8 +163,6 @@ public class MainFrame extends javax.swing.JFrame {
         miAddShapeZip = new javax.swing.JMenuItem();
         mAddDEM = new javax.swing.JMenu();
         miAddElevation = new javax.swing.JMenuItem();
-        jSeparator3 = new javax.swing.JPopupMenu.Separator();
-        miAddServer = new javax.swing.JMenuItem();
         mView = new javax.swing.JMenu();
         mLayers = new javax.swing.JMenu();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -221,21 +279,39 @@ public class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
 
-        pMain.setPreferredSize(new java.awt.Dimension(800, 600));
+        pMain.setPreferredSize(new java.awt.Dimension(1200, 1024));
+
+        jSplitPane1.setResizeWeight(0.1);
+        jSplitPane1.setContinuousLayout(true);
+        jSplitPane1.setLastDividerLocation(1);
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(1024, 768));
+
+        pServer.setPreferredSize(new java.awt.Dimension(150, 603));
+        pServer.setLayout(new java.awt.BorderLayout());
+
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(0, 0));
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(200, 603));
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(33, 50));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 281, Short.MAX_VALUE)
+            .addGap(0, 33, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 608, Short.MAX_VALUE)
+            .addGap(0, 580, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setLeftComponent(jPanel1);
+        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
+        pServer.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+
+        jSplitPane1.setLeftComponent(pServer);
+
+        pVisualization.setPreferredSize(new java.awt.Dimension(100, 100));
         pVisualization.setLayout(new java.awt.BorderLayout());
 
         pVisualization.add(wwPanel, java.awt.BorderLayout.CENTER);
@@ -250,7 +326,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         pMainLayout.setVerticalGroup(
             pMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
         );
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
@@ -335,17 +411,6 @@ public class MainFrame extends javax.swing.JFrame {
         mAddDEM.add(miAddElevation);
 
         mAdd.add(mAddDEM);
-        mAdd.add(jSeparator3);
-
-        miAddServer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
-        miAddServer.setText(bundle.getString("MainFrame.miAddServer.text")); // NOI18N
-        miAddServer.setEnabled(false);
-        miAddServer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddServerActionPerformed(evt);
-            }
-        });
-        mAdd.add(miAddServer);
 
         mbMain.add(mAdd);
 
@@ -537,22 +602,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnGoActionPerformed
 
-    private void miAddServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddServerActionPerformed
-        // TODO: i18n
-        String ret = JOptionPane.showInputDialog(this, "Server URL",
-                "Add Server ...", JOptionPane.QUESTION_MESSAGE);
-
-        if (ret != null && !ret.isEmpty()) {
-            if (log.isInfoEnabled()) {
-                log.info("Connecting to {}", ret);
-            }
-        } else {
-            if (log.isWarnEnabled()) {
-                log.warn("The input for the server URL is empty or null.");
-            }
-        }
-    }//GEN-LAST:event_miAddServerActionPerformed
-
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
         JOptionPane.showMessageDialog(this, "This is the sudplan3D application."
                 + "\nDFKI (c) 2011-2012",
@@ -703,6 +752,10 @@ public class MainFrame extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
+
+
+
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -734,11 +787,11 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JOptionPane jopAddServer;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;
@@ -760,7 +813,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miAddElevation;
     private javax.swing.JMenuItem miAddGeoTiff;
     private javax.swing.JMenuItem miAddRooftopResults;
-    private javax.swing.JMenuItem miAddServer;
     private javax.swing.JMenuItem miAddShape;
     private javax.swing.JMenuItem miAddShapeZip;
     private javax.swing.JMenuItem miAddStreetLevelResults;
@@ -781,8 +833,27 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pMain;
+    private javax.swing.JPanel pServer;
     private javax.swing.JPanel pVisualization;
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;
     // End of variables declaration//GEN-END:variables
+
+    private void jTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {
+        if (jTabbedPane1.getSelectedIndex() != 0) {
+            previousTabIndex = jTabbedPane1.getSelectedIndex();
+            return;
+        }
+
+        String server = JOptionPane.showInputDialog("Enter wms server URL");
+        if (server == null || server.length() < 1) {
+            jTabbedPane1.setSelectedIndex(previousTabIndex);
+            return;
+        }
+
+        // Respond by adding a new WMSLayerPanel to the tabbed pane.
+        if (addTab(jTabbedPane1.getTabCount(), server.trim()) != null) {
+            jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+        }
+    }
 }
