@@ -8,6 +8,9 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumberTansferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
@@ -31,22 +34,49 @@ import org.gdal.ogr.Feature;
  */
 public class VisTimeseries extends VisAlgorithmAbstract {
 
+    /**
+     *
+     */
+    private NumberParameter parTimestep0;
+    /**
+     *
+     */
+    private NumberParameter parTimestep1;
+    /**
+     *
+     */
+    private NumberParameter parHeight;
+
+    /**
+     *
+     */
     public VisTimeseries() {
         super("Timeseries Visualization",
                 "No description available.",
                 new ImageIcon(VisTimeseries.class.getClassLoader().
                 getResource("icons/VisTimeseries.png")));
-        VisParameter parameter0 = new VisParameter("Timestep t_0");
-        parameters.add(parameter0);
-        VisParameter parameter1 = new VisParameter("Timestep t_1");
-        parameters.add(parameter1);        
+
+        this.parTimestep0 = new NumberParameter("Timestep (t=0)");
+        this.parTimestep0.addTransferFunction(new IdentityFunction());
+        addVisParameter(parTimestep0);
+
+        this.parTimestep1 = new NumberParameter("Timestep (t=1)");
+        this.parTimestep1.addTransferFunction(new IdentityFunction());
+        addVisParameter(parTimestep1);
+
+        this.parHeight = new NumberParameter("Height of Timeseries [m]");
+        this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
+        addVisParameter(parHeight);
     }
 
     @Override
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
-        if (attributes == null || attributes.length != 2) {
-            throw new IllegalArgumentException();
+        log.debug("Running {}", this.getClass().getSimpleName());
+        
+        if (attributes == null || attributes.length < 2) {
+            throw new IllegalArgumentException("Not engough attributes for "
+                    + "timeseries visualization.");
         }
 
         List<Layer> layers = new ArrayList<Layer>();
@@ -56,6 +86,21 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             Shapefile shpfile = (Shapefile) data;
             String attribute0 = (String) attributes[0];
             String attribute1 = (String) attributes[1];
+            
+            // 1 - Pre-processing data
+            ITransferFunction function0 = parTimestep0.getSelectedTransferFunction();
+            log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
+            function0.preprocess(shpfile, attribute0);
+            
+            ITransferFunction function1 = parTimestep1.getSelectedTransferFunction();
+            log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
+            function1.preprocess(shpfile, attribute1);
+            
+            ITransferFunction function2 = parHeight.getSelectedTransferFunction();
+            log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
+            function2.preprocess(shpfile, attribute1);
+
+            // 2 - Create visualization            
             RenderableLayer layer = new RenderableLayer();
             createTimeSeriesSurface(shpfile, layer, attribute0, attribute1);
 
@@ -64,6 +109,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             layers.add(layer);
 
         }
+        
+        log.debug("Running {}", this.getClass().getSimpleName());
+        
         return layers;
     }
 
@@ -85,13 +133,13 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         log.debug("Bounding box: {}", shpfile.getExtent());
         double[] extend = shpfile.getExtent();
         surface.setSector(Sector.fromDegrees(extend[2], extend[3], extend[0], extend[1]));
-        surface.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+        surface.setAltitudeMode(WorldWind.ABSOLUTE);
         surface.setDimensions(width, height);
         surface.setClientLayer(layer);
         layer.addRenderable(surface);
 
-        List<Double> firstValues = GridValues(shpfile, attribute0);
-        List<Double> secondValues = GridValues(shpfile, attribute1);
+        List<Double> firstValues = computeGridValues(shpfile, attribute0);
+        List<Double> secondValues = computeGridValues(shpfile, attribute1);
 
         interpolateValuesOverTime(3000L, firstValues, secondValues, minValue, maxValue, minHue, maxHue, surface);
 
@@ -123,6 +171,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
             protected long startTime = -1;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (this.startTime < 0) {
                     this.startTime = System.currentTimeMillis();
@@ -164,6 +213,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         ArrayList<AnalyticSurface.GridPointAttributes> attributesList = new ArrayList<AnalyticSurface.GridPointAttributes>();
         for (int i = 0; i < firstBuffer.size(); i++) {
             double value = WWMath.mixSmooth(a, firstBuffer.get(i).doubleValue(), secondBuffer.get(i).doubleValue());
+
+            ITransferFunction function2 = parHeight.getSelectedTransferFunction();
+            Double height = (Double) function2.calc(value); // Actually, you don't need an argument!!
+            
             Color color;
             if (value < 5.0) {
                 color = Color.GREEN;
@@ -172,7 +225,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             } else {
                 color = Color.RED;
             }
-            attributesList.add(AnalyticSurface.createGridPointAttributes(2.0, color));
+            attributesList.add(AnalyticSurface.createGridPointAttributes(height, color));
         }
 
         return attributesList;
@@ -184,7 +237,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      * @param timestep
      * @return
      */
-    private List<Double> GridValues(Shapefile shpfile, String timestep) {
+    private List<Double> computeGridValues(Shapefile shpfile, String timestep) {
         int width = 140;
         int height = 140;
         int numValues = width * height;

@@ -1,4 +1,4 @@
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplanX.test;
 
 import java.util.ArrayList;
 import java.util.Iterator;

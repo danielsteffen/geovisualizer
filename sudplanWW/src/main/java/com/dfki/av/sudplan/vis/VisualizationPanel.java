@@ -91,7 +91,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void addLayer(Object data) {
-        addLayer(data, Visualization.POINT_CLOUD, null);
+        addLayer(data, Visualization.POINT_CLOUD(), null);
     }
 
     /**
@@ -224,7 +224,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Val_200503", "Val_200501"};
-            addLayer(url, Visualization.TIMESERIES, attributes);
+            addLayer(url, Visualization.TIMESERIES(), attributes);
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }
@@ -246,7 +246,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/Buildings.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Elevation"};
-            addLayer(url, Visualization.EXTRUDE_POLYGON, attributes);
+            addLayer(url, Visualization.EXTRUDE_POLYGON(), attributes);
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }
@@ -290,7 +290,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         try {
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip");
             String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-            addLayer(url, Visualization.EXTRUDE_POLYLINE, attributes);
+            addLayer(url, Visualization.EXTRUDE_POLYLINE(), attributes);
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }

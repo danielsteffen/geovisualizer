@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class Shapefile implements DataInput{
+public class Shapefile implements DataInput {
 
     static {
         ogr.RegisterAll();
@@ -221,8 +221,8 @@ public class Shapefile implements DataInput{
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public Map<String, Object> getAttributes() {
 
@@ -232,12 +232,16 @@ public class Shapefile implements DataInput{
         }
         HashMap<String, Object> attributes = new HashMap<String, Object>();
         FeatureDefn fdef = data.GetLayer(0).GetLayerDefn();
-       
+
         for (int i = 0; i < fdef.GetFieldCount(); i++) {
             FieldDefn fielddef = fdef.GetFieldDefn(i);
+            if(fielddef.GetTypeName().equalsIgnoreCase("String")){
+                log.warn("Skipping String attribute {}.", fielddef.GetName());
+                continue;
+            }
             attributes.put(fielddef.GetName(), fielddef.GetTypeName());
         }
-        
+
         return attributes;
     }
 
@@ -264,16 +268,11 @@ public class Shapefile implements DataInput{
         return tmp;
     }
 
-    /**
-     *
-     * @param shp
-     * @param attribute
-     * @return
-     */
-    public static double Min(Shapefile shp, String attribute) {
+    @Override
+    public double min(String attribute) {
         double minValue = Double.MAX_VALUE;
-        for (int i = 0; i < shp.getFeatureCount(); i++) {
-            Object object = shp.getAttributeOfFeature(i, attribute);
+        for (int i = 0; i < getFeatureCount(); i++) {
+            Object object = getAttributeOfFeature(i, attribute);
             if (object instanceof Number) {
                 double value = ((Number) object).doubleValue();
                 if (value < minValue) {
@@ -284,17 +283,12 @@ public class Shapefile implements DataInput{
         return minValue;
     }
 
-    /**
-     *
-     * @param shp
-     * @param attribute
-     * @return
-     */
-    public static double Max(Shapefile shp, String attribute) {
+    @Override
+    public double max(String attribute) {
         double maxValue = Double.MIN_VALUE;
 
-        for (int i = 0; i < shp.getFeatureCount(); i++) {
-            Object object = shp.getAttributeOfFeature(i, attribute);
+        for (int i = 0; i < getFeatureCount(); i++) {
+            Object object = getAttributeOfFeature(i, attribute);
             if (object instanceof Number) {
                 double value = ((Number) object).doubleValue();
                 if (value > maxValue) {
@@ -303,5 +297,25 @@ public class Shapefile implements DataInput{
             }
         }
         return maxValue;
+    }
+
+    /**
+     *
+     * @param shp
+     * @param attribute
+     * @return
+     */
+    public static double MIN(Shapefile shp, String attribute) {
+        return shp.min(attribute);
+    }
+
+    /**
+     *
+     * @param shp
+     * @param attribute
+     * @return
+     */
+    public static double MAX(Shapefile shp, String attribute) {
+        return shp.max(attribute);
     }
 }

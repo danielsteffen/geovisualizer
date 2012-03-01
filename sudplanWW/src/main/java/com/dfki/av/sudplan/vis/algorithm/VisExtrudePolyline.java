@@ -8,7 +8,7 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.utils.ColorUtils;
+import com.dfki.av.sudplan.vis.algorithm.functions.*;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -29,14 +29,14 @@ import org.gdal.ogr.Geometry;
 public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
     /**
-     * 
+     *
      */
-    private Material[] materials;
+    private ColorParameter parColor;
     /**
-     * 
+     *
      */
-    private List<Category> categories;
-    
+    private NumberParameter parHeight;
+
     /**
      *
      */
@@ -47,21 +47,27 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
                 + "color. The second attirbute 'b' is used for the extrution.",
                 new ImageIcon(VisExtrudePolyline.class.getClassLoader().
                 getResource("icons/VisExtrudePolyline.png")));
-        
-        VisParameter parameter0 = new VisParameter("Color", true);
-        parameter0.setCategorization(new CategorizationAuto(5));
-        parameters.add(parameter0);
-        
-        VisParameter parameter1 = new VisParameter("Height");
-        parameters.add(parameter1);
+
+        this.parColor = new ColorParameter("Color of surface");
+        this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+        this.parColor.addTransferFunction(new ConstantColorTransferFunction());
+        addVisParameter(parColor);
+
+        this.parHeight = new NumberParameter("Extrusion of surface");
+        this.parHeight.addTransferFunction(new IdentityFunction());
+        this.parHeight.addTransferFunction(new ScalarMultiplication());
+        this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
+        addVisParameter(parHeight);
     }
 
     @Override
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
+        log.debug("Running {}", this.getClass().getSimpleName());
+
         // First of all check whether enough attributes have been specified for
         // this visualization.
-        if (attributes == null || attributes.length != 2) {
+        if (attributes == null || attributes.length < 2) {
             throw new IllegalArgumentException("Need 2 attributes "
                     + "to define visualization parameters.");
         }
@@ -74,24 +80,16 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
             String attribute0 = (String) attributes[0];
             String attribute1 = (String) attributes[1];
 
-            //
-            // Pre-processing data for attribute 0 (color) if needed.
-            //
-            Categorization cat = parameters.get(0).getCategorization();
-            this.categories = cat.execute(shapefile, attribute0);
-            
-            //
-            // Mapping of data categories to visual categories.
-            //
-            Color[] colors = ColorUtils.CreateRedGreenColorGradientAttributes(categories.size());
-            this.materials = new Material[categories.size()];
-            for (int i = 0; i < materials.length; i++) {
-                materials[i] = new Material(colors[i]);
-            }
+            // 1 - Pre-processing data
+            ITransferFunction function0 = parColor.getSelectedTransferFunction();
+            log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
+            function0.preprocess(shapefile, attribute0);
 
-            //
-            // Create the visualization
-            //
+            ITransferFunction function1 = parHeight.getSelectedTransferFunction();
+            log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
+            function1.preprocess(shapefile, attribute0);
+
+            // 2 - Create visualization
             if (Shapefile.isPolylineType(shapefile.getShapeType())) {
                 RenderableLayer layer = new RenderableLayer();
                 for (int i = 0; i < shapefile.getFeatureCount(); i++) {
@@ -106,7 +104,9 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         } else {
             log.debug("Data type not supported.");
         }
-
+        
+        log.debug("Finished {}", this.getClass().getSimpleName());
+        
         return layers;
     }
 
@@ -119,10 +119,19 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
     private Renderable createExtrudedPolyline(Shapefile shpfile, int featureId, String attribute0, String attribute1) {
 
         //
-        // Mapping for visualization parameter COLOR
+        // Use the transfer function for parameter COLOR
         //
-        Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
-        Material m = getMaterialForValue(object0);
+        Object object0;
+        if (attribute0.equalsIgnoreCase("<<NO_ATTRIBUTE>>")) {
+            object0 = null;
+        } else {
+            object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
+        }
+
+        ITransferFunction function0 = parColor.getSelectedTransferFunction();
+        Color c = (Color) function0.calc(object0);
+        Material m = new Material(c);
+
         ShapeAttributes sa = new BasicShapeAttributes();
         sa.setOutlineWidth(0.3);
         sa.setInteriorOpacity(0.6);
@@ -131,19 +140,19 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         sa.setOutlineMaterial(m);
 
         //
-        // Mapping for visualization parameter HEIGHT
+        // Use the transfer function for parameter HEIGHT
         //
-        Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
-        Double value1;
-        if (object1 instanceof Number) {
-            value1 = ((Number) object1).doubleValue();
+        Object object1;
+        if (attribute1.equalsIgnoreCase("<<NO_ATTRIBUTE>>")) {
+            object1 = null;
         } else {
-            log.warn("Data type for extrude Polyline has to be of type Number."
-                    + "Setting 'height=0.5'.");
-            value1 = 0.5;
+            object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         }
 
-        double scaledValue = getScaledValueForAttribute1(value1);
+        ITransferFunction function1 = parHeight.getSelectedTransferFunction();
+        Double value1 = (Double) function1.calc(object1);
+
+        //double scaledValue = getScaledValueForAttribute1(value1);
         List<Position> positionList = new ArrayList<Position>();
         List<Geometry> list = shpfile.getGeometryList(featureId);
         for (int i = 0; i < list.size(); i++) {
@@ -151,7 +160,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
             for (int j = 0; j < g.GetPointCount(); j++) {
                 double[] point = g.GetPoint_2D(j);
                 // ... swap geo positions ???! why
-                positionList.add(Position.fromDegrees(point[1], point[0], scaledValue));
+                positionList.add(Position.fromDegrees(point[1], point[0], value1));
             }
         }
 
@@ -164,30 +173,5 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         path.setAttributes(sa);
 
         return path;
-    }
-
-    /**
-     *
-     * @param d
-     * @return
-     */
-    private Material getMaterialForValue(Object o) {
-
-        for (int i = 0; i < categories.size(); i++) {
-            Category c = categories.get(i);
-            if (c.includes(o)) {
-                return materials[i];
-            }
-        }
-        return Material.GRAY;
-    }
-
-    /**
-     *
-     * @param d
-     * @return
-     */
-    private double getScaledValueForAttribute1(Double d) {
-        return d / 120.0;
     }
 }

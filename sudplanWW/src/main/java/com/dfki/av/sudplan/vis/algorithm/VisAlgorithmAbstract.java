@@ -37,9 +37,9 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      */
     private String name;
     /**
-     * Parameter definition of the visualization
+     *
      */
-    protected List<VisParameter> parameters;
+    private List<IVisParameter> visParameters;
 
     /**
      *
@@ -61,9 +61,9 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      * @param d
      */
     public VisAlgorithmAbstract(String name, String description) {
-        this(name, 
-             description, 
-             new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
+        this(name,
+                description,
+                new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
                 getResource("icons/icon-missing.png")));
     }
 
@@ -76,7 +76,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
         this.icon = i;
         this.name = n;
         this.desription = d;
-        this.parameters = new ArrayList<VisParameter>();
+        this.visParameters = new ArrayList<IVisParameter>();
     }
 
     @Override
@@ -93,9 +93,17 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
     public String getDescription() {
         return this.desription;
     }
-    
+
     @Override
-    public List<VisParameter> getVisParameter(){
-        return this.parameters;
+    public List<IVisParameter> getVisParameters() {
+        return this.visParameters;
+    }
+
+    /**
+     *
+     * @param p
+     */
+    protected void addVisParameter(IVisParameter p) {
+        this.visParameters.add(p);
     }
 }

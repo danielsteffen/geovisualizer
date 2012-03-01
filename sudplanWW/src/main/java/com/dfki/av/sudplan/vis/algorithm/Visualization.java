@@ -16,21 +16,41 @@ import java.util.List;
  */
 public class Visualization {
 
-    public static IVisAlgorithm DEFAULT = new VisAlgorithmDefault();
-    public static IVisAlgorithm EXTRUDE_POLYGON = new VisExtrudePolygon();
-    public static IVisAlgorithm EXTRUDE_POLYLINE = new VisExtrudePolyline();
-    public static IVisAlgorithm POINT_CLOUD = new VisPointCloud();
-    public static IVisAlgorithm TIMESERIES = new VisTimeseries();
-    public static Iterable<IVisAlgorithm> LIST = createList();
+    /*
+     *
+     */
+    public static IVisAlgorithm EXTRUDE_POLYGON(){
+        return new VisExtrudePolygon();
+    }
+    /*
+     *
+     */
+    public static IVisAlgorithm EXTRUDE_POLYLINE(){
+        return new VisExtrudePolyline();
+    }
+    /*
+     *
+     */
+    public static IVisAlgorithm POINT_CLOUD(){
+        return new VisPointCloud();
+    }
+    /*
+     *
+     */
+    public static IVisAlgorithm TIMESERIES(){
+        return new VisTimeseries();
+    }
 
-    private static Iterable<IVisAlgorithm> createList() {
+    /**
+     *
+     * @return
+     */
+    public static Iterable<IVisAlgorithm> GET() {
         List<IVisAlgorithm> list = new ArrayList<IVisAlgorithm>();
-        
-//        list.add(DEFAULT);
-        list.add(EXTRUDE_POLYGON);
-        list.add(EXTRUDE_POLYLINE);
-        list.add(POINT_CLOUD);
-        list.add(TIMESERIES);
+        list.add(new VisExtrudePolygon());
+        list.add(new VisExtrudePolyline());
+        list.add(new VisPointCloud());
+        list.add(new VisTimeseries());
 
         return list;
     }

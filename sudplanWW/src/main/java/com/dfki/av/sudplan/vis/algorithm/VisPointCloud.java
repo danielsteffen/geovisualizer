@@ -31,19 +31,20 @@ public class VisPointCloud extends VisAlgorithmAbstract {
                 "No description available.",
                 new ImageIcon(VisPointCloud.class.getClassLoader().
                 getResource("icons/VisPointCloud.png")));
-        VisParameter parameter0 = new VisParameter("Default");
-        parameters.add(parameter0);
     }
 
     @Override
     public List<Layer> createLayersFromData(Object data, Object[] attriutes) {
 
+        log.debug("Running {}", this.getClass().getSimpleName());
+        
         List<Layer> layers = new ArrayList<Layer>();
         if (data instanceof Shapefile) {
             Shapefile shapefile = (Shapefile) data;
             IconLayer layer = new IconLayer();
             layer.setName(shapefile.getLayerName());
             // 1 - Pre-processing data
+            // ... nothing to do until now.
             // 2 - Create visualization
             addIconsForPoints(shapefile, layer);
             layers.add(layer);
@@ -51,6 +52,8 @@ public class VisPointCloud extends VisAlgorithmAbstract {
             log.warn("Data type not supported for Extrude Polygon Visualization.");
         }
 
+        log.debug("Finished {}", this.getClass().getSimpleName());
+        
         return layers;
     }
 

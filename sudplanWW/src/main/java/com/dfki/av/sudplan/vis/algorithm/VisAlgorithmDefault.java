@@ -42,14 +42,12 @@ public class VisAlgorithmDefault extends VisAlgorithmAbstract {
                 "No description available.",
                 new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
                 getResource("icons/VisAlgorithmDefault.png")));
-        VisParameter parameter0 = new VisParameter("Default");
-        parameters.add(parameter0);
     }
 
     @Override
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
-        log.debug("Creating layer from data: {}", data);
+        log.debug("Running {}", this.getClass().getSimpleName());
         List<Layer> layers = new ArrayList<Layer>();
 
         if (data instanceof Shapefile) {
@@ -72,7 +70,7 @@ public class VisAlgorithmDefault extends VisAlgorithmAbstract {
                 log.warn("Unrecognized shape type: {}", shp.getShapeType());
             }
         }
-        log.debug("Finished.");
+        log.debug("Finished {}", this.getClass().getSimpleName());
         return layers;
     }
 

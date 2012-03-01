@@ -17,8 +17,17 @@ import javax.swing.Icon;
  */
 public interface IVisAlgorithm {
 
-    public List<VisParameter> getVisParameter();
-    
+    /**
+     *
+     * @return
+     */
+    public List<IVisParameter> getVisParameters();
+
+//    /**
+//     *
+//     */
+//    public List<VisParameter> getVisParameter();
+
     /**
      *
      * @return

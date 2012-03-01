@@ -23,16 +23,19 @@ public final class VisualizationSelectionPanel extends JPanel {
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(VisualizationSelectionPanel.class);
-
+    /**
+     *
+     */
     private IVisAlgorithm visAlgorithm;
+
     /**
      * Creates new form VisualizationSelectionPanel
      */
     public VisualizationSelectionPanel() {
         initComponents();
-        this.visAlgorithm=null;
-                
-        for (Iterator<IVisAlgorithm> it = Visualization.LIST.iterator(); it.hasNext();) {
+        this.visAlgorithm = null;
+
+        for (Iterator<IVisAlgorithm> it = Visualization.GET().iterator(); it.hasNext();) {
             final IVisAlgorithm algo = it.next();
             JButton label = new JButton(algo.getIcon());
             label.setFocusable(true);
@@ -84,15 +87,9 @@ public final class VisualizationSelectionPanel extends JPanel {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(VisualizationSelectionPanel.class, "VisualizationSelectionPanel.jPanel2.border.title"))); // NOI18N
 
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
         jTextField1.setEditable(false);
         jTextField1.setText(org.openide.util.NbBundle.getMessage(VisualizationSelectionPanel.class, "VisualizationSelectionPanel.jTextField1.text")); // NOI18N
         jTextField1.setFocusable(false);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -158,10 +155,6 @@ public final class VisualizationSelectionPanel extends JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -172,7 +165,7 @@ public final class VisualizationSelectionPanel extends JPanel {
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 
-    public IVisAlgorithm getSelectedVisualization(){
+    public IVisAlgorithm getSelectedVisualization() {
         return this.visAlgorithm;
     }
 }

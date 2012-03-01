@@ -5,11 +5,11 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz;
+package com.dfki.av.sudplanX.test;
 
-import com.dfki.av.sudplan.vis.algorithm.CategorizationAuto;
-import com.dfki.av.sudplan.vis.algorithm.CategorizationOff;
-import com.dfki.av.sudplan.vis.algorithm.VisParameter;
+import com.dfki.av.sudplanX.test.CategorizationAuto;
+import com.dfki.av.sudplanX.test.CategorizationOff;
+import com.dfki.av.sudplanX.test.VisParameter;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Iterator;

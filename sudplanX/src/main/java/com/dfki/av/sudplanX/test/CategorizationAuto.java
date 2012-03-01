@@ -1,4 +1,4 @@
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplanX.test;
 
 import com.dfki.av.sudplan.io.DataInput;
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
@@ -11,21 +11,32 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class CategorizationOff implements Categorization {
+public class CategorizationAuto implements Categorization {
 
     /*
-     *
+     * 
      */
-    private static final Logger log = LoggerFactory.getLogger(CategorizationOff.class);
-
+    private static final Logger log = LoggerFactory.getLogger(CategorizationAuto.class);
+    /**
+     * 
+     */
+    private int numCategories;
+    /**
+     * 
+     */
+    public CategorizationAuto(int num){
+        this.numCategories = num;
+    }
+    
     @Override
     public List<Category> execute(DataInput data, String attribute) {
+
         if (data instanceof Shapefile) {
             Shapefile shpfile = (Shapefile) data;
             Object o = shpfile.getAttributeOfFeature(0, attribute);
             if (o instanceof Number) {
                 log.debug("Type of attribute {} is Number.", attribute);
-                return computeCategoriesForNumberAttribute(shpfile, attribute);
+                return computeCategoriesForNumberAttribute(shpfile, attribute, numCategories);
             } else if (o instanceof String) {
                 log.debug("Type of attribute {} is String.", attribute);
                 return computeCategoriesForStringAttribute(shpfile, attribute);
@@ -46,17 +57,21 @@ public class CategorizationOff implements Categorization {
      * @param numClasses the number of classes to produce.
      * @return array of boundaries of the classes to return
      */
-    private List<Category> computeCategoriesForNumberAttribute(Shapefile shpfile, String attribute) {
+    private List<Category> computeCategoriesForNumberAttribute(Shapefile shpfile, String attribute, int numClasses) {
 
         log.debug("Searching min and max value for attribute <{}>.", attribute);
-        double totalMinValue = Shapefile.Min(shpfile, attribute);
-        double totalMaxValue = Shapefile.Max(shpfile, attribute);
+        double totalMinValue = Shapefile.MIN(shpfile, attribute);
+        double totalMaxValue = Shapefile.MAX(shpfile, attribute);
         log.debug("Attribute {} min value is {}.", attribute, totalMinValue);
         log.debug("Attribute {} man value is {}.", attribute, totalMaxValue);
+        double intervallSize = (totalMaxValue - totalMinValue) / numClasses;
         ArrayList<Category> categories = new ArrayList<Category>();
-        NumberCategory n = new NumberCategory(totalMinValue, totalMaxValue);
-        categories.add(n);
-
+        for (int i = 0; i < numClasses; i++) {
+            double minValue = totalMinValue + i * intervallSize;
+            double maxValue = totalMinValue + (i + 1) * intervallSize;
+            NumberCategory n = new NumberCategory(minValue, maxValue);
+            categories.add(n);
+        }
         log.debug("Generated {} categories.", categories.size());
         return categories;
     }
@@ -70,13 +85,15 @@ public class CategorizationOff implements Categorization {
     private List<Category> computeCategoriesForStringAttribute(Shapefile shpfile, String attribute) {
         log.debug("Auto classification of attribute <{}>.", attribute);
         ArrayList<Category> categories = new ArrayList<Category>();
-        ArrayList<String> strings = new ArrayList<String>();
         for (int i = 0; i < shpfile.getFeatureCount(); i++) {
             Object o = shpfile.getAttributeOfFeature(i, attribute);
-            strings.add((String) o);
-
+            // Todo attention here ..... potential error.
+            if (o instanceof String) {
+                if (!categories.contains(new StringCategory((String) o))) {
+                    categories.add(new StringCategory((String) o));
+                }
+            }
         }
-        categories.add(new StringCategory(strings));
         log.debug("Generated {} categories.", categories.size());
         return categories;
     }
