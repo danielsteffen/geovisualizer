@@ -32,6 +32,14 @@
       </answer>
     </faq>
 	
+    <faq id="shapezip-not-working">
+      <question>
+        I am trying to load a zipped shapefile. However, my zipped shape files can not be processed. What can I do?
+      </question>
+      <answer>
+        <p>Currently, we assume that the name of the zip file and the included shapefile to be equal. Simply rename the zip file to the name of the included shapefile.</p>
+      </answer>
+    </faq>
   </part>
 
 </faqs>
