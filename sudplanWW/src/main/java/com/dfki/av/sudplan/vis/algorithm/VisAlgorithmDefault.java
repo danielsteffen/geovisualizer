@@ -37,7 +37,7 @@ public class VisAlgorithmDefault extends VisAlgorithmAbstract {
     /**
      *
      */
-    public VisAlgorithmDefault() {
+    private VisAlgorithmDefault() {
         super("Default Visualization",
                 "No description available.",
                 new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().

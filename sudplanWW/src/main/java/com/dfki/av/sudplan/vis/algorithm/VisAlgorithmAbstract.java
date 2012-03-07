@@ -44,7 +44,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
     /**
      *
      */
-    public VisAlgorithmAbstract() {
+    protected VisAlgorithmAbstract() {
         this("Default Visualization");
     }
 
@@ -52,7 +52,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      *
      * @param name
      */
-    public VisAlgorithmAbstract(String name) {
+    protected VisAlgorithmAbstract(String name) {
         this(name, "No description available.");
     }
 
@@ -60,7 +60,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      * @param n
      * @param d
      */
-    public VisAlgorithmAbstract(String name, String description) {
+    protected VisAlgorithmAbstract(String name, String description) {
         this(name,
                 description,
                 new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
@@ -72,7 +72,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      * @param i
      * @param d
      */
-    public VisAlgorithmAbstract(String n, String d, Icon i) {
+    protected VisAlgorithmAbstract(String n, String d, Icon i) {
         this.icon = i;
         this.name = n;
         this.desription = d;
@@ -105,5 +105,29 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      */
     protected void addVisParameter(IVisParameter p) {
         this.visParameters.add(p);
+    }
+
+    /**
+     *
+     * @param attribute
+     * @return
+     */
+    protected String checkAttribute(Object attribute) {
+        String ret = IVisAlgorithm.NO_ATTRIBUTE;
+        if (attribute != null) {
+            if (attribute instanceof String) {
+                ret = (String) attribute;
+                if (ret.isEmpty()) {
+                    ret = IVisAlgorithm.NO_ATTRIBUTE;
+                    log.warn("Attribute is empty. Setting attribute to default.");
+                }
+            } else {
+                log.warn("Attribute is instance of {}. Attribute set to default.",
+                        attribute.getClass().getSimpleName());
+            }
+        } else {
+            log.warn("Attribute is null. Setting attribute to default.");
+        }
+        return ret;
     }
 }

@@ -50,7 +50,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
     /**
      *
      */
-    public VisTimeseries() {
+    protected VisTimeseries() {
         super("Timeseries Visualization",
                 "No description available.",
                 new ImageIcon(VisTimeseries.class.getClassLoader().
@@ -73,45 +73,64 @@ public class VisTimeseries extends VisAlgorithmAbstract {
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
         log.debug("Running {}", this.getClass().getSimpleName());
-        
-        if (attributes == null || attributes.length < 2) {
-            throw new IllegalArgumentException("Not engough attributes for "
-                    + "timeseries visualization.");
-        }
 
         List<Layer> layers = new ArrayList<Layer>();
-        if (data instanceof Shapefile
-                && attributes[0] instanceof String
-                && attributes[1] instanceof String) {
-            Shapefile shpfile = (Shapefile) data;
-            String attribute0 = (String) attributes[0];
-            String attribute1 = (String) attributes[1];
-            
-            // 1 - Pre-processing data
-            ITransferFunction function0 = parTimestep0.getSelectedTransferFunction();
-            log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
-            function0.preprocess(shpfile, attribute0);
-            
-            ITransferFunction function1 = parTimestep1.getSelectedTransferFunction();
-            log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
-            function1.preprocess(shpfile, attribute1);
-            
-            ITransferFunction function2 = parHeight.getSelectedTransferFunction();
-            log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
-            function2.preprocess(shpfile, attribute1);
+        String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
+        String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
+        String attribute2 = IVisAlgorithm.NO_ATTRIBUTE;
+        Shapefile shapefile;
 
-            // 2 - Create visualization            
-            RenderableLayer layer = new RenderableLayer();
-            createTimeSeriesSurface(shpfile, layer, attribute0, attribute1);
-
-            layer.setPickEnabled(false);
-            layer.setName(shpfile.getLayerName());
-            layers.add(layer);
-
+        // 0 - Check data
+        if (!(data instanceof Shapefile)) {
+            log.error("Data type {} not supported for {}.",
+                    data.getClass().getSimpleName(), this.getName());
+            return layers;
+        } else {
+            shapefile = (Shapefile) data;
         }
-        
+
+        // 1 - Check and set all attributes
+        if (attributes == null || attributes.length == 0) {
+            log.error("Attributes set to null. Can not create visualization.");
+            return layers;
+        } else if (attributes.length == 1) {
+            log.warn("Using only one attribute. Setting second attribute to first one.");
+            attribute0 = checkAttribute(attributes[0]);
+            attribute1 = attribute0;
+        } else if (attributes.length == 2) {
+            log.warn("Using only two attributes. Setting remaining attribute to default.");
+            attribute0 = checkAttribute(attributes[0]);
+            attribute1 = checkAttribute(attributes[1]);
+        } else if (attributes.length == 3) {
+            attribute0 = checkAttribute(attributes[0]);
+            attribute1 = checkAttribute(attributes[1]);
+            attribute2 = checkAttribute(attributes[2]);
+        }
+        log.debug("Using " + attribute0 + ", " + attribute1 + ", and " + attribute2 + " as attributes.");
+
+        // 2 - Pre-processing data
+        ITransferFunction function0 = parTimestep0.getSelectedTransferFunction();
+        log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
+        function0.preprocess(shapefile, attribute0);
+
+        ITransferFunction function1 = parTimestep1.getSelectedTransferFunction();
+        log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
+        function1.preprocess(shapefile, attribute1);
+
+        ITransferFunction function2 = parHeight.getSelectedTransferFunction();
+        log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
+        function2.preprocess(shapefile, attribute1);
+
+        // 3 - Create visualization            
+        RenderableLayer layer = new RenderableLayer();
+        createTimeSeriesSurface(shapefile, layer, attribute0, attribute1);
+
+        layer.setPickEnabled(false);
+        layer.setName(shapefile.getLayerName());
+        layers.add(layer);
+
         log.debug("Running {}", this.getClass().getSimpleName());
-        
+
         return layers;
     }
 
@@ -216,7 +235,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
             ITransferFunction function2 = parHeight.getSelectedTransferFunction();
             Double height = (Double) function2.calc(value); // Actually, you don't need an argument!!
-            
+
             Color color;
             if (value < 5.0) {
                 color = Color.GREEN;

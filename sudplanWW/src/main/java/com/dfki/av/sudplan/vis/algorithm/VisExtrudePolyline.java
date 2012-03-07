@@ -29,18 +29,18 @@ import org.gdal.ogr.Geometry;
 public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
     /**
-     *
+     * The surface color of the extruded polyline.
      */
     private ColorParameter parColor;
     /**
-     *
+     * The extrusion height of the polyline.
      */
     private NumberParameter parHeight;
 
     /**
-     *
+     * Creates an polyline extrusion algorithm.
      */
-    public VisExtrudePolyline() {
+    protected VisExtrudePolyline() {
         super("Extrude Polylines", "You have to select 2 attributes for this "
                 + "visualization technique.\n\nThe Polyline technique maps one "
                 + "scalar attribute 'a' of your data source to the parameter "
@@ -65,48 +65,56 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
         log.debug("Running {}", this.getClass().getSimpleName());
 
-        // First of all check whether enough attributes have been specified for
-        // this visualization.
-        if (attributes == null || attributes.length < 2) {
-            throw new IllegalArgumentException("Need 2 attributes "
-                    + "to define visualization parameters.");
-        }
-
         List<Layer> layers = new ArrayList<Layer>();
-        if (data instanceof Shapefile
-                && attributes[0] instanceof String
-                && attributes[1] instanceof String) {
-            Shapefile shapefile = (Shapefile) data;
-            String attribute0 = (String) attributes[0];
-            String attribute1 = (String) attributes[1];
+        String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
+        String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
+        Shapefile shapefile;
 
-            // 1 - Pre-processing data
-            ITransferFunction function0 = parColor.getSelectedTransferFunction();
-            log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
-            function0.preprocess(shapefile, attribute0);
-
-            ITransferFunction function1 = parHeight.getSelectedTransferFunction();
-            log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
-            function1.preprocess(shapefile, attribute0);
-
-            // 2 - Create visualization
-            if (Shapefile.isPolylineType(shapefile.getShapeType())) {
-                RenderableLayer layer = new RenderableLayer();
-                for (int i = 0; i < shapefile.getFeatureCount(); i++) {
-                    Renderable r = createExtrudedPolyline(shapefile, i, attribute0, attribute1);
-                    layer.addRenderable(r);
-                }
-                layer.setName(shapefile.getLayerName());
-                layers.add(layer);
-            } else {
-                log.warn("Extrude Polyline Visualization does not support shape type {}.", shapefile.getShapeType());
-            }
+        // 0 - Check data
+        if (!(data instanceof Shapefile)) {
+            log.error("Data type {} not supported for {}.",
+                    data.getClass().getSimpleName(), this.getName());
+            return layers;
         } else {
-            log.debug("Data type not supported.");
+            shapefile = (Shapefile) data;
         }
-        
+
+        // 1 - Check and set all attributes
+        if (attributes == null || attributes.length == 0) {
+            log.warn("Attributes set to null. First and second attribute set to default.");
+        } else if (attributes.length == 1) {
+            log.warn("Using only one attribute. Second attribute set to default.");
+            attribute0 = checkAttribute(attributes[0]);
+        } else if (attributes.length == 2) {
+            attribute0 = checkAttribute(attributes[0]);
+            attribute1 = checkAttribute(attributes[1]);
+        }
+        log.debug("Using {} and {} as attributes.", attribute0, attribute1);
+
+        // 2 - Pre-processing data
+        ITransferFunction function0 = parColor.getSelectedTransferFunction();
+        log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
+        function0.preprocess(shapefile, attribute0);
+
+        ITransferFunction function1 = parHeight.getSelectedTransferFunction();
+        log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
+        function1.preprocess(shapefile, attribute0);
+
+        // 3 - Create visualization
+        if (Shapefile.isPolylineType(shapefile.getShapeType())) {
+            RenderableLayer layer = new RenderableLayer();
+            for (int i = 0; i < shapefile.getFeatureCount(); i++) {
+                Renderable r = createExtrudedPolyline(shapefile, i, attribute0, attribute1);
+                layer.addRenderable(r);
+            }
+            layer.setName(shapefile.getLayerName());
+            layers.add(layer);
+        } else {
+            log.warn("Extrude Polyline Visualization does not support shape type {}.", shapefile.getShapeType());
+        }
+
         log.debug("Finished {}", this.getClass().getSimpleName());
-        
+
         return layers;
     }
 
@@ -122,7 +130,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         // Use the transfer function for parameter COLOR
         //
         Object object0;
-        if (attribute0.equalsIgnoreCase("<<NO_ATTRIBUTE>>")) {
+        if (attribute0.equalsIgnoreCase(IVisAlgorithm.NO_ATTRIBUTE)) {
             object0 = null;
         } else {
             object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
@@ -143,7 +151,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         // Use the transfer function for parameter HEIGHT
         //
         Object object1;
-        if (attribute1.equalsIgnoreCase("<<NO_ATTRIBUTE>>")) {
+        if (attribute1.equalsIgnoreCase(IVisAlgorithm.NO_ATTRIBUTE)) {
             object1 = null;
         } else {
             object1 = shpfile.getAttributeOfFeature(featureId, attribute1);

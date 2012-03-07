@@ -26,7 +26,7 @@ public class VisPointCloud extends VisAlgorithmAbstract {
     /**
      *
      */
-    public VisPointCloud() {
+    protected VisPointCloud() {
         super("Point Cloud Visualization",
                 "No description available.",
                 new ImageIcon(VisPointCloud.class.getClassLoader().

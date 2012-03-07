@@ -10,8 +10,9 @@ import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
-import com.dfki.av.sudplan.vis.algorithm.VisPointCloud;
+import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
 import com.dfki.av.sudplan.vis.wiz.VisWizIterator;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
@@ -23,6 +24,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.imageio.spi.ServiceRegistry;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.openide.DialogDisplayer;
@@ -68,7 +73,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     /**
-     * Initialize the WMS server panel. 
+     * Initialize the WMS server panel.
      */
     private void initWMSPanel() {
         jTabbedPane1.setTitleAt(0, "+");
@@ -627,7 +632,9 @@ public class MainFrame extends javax.swing.JFrame {
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        wwPanel.addLayer(fc.getSelectedFile(), new VisPointCloud(), null);
+        VisualizationFactory factory = new VisualizationFactory();
+        IVisAlgorithm algo = factory.get("VisPointCloud");
+        wwPanel.addLayer(fc.getSelectedFile(), algo, null);
     }//GEN-LAST:event_miAddShapeActionPerformed
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
@@ -713,7 +720,9 @@ public class MainFrame extends javax.swing.JFrame {
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        wwPanel.addLayer(fc.getSelectedFile(), new VisPointCloud(), null);
+        VisualizationFactory factory = new VisualizationFactory();
+        IVisAlgorithm algo = factory.get("VisPointCloud");
+        wwPanel.addLayer(fc.getSelectedFile(), algo, null);
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void updateLayerMenu() {
@@ -779,6 +788,18 @@ public class MainFrame extends javax.swing.JFrame {
                 new MainFrame().setVisible(true);
             }
         });
+
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(IVisAlgorithmFactory.class);
+        ServiceRegistry registry = new ServiceRegistry(list.iterator());
+        Iterator<?> iter = registry.getServiceProviders(IVisAlgorithmFactory.class, false);
+
+        for (; iter.hasNext();) {
+            Object o = iter.next();
+            log.debug("Found class {}", o.getClass().getSimpleName());
+        }
+        log.debug("Finished searching.");
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelGoToDialoag;

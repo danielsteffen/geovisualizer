@@ -11,7 +11,7 @@ import com.dfki.av.sudplan.camera.*;
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
 import com.dfki.av.sudplan.vis.algorithm.VisWorker;
-import com.dfki.av.sudplan.vis.algorithm.Visualization;
+import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -72,7 +72,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         this.wwd.getModel().getLayers().add(viewControlsLayer);
         this.wwd.addSelectListener(new ViewControlsSelectListener(this.wwd, viewControlsLayer));
         this.add(this.wwd, BorderLayout.CENTER);
-        
+
         this.statusBar = new StatusBar();
         this.statusBar.setEventSource(wwd);
         this.add(statusBar, BorderLayout.PAGE_END);
@@ -91,7 +91,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void addLayer(Object data) {
-        addLayer(data, Visualization.POINT_CLOUD(), null);
+        VisualizationFactory factory = new VisualizationFactory();
+        IVisAlgorithm algo = factory.get("VisPointCloud");
+        addLayer(data, algo, null);
     }
 
     /**
@@ -224,7 +226,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Val_200503", "Val_200501"};
-            addLayer(url, Visualization.TIMESERIES(), attributes);
+            VisualizationFactory factory = new VisualizationFactory();
+            IVisAlgorithm algo = factory.get("VisTimeseries");
+            addLayer(url, algo, attributes);
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }
@@ -246,7 +250,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/Buildings.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Elevation"};
-            addLayer(url, Visualization.EXTRUDE_POLYGON(), attributes);
+            VisualizationFactory factory = new VisualizationFactory();
+            IVisAlgorithm algo = factory.get("VisExtrudePolygon");
+            addLayer(url, algo, attributes);
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }
@@ -256,7 +262,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         LayerList layerList = this.wwd.getModel().getLayers();
         for (Object object : layerList) {
             Layer layer = (Layer) object;
-            // TODO <steffen>: Check usage of World Wind constants here.
             if (layer.getName().startsWith("Building")) {
                 log.debug("Removing layer: {}", layer.getName());
                 removeLayer(layer);
@@ -290,7 +295,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         try {
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip");
             String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-            addLayer(url, Visualization.EXTRUDE_POLYLINE(), attributes);
+            VisualizationFactory factory = new VisualizationFactory();
+            IVisAlgorithm algo = factory.get("VisExtrudePolyline");
+            addLayer(url, algo, attributes);
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }

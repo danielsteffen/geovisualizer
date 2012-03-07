@@ -23,11 +23,6 @@ public interface IVisAlgorithm {
      */
     public List<IVisParameter> getVisParameters();
 
-//    /**
-//     *
-//     */
-//    public List<VisParameter> getVisParameter();
-
     /**
      *
      * @return
@@ -52,4 +47,8 @@ public interface IVisAlgorithm {
      * @return
      */
     public List<Layer> createLayersFromData(Object data, Object[] attributes);
+    /**
+     *
+     */
+    public static final String NO_ATTRIBUTE = "<<NO_ATTRIBUTE>>";
 }
