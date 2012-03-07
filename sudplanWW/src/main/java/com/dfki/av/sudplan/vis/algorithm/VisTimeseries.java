@@ -8,9 +8,7 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumberTansferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.*;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
@@ -46,6 +44,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      *
      */
     private NumberParameter parHeight;
+    /**
+     *
+     */
+//    private ColorParameter parColor;
 
     /**
      *
@@ -67,6 +69,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         this.parHeight = new NumberParameter("Height of Timeseries [m]");
         this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
         addVisParameter(parHeight);
+
+//        this.parColor = new ColorParameter("Color Classification");
+//        this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+//        addVisParameter(parColor);
     }
 
     @Override
@@ -78,6 +84,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute2 = IVisAlgorithm.NO_ATTRIBUTE;
+//        String attribute3 = IVisAlgorithm.NO_ATTRIBUTE;
         Shapefile shapefile;
 
         // 0 - Check data
@@ -105,8 +112,14 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             attribute0 = checkAttribute(attributes[0]);
             attribute1 = checkAttribute(attributes[1]);
             attribute2 = checkAttribute(attributes[2]);
-        }
-        log.debug("Using " + attribute0 + ", " + attribute1 + ", and " + attribute2 + " as attributes.");
+        } /*else if (attributes.length == 4) {
+            attribute0 = checkAttribute(attributes[0]);
+            attribute1 = checkAttribute(attributes[1]);
+            attribute2 = checkAttribute(attributes[2]);
+            attribute3 = checkAttribute(attributes[3]);
+        }*/
+        log.debug("Using " + attribute0 + ", " + attribute1
+                + ", " + attribute2 + /*", and " + attribute3 +*/ " as attributes.");
 
         // 2 - Pre-processing data
         ITransferFunction function0 = parTimestep0.getSelectedTransferFunction();
@@ -121,6 +134,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
 
+//        ITransferFunction function3 = parColor.getSelectedTransferFunction();
+//        log.debug("Using transfer function {} for attribute 3.", function3.getClass().getSimpleName());
+//        function3.preprocess(shapefile, attribute3);
+
         // 3 - Create visualization            
         RenderableLayer layer = new RenderableLayer();
         createTimeSeriesSurface(shapefile, layer, attribute0, attribute1);
@@ -129,7 +146,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         layer.setName(shapefile.getLayerName());
         layers.add(layer);
 
-        log.debug("Running {}", this.getClass().getSimpleName());
+        log.debug("Finished {}", this.getClass().getSimpleName());
 
         return layers;
     }
@@ -140,13 +157,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      * @param layer
      */
     private void createTimeSeriesSurface(Shapefile shpfile, RenderableLayer layer, String attribute0, String attribute1) {
-        double minHue = 240d / 360d;
-        double maxHue = 0.d / 360d;
+
         int width = 140;
         int height = 140;
-
-        double minValue = -200e3;
-        double maxValue = 200e3;
 
         AnalyticSurface surface = new AnalyticSurface();
         log.debug("Bounding box: {}", shpfile.getExtent());
@@ -160,7 +173,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         List<Double> firstValues = computeGridValues(shpfile, attribute0);
         List<Double> secondValues = computeGridValues(shpfile, attribute1);
 
-        interpolateValuesOverTime(3000L, firstValues, secondValues, minValue, maxValue, minHue, maxHue, surface);
+        interpolateValuesOverTime(3000L, firstValues, secondValues, surface);
 
         AnalyticSurfaceAttributes attr = new AnalyticSurfaceAttributes();
         attr.setDrawShadow(false);
@@ -183,7 +196,6 @@ public class VisTimeseries extends VisAlgorithmAbstract {
     private void interpolateValuesOverTime(
             final long timeToMix,
             final List<Double> firstBuffer, final List<Double> secondBuffer,
-            final double minValue, final double maxValue, final double minHue, final double maxHue,
             final AnalyticSurface surface) {
 
         Timer timer = new Timer(20, new ActionListener() {
@@ -205,7 +217,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
                 }
 
                 surface.setValues(createColorGradientGridValues(
-                        a, firstBuffer, secondBuffer, minValue, maxValue, minHue, maxHue));
+                        a, firstBuffer, secondBuffer));
 
                 if (surface.getClientLayer() != null) {
                     surface.getClientLayer().firePropertyChange(AVKey.LAYER, null, surface.getClientLayer());
@@ -220,15 +232,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      * @param a
      * @param firstBuffer
      * @param secondBuffer
-     * @param minValue
-     * @param maxValue
-     * @param minHue
-     * @param maxHue
      * @return
      */
     private Iterable<? extends AnalyticSurface.GridPointAttributes> createColorGradientGridValues(double a,
-            List<Double> firstBuffer, List<Double> secondBuffer, double minValue, double maxValue,
-            double minHue, double maxHue) {
+            List<Double> firstBuffer, List<Double> secondBuffer) {
         ArrayList<AnalyticSurface.GridPointAttributes> attributesList = new ArrayList<AnalyticSurface.GridPointAttributes>();
         for (int i = 0; i < firstBuffer.size(); i++) {
             double value = WWMath.mixSmooth(a, firstBuffer.get(i).doubleValue(), secondBuffer.get(i).doubleValue());
@@ -236,7 +243,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             ITransferFunction function2 = parHeight.getSelectedTransferFunction();
             Double height = (Double) function2.calc(value); // Actually, you don't need an argument!!
 
-            Color color;
+//            ITransferFunction function3 = parColor.getSelectedTransferFunction();
+//            Color color = (Color) function3.calc(value);
+            Color color = Color.WHITE;
             if (value < 5.0) {
                 color = Color.GREEN;
             } else if (value < 6.0) {
