@@ -48,12 +48,13 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
                 new ImageIcon(VisExtrudePolyline.class.getClassLoader().
                 getResource("icons/VisExtrudePolyline.png")));
 
-        this.parColor = new ColorParameter("Color of surface");
+        this.parColor = new ColorParameter("Color of top surface");
         this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+        this.parColor.addTransferFunction(new ColorrampTransferFunction());
         this.parColor.addTransferFunction(new ConstantColorTransferFunction());
         addVisParameter(parColor);
 
-        this.parHeight = new NumberParameter("Extrusion of surface");
+        this.parHeight = new NumberParameter("Extrusion of line [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
         this.parHeight.addTransferFunction(new ScalarMultiplication());
         this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
@@ -98,7 +99,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
         ITransferFunction function1 = parHeight.getSelectedTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
-        function1.preprocess(shapefile, attribute0);
+        function1.preprocess(shapefile, attribute1);
 
         // 3 - Create visualization
         if (Shapefile.isPolylineType(shapefile.getShapeType())) {

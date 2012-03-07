@@ -52,7 +52,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
                 new ImageIcon(VisExtrudePolygon.class.getClassLoader().
                 getResource("icons/VisExtrudePolygon.png")));
 
-        this.parHeight = new NumberParameter("Extrusion of polygon");
+        this.parHeight = new NumberParameter("Extrusion of polygon [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
         this.parHeight.addTransferFunction(new ScalarMultiplication());
         this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
@@ -61,6 +61,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         this.parColor = new ColorParameter("Color of top surface");
         this.parColor.addTransferFunction(new ConstantColorTransferFunction());
         this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+        this.parColor.addTransferFunction(new ColorrampTransferFunction());
         addVisParameter(this.parColor);
 
     }

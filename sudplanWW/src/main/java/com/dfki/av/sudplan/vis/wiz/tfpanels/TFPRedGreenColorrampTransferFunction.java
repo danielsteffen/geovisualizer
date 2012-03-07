@@ -27,7 +27,6 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
         }
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
-//        jRadioButton.setSelected(true);        
         bg.add(jRadioButton);
     }
 
@@ -42,8 +41,11 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
 
         jRadioButton = new javax.swing.JRadioButton();
         jComboBox1 = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
 
         jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jRadioButton.text")); // NOI18N
+
+        jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jLabel1.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -51,23 +53,30 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jRadioButton))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton)
+                    .addComponent(jLabel1)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton jRadioButton;
     // End of variables declaration//GEN-END:variables
 

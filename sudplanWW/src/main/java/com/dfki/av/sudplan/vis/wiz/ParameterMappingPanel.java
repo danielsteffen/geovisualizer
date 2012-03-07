@@ -9,6 +9,7 @@ package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.IVisParameter;
+import java.awt.Component;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JPanel;
@@ -41,52 +42,61 @@ public final class ParameterMappingPanel extends JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
 
+        setPreferredSize(new java.awt.Dimension(621, 408));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(ParameterMappingPanel.class, "ParameterMappingPanel.jLabel1.text")); // NOI18N
         add(jLabel1);
+        add(jTabbedPane1);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public String[] getAttributes() {
 
-        for (int i = 0, j = 0; i < this.getComponentCount(); i++) {
-            if (getComponent(i) instanceof VisParameterPanel) {
-                VisParameterPanel visParameterPanel = (VisParameterPanel) getComponent(i);
+        for (int tabid = 0, j = 0; tabid < jTabbedPane1.getTabCount(); tabid++) {
+            Component c = jTabbedPane1.getComponent(tabid);
+            if (c instanceof VisParameterPanel) {
+                VisParameterPanel visParameterPanel = (VisParameterPanel) c;
                 attributes[j] = visParameterPanel.getSelectedAttribute();
                 j++;
+            } else {
+                System.out.println("No VisParameterPanel.");
             }
         }
         return this.attributes;
     }
-    
+
     /**
-     * 
+     *
      * @param i
-     * @param attributes 
+     * @param attributes
      */
     public void setSelectedVisualization(IVisAlgorithm i, List<String> attributes) {
         this.visAlgorithm = i;
         this.attributes = new String[visAlgorithm.getVisParameters().size()];
-        this.removeAll();
-        
+        jTabbedPane1.removeAll();
         if (visAlgorithm.getVisParameters().isEmpty()) {
-            this.add(jLabel1);
+            jTabbedPane1.setVisible(false);
+            jLabel1.setVisible(true);
+        } else {
+            jTabbedPane1.setVisible(true);
+            jLabel1.setVisible(false);
         }
-        
+
         for (Iterator<IVisParameter> it = visAlgorithm.getVisParameters().iterator(); it.hasNext();) {
             IVisParameter p = it.next();
             VisParameterPanel panel = new VisParameterPanel(p, attributes);
-            this.add(panel);
+            jTabbedPane1.add(p.getName(), panel);
         }
-        
         this.updateUI();
     }
 }

@@ -69,6 +69,14 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
                 this.add(panel);
                 selectedTransferFunction = function.getClass().getSimpleName();
                 visParameter.setSelectedTransferFunction(f);
+            } else if (function instanceof ColorrampTransferFunction) {
+                ColorrampTransferFunction f = (ColorrampTransferFunction) function;
+                JPanel panel = new TFPColorrampTransferFunction(f, dataAttributes, bgTransferFunctions, this);
+                transferFunctionMap.put(f.getClass().getSimpleName(), f);
+                panelMap.put(f.getClass().getSimpleName(), panel);
+                this.add(panel);
+                selectedTransferFunction = function.getClass().getSimpleName();
+                visParameter.setSelectedTransferFunction(f);
             } else if (function instanceof ConstantColorTransferFunction) {
                 ConstantColorTransferFunction f = (ConstantColorTransferFunction) function;
                 JPanel panel = new TFPConstantColorTransferFunction(f, dataAttributes, bgTransferFunctions, this);
@@ -118,9 +126,9 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
 
         bgTransferFunctions = new javax.swing.ButtonGroup();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(visParameter.getName()));
         setAlignmentY(0.0F);
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        setMinimumSize(new java.awt.Dimension(400, 300));
+        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING));
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgTransferFunctions;
@@ -131,6 +139,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
      * @return
      */
     public String getSelectedAttribute() {
+        log.debug("Selected transfer function {}", selectedTransferFunction);
         return ((TFPanel) panelMap.get(selectedTransferFunction)).getSelectedAttribute();
     }
 

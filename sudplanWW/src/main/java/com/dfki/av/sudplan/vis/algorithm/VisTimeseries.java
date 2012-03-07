@@ -119,7 +119,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
         ITransferFunction function2 = parHeight.getSelectedTransferFunction();
         log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
-        function2.preprocess(shapefile, attribute1);
+        function2.preprocess(shapefile, attribute2);
 
         // 3 - Create visualization            
         RenderableLayer layer = new RenderableLayer();

@@ -16,10 +16,10 @@ import java.awt.Color;
 public class ColorUtils {
 
     /**
-     * Returns an color array of size {@link #numColors}. {@link Color#GREEN} is 
+     * Returns an color array of size {@link #numColors}. {@link Color#GREEN} is
      * the first color and {@link Color#RED} the last color in the array.
-     * 
-     * @param numColors the number of colors to return 
+     *
+     * @param numColors the number of colors to return
      * @return the array of colors
      */
     public static Color[] CreateRedGreenColorGradientAttributes(int numColors) {
@@ -34,6 +34,20 @@ public class ColorUtils {
         return colors;
     }
 
+    public static Color[] CreateLinearColorGradient(Color c1, Color c2, int numColors) {
+
+        Color[] colors = new Color[numColors];
+        for (int i = 0; i < colors.length; i++) {
+            float ratio = (float) i / (float) colors.length;
+            int red = (int) (c2.getRed() * ratio + c1.getRed() * (1 - ratio));
+            int green = (int) (c2.getGreen() * ratio
+                    + c1.getGreen() * (1 - ratio));
+            int blue = (int) (c2.getBlue() * ratio
+                    + c1.getBlue() * (1 - ratio));
+            colors[i] = new Color(red, green, blue);
+        }
+        return colors;
+    }
 
     /**
      * r,g,b values are from 0 to 1 h = [0,360], s = [0,1], v = [0,1] if s == 0,

@@ -63,7 +63,6 @@ public final class AttributeSelectionPanel extends JPanel {
 
         jPanel2 = new javax.swing.JPanel();
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(AttributeSelectionPanel.class, "AttributeSelectionPanel.jPanel2.border.title"))); // NOI18N
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
