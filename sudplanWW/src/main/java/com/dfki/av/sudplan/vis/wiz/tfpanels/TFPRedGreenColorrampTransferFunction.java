@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 
 /**
  *
@@ -16,10 +18,13 @@ import javax.swing.ButtonGroup;
  */
 public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel implements TFPanel {
 
+    private RedGreenColorrampTransferFunction function;
+
     /**
      * Creates new form TFPRedGreenColorrampTransferFunction
      */
     public TFPRedGreenColorrampTransferFunction(final RedGreenColorrampTransferFunction f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+        this.function = f;
         initComponents();
         for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
             String string = it.next();
@@ -28,6 +33,8 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
         bg.add(jRadioButton);
+
+        jSpinner1.setValue(f.getNumCategories());
     }
 
     /**
@@ -42,10 +49,21 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
         jRadioButton = new javax.swing.JRadioButton();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jSpinner1 = new javax.swing.JSpinner();
 
         jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jRadioButton.text")); // NOI18N
 
         jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jLabel1.text")); // NOI18N
+
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jLabel2.text")); // NOI18N
+
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
+        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinner1StateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -54,13 +72,17 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButton)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
-                        .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jRadioButton))
-                .addContainerGap(83, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(149, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -71,13 +93,27 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
+        SpinnerModel m = jSpinner1.getModel();
+        if (m instanceof SpinnerNumberModel) {
+            Number n = ((SpinnerNumberModel) m).getNumber();
+            function.setNumCategories(n.intValue());
+        }
+    }//GEN-LAST:event_jSpinner1StateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JRadioButton jRadioButton;
+    private javax.swing.JSpinner jSpinner1;
     // End of variables declaration//GEN-END:variables
 
     @Override

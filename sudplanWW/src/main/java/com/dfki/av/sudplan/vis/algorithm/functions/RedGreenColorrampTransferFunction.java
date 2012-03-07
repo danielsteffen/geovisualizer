@@ -54,8 +54,8 @@ public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
     public Object calc(Object o) {
         if (o instanceof Number) {
             double arg = ((Number) o).doubleValue();
-            double categorieSize = (this.max - this.min) / (double) this.numCategories;
-            for (int i = 0; i < numCategories; i++) {
+            double categorieSize = (this.max - this.min) / (double) this.getNumCategories();
+            for (int i = 0; i < getNumCategories(); i++) {
                 if (arg <= min + (i + 1) * categorieSize) {
                     return colorramp[i];
                 }
@@ -76,11 +76,30 @@ public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
 
     @Override
     public void preprocess(DataInput data, String attribute) {
-        log.debug("Pre-processing data.");
+        log.debug("Pre-processing ...");
+        this.colorramp = ColorUtils.CreateRedGreenColorGradientAttributes(numCategories);
         this.min = data.min(attribute);
-        log.debug("Minimum for attribute {} is {}.", attribute, min);
         this.max = data.max(attribute);
+        log.debug("Minimum for attribute {} is {}.", attribute, min);
         log.debug("Maximum for attribute {} is {}.", attribute, max);
         log.debug("Pre-processing finished.");
+    }
+
+    /**
+     * @return the numCategories
+     */
+    public int getNumCategories() {
+        return numCategories;
+    }
+
+    /**
+     * @param numCategories the numCategories to set
+     */
+    public void setNumCategories(int numCategories) {
+        if (numCategories <= 0) {
+            throw new IllegalArgumentException("No valid argument. "
+                    + "'numCategories' has to be greater 0.");
+        }
+        this.numCategories = numCategories;
     }
 }

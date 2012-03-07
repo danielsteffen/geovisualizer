@@ -79,11 +79,11 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
 
     @Override
     public void preprocess(DataInput data, String attribute) {
+        log.debug("Pre-processing ...");
         this.colorramp = ColorUtils.CreateLinearColorGradient(startColor, endColor, numCategories);
-        log.debug("Pre-processing data.");
         this.min = data.min(attribute);
-        log.debug("Minimum for attribute {} is {}.", attribute, min);
         this.max = data.max(attribute);
+        log.debug("Minimum for attribute {} is {}.", attribute, min);
         log.debug("Maximum for attribute {} is {}.", attribute, max);
         log.debug("Pre-processing finished.");
     }
