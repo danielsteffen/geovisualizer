@@ -25,7 +25,7 @@ public class ConstantColorTransferFunction extends ColorTransferFunction {
      *
      */
     public ConstantColorTransferFunction() {
-        this.color = Color.WHITE;
+        this.color = Color.GRAY;
     }
 
     @Override

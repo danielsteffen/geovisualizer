@@ -41,7 +41,11 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
     /**
      *
      */
-    private ColorParameter parColor;
+    private ColorParameter parCapColor;
+    /**
+     *
+     */
+    private ColorParameter parSideColor;
 
     /**
      *
@@ -58,12 +62,17 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
         addVisParameter(this.parHeight);
 
-        this.parColor = new ColorParameter("Color of top surface");
-        this.parColor.addTransferFunction(new ConstantColorTransferFunction());
-        this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-        this.parColor.addTransferFunction(new ColorrampTransferFunction());
-        addVisParameter(this.parColor);
+        this.parCapColor = new ColorParameter("Color of cap");
+        this.parCapColor.addTransferFunction(new ConstantColorTransferFunction());
+        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
+        addVisParameter(this.parCapColor);
 
+        this.parSideColor = new ColorParameter("Color of side");
+        this.parSideColor.addTransferFunction(new ConstantColorTransferFunction());
+//        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+//        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
+        addVisParameter(this.parSideColor);
     }
 
     @Override
@@ -74,6 +83,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         List<Layer> layers = new ArrayList<Layer>();
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
+        String attribute2 = IVisAlgorithm.NO_ATTRIBUTE;
         Shapefile shapefile;
 
         // 0 - Check data
@@ -94,17 +104,25 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         } else if (attributes.length == 2) {
             attribute0 = checkAttribute(attributes[0]);
             attribute1 = checkAttribute(attributes[1]);
+        } else if (attributes.length == 3) {
+            attribute0 = checkAttribute(attributes[0]);
+            attribute1 = checkAttribute(attributes[1]);
+            attribute2 = checkAttribute(attributes[2]);
         }
-        log.debug("Using {} and {} as attributes.", attribute0, attribute1);
+        log.debug("Using attributes: " + attribute0 + ", " + attribute1 + ", " + attribute2);
 
         // 2 - Preprocessing data
         ITransferFunction function0 = parHeight.getSelectedTransferFunction();
         log.debug("Using transfer function {} for attribute.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
 
-        ITransferFunction function1 = parColor.getSelectedTransferFunction();
+        ITransferFunction function1 = parCapColor.getSelectedTransferFunction();
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
+
+        ITransferFunction function2 = parSideColor.getSelectedTransferFunction();
+        log.debug("Using transfer function {} for attribute.", function2.getClass().getSimpleName());
+        function2.preprocess(shapefile, attribute2);
 
         // 3 - Create visualization
         createRenderablesForPolygons(shapefile, attribute0, attribute1, layers);
@@ -170,7 +188,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         } else if (result.doubleValue() == 0) {
             log.warn("The input value for ExtrudedPolygon = 0."
                     + "Setting value to 0.01.");
-            dResult += 0.01;
+            dResult += 1.0;
         }
 
         Object object1;
@@ -180,19 +198,28 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
             object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         }
 
-        ITransferFunction tf1 = parColor.getSelectedTransferFunction();
-        Color c = (Color) tf1.calc(object1);
+        ITransferFunction tfCapColor = parCapColor.getSelectedTransferFunction();
+        Color capColor = (Color) tfCapColor.calc(object1);
+        Material m = new Material(capColor);
+        BasicShapeAttributes attrCap = new BasicShapeAttributes();
+        attrCap.setDrawOutline(false);
+        attrCap.setInteriorOpacity(1.0);
+        attrCap.setInteriorMaterial(m);
 
-        Material m = new Material(c);
-        BasicShapeAttributes bsa = new BasicShapeAttributes();
-        bsa.setDrawOutline(false);
-        bsa.setInteriorOpacity(1.0);
-        bsa.setInteriorMaterial(m);
+        ITransferFunction tfSideColor = parSideColor.getSelectedTransferFunction();
+        Color sideColor = (Color) tfSideColor.calc(object1);
+        Material sideMaterial = new Material(sideColor);
+        BasicShapeAttributes attrSide = new BasicShapeAttributes();
+        attrSide.setDrawOutline(true);
+        attrSide.setInteriorOpacity(1.0);
+        attrSide.setInteriorMaterial(sideMaterial);
 
         ExtrudedPolygon ep = new ExtrudedPolygon();
         ep.setHeight(dResult);
-        ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-        ep.setAttributes(bsa);
+//        ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+        ep.setCapAttributes(attrCap);
+        ep.setSideAttributes(attrSide);
+        ep.setEnableSides(false);
         layer.addRenderable(ep);
 
         List<Geometry> list = shpfile.getGeometryList(featureId);
@@ -208,12 +235,13 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
             }
 
             if (WWMath.computeWindingOrderOfLocations(positionList).equals(AVKey.CLOCKWISE)) {
-                if (!ep.getOuterBoundary().iterator().hasNext()) // has no outer boundary yet
-                {
+                if (!ep.getOuterBoundary().iterator().hasNext()) {
+                    // has no outer boundary yet
                     ep.setOuterBoundary(positionList);
                 } else {
                     ep = new ExtrudedPolygon();
-                    ep.setAttributes(bsa);
+                    ep.setCapAttributes(attrCap);
+                    ep.setSideAttributes(attrSide);
                     ep.setOuterBoundary(positionList);
                     layer.addRenderable(ep);
                 }
