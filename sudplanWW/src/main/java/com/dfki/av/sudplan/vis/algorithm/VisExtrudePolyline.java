@@ -48,11 +48,12 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
                 new ImageIcon(VisExtrudePolyline.class.getClassLoader().
                 getResource("icons/VisExtrudePolyline.png")));
 
-        this.parColor = new ColorParameter("Color of top surface");
+
+        this.parColor = new ColorParameter("Color of surface");
+        this.parColor.addTransferFunction(new ConstantColorTransferFunction());        
         this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
         this.parColor.addTransferFunction(new ColorrampTransferFunction());
-        this.parColor.addTransferFunction(new ConstantColorTransferFunction());
-        addVisParameter(parColor);
+        addVisParameter(parColor);        
 
         this.parHeight = new NumberParameter("Extrusion of line [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
@@ -130,13 +131,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         //
         // Use the transfer function for parameter COLOR
         //
-        Object object0;
-        if (attribute0.equalsIgnoreCase(IVisAlgorithm.NO_ATTRIBUTE)) {
-            object0 = null;
-        } else {
-            object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
-        }
-
+        Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
         ITransferFunction function0 = parColor.getSelectedTransferFunction();
         Color c = (Color) function0.calc(object0);
         Material m = new Material(c);
@@ -151,17 +146,10 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         //
         // Use the transfer function for parameter HEIGHT
         //
-        Object object1;
-        if (attribute1.equalsIgnoreCase(IVisAlgorithm.NO_ATTRIBUTE)) {
-            object1 = null;
-        } else {
-            object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
-        }
-
+        Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         ITransferFunction function1 = parHeight.getSelectedTransferFunction();
         Double value1 = (Double) function1.calc(object1);
 
-        //double scaledValue = getScaledValueForAttribute1(value1);
         List<Position> positionList = new ArrayList<Position>();
         List<Geometry> list = shpfile.getGeometryList(featureId);
         for (int i = 0; i < list.size(); i++) {

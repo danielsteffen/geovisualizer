@@ -33,11 +33,11 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
      */
     private Color[] colorramp;
     /**
-     * 
+     *
      */
     private Color startColor;
     /**
-     * 
+     *
      */
     private Color endColor;
 
@@ -55,6 +55,11 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
 
     @Override
     public Object calc(Object o) {
+        if (o == null) {
+            log.error("Argument set to null.");
+            return Color.GRAY;
+        }
+        
         if (o instanceof Number) {
             double arg = ((Number) o).doubleValue();
             double categorieSize = (this.max - this.min) / (double) this.getNumCategories();
@@ -69,7 +74,6 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
             return Color.GRAY;
         }
         return Color.GRAY;
-
     }
 
     @Override
@@ -117,7 +121,7 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
      * @param startColor the startColor to set
      */
     public void setStartColor(Color startColor) {
-        if(startColor == null){
+        if (startColor == null) {
             throw new IllegalArgumentException("Color parameter is null.");
         }
         this.startColor = startColor;
@@ -134,7 +138,7 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
      * @param endColor the endColor to set
      */
     public void setEndColor(Color endColor) {
-        if(endColor == null){
+        if (endColor == null) {
             throw new IllegalArgumentException("Color parameter is null.");
         }
         this.endColor = endColor;

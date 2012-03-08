@@ -20,10 +20,13 @@ public class VisualizationFactory implements IVisAlgorithmFactory {
     @Override
     public List<String> getVisualizationNames() {
         List<String> visualizationList = new ArrayList<String>();
-        visualizationList.add(VisExtrudePolygon.class.getSimpleName());
+        visualizationList.add(VisBuildings.class.getSimpleName());
         visualizationList.add(VisExtrudePolyline.class.getSimpleName());
+        visualizationList.add(VisExtrudePolygon.class.getSimpleName());
         visualizationList.add(VisTimeseries.class.getSimpleName());
+        visualizationList.add(VisGeoCPM.class.getSimpleName());
         visualizationList.add(VisPointCloud.class.getSimpleName());
+        
         return Collections.unmodifiableList(visualizationList);
     }
 
@@ -37,6 +40,10 @@ public class VisualizationFactory implements IVisAlgorithmFactory {
             return new VisTimeseries();
         } else if (VisPointCloud.class.getSimpleName().equalsIgnoreCase(name)) {
             return new VisPointCloud();
+        } else if (VisBuildings.class.getSimpleName().equalsIgnoreCase(name)) {
+            return new VisBuildings();
+        } else if (VisGeoCPM.class.getSimpleName().equalsIgnoreCase(name)){
+            return new VisGeoCPM();
         }
         return null;
     }

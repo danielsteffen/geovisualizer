@@ -52,6 +52,12 @@ public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
 
     @Override
     public Object calc(Object o) {
+
+        if (o == null) {
+            log.error("Argument set to null.");
+            return Color.GRAY;
+        }
+
         if (o instanceof Number) {
             double arg = ((Number) o).doubleValue();
             double categorieSize = (this.max - this.min) / (double) this.getNumCategories();
@@ -66,7 +72,6 @@ public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
             return Color.GRAY;
         }
         return Color.GRAY;
-
     }
 
     @Override

@@ -92,6 +92,7 @@ public class Shapefile implements DataInput {
         return getAttributeOfFeatureOfLayer(0, i, attribute);
     }
 
+    
     /**
      *
      * @param layerId
@@ -107,6 +108,11 @@ public class Shapefile implements DataInput {
         if (featureId >= getFeatureCount()) {
             throw new ArrayIndexOutOfBoundsException();
         }
+        
+        if(!hasAttribute(attribute)){
+            return null;
+        }
+        
         Object ret;
         Feature feature = data.GetLayer(layerId).GetFeature(featureId);
         switch (feature.GetFieldType(attribute)) {
@@ -127,6 +133,24 @@ public class Shapefile implements DataInput {
         }
 
         return ret;
+    }
+
+    /**
+     * 
+     * @param attribute the attribute to check.
+     * @return true if the shapefile has an attribute called <code>attribute</code>.
+     */
+    private boolean hasAttribute(String attribute){
+        FeatureDefn fdef = data.GetLayer(0).GetLayerDefn();
+
+        for (int i = 0; i < fdef.GetFieldCount(); i++) {
+            FieldDefn fielddef = fdef.GetFieldDefn(i);
+            if(fielddef.GetName().equalsIgnoreCase(attribute)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

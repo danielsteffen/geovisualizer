@@ -21,6 +21,7 @@ import gov.nasa.worldwind.util.WWMath;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.gdal.ogr.Geometry;
 
@@ -46,15 +47,36 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
      *
      */
     private ColorParameter parSideColor;
+    /**
+     *
+     */
+    private boolean drawOutline;
 
     /**
      *
-     * @param attribute
      */
     protected VisExtrudePolygon() {
-        super("Extrude Polygons", "No description available.",
+        this(true);
+    }
+
+    /**
+     *
+     * @param drawOutline
+     */
+    protected VisExtrudePolygon(boolean drawOutline) {
+        this("Extrude Polygons", "No description available.",
                 new ImageIcon(VisExtrudePolygon.class.getClassLoader().
-                getResource("icons/VisExtrudePolygon.png")));
+                getResource("icons/VisExtrudePolygon.png")), drawOutline);
+    }
+
+    /**
+     *
+     * @param drawOutline
+     */
+    protected VisExtrudePolygon(String name, String description, Icon icon, boolean drawOutline) {
+        super(name, description, icon);
+
+        this.drawOutline = drawOutline;
 
         this.parHeight = new NumberParameter("Extrusion of polygon [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
@@ -70,8 +92,8 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
 
         this.parSideColor = new ColorParameter("Color of side");
         this.parSideColor.addTransferFunction(new ConstantColorTransferFunction());
-//        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-//        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
+        this.parSideColor.addTransferFunction(new RedGreenColorrampTransferFunction());
+        this.parSideColor.addTransferFunction(new ColorrampTransferFunction());
         addVisParameter(this.parSideColor);
     }
 
@@ -170,17 +192,13 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
      */
     private void createExtrudedPolygon(Shapefile shpfile, int featureId, String attribute, String attribute1, RenderableLayer layer) {
 
-        Object object;
-        if (attribute.equalsIgnoreCase(IVisAlgorithm.NO_ATTRIBUTE)) {
-            object = null;
-        } else {
-            object = shpfile.getAttributeOfFeature(featureId, attribute);
-        }
-
-        ITransferFunction tf = parHeight.getSelectedTransferFunction();
-        Number result = (Number) tf.calc(object);
+        //
+        // Use the transfer function for parameter HEIGHT
+        //
+        Object object0 = shpfile.getAttributeOfFeature(featureId, attribute);
+        ITransferFunction tfHeight = parHeight.getSelectedTransferFunction();
+        Number result = (Number) tfHeight.calc(object0);
         double dResult = result.doubleValue();
-
         if (dResult < 0) {
             log.error("The input value for ExtrudedPolygon < 0."
                     + "Setting value to 0.01.");
@@ -191,13 +209,10 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
             dResult += 1.0;
         }
 
-        Object object1;
-        if (attribute1.equalsIgnoreCase(IVisAlgorithm.NO_ATTRIBUTE)) {
-            object1 = null;
-        } else {
-            object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
-        }
-
+        //
+        // Use the transfer function for parameter CAP COLOR
+        //
+        Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         ITransferFunction tfCapColor = parCapColor.getSelectedTransferFunction();
         Color capColor = (Color) tfCapColor.calc(object1);
         Material m = new Material(capColor);
@@ -206,20 +221,25 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         attrCap.setInteriorOpacity(1.0);
         attrCap.setInteriorMaterial(m);
 
+        //
+        // Use the transfer function for parameter SIDE COLOR
+        //
         ITransferFunction tfSideColor = parSideColor.getSelectedTransferFunction();
         Color sideColor = (Color) tfSideColor.calc(object1);
         Material sideMaterial = new Material(sideColor);
         BasicShapeAttributes attrSide = new BasicShapeAttributes();
-        attrSide.setDrawOutline(true);
+        attrSide.setDrawOutline(drawOutline);
         attrSide.setInteriorOpacity(1.0);
         attrSide.setInteriorMaterial(sideMaterial);
 
+        //
+        // Putting everything together.
+        //
         ExtrudedPolygon ep = new ExtrudedPolygon();
         ep.setHeight(dResult);
-//        ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+        ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         ep.setCapAttributes(attrCap);
         ep.setSideAttributes(attrSide);
-        ep.setEnableSides(false);
         layer.addRenderable(ep);
 
         List<Geometry> list = shpfile.getGeometryList(featureId);

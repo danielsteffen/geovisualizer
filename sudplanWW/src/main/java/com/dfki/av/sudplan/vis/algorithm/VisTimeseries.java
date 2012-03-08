@@ -8,7 +8,9 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.algorithm.functions.*;
+import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumberTansferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
@@ -162,10 +164,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         int height = 140;
 
         AnalyticSurface surface = new AnalyticSurface();
-        log.debug("Bounding box: {}", shpfile.getExtent());
         double[] extend = shpfile.getExtent();
         surface.setSector(Sector.fromDegrees(extend[2], extend[3], extend[0], extend[1]));
-        surface.setAltitudeMode(WorldWind.ABSOLUTE);
+        surface.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         surface.setDimensions(width, height);
         surface.setClientLayer(layer);
         layer.addRenderable(surface);

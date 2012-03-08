@@ -50,7 +50,6 @@ public class VisCreateTexture extends VisAlgorithmAbstract {
                 sul = null;
             }
             list.add(sul);
-
         } else {
             log.error("Data type not supported.");
         }

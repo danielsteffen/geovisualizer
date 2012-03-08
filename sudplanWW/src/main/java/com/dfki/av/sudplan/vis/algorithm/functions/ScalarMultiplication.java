@@ -35,6 +35,11 @@ public class ScalarMultiplication extends LinearTransformation {
 
     @Override
     public Object calc(Object o) {
+        if (o == null) {
+            log.error("Argument set to null.");
+            return new Double(0.0);
+        }
+        
         Double result = null;
         if (o instanceof Number) {
             Number n = (Number) o;
@@ -50,25 +55,25 @@ public class ScalarMultiplication extends LinearTransformation {
     public String getName() {
         return "Scalar Mulitplication";
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    public Double getScaleValue(){
+    public Double getScaleValue() {
         return this.scaleValue;
     }
-    
+
     /**
-     * 
-     * @param d 
+     *
+     * @param d
      */
-    public void setScaleValue(double d){
+    public void setScaleValue(double d) {
         this.scaleValue = Double.valueOf(d);
     }
 
     @Override
     public void preprocess(DataInput data, String attribute) {
-       log.debug("No pre-processing required.");
+        log.debug("No pre-processing required.");
     }
 }
