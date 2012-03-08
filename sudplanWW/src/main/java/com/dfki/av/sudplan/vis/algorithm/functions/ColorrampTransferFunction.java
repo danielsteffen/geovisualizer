@@ -48,9 +48,9 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
         this.min = Double.MIN_VALUE;
         this.max = Double.MAX_VALUE;
         this.numCategories = 5;
-        this.startColor = Color.RED;
-        this.endColor = Color.GREEN;
-        this.colorramp = ColorUtils.CreateLinearColorGradient(startColor, endColor, numCategories);
+        this.startColor = Color.GREEN;
+        this.endColor = Color.RED;
+        this.colorramp = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, numCategories);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ColorrampTransferFunction extends ColorTransferFunction {
     @Override
     public void preprocess(DataInput data, String attribute) {
         log.debug("Pre-processing ...");
-        this.colorramp = ColorUtils.CreateLinearColorGradient(startColor, endColor, numCategories);
+        this.colorramp = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, numCategories);
         this.min = data.min(attribute);
         this.max = data.max(attribute);
         log.debug("Minimum for attribute {} is {}.", attribute, min);
