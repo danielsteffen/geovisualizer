@@ -155,24 +155,27 @@ public class TFPColorrampTransferFunction extends javax.swing.JPanel implements 
 
     private void jTextField2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField2MouseClicked
         Color c = JColorChooser.showDialog(this, "Choose your color", function.getStartColor());
-        jTextField2.setBackground(c);
-        function.setStartColor(c);
+        if (c != null) {
+            jTextField2.setBackground(c);
+            function.setStartColor(c);
+        }
     }//GEN-LAST:event_jTextField2MouseClicked
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
         Color c = JColorChooser.showDialog(this, "Choose your color", function.getEndColor());
-        jTextField1.setBackground(c);
-        function.setEndColor(c);
+        if (c != null) {
+            jTextField1.setBackground(c);
+            function.setEndColor(c);
+        }
     }//GEN-LAST:event_jTextField1MouseClicked
 
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
         SpinnerModel m = jSpinner1.getModel();
-        if( m instanceof SpinnerNumberModel){
-            Number n = ((SpinnerNumberModel)m).getNumber();
+        if (m instanceof SpinnerNumberModel) {
+            Number n = ((SpinnerNumberModel) m).getNumber();
             function.setNumCategories(n.intValue());
         }
     }//GEN-LAST:event_jSpinner1StateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
@@ -187,7 +190,7 @@ public class TFPColorrampTransferFunction extends javax.swing.JPanel implements 
 
     @Override
     public String getSelectedAttribute() {
-        System.out.println("Selected Item: "+(String) jComboBox1.getSelectedItem());
+        System.out.println("Selected Item: " + (String) jComboBox1.getSelectedItem());
         return (String) jComboBox1.getSelectedItem();
     }
 }

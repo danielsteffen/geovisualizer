@@ -25,7 +25,7 @@ public class TFPConstantColorTransferFunction extends javax.swing.JPanel impleme
     public TFPConstantColorTransferFunction(final ConstantColorTransferFunction f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
         this.function = f;
         initComponents();
-        
+
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
         bg.add(jRadioButton);
@@ -78,9 +78,12 @@ public class TFPConstantColorTransferFunction extends javax.swing.JPanel impleme
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
         Color c = JColorChooser.showDialog(this, "Choose your color", function.getColor());
-        jTextField1.setBackground(c);
-        function.setColor(c);
+        if (c != null) {
+            jTextField1.setBackground(c);
+            function.setColor(c);
+        }
     }//GEN-LAST:event_jTextField1MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton jRadioButton;
     private javax.swing.JTextField jTextField1;
