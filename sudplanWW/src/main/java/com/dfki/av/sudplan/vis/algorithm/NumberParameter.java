@@ -64,7 +64,7 @@ public class NumberParameter implements IVisParameter {
     }
 
     @Override
-    public boolean addTransferFunction(ITransferFunction f) {
+    public boolean addTransferFunction(final ITransferFunction f) {
         if(!(f instanceof NumberTransferFunction))                {
             throw new IllegalArgumentException("Transferfunction must be of typ "
                     + NumberTransferFunction.class.getSimpleName());

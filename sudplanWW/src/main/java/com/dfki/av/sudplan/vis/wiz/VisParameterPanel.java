@@ -139,7 +139,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
      * @return
      */
     public String getSelectedAttribute() {
-        log.debug("Selected transfer function {}", selectedTransferFunction);
+//        log.debug("Selected transfer function {}", selectedTransferFunction);
         return ((TFPanel) panelMap.get(selectedTransferFunction)).getSelectedAttribute();
     }
 

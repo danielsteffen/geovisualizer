@@ -42,7 +42,11 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
      *
      */
     private ColorParameter parCapColor;
-
+    /**
+     * Filter to reduce number of Polygons.
+     */
+    private NumberParameter parFilter;
+    
     /**
      *
      */
@@ -62,6 +66,12 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
         this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
         addVisParameter(this.parCapColor);
+
+        this.parFilter = new NumberParameter("Filter");
+        ConstantNumberTansferFunction cntf = new ConstantNumberTansferFunction();
+        cntf.setConstant(0.5);
+        this.parFilter.addTransferFunction(cntf);
+        addVisParameter(this.parFilter);
     }
 
     @Override
@@ -84,12 +94,13 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         }
 
         // 1 - Check and set all attributes
+        // Attention you will receive an array that has the size of the ...
         if (attributes == null || attributes.length == 0) {
             log.warn("Attributes set to null. First and second attribute set to default.");
         } else if (attributes.length == 1) {
             log.warn("Using only one attribute. Second attribute set to default.");
             attribute0 = checkAttribute(attributes[0]);
-        } else if (attributes.length == 2) {
+        } else if (attributes.length >= 2) {
             attribute0 = checkAttribute(attributes[0]);
             attribute1 = checkAttribute(attributes[1]);
         }
@@ -167,10 +178,14 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
             dResult = 0.01;
         } 
         
-        if(dResult < 0.1){
+        //
+        // Skip all values lower than a determined value.
+        //
+        ITransferFunction tfFilter = parFilter.getSelectedTransferFunction();
+        Number limit = (Number)tfFilter.calc(null);
+        if(dResult < limit.doubleValue()){
             return;
         }
-        
 
         //
         // Use the transfer function for parameter CAP COLOR
