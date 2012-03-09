@@ -47,36 +47,23 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
      *
      */
     private ColorParameter parSideColor;
-    /**
-     *
-     */
-    private boolean drawOutline;
 
     /**
      *
+     * @param drawOutline
      */
     protected VisExtrudePolygon() {
-        this(true);
-    }
-
-    /**
-     *
-     * @param drawOutline
-     */
-    protected VisExtrudePolygon(boolean drawOutline) {
         this("Extrude Polygons", "No description available.",
                 new ImageIcon(VisExtrudePolygon.class.getClassLoader().
-                getResource("icons/VisExtrudePolygon.png")), drawOutline);
+                getResource("icons/VisExtrudePolygon.png")));
     }
 
     /**
      *
      * @param drawOutline
      */
-    protected VisExtrudePolygon(String name, String description, Icon icon, boolean drawOutline) {
+    protected VisExtrudePolygon(String name, String description, Icon icon) {
         super(name, description, icon);
-
-        this.drawOutline = drawOutline;
 
         this.parHeight = new NumberParameter("Extrusion of polygon [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
@@ -228,7 +215,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         Color sideColor = (Color) tfSideColor.calc(object1);
         Material sideMaterial = new Material(sideColor);
         BasicShapeAttributes attrSide = new BasicShapeAttributes();
-        attrSide.setDrawOutline(drawOutline);
+        attrSide.setDrawOutline(true);
         attrSide.setInteriorOpacity(1.0);
         attrSide.setInteriorMaterial(sideMaterial);
 
@@ -270,4 +257,5 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
             }
         }
     }
+
 }
