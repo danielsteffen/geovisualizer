@@ -178,10 +178,6 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         miAddRooftopResults = new javax.swing.JMenuItem();
         miRemoveRooftopResults = new javax.swing.JMenuItem();
-        miAddStreetLevelResults = new javax.swing.JMenuItem();
-        miRemoveStreetLevelResults = new javax.swing.JMenuItem();
-        miAddBuildings = new javax.swing.JMenuItem();
-        miRemoveBuildings = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         miAddTimeseries = new javax.swing.JMenuItem();
         miRemoveTimeseries = new javax.swing.JMenuItem();
@@ -303,7 +299,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 33, Short.MAX_VALUE)
+            .addGap(0, 199, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -441,6 +437,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         mStockholm.setText(bundle.getString("MainFrame.mStockholm.text")); // NOI18N
 
+        miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
         miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -465,38 +462,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         mStockholm.add(miRemoveRooftopResults);
-
-        miAddStreetLevelResults.setText(bundle.getString("MainFrame.miAddStreetLevelResults.text")); // NOI18N
-        miAddStreetLevelResults.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddStreetLevelResultsActionPerformed(evt);
-            }
-        });
-        mStockholm.add(miAddStreetLevelResults);
-
-        miRemoveStreetLevelResults.setText(bundle.getString("MainFrame.miRemoveStreetLevelResults.text")); // NOI18N
-        miRemoveStreetLevelResults.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miRemoveStreetLevelResultsActionPerformed(evt);
-            }
-        });
-        mStockholm.add(miRemoveStreetLevelResults);
-
-        miAddBuildings.setText(bundle.getString("MainFrame.miAddBuildings.text")); // NOI18N
-        miAddBuildings.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddBuildingsActionPerformed(evt);
-            }
-        });
-        mStockholm.add(miAddBuildings);
-
-        miRemoveBuildings.setText(bundle.getString("MainFrame.miRemoveBuildings.text")); // NOI18N
-        miRemoveBuildings.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miRemoveBuildingsActionPerformed(evt);
-            }
-        });
-        mStockholm.add(miRemoveBuildings);
         mStockholm.add(jSeparator7);
 
         miAddTimeseries.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddTimeseries.text")); // NOI18N
@@ -519,6 +484,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         mLinz.setText(bundle.getString("MainFrame.mLinz.text")); // NOI18N
 
+        miGotoLinz.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
         miGotoLinz.setText(bundle.getString("MainFrame.miGotoLinz.text")); // NOI18N
         miGotoLinz.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -531,6 +497,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         mWuppertal.setText(bundle.getString("MainFrame.mWuppertal.text")); // NOI18N
 
+        miGotoWuppertal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
         miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -543,6 +510,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         mPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mPraque.text")); // NOI18N
 
+        miGotoPraque.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         miGotoPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoPraque.text")); // NOI18N
         miGotoPraque.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -661,10 +629,6 @@ public class MainFrame extends javax.swing.JFrame {
         wwPanel.removeAllLayers();
     }//GEN-LAST:event_miRemoveAllLayerActionPerformed
 
-    private void miAddBuildingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddBuildingsActionPerformed
-        wwPanel.addBuildings();
-    }//GEN-LAST:event_miAddBuildingsActionPerformed
-
     private void miGoToStockhomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGoToStockhomActionPerformed
         wwPanel.setCamera(new AnimatedCamera(59.328, 18.047, 20000.0));
     }//GEN-LAST:event_miGoToStockhomActionPerformed
@@ -674,28 +638,16 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_miGotoLinzActionPerformed
 
     private void miGotoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoWuppertalActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(51.2665, 7.1832, 20000.0));
+        wwPanel.setCamera(new AnimatedCamera(51.249, 7.0832, 1510.0));
     }//GEN-LAST:event_miGotoWuppertalActionPerformed
 
     private void miFullSphereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFullSphereActionPerformed
         wwPanel.setCamera(new AnimatedCamera(37.0, 27.0, 19000000.0));
     }//GEN-LAST:event_miFullSphereActionPerformed
 
-    private void miAddStreetLevelResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddStreetLevelResultsActionPerformed
-        wwPanel.addStreetLevelResults();
-    }//GEN-LAST:event_miAddStreetLevelResultsActionPerformed
-
     private void miAddRooftopResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddRooftopResultsActionPerformed
         wwPanel.addRooftopResults();
     }//GEN-LAST:event_miAddRooftopResultsActionPerformed
-
-    private void miRemoveBuildingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveBuildingsActionPerformed
-        wwPanel.removeBuildings();
-    }//GEN-LAST:event_miRemoveBuildingsActionPerformed
-
-    private void miRemoveStreetLevelResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveStreetLevelResultsActionPerformed
-        wwPanel.removeStreetLevelResults();
-    }//GEN-LAST:event_miRemoveStreetLevelResultsActionPerformed
 
     private void miRemoveRooftopResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveRooftopResultsActionPerformed
         wwPanel.removeRooftopResults();
@@ -830,13 +782,11 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu mWuppertal;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
-    private javax.swing.JMenuItem miAddBuildings;
     private javax.swing.JMenuItem miAddElevation;
     private javax.swing.JMenuItem miAddGeoTiff;
     private javax.swing.JMenuItem miAddRooftopResults;
     private javax.swing.JMenuItem miAddShape;
     private javax.swing.JMenuItem miAddShapeZip;
-    private javax.swing.JMenuItem miAddStreetLevelResults;
     private javax.swing.JMenuItem miAddTimeseries;
     private javax.swing.JMenuItem miChangeOrder;
     private javax.swing.JMenuItem miExit;
@@ -847,9 +797,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
     private javax.swing.JMenuItem miRemoveAllLayer;
-    private javax.swing.JMenuItem miRemoveBuildings;
     private javax.swing.JMenuItem miRemoveRooftopResults;
-    private javax.swing.JMenuItem miRemoveStreetLevelResults;
     private javax.swing.JMenuItem miRemoveTimeseries;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
