@@ -63,14 +63,12 @@ public class VisBuildings extends VisAlgorithmAbstract {
 
         this.parCapColor = new ColorParameter("Color of roof");
         this.parCapColor.addTransferFunction(new ConstantColorTransferFunction());
-        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
+        this.parCapColor.addTransferFunction(new ColorrampCategorization());
+        this.parCapColor.addTransferFunction(new ColorrampClassification());
         addVisParameter(this.parCapColor);
 
         this.parSideColor = new ColorParameter("Color of walls");
         this.parSideColor.addTransferFunction(new ConstantColorTransferFunction());
-//        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-//        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
         addVisParameter(this.parSideColor);
     }
 

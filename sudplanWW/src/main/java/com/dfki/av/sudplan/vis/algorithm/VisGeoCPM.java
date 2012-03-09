@@ -63,8 +63,8 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
 
         this.parCapColor = new ColorParameter("Color of surface");
         this.parCapColor.addTransferFunction(new ConstantColorTransferFunction());
-        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
+//        this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
+        this.parCapColor.addTransferFunction(new ColorrampClassification());
         addVisParameter(this.parCapColor);
 
         this.parFilter = new NumberParameter("Filter");

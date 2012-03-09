@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.io.DataInput;
+import com.dfki.av.sudplan.io.DataSource;
 
 /**
  *
@@ -19,6 +19,6 @@ public interface ITransferFunction {
 
     public String getName();
 
-    public void preprocess(DataInput data, String attribute);
+    public void preprocess(DataSource data, String attribute);
 
 }

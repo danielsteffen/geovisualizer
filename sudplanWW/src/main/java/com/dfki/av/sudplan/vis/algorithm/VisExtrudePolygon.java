@@ -73,14 +73,14 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
 
         this.parCapColor = new ColorParameter("Color of cap");
         this.parCapColor.addTransferFunction(new ConstantColorTransferFunction());
-        this.parCapColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-        this.parCapColor.addTransferFunction(new ColorrampTransferFunction());
+//        this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
+        this.parCapColor.addTransferFunction(new ColorrampClassification());
         addVisParameter(this.parCapColor);
 
         this.parSideColor = new ColorParameter("Color of side");
         this.parSideColor.addTransferFunction(new ConstantColorTransferFunction());
-        this.parSideColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-        this.parSideColor.addTransferFunction(new ColorrampTransferFunction());
+//        this.parSideColor.addTransferFunction(new RedGreenColorrampClassification());
+        this.parSideColor.addTransferFunction(new ColorrampClassification());
         addVisParameter(this.parSideColor);
     }
 

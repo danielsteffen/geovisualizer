@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.io.DataInput;
+import com.dfki.av.sudplan.io.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class ScalarMultiplication extends LinearTransformation {
     }
 
     @Override
-    public void preprocess(DataInput data, String attribute) {
+    public void preprocess(DataSource data, String attribute) {
         log.debug("No pre-processing required.");
     }
 }

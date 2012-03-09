@@ -61,16 +61,16 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
         List<ITransferFunction> list = param.getTransferFunctions();
         for (Iterator<ITransferFunction> it = list.iterator(); it.hasNext();) {
             ITransferFunction function = it.next();
-            if (function instanceof RedGreenColorrampTransferFunction) {
-                RedGreenColorrampTransferFunction f = (RedGreenColorrampTransferFunction) function;
+            if (function instanceof RedGreenColorrampClassification) {
+                RedGreenColorrampClassification f = (RedGreenColorrampClassification) function;
                 JPanel panel = new TFPRedGreenColorrampTransferFunction(f, dataAttributes, bgTransferFunctions, this);
                 transferFunctionMap.put(f.getClass().getSimpleName(), f);
                 panelMap.put(f.getClass().getSimpleName(), panel);
                 this.add(panel);
                 selectedTransferFunction = function.getClass().getSimpleName();
                 visParameter.setSelectedTransferFunction(f);
-            } else if (function instanceof ColorrampTransferFunction) {
-                ColorrampTransferFunction f = (ColorrampTransferFunction) function;
+            } else if (function instanceof ColorrampClassification) {
+                ColorrampClassification f = (ColorrampClassification) function;
                 JPanel panel = new TFPColorrampTransferFunction(f, dataAttributes, bgTransferFunctions, this);
                 transferFunctionMap.put(f.getClass().getSimpleName(), f);
                 panelMap.put(f.getClass().getSimpleName(), panel);
@@ -109,6 +109,14 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
                 this.add(panel);
                 selectedTransferFunction = function.getClass().getSimpleName();
                 visParameter.setSelectedTransferFunction(f);
+            } else if(function instanceof ColorrampCategorization){
+               ColorrampCategorization f = (ColorrampCategorization) function;
+               JPanel panel = new TFPColorrampCategorization(f, dataAttributes, bgTransferFunctions, this);
+               transferFunctionMap.put(f.getClass().getSimpleName(), f);
+               panelMap.put(f.getClass().getSimpleName(), panel);
+               this.add(panel);
+               selectedTransferFunction = function.getClass().getSimpleName();
+               visParameter.setSelectedTransferFunction(function);
             } else {
                 log.debug("TransferFunction {} not supported by UI", function.getClass().getSimpleName());
             }

@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.io.DataInput;
+import com.dfki.av.sudplan.io.DataSource;
 import java.awt.Color;
 
 /**
@@ -39,7 +39,7 @@ public class ConstantColorTransferFunction extends ColorTransferFunction {
     }
 
     @Override
-    public void preprocess(DataInput data, String attribute) {
+    public void preprocess(DataSource data, String attribute) {
         // Nothing to do.
     }
 

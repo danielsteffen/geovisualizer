@@ -4,7 +4,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz.tfpanels;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.RedGreenColorrampTransferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.RedGreenColorrampClassification;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
@@ -18,12 +18,12 @@ import javax.swing.SpinnerNumberModel;
  */
 public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel implements TFPanel {
 
-    private RedGreenColorrampTransferFunction function;
+    private RedGreenColorrampClassification function;
 
     /**
      * Creates new form TFPRedGreenColorrampTransferFunction
      */
-    public TFPRedGreenColorrampTransferFunction(final RedGreenColorrampTransferFunction f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPRedGreenColorrampTransferFunction(final RedGreenColorrampClassification f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
         this.function = f;
         initComponents();
         for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
@@ -82,7 +82,7 @@ public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel imp
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
                             .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(149, Short.MAX_VALUE))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

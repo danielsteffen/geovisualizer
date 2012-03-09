@@ -1,5 +1,5 @@
 /*
- *  RedGreenColorrampTransferFunction.java 
+ *  RedGreenColorrampClassification.java 
  *
  *  Created by DFKI AV on 29.02.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.io.DataInput;
+import com.dfki.av.sudplan.io.DataSource;
 import com.dfki.av.utils.ColorUtils;
 import java.awt.Color;
 import org.slf4j.Logger;
@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
+public class RedGreenColorrampClassification extends ColorClassification {
 
     /*
      *
      */
-    private static final Logger log = LoggerFactory.getLogger(RedGreenColorrampTransferFunction.class);
+    private static final Logger log = LoggerFactory.getLogger(RedGreenColorrampClassification.class);
     /**
      *
      */
@@ -43,7 +43,7 @@ public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
     /**
      *
      */
-    public RedGreenColorrampTransferFunction() {
+    public RedGreenColorrampClassification() {
         this.min = Double.MIN_VALUE;
         this.max = Double.MAX_VALUE;
         this.numCategories = 5;
@@ -80,7 +80,7 @@ public class RedGreenColorrampTransferFunction extends ColorTransferFunction {
     }
 
     @Override
-    public void preprocess(DataInput data, String attribute) {
+    public void preprocess(DataSource data, String attribute) {
         log.debug("Pre-processing ...");
         this.colorramp = ColorUtils.CreateRedGreenColorGradientAttributes(numCategories);
         this.min = data.min(attribute);

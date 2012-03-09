@@ -1,6 +1,6 @@
 package com.dfki.av.sudplan.io.shapefile;
 
-import com.dfki.av.sudplan.io.DataInput;
+import com.dfki.av.sudplan.io.DataSource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class Shapefile implements DataInput {
+public class Shapefile implements DataSource {
 
     static {
         ogr.RegisterAll();
     }
     private static final Logger log = LoggerFactory.getLogger(Shapefile.class);
-    private DataSource data;
+    private org.gdal.ogr.DataSource data;
     public static final int PolylineType = ogrConstants.wkbLineString;
     public static final int PolygonType = ogrConstants.wkbPolygon;
 
@@ -259,14 +259,34 @@ public class Shapefile implements DataInput {
 
         for (int i = 0; i < fdef.GetFieldCount(); i++) {
             FieldDefn fielddef = fdef.GetFieldDefn(i);
-            if(fielddef.GetTypeName().equalsIgnoreCase("String")){
-                log.warn("Skipping String attribute {}.", fielddef.GetName());
-                continue;
-            }
+//            if(fielddef.GetTypeName().equalsIgnoreCase("String")){
+//                log.warn("Skipping String attribute {}.", fielddef.GetName());
+//                continue;
+//            }
             attributes.put(fielddef.GetName(), fielddef.GetTypeName());
         }
 
         return attributes;
+    }
+    /**
+     * 
+     * @param attribute
+     * @return 
+     */
+    public int getTypeOfAttribute(String attribute){
+        if (data == null || data.GetLayerCount() == 0) {
+            log.error("Shapefile has no layers.");
+            throw new RuntimeException("Shapefile has no layers.");
+        }        
+        
+        FeatureDefn fdef = data.GetLayer(0).GetLayerDefn();
+        for (int i = 0; i < fdef.GetFieldCount(); i++) {
+            FieldDefn fielddef = fdef.GetFieldDefn(i);
+            if(fielddef.GetName().equalsIgnoreCase(attribute)){
+                return fielddef.GetFieldType();
+            }
+        }
+        return -1;
     }
 
     @Override

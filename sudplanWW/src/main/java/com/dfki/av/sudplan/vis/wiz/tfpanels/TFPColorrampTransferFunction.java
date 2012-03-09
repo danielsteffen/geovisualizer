@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz.tfpanels;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ColorrampTransferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.ColorrampClassification;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -23,12 +23,12 @@ import javax.swing.SpinnerNumberModel;
  */
 public class TFPColorrampTransferFunction extends javax.swing.JPanel implements TFPanel {
 
-    private ColorrampTransferFunction function;
+    private ColorrampClassification function;
 
     /**
      * Creates new form TFPColorrampTransferFunction
      */
-    public TFPColorrampTransferFunction(final ColorrampTransferFunction f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPColorrampTransferFunction(final ColorrampClassification f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
         this.function = f;
 
         initComponents();
@@ -68,6 +68,7 @@ public class TFPColorrampTransferFunction extends javax.swing.JPanel implements 
 
         jRadioButton1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jRadioButton1.text")); // NOI18N
 
+        jTextField1.setColumns(6);
         jTextField1.setEditable(false);
         jTextField1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jTextField1.text")); // NOI18N
         jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -78,6 +79,7 @@ public class TFPColorrampTransferFunction extends javax.swing.JPanel implements 
 
         jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jLabel1.text")); // NOI18N
 
+        jTextField2.setColumns(6);
         jTextField2.setEditable(false);
         jTextField2.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jTextField2.text")); // NOI18N
         jTextField2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -109,43 +111,44 @@ public class TFPColorrampTransferFunction extends javax.swing.JPanel implements 
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jSpinner1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap())))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jRadioButton1)
-                        .addContainerGap())))
+                        .addContainerGap(92, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jRadioButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -190,7 +193,6 @@ public class TFPColorrampTransferFunction extends javax.swing.JPanel implements 
 
     @Override
     public String getSelectedAttribute() {
-        System.out.println("Selected Item: " + (String) jComboBox1.getSelectedItem());
         return (String) jComboBox1.getSelectedItem();
     }
 }
