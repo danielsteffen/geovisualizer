@@ -105,16 +105,17 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
 
         String fileName = tmpFile.getName();
         Object data = null;
-        if (fileName.endsWith(".zip")) {
+        String fileExtension = fileName.substring(fileName.length() - 4);
+        if (fileExtension.equalsIgnoreCase(".zip")) {
             AVUtils.Unzip(tmpFile, Settings.SUDPLAN_3D_USER_HOME);
             // Here, we assume that the name of the shapefile contained in the
             // zip file equals the name of the zip and vice versa.
-            String shpFileName = fileName.replace(".zip", ".shp");
+            String shpFileName = fileName.replace(fileExtension, ".shp");
             File tmp = new File(Settings.SUDPLAN_3D_USER_HOME + File.separator + shpFileName);
             data = new Shapefile(tmp.getAbsolutePath());
-        } else if (fileName.endsWith(".shp")) {
+        } else if (fileExtension.equalsIgnoreCase(".shp")) {
             data = new Shapefile(tmpFile.getAbsolutePath());
-        } else if (fileName.endsWith(".tif")
+        } else if (fileExtension.equalsIgnoreCase(".tif")
                 || fileName.endsWith(".tiff")) {
             data = tmpFile;
         } else {
