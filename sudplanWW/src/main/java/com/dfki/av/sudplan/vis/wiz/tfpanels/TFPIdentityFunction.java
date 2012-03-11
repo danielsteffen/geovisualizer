@@ -22,7 +22,8 @@ public class TFPIdentityFunction extends /*javax.swing.JPanel implements*/ TFPan
     /**
      * Creates new form TFPIdentityFunction
      */
-    public TFPIdentityFunction(final IdentityFunction f, final List<String> attributes, final ButtonGroup bg, ActionListener l) {
+    public TFPIdentityFunction(final IdentityFunction f, final List<String> attributes, 
+            final ButtonGroup bg, ActionListener l, boolean selected) {
         
         initComponents();
         for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
@@ -32,7 +33,7 @@ public class TFPIdentityFunction extends /*javax.swing.JPanel implements*/ TFPan
         // Finally, add the jRadioButton to the buttongroup
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
-//        jRadioButton.setSelected(true);
+        jRadioButton.setSelected(selected);
         bg.add(jRadioButton);
     }
 

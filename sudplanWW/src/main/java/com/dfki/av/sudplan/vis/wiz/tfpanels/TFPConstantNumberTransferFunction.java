@@ -33,7 +33,8 @@ public class TFPConstantNumberTransferFunction extends /*JPanel implements*/ TFP
     /**
      * Creates new form TFPanelIdentityFunction
      */
-    public TFPConstantNumberTransferFunction(final ConstantNumberTansferFunction f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPConstantNumberTransferFunction(final ConstantNumberTansferFunction f, 
+            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
         this.function = f;
         
         initComponents();
@@ -41,6 +42,7 @@ public class TFPConstantNumberTransferFunction extends /*JPanel implements*/ TFP
         // Finally, add the jRadioButton to the buttongroup
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
+        jRadioButton.setSelected(selected);
         bg.add(jRadioButton);
     }
 

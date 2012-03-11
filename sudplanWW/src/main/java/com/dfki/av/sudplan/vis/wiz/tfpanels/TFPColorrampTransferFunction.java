@@ -28,7 +28,8 @@ public class TFPColorrampTransferFunction extends /*javax.swing.JPanel implement
     /**
      * Creates new form TFPColorrampTransferFunction
      */
-    public TFPColorrampTransferFunction(final ColorrampClassification f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPColorrampTransferFunction(final ColorrampClassification f, 
+            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
         this.function = f;
 
         initComponents();
@@ -39,6 +40,7 @@ public class TFPColorrampTransferFunction extends /*javax.swing.JPanel implement
         }
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
         jRadioButton1.addActionListener(l);
+        jRadioButton1.setSelected(selected);
         bg.add(jRadioButton1);
 
         jSpinner1.setValue(f.getNumCategories());

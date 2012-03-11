@@ -56,16 +56,23 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
         this.panelMap = new HashMap<String, TFPanel>();
 
         initComponents();
-
+        boolean first = true;
         //Create a panel for each available transfer function.
         List<ITransferFunction> list = param.getTransferFunctions();
         for (Iterator<ITransferFunction> it = list.iterator(); it.hasNext();) {
             ITransferFunction function = it.next();
-            TFPanel panel = TFPanelFactory.get(function, dataAttributes, bgTransferFunctions, this);
+            TFPanel panel;
+            if (first) {
+                panel = TFPanelFactory.get(function, dataAttributes, bgTransferFunctions, this, true);
+                this.setTransferFunction(function);
+                first = false;
+            } else {
+                panel = TFPanelFactory.get(function, dataAttributes, bgTransferFunctions, this, false);
+
+            }
             transferFunctionMap.put(function.getClass().getSimpleName(), function);
             panelMap.put(function.getClass().getSimpleName(), panel);
             this.add(panel);
-            this.setTransferFunction(function);
         }
     }
 

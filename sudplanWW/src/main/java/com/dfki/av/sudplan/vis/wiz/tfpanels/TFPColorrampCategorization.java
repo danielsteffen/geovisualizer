@@ -25,7 +25,7 @@ public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*
     /**
      * Creates new form TFPColorrampCategorization
      */
-    public TFPColorrampCategorization(final ColorrampCategorization f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPColorrampCategorization(final ColorrampCategorization f, final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
         this.function = f;
         initComponents();
         for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
@@ -34,6 +34,7 @@ public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*
         }
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
         jRadioButton1.addActionListener(l);
+        jRadioButton1.setSelected(selected);
         bg.add(jRadioButton1);
 
         jTextField1.setBackground(f.getStartColor());

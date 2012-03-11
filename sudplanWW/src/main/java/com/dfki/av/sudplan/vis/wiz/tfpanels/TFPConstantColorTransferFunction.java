@@ -22,14 +22,15 @@ public class TFPConstantColorTransferFunction extends /*javax.swing.JPanel imple
     /**
      * Creates new form TFPConstantColorTransferFunction
      */
-    public TFPConstantColorTransferFunction(final ConstantColorTransferFunction f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPConstantColorTransferFunction(final ConstantColorTransferFunction f, 
+            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
         this.function = f;
         initComponents();
 
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
+        jRadioButton.setSelected(selected);
         bg.add(jRadioButton);
-//        bg.setSelected(jRadioButton.getModel(), true);
     }
 
     /**

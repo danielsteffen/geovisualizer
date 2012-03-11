@@ -23,7 +23,8 @@ public class TFPRedGreenColorrampTransferFunction extends /*javax.swing.JPanel i
     /**
      * Creates new form TFPRedGreenColorrampTransferFunction
      */
-    public TFPRedGreenColorrampTransferFunction(final RedGreenColorrampClassification f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPRedGreenColorrampTransferFunction(final RedGreenColorrampClassification f, 
+            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
         this.function = f;
         initComponents();
         for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
@@ -32,6 +33,7 @@ public class TFPRedGreenColorrampTransferFunction extends /*javax.swing.JPanel i
         }
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
+        jRadioButton.setSelected(selected);
         bg.add(jRadioButton);
 
         jSpinner1.setValue(f.getNumCategories());

@@ -33,7 +33,8 @@ public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ T
     /**
      * Creates new form TFPanelIdentityFunction
      */
-    public TFPScalarMultiplication(final ScalarMultiplication f, final List<String> attributes, ButtonGroup bg, ActionListener l) {
+    public TFPScalarMultiplication(final ScalarMultiplication f, final List<String> attributes, 
+            ButtonGroup bg, ActionListener l, boolean selected) {
         this.function = f;
 
         initComponents();
@@ -46,6 +47,7 @@ public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ T
         // Finally, add the jRadioButton to the buttongroup
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jRadioButton.addActionListener(l);
+        jRadioButton.setSelected(selected);
         bg.add(jRadioButton);
     }
 
