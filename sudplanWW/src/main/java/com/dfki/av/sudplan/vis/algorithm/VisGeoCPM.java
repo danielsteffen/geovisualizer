@@ -63,7 +63,7 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
 
         this.parCapColor = new ColorParameter("Color of surface");
         this.parCapColor.addTransferFunction(new ConstantColorTransferFunction());
-//        this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
+        this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
         this.parCapColor.addTransferFunction(new ColorrampClassification());
         addVisParameter(this.parCapColor);
 
@@ -196,7 +196,7 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         Material m = new Material(capColor);
         BasicShapeAttributes attrCap = new BasicShapeAttributes();
         attrCap.setDrawOutline(false);
-        attrCap.setInteriorOpacity(0.5);
+        attrCap.setInteriorOpacity(0.8);
         attrCap.setInteriorMaterial(m);
 
         //
@@ -206,7 +206,8 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         ep.setHeight(dResult);
         ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         ep.setCapAttributes(attrCap);
-        ep.setEnableSides(false);
+        ep.setSideAttributes(attrCap);
+        //ep.setEnableSides(false);
         layer.addRenderable(ep);
 
         List<Geometry> list = shpfile.getGeometryList(featureId);

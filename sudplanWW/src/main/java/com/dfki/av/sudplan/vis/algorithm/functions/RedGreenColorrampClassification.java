@@ -8,8 +8,12 @@
 package com.dfki.av.sudplan.vis.algorithm.functions;
 
 import com.dfki.av.sudplan.io.DataSource;
+import com.dfki.av.sudplan.vis.algorithm.functions.classification.IClass;
+import com.dfki.av.sudplan.vis.algorithm.functions.classification.NumberInterval;
 import com.dfki.av.utils.ColorUtils;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,33 +30,28 @@ public class RedGreenColorrampClassification extends ColorClassification {
     /**
      *
      */
-    private double min;
-    /**
-     *
-     */
-    private double max;
-    /**
-     *
-     */
     private int numCategories;
     /**
      *
      */
     private Color[] colorramp;
-
+    /**
+     *
+     */
+    private List<IClass> classes;
     /**
      *
      */
     public RedGreenColorrampClassification() {
-        this.min = Double.MIN_VALUE;
-        this.max = Double.MAX_VALUE;
-        this.numCategories = 5;
+        this.numCategories = 1;
         this.colorramp = ColorUtils.CreateRedGreenColorGradientAttributes(numCategories);
+        this.classes = new ArrayList<IClass>();
+        this.classes.add(new NumberInterval());
+        
     }
 
     @Override
     public Object calc(Object o) {
-
         if (o == null) {
             log.error("Argument set to null.");
             return Color.GRAY;
@@ -60,9 +59,9 @@ public class RedGreenColorrampClassification extends ColorClassification {
 
         if (o instanceof Number) {
             double arg = ((Number) o).doubleValue();
-            double categorieSize = (this.max - this.min) / (double) this.getNumCategories();
-            for (int i = 0; i < getNumCategories(); i++) {
-                if (arg <= min + (i + 1) * categorieSize) {
+            for(int i = 0; i < classes.size(); i++){
+                IClass c = classes.get(i);
+                if(c.contains(arg)){
                     return colorramp[i];
                 }
             }
@@ -81,13 +80,23 @@ public class RedGreenColorrampClassification extends ColorClassification {
 
     @Override
     public void preprocess(DataSource data, String attribute) {
-        log.debug("Pre-processing ...");
+        log.debug("Preprocessing ...");
         this.colorramp = ColorUtils.CreateRedGreenColorGradientAttributes(numCategories);
-        this.min = data.min(attribute);
-        this.max = data.max(attribute);
+        double min = data.min(attribute);
+        double max = data.max(attribute);
         log.debug("Minimum for attribute {} is {}.", attribute, min);
         log.debug("Maximum for attribute {} is {}.", attribute, max);
-        log.debug("Pre-processing finished.");
+
+        log.debug("Setting up classes.");
+        classes.clear();
+        double intervalSize = (max - min) / (double) this.getNumCategories();
+        for (int i = 0; i < getNumCategories(); i++) {
+            double t0 = min + i * intervalSize;
+            double t1 = min + (i + 1) * intervalSize;
+            NumberInterval m = new NumberInterval(t0, t1);
+            classes.add(m);
+        }
+        log.debug("Preprocessing finished.");
     }
 
     /**

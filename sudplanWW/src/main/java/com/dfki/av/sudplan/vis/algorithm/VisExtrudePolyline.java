@@ -50,7 +50,8 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
 
         this.parColor = new ColorParameter("Color of surface");
-        this.parColor.addTransferFunction(new ConstantColorTransferFunction());        
+        this.parColor.addTransferFunction(new ConstantColorTransferFunction()); 
+        this.parColor.addTransferFunction(new RedGreenColorrampClassification());
         this.parColor.addTransferFunction(new ColorrampCategorization());
         addVisParameter(parColor);        
 
