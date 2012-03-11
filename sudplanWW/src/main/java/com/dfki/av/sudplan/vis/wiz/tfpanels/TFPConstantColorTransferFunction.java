@@ -15,7 +15,7 @@ import javax.swing.JColorChooser;
  *
  * @author steffen
  */
-public class TFPConstantColorTransferFunction extends javax.swing.JPanel implements TFPanel {
+public class TFPConstantColorTransferFunction extends /*javax.swing.JPanel implements*/ TFPanel {
 
     private ConstantColorTransferFunction function;
 

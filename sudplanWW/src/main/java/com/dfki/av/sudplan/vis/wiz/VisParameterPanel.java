@@ -8,15 +8,15 @@
 package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisParameter;
-import com.dfki.av.sudplan.vis.algorithm.functions.*;
-import com.dfki.av.sudplan.vis.wiz.tfpanels.*;
+import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
+import com.dfki.av.sudplan.vis.wiz.tfpanels.TFPanel;
+import com.dfki.av.sudplan.vis.wiz.tfpanels.TFPanelFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     /**
      *
      */
-    private Map<String, JPanel> panelMap;
+    private Map<String, TFPanel> panelMap;
     /**
      *
      */
@@ -53,73 +53,19 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     public VisParameterPanel(final IVisParameter param, final List<String> dataAttributes) {
         this.visParameter = param;
         this.transferFunctionMap = new HashMap<String, ITransferFunction>();
-        this.panelMap = new HashMap<String, JPanel>();
+        this.panelMap = new HashMap<String, TFPanel>();
 
         initComponents();
 
-        //Create a panel for each transfer function.
+        //Create a panel for each available transfer function.
         List<ITransferFunction> list = param.getTransferFunctions();
         for (Iterator<ITransferFunction> it = list.iterator(); it.hasNext();) {
             ITransferFunction function = it.next();
-            if (function instanceof RedGreenColorrampClassification) {
-                RedGreenColorrampClassification f = (RedGreenColorrampClassification) function;
-                JPanel panel = new TFPRedGreenColorrampTransferFunction(f, dataAttributes, bgTransferFunctions, this);
-                transferFunctionMap.put(f.getClass().getSimpleName(), f);
-                panelMap.put(f.getClass().getSimpleName(), panel);
-                this.add(panel);
-                selectedTransferFunction = function.getClass().getSimpleName();
-                visParameter.setSelectedTransferFunction(f);
-            } else if (function instanceof ColorrampClassification) {
-                ColorrampClassification f = (ColorrampClassification) function;
-                JPanel panel = new TFPColorrampTransferFunction(f, dataAttributes, bgTransferFunctions, this);
-                transferFunctionMap.put(f.getClass().getSimpleName(), f);
-                panelMap.put(f.getClass().getSimpleName(), panel);
-                this.add(panel);
-                selectedTransferFunction = function.getClass().getSimpleName();
-                visParameter.setSelectedTransferFunction(f);
-            } else if (function instanceof ConstantColorTransferFunction) {
-                ConstantColorTransferFunction f = (ConstantColorTransferFunction) function;
-                JPanel panel = new TFPConstantColorTransferFunction(f, dataAttributes, bgTransferFunctions, this);
-                transferFunctionMap.put(f.getClass().getSimpleName(), f);
-                panelMap.put(f.getClass().getSimpleName(), panel);
-                this.add(panel);
-                selectedTransferFunction = function.getClass().getSimpleName();
-                visParameter.setSelectedTransferFunction(f);
-            } else if (function instanceof IdentityFunction) {
-                IdentityFunction f = (IdentityFunction) function;
-                JPanel panel = new TFPIdentityFunction(f, dataAttributes, bgTransferFunctions, this);
-                transferFunctionMap.put(f.getClass().getSimpleName(), f);
-                panelMap.put(f.getClass().getSimpleName(), panel);
-                this.add(panel);
-                selectedTransferFunction = function.getClass().getSimpleName();
-                visParameter.setSelectedTransferFunction(f);
-            } else if (function instanceof ScalarMultiplication) {
-                ScalarMultiplication f = (ScalarMultiplication) function;
-                JPanel panel = new TFPScalarMultiplication(f, dataAttributes, bgTransferFunctions, this);
-                transferFunctionMap.put(f.getClass().getSimpleName(), f);
-                panelMap.put(f.getClass().getSimpleName(), panel);
-                this.add(panel);
-                selectedTransferFunction = function.getClass().getSimpleName();
-                visParameter.setSelectedTransferFunction(f);
-            } else if (function instanceof ConstantNumberTansferFunction) {
-                ConstantNumberTansferFunction f = (ConstantNumberTansferFunction) function;
-                JPanel panel = new TFPConstantNumberTransferFunction(f, dataAttributes, bgTransferFunctions, this);
-                transferFunctionMap.put(f.getClass().getSimpleName(), f);
-                panelMap.put(f.getClass().getSimpleName(), panel);
-                this.add(panel);
-                selectedTransferFunction = function.getClass().getSimpleName();
-                visParameter.setSelectedTransferFunction(f);
-            } else if(function instanceof ColorrampCategorization){
-               ColorrampCategorization f = (ColorrampCategorization) function;
-               JPanel panel = new TFPColorrampCategorization(f, dataAttributes, bgTransferFunctions, this);
-               transferFunctionMap.put(f.getClass().getSimpleName(), f);
-               panelMap.put(f.getClass().getSimpleName(), panel);
-               this.add(panel);
-               selectedTransferFunction = function.getClass().getSimpleName();
-               visParameter.setSelectedTransferFunction(function);
-            } else {
-                log.debug("TransferFunction {} not supported by UI", function.getClass().getSimpleName());
-            }
+            TFPanel panel = TFPanelFactory.get(function, dataAttributes, bgTransferFunctions, this);
+            transferFunctionMap.put(function.getClass().getSimpleName(), function);
+            panelMap.put(function.getClass().getSimpleName(), panel);
+            this.add(panel);
+            this.setTransferFunction(function);
         }
     }
 
@@ -147,15 +93,18 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
      * @return
      */
     public String getSelectedAttribute() {
-//        log.debug("Selected transfer function {}", selectedTransferFunction);
-        return ((TFPanel) panelMap.get(selectedTransferFunction)).getSelectedAttribute();
+        return panelMap.get(selectedTransferFunction).getSelectedAttribute();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         ITransferFunction f = transferFunctionMap.get(e.getActionCommand());
-        selectedTransferFunction = e.getActionCommand();
-        log.debug("Setting transfer function {} of VisParameter {} ", selectedTransferFunction, visParameter.getName());
+        setTransferFunction(f);
+    }
+
+    private void setTransferFunction(ITransferFunction f) {
+        selectedTransferFunction = f.getClass().getSimpleName();
         visParameter.setSelectedTransferFunction(f);
+        log.debug("Setting transfer function {} of VisParameter {} ", selectedTransferFunction, visParameter.getName());
     }
 }

@@ -19,7 +19,7 @@ import javax.swing.JColorChooser;
  *
  * @author steffen
  */
-public class TFPColorrampCategorization extends javax.swing.JPanel implements TFPanel{
+public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*/ TFPanel{
 
     private ColorrampCategorization function;
     /**

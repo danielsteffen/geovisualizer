@@ -7,10 +7,12 @@
  */
 package com.dfki.av.sudplan.vis.wiz.tfpanels;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author steffen
  */
-public interface TFPanel {
-    public String getSelectedAttribute();
+public abstract class TFPanel extends JPanel{
+    public abstract String getSelectedAttribute();
 }

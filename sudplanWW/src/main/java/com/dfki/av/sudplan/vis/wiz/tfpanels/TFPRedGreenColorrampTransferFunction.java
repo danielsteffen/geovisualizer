@@ -16,7 +16,7 @@ import javax.swing.SpinnerNumberModel;
  *
  * @author steffen
  */
-public class TFPRedGreenColorrampTransferFunction extends javax.swing.JPanel implements TFPanel {
+public class TFPRedGreenColorrampTransferFunction extends /*javax.swing.JPanel implements*/ TFPanel {
 
     private RedGreenColorrampClassification function;
 

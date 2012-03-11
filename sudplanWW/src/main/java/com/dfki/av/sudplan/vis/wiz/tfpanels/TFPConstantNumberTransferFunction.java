@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class TFPConstantNumberTransferFunction extends JPanel implements TFPanel{
+public class TFPConstantNumberTransferFunction extends /*JPanel implements*/ TFPanel{
 
     /*
      *

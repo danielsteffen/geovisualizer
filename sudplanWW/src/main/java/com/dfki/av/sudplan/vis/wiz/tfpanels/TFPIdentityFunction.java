@@ -17,7 +17,7 @@ import javax.swing.ButtonGroup;
  *
  * @author steffen
  */
-public class TFPIdentityFunction extends javax.swing.JPanel implements TFPanel{
+public class TFPIdentityFunction extends /*javax.swing.JPanel implements*/ TFPanel{
 
     /**
      * Creates new form TFPIdentityFunction

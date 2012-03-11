@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class TFPScalarMultiplication extends javax.swing.JPanel implements TFPanel {
+public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ TFPanel {
 
     /*
      *
