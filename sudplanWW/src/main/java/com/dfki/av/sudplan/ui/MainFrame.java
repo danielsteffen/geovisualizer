@@ -68,7 +68,8 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         initComponents();
-        initWMSPanel();
+//        initWMSPanel();
+        jTabbedPane1.setVisible(false);
         updateLayerMenu();
     }
 
