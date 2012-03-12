@@ -15,7 +15,30 @@ SUDPLAN 3D Java Web Start Application
   {{{http://sudplan.kl.dfki.de/jnlp/sudplan.jnlp}SUDPLAN.jnlp}} - launch with Java Web Start.
   
   The general application called SUDPLAN Scenario Managmenet System can be found {{{http://sudplanwp3.cismet.de/sms/}here}}. A demo video can be found {{{./videos.html}here}}.
+
+Shortcuts
   
+  For the quick interaction with the demo application you can use the following short cuts.
+  
+*----------------------+---------------------------------------+
+| <ALT> + <R>          | Remove all layers                     |
+*----------------------+---------------------------------------+
+| <ALT> + <Q>          | Quit SUDPLAN 3D                       |
+*----------------------+---------------------------------------+
+| <ALT> + <W>          | Start ViwWiz                          |
+*----------------------+---------------------------------------+
+| <STRG> + <G>         | Dialog to enter lat/lon coordinates   |
+*----------------------+---------------------------------------+
+| <STRG> + <S>         | Goto Stockholm                        |
+*----------------------+---------------------------------------+
+| <STRG> + <W>         | Goto Wuppertal                        |
+*----------------------+---------------------------------------+
+| <STRG> + <P>         | Goto Praque                           |
+*----------------------+---------------------------------------+
+| <STRG> + <L>         | Goto Linz                             |
+*----------------------+---------------------------------------+
+<<Key / key combinations and what they do>>
+
 Test Data Sets
 
   The following lists some data sets for testing the SUDPLAN 3D component:
