@@ -354,6 +354,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         mEdit.add(miGoto);
 
+        miRemoveAllLayer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
         miRemoveAllLayer.setText(bundle.getString("MainFrame.miRemoveAllLayer.text")); // NOI18N
         miRemoveAllLayer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
