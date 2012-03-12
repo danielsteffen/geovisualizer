@@ -33,33 +33,35 @@ public class ColorUtils {
         }
         return colors;
     }
-    
+
     /**
-     * 
+     *
      * @param c1
      * @param c2
      * @param numColors
-     * @return 
+     * @return
      */
-    public static Color[] CreateLinearHSVColorGradient(Color c1, Color c2, int numColors){
+    public static Color[] CreateLinearHSVColorGradient(Color c1, Color c2, int numColors) {
         Color[] colors = new Color[numColors];
-        double[] hsvColor1 = RGBtoHSV(c1.getRed()/255.0, c1.getGreen()/255.0, c1.getBlue()/255.0);
-        double[] hsvColor2 = RGBtoHSV(c2.getRed()/255.0, c2.getGreen()/255.0, c2.getBlue()/255.0);
-        
+        double[] hsvColor1 = RGBtoHSV(c1.getRed() / 255.0, c1.getGreen() / 255.0, c1.getBlue() / 255.0);
+        double[] hsvColor2 = RGBtoHSV(c2.getRed() / 255.0, c2.getGreen() / 255.0, c2.getBlue() / 255.0);
+
         for (int i = 0; i < colors.length; i++) {
-            double hue = hsvColor1[0] + (hsvColor2[0]-hsvColor1[0]) / (double) (colors.length - 1) * i;
-            colors[i] = ColorUtils.HSVtoRGB((float)hue, 1.0f, 1.0f);
+            double hue = hsvColor1[0] + (hsvColor2[0] - hsvColor1[0]) / (double) (colors.length - 1) * i;
+            double s = hsvColor1[1] + (hsvColor2[1] - hsvColor1[1]) / (double) (colors.length - 1) * i;
+            double v = hsvColor1[2] + (hsvColor2[2] - hsvColor1[2]) / (double) (colors.length - 1) * i;
+            colors[i] = ColorUtils.HSVtoRGB((float) hue, (float)s, (float)v);
         }
-        
+
         return colors;
     }
-    
+
     /**
-     * 
+     *
      * @param c1
      * @param c2
      * @param numColors
-     * @return 
+     * @return
      */
     public static Color[] CreateLinearRGBColorGradient(Color c1, Color c2, int numColors) {
 
@@ -79,7 +81,7 @@ public class ColorUtils {
     /**
      * Calculates the hsv color vlaue for a given rgb value. The return values
      * are h = [0,360], s = [0,1], v = [0,1]. If s == 0, then h = -1 (undefined)
-     * 
+     *
      * @param r value is from 0 to 1
      * @param g value is from 0 to 1
      * @param b value is from 0 to 1
