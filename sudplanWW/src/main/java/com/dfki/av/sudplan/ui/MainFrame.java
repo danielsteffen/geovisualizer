@@ -43,7 +43,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
     private static final String[] servers = new String[]{
-        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"
+        "http://serv-2118.kl.dfki.de:8888/geoserver/wms",
+            "http://www.wms.nrw.de/geobasis/DOP"
     };
     private Dimension canvasSize;
     private VisualizationPanel wwPanel;
@@ -68,8 +69,8 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         initComponents();
-//        initWMSPanel();
-        jTabbedPane1.setVisible(false);
+        initWMSPanel();
+//        jTabbedPane1.setVisible(false);
         updateLayerMenu();
     }
 
