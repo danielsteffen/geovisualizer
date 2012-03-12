@@ -34,6 +34,9 @@ public class TFPanelFactory {
         } else if (f instanceof ColorrampCategorization) {
             ColorrampCategorization function = (ColorrampCategorization) f;
             panel = new TFPColorrampCategorization(function, attributes, bg, l, b);
+        } else if(f instanceof ColorRuleClassification){
+            ColorRuleClassification function = (ColorRuleClassification) f;
+            panel = new TFPColorRuleClassification(function, attributes, bg, l, b);
         }
         return panel;
     }

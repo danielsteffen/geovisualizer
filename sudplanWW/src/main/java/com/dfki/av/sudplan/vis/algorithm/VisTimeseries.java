@@ -8,6 +8,7 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.algorithm.functions.ColorRuleClassification;
 import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumberTansferFunction;
 import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
 import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
@@ -47,10 +48,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      */
     private NumberParameter parHeight;
     /**
-     *
+     * 
      */
-//    private ColorParameter parColor;
-
+    private ColorParameter parColor;
     /**
      *
      */
@@ -71,10 +71,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         this.parHeight = new NumberParameter("Height of Timeseries [m]");
         this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
         addVisParameter(parHeight);
-
-//        this.parColor = new ColorParameter("Color Classification");
-//        this.parColor.addTransferFunction(new RedGreenColorrampTransferFunction());
-//        addVisParameter(parColor);
+        
+        this.parColor = new ColorParameter("Color definition");
+        this.parColor.addTransferFunction(new ColorRuleClassification());
+        addVisParameter(parColor);
     }
 
     @Override
@@ -86,7 +86,6 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute2 = IVisAlgorithm.NO_ATTRIBUTE;
-//        String attribute3 = IVisAlgorithm.NO_ATTRIBUTE;
         Shapefile shapefile;
 
         // 0 - Check data
@@ -110,16 +109,11 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             log.warn("Using only two attributes. Setting remaining attribute to default.");
             attribute0 = checkAttribute(attributes[0]);
             attribute1 = checkAttribute(attributes[1]);
-        } else if (attributes.length == 3) {
+        } else if (attributes.length > 3) {
             attribute0 = checkAttribute(attributes[0]);
             attribute1 = checkAttribute(attributes[1]);
             attribute2 = checkAttribute(attributes[2]);
-        } /*else if (attributes.length == 4) {
-            attribute0 = checkAttribute(attributes[0]);
-            attribute1 = checkAttribute(attributes[1]);
-            attribute2 = checkAttribute(attributes[2]);
-            attribute3 = checkAttribute(attributes[3]);
-        }*/
+        }
         log.debug("Using " + attribute0 + ", " + attribute1
                 + ", " + attribute2 + /*", and " + attribute3 +*/ " as attributes.");
 
@@ -241,19 +235,12 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         for (int i = 0; i < firstBuffer.size(); i++) {
             double value = WWMath.mixSmooth(a, firstBuffer.get(i).doubleValue(), secondBuffer.get(i).doubleValue());
 
-            ITransferFunction function2 = parHeight.getSelectedTransferFunction();
-            Double height = (Double) function2.calc(value); // Actually, you don't need an argument!!
+            ITransferFunction function0 = parHeight.getSelectedTransferFunction();
+            Double height = (Double) function0.calc(null); // Actually, you don't need an argument!!
 
-//            ITransferFunction function3 = parColor.getSelectedTransferFunction();
-//            Color color = (Color) function3.calc(value);
-            Color color = Color.WHITE;
-            if (value < 5.0) {
-                color = Color.GREEN;
-            } else if (value < 6.0) {
-                color = Color.YELLOW;
-            } else {
-                color = Color.RED;
-            }
+            ITransferFunction function1 = parColor.getSelectedTransferFunction();
+            Color color = (Color) function1.calc(value); 
+            
             attributesList.add(AnalyticSurface.createGridPointAttributes(height, color));
         }
 
