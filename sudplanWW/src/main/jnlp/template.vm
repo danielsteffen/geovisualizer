@@ -21,9 +21,9 @@
 	<j2se version="1.6+" initial-heap-size="1024m" max-heap-size="1024m" />
     <property name="jnlp.versionEnabled" value="true"/>
     $dependencies
-	<extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/>
-	<extension name="worldwindx" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwindx.jnlp"/>
-	<extension name="gdal" href="http://worldwind.arc.nasa.gov/java/gdal/webstart/gdal.jnlp"/>
+	<!--extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/-->
+	<extension name="worldwindx" href="http://sudplan.kl.dfki.de/worldwind/worldwindx.jnlp"/>
+	<extension name="gdal" href="http://sudplan.kl.dfki.de/worldwind/gdal.jnlp"/>
  </resources>
  <application-desc main-class="$mainClass">
  </application-desc>
