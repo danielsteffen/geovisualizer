@@ -10,7 +10,6 @@ package com.dfki.av.sudplan.vis;
 import com.dfki.av.sudplan.camera.*;
 import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
-import com.dfki.av.sudplan.vis.algorithm.VisWorker;
 import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
