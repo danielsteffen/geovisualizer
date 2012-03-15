@@ -1,5 +1,5 @@
 /*
- *  ConstantColorTransferFunction.java 
+ *  ConstantColor.java 
  *
  *  Created by DFKI AV on 29.02.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -14,7 +14,7 @@ import java.awt.Color;
  *
  * @author steffen
  */
-public class ConstantColorTransferFunction extends ColorTransferFunction {
+public class ConstantColor extends ColorTransferFunction {
 
     /**
      *
@@ -24,7 +24,7 @@ public class ConstantColorTransferFunction extends ColorTransferFunction {
     /**
      *
      */
-    public ConstantColorTransferFunction() {
+    public ConstantColor() {
         this.color = Color.GRAY;
     }
 

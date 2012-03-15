@@ -61,7 +61,7 @@
     <Component class="javax.swing.JRadioButton" name="jRadioButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/dfki/av/sudplan/vis/wiz/tfpanels/Bundle.properties" key="TFPRedGreenColorrampTransferFunction.jRadioButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="com/dfki/av/sudplan/vis/algorithm/functions/Bundle.properties" key="TFPRedGreenColorrampClassification.jRadioButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -75,14 +75,14 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/dfki/av/sudplan/vis/wiz/tfpanels/Bundle.properties" key="TFPRedGreenColorrampTransferFunction.jLabel1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="com/dfki/av/sudplan/vis/algorithm/functions/Bundle.properties" key="TFPRedGreenColorrampClassification.jLabel1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/dfki/av/sudplan/vis/wiz/tfpanels/Bundle.properties" key="TFPRedGreenColorrampTransferFunction.jLabel2.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="com/dfki/av/sudplan/vis/algorithm/functions/Bundle.properties" key="TFPRedGreenColorrampClassification.jLabel2.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

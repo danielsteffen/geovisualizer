@@ -1,5 +1,5 @@
 /*
- *  ConstantNumberTansferFunction.java 
+ *  ConstantNumber.java 
  *
  *  Created by DFKI AV on 29.02.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -13,7 +13,7 @@ import com.dfki.av.sudplan.io.DataSource;
  *
  * @author steffen
  */
-public class ConstantNumberTansferFunction extends NumberTransferFunction {
+public class ConstantNumber extends NumberTransferFunction {
 
     /**
      * 
@@ -23,7 +23,7 @@ public class ConstantNumberTansferFunction extends NumberTransferFunction {
     /**
      * 
      */
-    public ConstantNumberTansferFunction() {
+    public ConstantNumber() {
         this.constant = Double.valueOf(100.0);
     }
 

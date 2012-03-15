@@ -52,7 +52,7 @@
     <Component class="javax.swing.JRadioButton" name="jRadioButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/dfki/av/sudplan/vis/wiz/tfpanels/Bundle.properties" key="TFPIdentityFunction.jRadioButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="com/dfki/av/sudplan/vis/algorithm/functions/Bundle.properties" key="TFPIdentityFunction.jRadioButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

@@ -1,13 +1,12 @@
 /*
- *  TFPConstantNumberTransferFunction.java 
+ *  TFPColorrampClassification.java 
  *
  *  Created by DFKI AV on 07.03.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ColorrampClassification;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -21,30 +20,23 @@ import javax.swing.SpinnerNumberModel;
  *
  * @author steffen
  */
-public class TFPColorrampTransferFunction extends TFPanel {
+public class TFPColorrampClassification extends TFPanel {
 
+    /**
+     *
+     */
     private ColorrampClassification function;
 
     /**
-     * Creates new form TFPColorrampTransferFunction
+     * Creates new form TFPColorrampClassification
      */
-    public TFPColorrampTransferFunction(final ColorrampClassification f, 
-            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
+    public TFPColorrampClassification(final ColorrampClassification f) {
         this.function = f;
 
         initComponents();
 
-        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
-            String string = it.next();
-            jComboBox1.addItem(string);
-        }
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton1.addActionListener(l);
-        jRadioButton1.setSelected(selected);
-        bg.add(jRadioButton1);
-
         jSpinner1.setValue(f.getNumCategories());
-
         jTextField2.setBackground(f.getStartColor());
         jTextField1.setBackground(f.getEndColor());
     }
@@ -68,29 +60,29 @@ public class TFPColorrampTransferFunction extends TFPanel {
         jLabel4 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
 
-        jRadioButton1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jRadioButton1.text")); // NOI18N
+        jRadioButton1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jRadioButton1.text")); // NOI18N
 
         jTextField1.setColumns(6);
         jTextField1.setEditable(false);
-        jTextField1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jTextField1.text")); // NOI18N
+        jTextField1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jTextField1.text")); // NOI18N
         jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTextField1MouseClicked(evt);
             }
         });
 
-        jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jLabel1.text")); // NOI18N
+        jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel1.text")); // NOI18N
 
         jTextField2.setColumns(6);
         jTextField2.setEditable(false);
-        jTextField2.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jTextField2.text")); // NOI18N
+        jTextField2.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jTextField2.text")); // NOI18N
         jTextField2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTextField2MouseClicked(evt);
             }
         });
 
-        jLabel2.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jLabel2.text")); // NOI18N
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel2.text")); // NOI18N
 
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
         jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -99,9 +91,9 @@ public class TFPColorrampTransferFunction extends TFPanel {
             }
         });
 
-        jLabel3.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jLabel3.text")); // NOI18N
+        jLabel3.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel3.text")); // NOI18N
 
-        jLabel4.setText(org.openide.util.NbBundle.getMessage(TFPColorrampTransferFunction.class, "TFPColorrampTransferFunction.jLabel4.text")); // NOI18N
+        jLabel4.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel4.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -196,5 +188,28 @@ public class TFPColorrampTransferFunction extends TFPanel {
     @Override
     public String getSelectedAttribute() {
         return (String) jComboBox1.getSelectedItem();
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
+            String string = it.next();
+            jComboBox1.addItem(string);
+        }
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton1);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton1.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton1.setSelected(b);
     }
 }

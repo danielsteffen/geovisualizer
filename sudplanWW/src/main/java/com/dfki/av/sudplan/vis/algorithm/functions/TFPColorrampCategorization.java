@@ -5,9 +5,8 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ColorrampCategorization;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -19,24 +18,20 @@ import javax.swing.JColorChooser;
  *
  * @author steffen
  */
-public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*/ TFPanel{
+public class TFPColorrampCategorization extends TFPanel {
 
+    /**
+     *
+     */
     private ColorrampCategorization function;
+
     /**
      * Creates new form TFPColorrampCategorization
      */
-    public TFPColorrampCategorization(final ColorrampCategorization f, final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
+    public TFPColorrampCategorization(final ColorrampCategorization f) {
         this.function = f;
         initComponents();
-        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
-            String string = it.next();
-            jComboBox1.addItem(string);
-        }
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton1.addActionListener(l);
-        jRadioButton1.setSelected(selected);
-        bg.add(jRadioButton1);
-
         jTextField1.setBackground(f.getStartColor());
         jTextField2.setBackground(f.getEndColor());
     }
@@ -70,11 +65,6 @@ public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*
         jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTextField1MouseClicked(evt);
-            }
-        });
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
             }
         });
 
@@ -132,10 +122,6 @@ public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
         Color c = JColorChooser.showDialog(this, "Choose your color", function.getStartColor());
         if (c != null) {
@@ -151,7 +137,6 @@ public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*
             function.setEndColor(c);
         }
     }//GEN-LAST:event_jTextField2MouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
@@ -165,5 +150,28 @@ public class TFPColorrampCategorization extends /*javax.swing.JPanel implements*
     @Override
     public String getSelectedAttribute() {
         return (String) jComboBox1.getSelectedItem();
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
+            String string = it.next();
+            jComboBox1.addItem(string);
+        }
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton1);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton1.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton1.setSelected(b);
     }
 }

@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.algorithm;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumberTansferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumber;
 import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
 import com.dfki.av.sudplan.vis.algorithm.functions.NumberTransferFunction;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class NumberParameter implements IVisParameter {
         this.name = name;
         this.transferFunctions = new ArrayList<ITransferFunction>();
         // Setting default transfer function
-        this.transferFunction = new ConstantNumberTansferFunction();
+        this.transferFunction = new ConstantNumber();
     }
 
     @Override

@@ -58,17 +58,17 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         this.parHeight = new NumberParameter("Height [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
         this.parHeight.addTransferFunction(new ScalarMultiplication());
-        this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
+        this.parHeight.addTransferFunction(new ConstantNumber());
         addVisParameter(this.parHeight);
 
         this.parCapColor = new ColorParameter("Color of surface");
-        this.parCapColor.addTransferFunction(new ConstantColorTransferFunction());
+        this.parCapColor.addTransferFunction(new ConstantColor());
         this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
         this.parCapColor.addTransferFunction(new ColorrampClassification());
         addVisParameter(this.parCapColor);
 
         this.parFilter = new NumberParameter("Filter");
-        ConstantNumberTansferFunction cntf = new ConstantNumberTansferFunction();
+        ConstantNumber cntf = new ConstantNumber();
         cntf.setConstant(0.5);
         this.parFilter.addTransferFunction(cntf);
         addVisParameter(this.parFilter);

@@ -9,7 +9,7 @@ package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.algorithm.functions.ColorRuleClassification;
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumberTansferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumber;
 import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
 import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
 import gov.nasa.worldwind.WorldWind;
@@ -69,7 +69,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         addVisParameter(parTimestep1);
 
         this.parHeight = new NumberParameter("Height of Timeseries [m]");
-        this.parHeight.addTransferFunction(new ConstantNumberTansferFunction());
+        this.parHeight.addTransferFunction(new ConstantNumber());
         addVisParameter(parHeight);
         
         this.parColor = new ColorParameter("Color definition");

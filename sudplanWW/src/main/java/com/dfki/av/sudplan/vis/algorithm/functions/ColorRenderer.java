@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.

@@ -5,9 +5,8 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ScalarMultiplication;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ TFPanel {
+public class TFPScalarMultiplication extends TFPanel {
 
     /*
      *
@@ -33,22 +32,11 @@ public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ T
     /**
      * Creates new form TFPanelIdentityFunction
      */
-    public TFPScalarMultiplication(final ScalarMultiplication f, final List<String> attributes, 
-            ButtonGroup bg, ActionListener l, boolean selected) {
+    public TFPScalarMultiplication(final ScalarMultiplication f) {
         this.function = f;
-
         initComponents();
-
-        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
-            String string = it.next();
-            jComboBox1.addItem(string);
-        }
         jTextField1.setText(function.getScaleValue().toString());
-        // Finally, add the jRadioButton to the buttongroup
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton.addActionListener(l);
-        jRadioButton.setSelected(selected);
-        bg.add(jRadioButton);
     }
 
     /**
@@ -75,11 +63,6 @@ public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ T
         });
 
         jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPScalarMultiplication.class, "TFPScalarMultiplication.jRadioButton.text")); // NOI18N
-        jRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -109,10 +92,6 @@ public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ T
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButtonActionPerformed
-
     private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
         String s = jTextField1.getText();
         Double d = Double.parseDouble(s);
@@ -129,5 +108,28 @@ public class TFPScalarMultiplication extends /*javax.swing.JPanel implements*/ T
     @Override
     public String getSelectedAttribute() {
         return (String) jComboBox1.getSelectedItem();
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
+            String string = it.next();
+            jComboBox1.addItem(string);
+        }
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton.setSelected(b);
     }
 }

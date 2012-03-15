@@ -5,9 +5,8 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
@@ -17,24 +16,15 @@ import javax.swing.ButtonGroup;
  *
  * @author steffen
  */
-public class TFPIdentityFunction extends /*javax.swing.JPanel implements*/ TFPanel{
+public class TFPIdentityFunction extends TFPanel {
 
     /**
      * Creates new form TFPIdentityFunction
      */
-    public TFPIdentityFunction(final IdentityFunction f, final List<String> attributes, 
-            final ButtonGroup bg, ActionListener l, boolean selected) {
-        
+    public TFPIdentityFunction(final IdentityFunction f) {
+
         initComponents();
-        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
-            String string = it.next();
-            jComboBox1.addItem(string);
-        }
-        // Finally, add the jRadioButton to the buttongroup
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton.addActionListener(l);
-        jRadioButton.setSelected(selected);
-        bg.add(jRadioButton);
     }
 
     /**
@@ -80,9 +70,7 @@ public class TFPIdentityFunction extends /*javax.swing.JPanel implements*/ TFPan
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        
     }//GEN-LAST:event_jComboBox1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JRadioButton jRadioButton;
@@ -90,6 +78,29 @@ public class TFPIdentityFunction extends /*javax.swing.JPanel implements*/ TFPan
 
     @Override
     public String getSelectedAttribute() {
-        return (String)jComboBox1.getSelectedItem();
+        return (String) jComboBox1.getSelectedItem();
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
+            String string = it.next();
+            jComboBox1.addItem(string);
+        }
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton.setSelected(b);
     }
 }

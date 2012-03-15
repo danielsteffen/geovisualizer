@@ -1,10 +1,12 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  TFPRedGreenColorrampClassification.java 
+ *
+ *  Created by DFKI AV on 01.03.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.RedGreenColorrampClassification;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
@@ -16,26 +18,20 @@ import javax.swing.SpinnerNumberModel;
  *
  * @author steffen
  */
-public class TFPRedGreenColorrampTransferFunction extends /*javax.swing.JPanel implements*/ TFPanel {
+public class TFPRedGreenColorrampClassification extends TFPanel {
 
+    /**
+     * 
+     */
     private RedGreenColorrampClassification function;
 
     /**
-     * Creates new form TFPRedGreenColorrampTransferFunction
+     * Creates new form TFPRedGreenColorrampClassification
      */
-    public TFPRedGreenColorrampTransferFunction(final RedGreenColorrampClassification f, 
-            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
+    public TFPRedGreenColorrampClassification(final RedGreenColorrampClassification f) {
         this.function = f;
         initComponents();
-        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
-            String string = it.next();
-            jComboBox1.addItem(string);
-        }
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton.addActionListener(l);
-        jRadioButton.setSelected(selected);
-        bg.add(jRadioButton);
-
         jSpinner1.setValue(f.getNumCategories());
     }
 
@@ -54,11 +50,11 @@ public class TFPRedGreenColorrampTransferFunction extends /*javax.swing.JPanel i
         jLabel2 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
 
-        jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jRadioButton.text")); // NOI18N
+        jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampClassification.class, "TFPRedGreenColorrampClassification.jRadioButton.text")); // NOI18N
 
-        jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jLabel1.text")); // NOI18N
+        jLabel1.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampClassification.class, "TFPRedGreenColorrampClassification.jLabel1.text")); // NOI18N
 
-        jLabel2.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampTransferFunction.class, "TFPRedGreenColorrampTransferFunction.jLabel2.text")); // NOI18N
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampClassification.class, "TFPRedGreenColorrampClassification.jLabel2.text")); // NOI18N
 
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
         jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -121,5 +117,28 @@ public class TFPRedGreenColorrampTransferFunction extends /*javax.swing.JPanel i
     @Override
     public String getSelectedAttribute() {
         return (String) jComboBox1.getSelectedItem();
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
+            String string = it.next();
+            jComboBox1.addItem(string);
+        }
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton.setSelected(b);
     }
 }

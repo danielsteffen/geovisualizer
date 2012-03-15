@@ -8,7 +8,7 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.vis.algorithm.functions.ColorTransferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantColorTransferFunction;
+import com.dfki.av.sudplan.vis.algorithm.functions.ConstantColor;
 import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class ColorParameter implements IVisParameter {
         this.name = name;
         this.transferFunctions = new ArrayList<ITransferFunction>();
         // Setting default transfer function.
-        this.transferFunction = new ConstantColorTransferFunction();
+        this.transferFunction = new ConstantColor();
     }
 
     @Override

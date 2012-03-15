@@ -1,4 +1,4 @@
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
 import com.dfki.av.sudplan.vis.wiz.AttributeTableModel;
 import java.awt.Color;

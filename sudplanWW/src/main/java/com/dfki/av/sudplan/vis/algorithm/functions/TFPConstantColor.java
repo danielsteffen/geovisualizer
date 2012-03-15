@@ -1,10 +1,12 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  TFPConstantColor.java 
+ *
+ *  Created by DFKI AV on 07.03.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantColorTransferFunction;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -15,22 +17,20 @@ import javax.swing.JColorChooser;
  *
  * @author steffen
  */
-public class TFPConstantColorTransferFunction extends /*javax.swing.JPanel implements*/ TFPanel {
-
-    private ConstantColorTransferFunction function;
+public class TFPConstantColor extends TFPanel {
 
     /**
-     * Creates new form TFPConstantColorTransferFunction
+     *
      */
-    public TFPConstantColorTransferFunction(final ConstantColorTransferFunction f, 
-            final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
+    private ConstantColor function;
+
+    /**
+     * Creates new form TFPConstantColor
+     */
+    public TFPConstantColor(final ConstantColor f) {
         this.function = f;
         initComponents();
-
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton.addActionListener(l);
-        jRadioButton.setSelected(selected);
-        bg.add(jRadioButton);
     }
 
     /**
@@ -45,10 +45,10 @@ public class TFPConstantColorTransferFunction extends /*javax.swing.JPanel imple
         jRadioButton = new javax.swing.JRadioButton();
         jTextField1 = new javax.swing.JTextField();
 
-        jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPConstantColorTransferFunction.class, "TFPConstantColorTransferFunction.jRadioButton.text")); // NOI18N
+        jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPConstantColor.class, "TFPConstantColor.jRadioButton.text")); // NOI18N
 
         jTextField1.setEditable(false);
-        jTextField1.setText(org.openide.util.NbBundle.getMessage(TFPConstantColorTransferFunction.class, "TFPConstantColorTransferFunction.jTextField1.text")); // NOI18N
+        jTextField1.setText(org.openide.util.NbBundle.getMessage(TFPConstantColor.class, "TFPConstantColor.jTextField1.text")); // NOI18N
         jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTextField1MouseClicked(evt);
@@ -84,7 +84,6 @@ public class TFPConstantColorTransferFunction extends /*javax.swing.JPanel imple
             function.setColor(c);
         }
     }//GEN-LAST:event_jTextField1MouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton jRadioButton;
     private javax.swing.JTextField jTextField1;
@@ -93,5 +92,24 @@ public class TFPConstantColorTransferFunction extends /*javax.swing.JPanel imple
     @Override
     public String getSelectedAttribute() {
         return "<<NO_ATTRIBUTE>>";
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton.setSelected(b);
     }
 }

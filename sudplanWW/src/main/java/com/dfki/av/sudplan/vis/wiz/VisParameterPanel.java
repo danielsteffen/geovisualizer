@@ -9,8 +9,8 @@ package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.algorithm.IVisParameter;
 import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
-import com.dfki.av.sudplan.vis.wiz.tfpanels.TFPanel;
-import com.dfki.av.sudplan.vis.wiz.tfpanels.TFPanelFactory;
+import com.dfki.av.sudplan.vis.algorithm.functions.TFPanel;
+import com.dfki.av.sudplan.vis.algorithm.functions.TFPanelFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -56,20 +56,20 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
         this.panelMap = new HashMap<String, TFPanel>();
 
         initComponents();
-        boolean first = true;
+        
         //Create a panel for each available transfer function.
+        boolean isFirst = true;
+        TFPanelFactory tfPanelFactory = TFPanelFactory.getInstance();
         List<ITransferFunction> list = param.getTransferFunctions();
         for (Iterator<ITransferFunction> it = list.iterator(); it.hasNext();) {
             ITransferFunction function = it.next();
-            TFPanel panel;
-            if (first) {
-                panel = TFPanelFactory.get(function, dataAttributes, bgTransferFunctions, this, true);
-                this.setTransferFunction(function);
-                first = false;
-            } else {
-                panel = TFPanelFactory.get(function, dataAttributes, bgTransferFunctions, this, false);
-
-            }
+            TFPanel panel = tfPanelFactory.get(function, dataAttributes, bgTransferFunctions, this, isFirst);
+            
+            if(isFirst){
+                setTransferFunction(function);
+                isFirst = false;
+            } 
+            
             transferFunctionMap.put(function.getClass().getSimpleName(), function);
             panelMap.put(function.getClass().getSimpleName(), panel);
             this.add(panel);

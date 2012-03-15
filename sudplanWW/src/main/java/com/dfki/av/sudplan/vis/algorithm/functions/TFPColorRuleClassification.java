@@ -1,22 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  TFPColorRuleClassification.java 
+ *
+ *  Created by DFKI AV on 07.03.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.wiz.tfpanels;
+package com.dfki.av.sudplan.vis.algorithm.functions;
 
-import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
-import com.dfki.av.sudplan.vis.algorithm.functions.ColorRuleClassification;
 import com.dfki.av.sudplan.vis.algorithm.functions.classification.NumberInterval;
 import java.awt.Color;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JColorChooser;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -24,23 +22,24 @@ import org.slf4j.LoggerFactory;
  */
 public class TFPColorRuleClassification extends TFPanel implements TableModelListener {
 
-    private final static Logger log = LoggerFactory.getLogger(TFPColorRuleClassification.class);
+    /**
+     *
+     */
     private ClassificationTableModel tableModel;
+    /**
+     *
+     */
     private ColorRuleClassification function;
 
     /**
      * Creates new form TFPColorRuleClassification
      */
-    public TFPColorRuleClassification(final ColorRuleClassification f, final List<String> attributes, ButtonGroup bg, ActionListener l, boolean selected) {
+    public TFPColorRuleClassification(final ColorRuleClassification f) {
 
         this.function = f;
 
         initComponents();
-
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
-        jRadioButton1.addActionListener(l);
-        jRadioButton1.setSelected(selected);
-        bg.add(jRadioButton1);
 
         this.tableModel = new ClassificationTableModel();
         tableModel.addTableModelListener(this);
@@ -321,7 +320,7 @@ public class TFPColorRuleClassification extends TFPanel implements TableModelLis
         classdef[0] = jTextField4.getText();
         classdef[1] = jTextField5.getText();
         Color c = jTextField6.getBackground();
-        int transparency = 255-jSlider1.getValue();
+        int transparency = 255 - jSlider1.getValue();
         classdef[2] = new Color(c.getRed(), c.getGreen(), c.getBlue(), transparency);
         tableModel.addRow(classdef);
         jTextField4.setText("");
@@ -379,5 +378,24 @@ public class TFPColorRuleClassification extends TFPanel implements TableModelLis
             NumberInterval n = new NumberInterval(d0, d1);
             function.addClassification(n, color);
         }
+    }
+
+    @Override
+    public void setAttributes(List<String> attributes) {
+    }
+
+    @Override
+    public void setButtonGroup(ButtonGroup bg) {
+        bg.add(jRadioButton1);
+    }
+
+    @Override
+    public void setActionListener(ActionListener l) {
+        jRadioButton1.addActionListener(l);
+    }
+
+    @Override
+    public void setSelected(boolean b) {
+        jRadioButton1.setSelected(b);
     }
 }

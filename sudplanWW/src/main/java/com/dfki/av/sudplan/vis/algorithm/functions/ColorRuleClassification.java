@@ -27,6 +27,10 @@ public class ColorRuleClassification extends ColorClassification {
      *
      */
     private List<Color> colorramp;
+    /**
+     * 
+     */
+    private TFPanel tfPanel;
 
     /**
      *
@@ -35,6 +39,7 @@ public class ColorRuleClassification extends ColorClassification {
         this.classes = new ArrayList<IClass>();
         this.colorramp = new ArrayList<Color>();
         addClassification(new NumberInterval(), Color.GRAY);
+        tfPanel = new TFPColorRuleClassification(this);
     }
 
     @Override
@@ -83,5 +88,9 @@ public class ColorRuleClassification extends ColorClassification {
     public void clear(){
         this.classes.clear();
         this.colorramp.clear();
+    }
+    
+    public TFPanel getUIPanel(){
+        return tfPanel;
     }
 }
