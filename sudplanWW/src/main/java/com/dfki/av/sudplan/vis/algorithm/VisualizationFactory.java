@@ -7,6 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.algorithm;
 
+import com.dfki.av.sudplan.vis.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.IVisAlgorithmFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

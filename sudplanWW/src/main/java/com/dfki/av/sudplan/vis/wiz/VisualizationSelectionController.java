@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.IVisAlgorithm;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;

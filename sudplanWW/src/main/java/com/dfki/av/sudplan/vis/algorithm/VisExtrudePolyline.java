@@ -8,7 +8,9 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.algorithm.functions.*;
+import com.dfki.av.sudplan.vis.ITransferFunction;
+import com.dfki.av.sudplan.vis.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.functions.*;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;

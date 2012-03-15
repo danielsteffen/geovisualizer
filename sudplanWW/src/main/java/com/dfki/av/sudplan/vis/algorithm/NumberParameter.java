@@ -7,9 +7,10 @@
  */
 package com.dfki.av.sudplan.vis.algorithm;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumber;
-import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.NumberTransferFunction;
+import com.dfki.av.sudplan.vis.ITransferFunction;
+import com.dfki.av.sudplan.vis.IVisParameter;
+import com.dfki.av.sudplan.vis.functions.ConstantNumber;
+import com.dfki.av.sudplan.vis.functions.NumberTransferFunction;
 import java.util.ArrayList;
 import java.util.List;
 

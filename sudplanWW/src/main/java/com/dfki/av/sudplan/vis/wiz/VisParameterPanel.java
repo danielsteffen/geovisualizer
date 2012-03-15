@@ -7,10 +7,10 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.algorithm.IVisParameter;
-import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.TFPanel;
-import com.dfki.av.sudplan.vis.algorithm.functions.TFPanelFactory;
+import com.dfki.av.sudplan.vis.ITransferFunction;
+import com.dfki.av.sudplan.vis.IVisParameter;
+import com.dfki.av.sudplan.vis.TFPanel;
+import com.dfki.av.sudplan.vis.functions.ui.TFPanelFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;

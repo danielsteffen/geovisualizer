@@ -8,7 +8,6 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.algorithm.IVisAlgorithm;
 import com.dfki.av.utils.AVUtils;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.Layer;

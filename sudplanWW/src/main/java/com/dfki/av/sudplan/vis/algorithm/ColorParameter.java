@@ -7,9 +7,10 @@
  */
 package com.dfki.av.sudplan.vis.algorithm;
 
-import com.dfki.av.sudplan.vis.algorithm.functions.ColorTransferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantColor;
-import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
+import com.dfki.av.sudplan.vis.ITransferFunction;
+import com.dfki.av.sudplan.vis.IVisParameter;
+import com.dfki.av.sudplan.vis.functions.ColorTransferFunction;
+import com.dfki.av.sudplan.vis.functions.ConstantColor;
 import java.util.ArrayList;
 import java.util.List;
 

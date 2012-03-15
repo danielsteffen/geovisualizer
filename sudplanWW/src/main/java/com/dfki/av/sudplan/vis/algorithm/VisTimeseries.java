@@ -8,10 +8,11 @@
 package com.dfki.av.sudplan.vis.algorithm;
 
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.algorithm.functions.ColorRuleClassification;
-import com.dfki.av.sudplan.vis.algorithm.functions.ConstantNumber;
-import com.dfki.av.sudplan.vis.algorithm.functions.ITransferFunction;
-import com.dfki.av.sudplan.vis.algorithm.functions.IdentityFunction;
+import com.dfki.av.sudplan.vis.ITransferFunction;
+import com.dfki.av.sudplan.vis.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.functions.ColorRuleClassification;
+import com.dfki.av.sudplan.vis.functions.ConstantNumber;
+import com.dfki.av.sudplan.vis.functions.IdentityFunction;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
