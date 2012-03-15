@@ -1,16 +1,19 @@
 /*
- *  VisBuildings.java 
+ *  VisExtrudePolygon.java 
  *
- *  Created by DFKI AV on 08.03.2012.
+ *  Created by DFKI AV on 09.03.2012.
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplan.vis.basic;
 
+import com.dfki.av.sudplan.vis.core.NumberParameter;
+import com.dfki.av.sudplan.vis.core.ColorParameter;
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.ITransferFunction;
-import com.dfki.av.sudplan.vis.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.ITransferFunction;
+import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.functions.*;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -29,12 +32,12 @@ import org.gdal.ogr.Geometry;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class VisBuildings extends VisAlgorithmAbstract {
+public class VisGeoCPM extends VisAlgorithmAbstract {
 
     /**
      *
      */
-    private final int numPolygonsPerLayer = 10000;
+    private final int numPolygonsPerLayer = 100000;
     /**
      *
      */
@@ -44,35 +47,35 @@ public class VisBuildings extends VisAlgorithmAbstract {
      */
     private ColorParameter parCapColor;
     /**
-     *
+     * Filter to reduce number of Polygons.
      */
-    private ColorParameter parSideColor;
-
+    private NumberParameter parFilter;
+    
     /**
      *
-     * @param attribute
      */
-    protected VisBuildings() {
-        super("Buildings", "No description available.",
-                new ImageIcon(VisExtrudePolygon.class.getClassLoader().
-                getResource("icons/VisBuildings.png")));
+    protected VisGeoCPM() {
+        super("GeoCPM Visualization", "Visualization of GeoCPM results of Wuppertal.",
+                new ImageIcon(VisGeoCPM.class.getClassLoader().
+                getResource("icons/VisGeoCPM.png")));
 
-        this.parHeight = new NumberParameter("Height of building [m]");
+        this.parHeight = new NumberParameter("Height [m]");
         this.parHeight.addTransferFunction(new IdentityFunction());
         this.parHeight.addTransferFunction(new ScalarMultiplication());
         this.parHeight.addTransferFunction(new ConstantNumber());
         addVisParameter(this.parHeight);
 
-        this.parCapColor = new ColorParameter("Color of roof");
+        this.parCapColor = new ColorParameter("Color of surface");
         this.parCapColor.addTransferFunction(new ConstantColor());
         this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
         this.parCapColor.addTransferFunction(new ColorrampClassification());
-        this.parCapColor.addTransferFunction(new ColorrampCategorization());
         addVisParameter(this.parCapColor);
 
-        this.parSideColor = new ColorParameter("Color of walls");
-        this.parSideColor.addTransferFunction(new ConstantColor());
-        addVisParameter(this.parSideColor);
+        this.parFilter = new NumberParameter("Filter");
+        ConstantNumber cntf = new ConstantNumber();
+        cntf.setConstant(0.5);
+        this.parFilter.addTransferFunction(cntf);
+        addVisParameter(this.parFilter);
     }
 
     @Override
@@ -83,7 +86,6 @@ public class VisBuildings extends VisAlgorithmAbstract {
         List<Layer> layers = new ArrayList<Layer>();
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
-        String attribute2 = IVisAlgorithm.NO_ATTRIBUTE;
         Shapefile shapefile;
 
         // 0 - Check data
@@ -96,20 +98,17 @@ public class VisBuildings extends VisAlgorithmAbstract {
         }
 
         // 1 - Check and set all attributes
+        // Attention you will receive an array that has the size of the ...
         if (attributes == null || attributes.length == 0) {
             log.warn("Attributes set to null. First and second attribute set to default.");
         } else if (attributes.length == 1) {
             log.warn("Using only one attribute. Second attribute set to default.");
             attribute0 = checkAttribute(attributes[0]);
-        } else if (attributes.length == 2) {
+        } else if (attributes.length >= 2) {
             attribute0 = checkAttribute(attributes[0]);
             attribute1 = checkAttribute(attributes[1]);
-        } else if (attributes.length == 3) {
-            attribute0 = checkAttribute(attributes[0]);
-            attribute1 = checkAttribute(attributes[1]);
-            attribute2 = checkAttribute(attributes[2]);
         }
-        log.debug("Using attributes: " + attribute0 + ", " + attribute1 + ", " + attribute2);
+        log.debug("Using attributes: " + attribute0 + ", " + attribute1);
 
         // 2 - Preprocessing data
         ITransferFunction function0 = parHeight.getSelectedTransferFunction();
@@ -120,12 +119,8 @@ public class VisBuildings extends VisAlgorithmAbstract {
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
 
-        ITransferFunction function2 = parSideColor.getSelectedTransferFunction();
-        log.debug("Using transfer function {} for attribute.", function2.getClass().getSimpleName());
-        function2.preprocess(shapefile, attribute2);
-
         // 3 - Create visualization
-        createRenderablesForPolygons(shapefile, attribute0, attribute1, attribute2, layers);
+        createRenderablesForPolygons(shapefile, attribute0, attribute1, layers);
 
         log.debug("Finished {}", this.getClass().getSimpleName());
 
@@ -141,7 +136,7 @@ public class VisBuildings extends VisAlgorithmAbstract {
      * @param layers a list in which to place the layers created. May not be
      * null.
      */
-    private void createRenderablesForPolygons(Shapefile shp, String attribute0, String attribute1, String attribute2, List<Layer> layers) {
+    private void createRenderablesForPolygons(Shapefile shp, String attribute0, String attribute1, List<Layer> layers) {
 
         RenderableLayer layer = new RenderableLayer();
         int numLayers = 0;
@@ -150,7 +145,7 @@ public class VisBuildings extends VisAlgorithmAbstract {
 
         for (int i = 0; i < shp.getFeatureCount(); i++) {
 
-            createExtrudedPolygon(shp, i, attribute0, attribute1, attribute2, layer);
+            createExtrudedPolygon(shp, i, attribute0, attribute1, layer);
 
             if (layer.getNumRenderables() > this.numPolygonsPerLayer) {
                 layer = new RenderableLayer();
@@ -168,7 +163,7 @@ public class VisBuildings extends VisAlgorithmAbstract {
      * @param attribute0
      * @param layer
      */
-    private void createExtrudedPolygon(Shapefile shpfile, int featureId, String attribute0, String attribute1, String attribute2, RenderableLayer layer) {
+    private void createExtrudedPolygon(Shapefile shpfile, int featureId, String attribute0, String attribute1, RenderableLayer layer) {
 
         //
         // Use the transfer function for parameter HEIGHT
@@ -184,7 +179,16 @@ public class VisBuildings extends VisAlgorithmAbstract {
         } else if (result.doubleValue() == 0) {
             log.warn("The input value for ExtrudedPolygon = 0."
                     + "Setting value to 0.01.");
-            dResult += 1.0;
+            dResult = 0.01;
+        } 
+        
+        //
+        // Skip all values lower than a determined value.
+        //
+        ITransferFunction tfFilter = parFilter.getSelectedTransferFunction();
+        Number limit = (Number)tfFilter.calc(null);
+        if(dResult < limit.doubleValue()){
+            return;
         }
 
         //
@@ -193,31 +197,21 @@ public class VisBuildings extends VisAlgorithmAbstract {
         Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         ITransferFunction tfCapColor = parCapColor.getSelectedTransferFunction();
         Color capColor = (Color) tfCapColor.calc(object1);
-        Material capMaterial = new Material(capColor);
+        Material m = new Material(capColor);
         BasicShapeAttributes attrCap = new BasicShapeAttributes();
         attrCap.setDrawOutline(false);
-        attrCap.setInteriorOpacity(1.0);
-        attrCap.setInteriorMaterial(capMaterial);
+        attrCap.setInteriorOpacity(0.8);
+        attrCap.setInteriorMaterial(m);
 
         //
-        // Use the transfer function for parameter WALL COLOR
-        //
-        Object object2 = shpfile.getAttributeOfFeature(featureId, attribute2);
-        ITransferFunction tfSideColor = parSideColor.getSelectedTransferFunction();
-        Color sideColor = (Color) tfSideColor.calc(object2);
-        Material sideMaterial = new Material(sideColor);
-        BasicShapeAttributes attrSide = new BasicShapeAttributes();
-        attrSide.setDrawOutline(true);
-        attrSide.setInteriorOpacity(1.0);
-        attrSide.setInteriorMaterial(sideMaterial);
-
-        //
-        // Putting all together
+        // Putting everything together.
         //
         ExtrudedPolygon ep = new ExtrudedPolygon();
         ep.setHeight(dResult);
+        ep.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         ep.setCapAttributes(attrCap);
-        ep.setSideAttributes(attrSide);
+        ep.setSideAttributes(attrCap);
+        //ep.setEnableSides(false);
         layer.addRenderable(ep);
 
         List<Geometry> list = shpfile.getGeometryList(featureId);
@@ -239,8 +233,8 @@ public class VisBuildings extends VisAlgorithmAbstract {
                 } else {
                     ep = new ExtrudedPolygon();
                     ep.setCapAttributes(attrCap);
-                    ep.setSideAttributes(attrSide);
                     ep.setOuterBoundary(positionList);
+                    ep.setEnableSides(false);
                     layer.addRenderable(ep);
                 }
             } else {

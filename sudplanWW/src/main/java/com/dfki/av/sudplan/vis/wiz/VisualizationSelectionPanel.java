@@ -7,9 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.IVisAlgorithmFactory;
-import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
+import com.dfki.av.sudplan.vis.VisualizationCollection;
+import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Iterator;
@@ -36,30 +35,30 @@ public final class VisualizationSelectionPanel extends JPanel {
         initComponents();
         this.visAlgorithm = null;
 
-        IVisAlgorithmFactory factory = new VisualizationFactory();
-        Iterator<String> iter = factory.getVisualizationNames().iterator();
-        for (;iter.hasNext();){
+        Iterator<String> iter = VisualizationCollection.getNames().iterator();
+        while (iter.hasNext()) {
             String name = iter.next();
-            final IVisAlgorithm algo = factory.get(name);
-            JButton label = new JButton(algo.getIcon());
-            label.setFocusable(true);
-            label.addFocusListener(new FocusListener() {
+            final IVisAlgorithm algo = VisualizationCollection.newInstance(name);
+            if (algo != null) {
+                log.debug("Adding visualization technique: {}", algo.getName());
+                JButton label = new JButton(algo.getIcon());
+                label.setFocusable(true);
+                label.addFocusListener(new FocusListener() {
 
-                @Override
-                public void focusGained(FocusEvent fe) {
-                    jTextField1.setText(algo.getName());
-                    jTextPane1.setText(algo.getDescription());
-                    visAlgorithm = algo;
-                }
+                    @Override
+                    public void focusGained(FocusEvent fe) {
+                        jTextField1.setText(algo.getName());
+                        jTextPane1.setText(algo.getDescription());
+                        visAlgorithm = algo;
+                    }
 
-                @Override
-                public void focusLost(FocusEvent fe) {
-                }
-            });
-            jPanel3.add(label);
-            log.debug("Adding visualization technique: {}", algo.getName());
+                    @Override
+                    public void focusLost(FocusEvent fe) {
+                    }
+                });
+                jPanel3.add(label);
+            }
         }
-        this.jTextField1.setText("huhu hier bin ich daheim.");
     }
 
     @Override

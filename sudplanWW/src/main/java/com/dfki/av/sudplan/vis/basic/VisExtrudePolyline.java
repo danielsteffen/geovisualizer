@@ -5,11 +5,13 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplan.vis.basic;
 
+import com.dfki.av.sudplan.vis.core.NumberParameter;
+import com.dfki.av.sudplan.vis.core.ColorParameter;
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.ITransferFunction;
-import com.dfki.av.sudplan.vis.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.ITransferFunction;
+import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.functions.*;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Position;

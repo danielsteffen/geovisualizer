@@ -5,7 +5,7 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplan.vis.basic;
 
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;

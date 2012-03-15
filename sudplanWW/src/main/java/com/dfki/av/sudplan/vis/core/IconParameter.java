@@ -5,10 +5,10 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplan.vis.core;
 
-import com.dfki.av.sudplan.vis.ITransferFunction;
-import com.dfki.av.sudplan.vis.IVisParameter;
+import com.dfki.av.sudplan.vis.core.ITransferFunction;
+import com.dfki.av.sudplan.vis.core.IVisParameter;
 import java.util.List;
 
 /**

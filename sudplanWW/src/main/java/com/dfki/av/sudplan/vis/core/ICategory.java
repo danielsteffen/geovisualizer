@@ -5,7 +5,7 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis;
+package com.dfki.av.sudplan.vis.core;
 
 /**
  * An interface for categories. Categories are basically sets of 1 to n objects.

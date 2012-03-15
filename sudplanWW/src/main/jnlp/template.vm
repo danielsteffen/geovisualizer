@@ -7,7 +7,7 @@
     <description kind="one-line">Sudplan</description>
     <description kind="tooltip">Sudplan</description>
     <description kind="short">Sudplan</description>
-    <icon kind="default" href="img/sudplan64x64px.jpg"/>
+    <icon kind="default" href="button.png"/>
     <shortcut online="true">
       <desktop/>
       <menu submenu="sudplan"/>

@@ -8,8 +8,6 @@
 package com.dfki.av.sudplan.vis.wiz;
 
 import javax.swing.table.DefaultTableModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,10 +15,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AttributeTableModel extends DefaultTableModel {
 
-    /*
-     * Logger.
-     */
-    private final static Logger log = LoggerFactory.getLogger(AttributeTableModel.class);
     private final static Object[] DATA_TYPES = new Object[]{
         Boolean.FALSE,
         "none",

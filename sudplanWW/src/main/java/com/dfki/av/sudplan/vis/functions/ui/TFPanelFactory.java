@@ -7,8 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.functions.ui;
 
-import com.dfki.av.sudplan.vis.ITransferFunction;
-import com.dfki.av.sudplan.vis.TFPanel;
+import com.dfki.av.sudplan.vis.core.ITransferFunction;
+import com.dfki.av.sudplan.vis.core.TFPanel;
 import com.dfki.av.sudplan.vis.functions.*;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -78,12 +78,14 @@ public class TFPanelFactory {
             ColorRuleClassification function = (ColorRuleClassification) f;
             panel = new TFPColorRuleClassification(function);
         }
-        panel.setAttributes(attributes);
-        panel.setButtonGroup(bg);
-        panel.setActionListener(l);
-        panel.setSelected(b);
         
-        
+        if (panel != null) {
+            panel.setAttributes(attributes);
+            panel.setButtonGroup(bg);
+            panel.setActionListener(l);
+            panel.setSelected(b);
+        }
+
         return panel;
     }
 }

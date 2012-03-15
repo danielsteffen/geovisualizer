@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
-import com.dfki.av.sudplan.vis.ICategory;
+import com.dfki.av.sudplan.vis.core.ICategory;
 
 /**
  *

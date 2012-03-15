@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.functions.ui;
 
-import com.dfki.av.sudplan.vis.TFPanel;
+import com.dfki.av.sudplan.vis.core.TFPanel;
 import com.dfki.av.sudplan.vis.functions.ScalarMultiplication;
 import java.awt.event.ActionListener;
 import java.util.Iterator;

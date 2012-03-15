@@ -9,10 +9,10 @@ import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
-import com.dfki.av.sudplan.vis.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.IVisAlgorithmFactory;
-import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
-import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
+import com.dfki.av.sudplan.vis.VisualizationCollection;
+import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
+import com.dfki.av.sudplan.vis.basic.VisPointCloud;
+import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.wiz.VisWizIterator;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
@@ -24,10 +24,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.imageio.spi.ServiceRegistry;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.openide.DialogDisplayer;
@@ -44,7 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
     private static final String[] servers = new String[]{
         "http://serv-2118.kl.dfki.de:8888/geoserver/wms",
-            "http://www.wms.nrw.de/geobasis/DOP"
+        "http://www.wms.nrw.de/geobasis/DOP"
     };
     private Dimension canvasSize;
     private VisualizationPanel wwPanel;
@@ -70,7 +66,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         initComponents();
         initWMSPanel();
-//        jTabbedPane1.setVisible(false);
         updateLayerMenu();
     }
 
@@ -117,7 +112,7 @@ public class MainFrame extends javax.swing.JFrame {
                 @Override
                 public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 //                    this.getLayerPanel().update(wwPanel.getWwd());
-                    log.debug("property change event from layers panel");
+//                    log.debug("property change event from layers panel");
                 }
             });
 
@@ -588,10 +583,12 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff"));
+        
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
+        
         wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
 
     }//GEN-LAST:event_miAddGeoTiffActionPerformed
@@ -599,13 +596,18 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp"));
+        
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        VisualizationFactory factory = new VisualizationFactory();
-        IVisAlgorithm algo = factory.get("VisPointCloud");
-        wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+        
+        IVisAlgorithm algo = VisualizationCollection.newInstance(VisPointCloud.class.getName());
+        if(algo != null){
+            wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+        } else {
+            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+        }
     }//GEN-LAST:event_miAddShapeActionPerformed
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
@@ -671,13 +673,18 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAddShapeZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeZipActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip"));
+
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        VisualizationFactory factory = new VisualizationFactory();
-        IVisAlgorithm algo = factory.get("VisPointCloud");
-        wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+        
+        IVisAlgorithm algo = VisualizationCollection.newInstance(VisPointCloud.class.getName());
+        if(algo != null){
+            wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+        } else {
+            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+        }        
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void updateLayerMenu() {
@@ -743,18 +750,6 @@ public class MainFrame extends javax.swing.JFrame {
                 new MainFrame().setVisible(true);
             }
         });
-
-        List<Class<?>> list = new ArrayList<Class<?>>();
-        list.add(IVisAlgorithmFactory.class);
-        ServiceRegistry registry = new ServiceRegistry(list.iterator());
-        Iterator<?> iter = registry.getServiceProviders(IVisAlgorithmFactory.class, false);
-
-        for (; iter.hasNext();) {
-            Object o = iter.next();
-            log.debug("Found class {}", o.getClass().getSimpleName());
-        }
-        log.debug("Finished searching.");
-
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelGoToDialoag;

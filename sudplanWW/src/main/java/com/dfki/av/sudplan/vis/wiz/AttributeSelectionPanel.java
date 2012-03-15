@@ -30,7 +30,7 @@ public final class AttributeSelectionPanel extends JPanel {
 
     private final static Logger log = LoggerFactory.getLogger(AttributeSelectionPanel.class);
     private AttributeTableModel tableModel;
-    private JTable tabAttributes;
+    private JTable table;
     private JScrollPane spAttributeTable;
 
     /**
@@ -41,10 +41,10 @@ public final class AttributeSelectionPanel extends JPanel {
         // init my components here:
 
         this.tableModel = new AttributeTableModel();
-        this.tabAttributes = new JTable(tableModel);
-        this.tabAttributes.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        this.tabAttributes.setFillsViewportHeight(true);
-        this.spAttributeTable = new JScrollPane(this.tabAttributes);
+        this.table = new JTable(tableModel);
+        this.table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        this.table.setFillsViewportHeight(true);
+        this.spAttributeTable = new JScrollPane(this.table);
         jPanel2.add(this.spAttributeTable);
     }
 
@@ -166,7 +166,7 @@ public final class AttributeSelectionPanel extends JPanel {
         protected void done() {
             try {
                 Map<String, Object> attributes = get();
-                TableModel tModel = tabAttributes.getModel();
+                TableModel tModel = table.getModel();
                 if (tModel instanceof AttributeTableModel) {
                     AttributeTableModel model = (AttributeTableModel) tModel;
                     model.removeAllRows();
@@ -178,7 +178,7 @@ public final class AttributeSelectionPanel extends JPanel {
                         model.addRow(rowData);
                     }
                 }
-                tabAttributes.updateUI();
+                table.updateUI();
             } catch (InterruptedException ex) {
                 log.error(ex.toString());
             } catch (ExecutionException ex) {

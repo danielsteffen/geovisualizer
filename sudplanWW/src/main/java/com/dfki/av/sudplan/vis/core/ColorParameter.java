@@ -1,16 +1,14 @@
 /*
- *  NumberParameter.java 
+ *  ColorParameter.java 
  *
  *  Created by DFKI AV on 29.02.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.algorithm;
+package com.dfki.av.sudplan.vis.core;
 
-import com.dfki.av.sudplan.vis.ITransferFunction;
-import com.dfki.av.sudplan.vis.IVisParameter;
-import com.dfki.av.sudplan.vis.functions.ConstantNumber;
-import com.dfki.av.sudplan.vis.functions.NumberTransferFunction;
+import com.dfki.av.sudplan.vis.functions.ColorTransferFunction;
+import com.dfki.av.sudplan.vis.functions.ConstantColor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +16,18 @@ import java.util.List;
  *
  * @author steffen
  */
-public class NumberParameter implements IVisParameter {
+public class ColorParameter implements IVisParameter {
 
     /**
-     *
-     */
-    private List<ITransferFunction> transferFunctions;
-    /**
-     *
+     * The name to display for this
+     * <code>ColorParameter</code>.
      */
     private String name;
+    /**
+     * The list of transfer functions the
+     * <code>ColorParameter</code> supports.
+     */
+    private List<ITransferFunction> transferFunctions;
     /**
      *
      */
@@ -37,11 +37,11 @@ public class NumberParameter implements IVisParameter {
      *
      * @param name
      */
-    public NumberParameter(String name) {
+    public ColorParameter(String name) {
         this.name = name;
         this.transferFunctions = new ArrayList<ITransferFunction>();
-        // Setting default transfer function
-        this.transferFunction = new ConstantNumber();
+        // Setting default transfer function.
+        this.transferFunction = new ConstantColor();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class NumberParameter implements IVisParameter {
 
     @Override
     public ITransferFunction getSelectedTransferFunction() {
-        return this.transferFunction;
+        return transferFunction;
     }
 
     @Override
@@ -65,10 +65,10 @@ public class NumberParameter implements IVisParameter {
     }
 
     @Override
-    public boolean addTransferFunction(final ITransferFunction f) {
-        if(!(f instanceof NumberTransferFunction))                {
+    public boolean addTransferFunction(ITransferFunction f) {
+        if(!(f instanceof ColorTransferFunction))                {
             throw new IllegalArgumentException("Transferfunction must be of typ "
-                    + NumberTransferFunction.class.getSimpleName());
+                    + ColorTransferFunction.class.getSimpleName());
         } 
         if(f == null){
             throw new IllegalArgumentException("Transferfunction is null");

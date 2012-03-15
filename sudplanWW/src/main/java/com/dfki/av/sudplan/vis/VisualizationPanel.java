@@ -8,8 +8,8 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.camera.*;
-import com.dfki.av.sudplan.vis.algorithm.VisCreateTexture;
-import com.dfki.av.sudplan.vis.algorithm.VisualizationFactory;
+import com.dfki.av.sudplan.vis.basic.*;
+import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -89,9 +89,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void addLayer(Object data) {
-        VisualizationFactory factory = new VisualizationFactory();
-        IVisAlgorithm algo = factory.get("VisPointCloud");
-        addLayer(data, algo, null);
+        IVisAlgorithm algo = VisualizationCollection.newInstance(VisPointCloud.class.getName());
+        if(algo != null){
+            addLayer(data, algo, null);
+        } else {
+            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+        }
     }
 
     /**
@@ -224,9 +227,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Val_200503", "Val_200501"};
-            VisualizationFactory factory = new VisualizationFactory();
-            IVisAlgorithm algo = factory.get("VisTimeseries");
-            addLayer(url, algo, attributes);
+            IVisAlgorithm algo = VisualizationCollection.newInstance(VisTimeseries.class.getName());
+            if(algo != null){
+                addLayer(url, algo, attributes);
+            } else {
+                log.error("VisAlgorithm {} not supported.", VisTimeseries.class.getName());
+            }
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }
@@ -248,9 +254,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/Buildings.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Elevation"};
-            VisualizationFactory factory = new VisualizationFactory();
-            IVisAlgorithm algo = factory.get("VisExtrudePolygon");
-            addLayer(url, algo, attributes);
+            IVisAlgorithm algo = VisualizationCollection.newInstance(VisExtrudePolygon.class.getName());
+            if(algo != null){
+                addLayer(url, algo, attributes);
+            } else {
+                log.error("VisAlgorithm {} not supported.", VisExtrudePolygon.class.getName());
+            }
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }
@@ -293,9 +302,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         try {
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip");
             String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-            VisualizationFactory factory = new VisualizationFactory();
-            IVisAlgorithm algo = factory.get("VisExtrudePolyline");
-            addLayer(url, algo, attributes);
+            IVisAlgorithm algo = VisualizationCollection.newInstance(VisExtrudePolyline.class.getName());
+            if(algo != null){
+                addLayer(url, algo, attributes);
+            } else {
+                log.error("VisAlgorithm {} not supported.", VisExtrudePolyline.class.getName());
+            }            
         } catch (MalformedURLException ex) {
             log.error(ex.toString());
         }

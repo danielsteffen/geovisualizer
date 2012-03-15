@@ -1,6 +1,5 @@
 package com.dfki.av.sudplan.vis.functions;
 
-import com.dfki.av.sudplan.vis.wiz.AttributeTableModel;
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ public class ClassificationTableModel extends DefaultTableModel{
     /*
      * Logger.
      */
-    private final static Logger log = LoggerFactory.getLogger(AttributeTableModel.class);
+    private final static Logger log = LoggerFactory.getLogger(ClassificationTableModel.class);
     private final static Object[] DATA_TYPES = new Object[]{
         "none",
         "none",
