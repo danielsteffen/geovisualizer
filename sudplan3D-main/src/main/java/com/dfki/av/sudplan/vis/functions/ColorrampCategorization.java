@@ -10,7 +10,7 @@ package com.dfki.av.sudplan.vis.functions;
 import com.dfki.av.sudplan.vis.core.ICategory;
 import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
-import com.dfki.av.utils.ColorUtils;
+import com.dfki.av.sudplan.vis.utils.ColorUtils;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

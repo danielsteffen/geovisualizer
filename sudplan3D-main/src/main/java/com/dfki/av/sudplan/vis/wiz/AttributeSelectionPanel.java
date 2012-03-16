@@ -9,7 +9,7 @@ package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.Settings;
-import com.dfki.av.utils.AVUtils;
+import com.dfki.av.sudplan.vis.utils.AVUtils;
 import java.awt.Dimension;
 import java.io.File;
 import java.net.URI;
