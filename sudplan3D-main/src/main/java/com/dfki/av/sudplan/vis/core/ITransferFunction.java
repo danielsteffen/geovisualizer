@@ -13,10 +13,24 @@ package com.dfki.av.sudplan.vis.core;
  */
 public interface ITransferFunction {
 
+    /**
+     * 
+     * @param o
+     * @return 
+     */
     public Object calc(Object o);
 
+    /**
+     * 
+     * @return 
+     */
     public String getName();
 
-    public void preprocess(DataSource data, String attribute);
+    /**
+     * 
+     * @param data
+     * @param attribute 
+     */
+    public void preprocess(ISource data, String attribute);
 
 }

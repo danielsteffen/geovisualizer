@@ -8,7 +8,7 @@
 package com.dfki.av.sudplan.vis.functions;
 
 import com.dfki.av.sudplan.vis.core.ICategory;
-import com.dfki.av.sudplan.vis.core.DataSource;
+import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.utils.ColorUtils;
 import java.awt.Color;
@@ -78,7 +78,7 @@ public class ColorrampCategorization extends ColorCategorization {
     }
 
     @Override
-    public void preprocess(DataSource data, String attribute) {
+    public void preprocess(ISource data, String attribute) {
         log.debug("Preprocessing ...");
         log.debug("Auto classification of attribute <{}>.", attribute);
         categories.clear();

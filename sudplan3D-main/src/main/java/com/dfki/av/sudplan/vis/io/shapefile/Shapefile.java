@@ -1,6 +1,6 @@
 package com.dfki.av.sudplan.vis.io.shapefile;
 
-import com.dfki.av.sudplan.vis.core.DataSource;
+import com.dfki.av.sudplan.vis.core.ISource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author steffen
  */
-public class Shapefile implements DataSource {
+public class Shapefile implements ISource {
 
     static {
         ogr.RegisterAll();
