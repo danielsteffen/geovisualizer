@@ -16,6 +16,10 @@
         <url>http://www.dfki.de</url>
     </organization>
     
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
     <developers>
         <developer>
             <name>Daniel Steffen</name>
@@ -28,16 +32,9 @@
         </developer>
     </developers>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-        <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
-        <distribution.server>dfki-artifactory</distribution.server>		
-		<ww-scope>compile</ww-scope>
-    </properties>
     <profiles>
         <profile>
-            <id>deploy-dfki</id>
+            <id>s3d-core-dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -45,12 +42,23 @@
                 <distribution.server>dfki-artifactory</distribution.server>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>                
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-                <ww-scope>provided</ww-scope>                
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>s3d-core-deploy-dfki</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <distribution.server>dfki-artifactory</distribution.server>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>                
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
             </properties>
         </profile>
 
         <profile>
-            <id>deploy-cismet</id>
+            <id>s3d-core-deploy-cismet</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -58,7 +66,6 @@
                 <distribution.server>cismet-artifactory</distribution.server>                
                 <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>                
                 <repository.url>http://flexo.cismet.de:8081/artifactory/repo</repository.url>
-                <ww-scope>provided</ww-scope>                                
             </properties>
         </profile>
     </profiles>  
@@ -68,31 +75,26 @@
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwind</artifactId>
             <version>1.2.0</version>
-            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwindx</artifactId>
             <version>1.2.0</version>
-            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gdal</artifactId>
             <version>1.2.0</version>
-            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gluegen-rt</artifactId>
             <version>1.2.0</version>
-            <scope>${ww-scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>jogl</artifactId>
             <version>1.2.0</version>
-            <scope>${ww-scope}</scope>
         </dependency>
         <!--dependency>
             <groupId>junit</groupId>
@@ -147,7 +149,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>${main-class}</mainClass>
+                            <!--mainClass>${main-class}</mainClass-->
                         </manifest>
                     </archive>
                 </configuration>
