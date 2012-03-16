@@ -35,6 +35,33 @@
         <distribution.server>dfki-artifactory</distribution.server>		
 		<ww-scope>compile</ww-scope>
     </properties>
+    <profiles>
+        <profile>
+            <id>deploy-dfki</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <distribution.server>dfki-artifactory</distribution.server>
+                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>                
+                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+                <ww-scope>provided</ww-scope>                
+            </properties>
+        </profile>
+
+        <profile>
+            <id>deploy-cismet</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <distribution.server>cismet-artifactory</distribution.server>                
+                <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>                
+                <repository.url>http://flexo.cismet.de:8081/artifactory/repo</repository.url>
+                <ww-scope>provided</ww-scope>                                
+            </properties>
+        </profile>
+    </profiles>  
 
     <dependencies>
         <dependency>
@@ -67,12 +94,12 @@
             <version>1.2.0</version>
             <scope>${ww-scope}</scope>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -223,10 +250,6 @@
             <name>${distribution.url}</name>
             <url>${distribution.url}</url>
         </repository>
-        <site>
-            <id>steffen.website</id>
-            <url>scp://serv-2100/project/av/etc/www/sudplan.kl.dfki.de</url>
-        </site>		
     </distributionManagement>    
     
     <ciManagement>
