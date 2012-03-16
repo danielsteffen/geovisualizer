@@ -7,8 +7,6 @@
  */
 package com.dfki.av.sudplan.vis.core;
 
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.IVisParameter;
 import java.util.List;
 
 /**

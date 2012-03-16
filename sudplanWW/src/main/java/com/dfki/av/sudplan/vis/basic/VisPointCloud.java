@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
+import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.IconLayer;

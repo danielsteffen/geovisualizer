@@ -7,11 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
-import com.dfki.av.sudplan.vis.core.NumberParameter;
-import com.dfki.av.sudplan.vis.core.ColorParameter;
 import com.dfki.av.sudplan.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;

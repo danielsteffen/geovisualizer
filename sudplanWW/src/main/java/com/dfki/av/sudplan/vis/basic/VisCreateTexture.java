@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
+import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import java.io.File;

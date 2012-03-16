@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
+import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
 import com.dfki.av.sudplan.vis.core.NumberParameter;
 import com.dfki.av.sudplan.vis.core.ColorParameter;
 import com.dfki.av.sudplan.io.shapefile.Shapefile;

@@ -5,10 +5,8 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.basic;
+package com.dfki.av.sudplan.vis.core;
 
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.core.IVisParameter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
@@ -46,7 +44,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
     /**
      *
      */
-    protected VisAlgorithmAbstract() {
+    public VisAlgorithmAbstract() {
         this("Default Visualization");
     }
 
@@ -54,7 +52,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      *
      * @param name
      */
-    protected VisAlgorithmAbstract(String name) {
+    public VisAlgorithmAbstract(String name) {
         this(name, "No description available.");
     }
 
@@ -62,7 +60,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      * @param n
      * @param d
      */
-    protected VisAlgorithmAbstract(String name, String description) {
+    public VisAlgorithmAbstract(String name, String description) {
         this(name,
                 description,
                 new ImageIcon(VisAlgorithmAbstract.class.getClassLoader().
@@ -74,7 +72,7 @@ public abstract class VisAlgorithmAbstract implements IVisAlgorithm {
      * @param i
      * @param d
      */
-    protected VisAlgorithmAbstract(String n, String d, Icon i) {
+    public VisAlgorithmAbstract(String n, String d, Icon i) {
         this.icon = i;
         this.name = n;
         this.desription = d;

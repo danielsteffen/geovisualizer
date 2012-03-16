@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
+import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.Position;
