@@ -5,7 +5,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D</artifactId>
-    <version>0.7.0.5</version>
+    <version>0.8.0</version>
     <packaging>jar</packaging>
     <name>sudplan3D-main</name>
     <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
@@ -34,7 +34,7 @@
 
     <profiles>
         <profile>
-            <id>sudplan3D-develop</id>
+            <id>s3D-main-dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -49,9 +49,9 @@
         </profile>
 
         <profile>
-            <id>www.dfki.uni-kl.de</id>
+            <id>s3D-main-webstart-steffen</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                   
@@ -64,7 +64,7 @@
         </profile>
 
         <profile>
-            <id>sudplan.kl.dfki.de</id>
+            <id>s3D-main-webstart-offical</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -79,7 +79,7 @@
         </profile>
         
         <profile>
-            <id>sudplan3D-deploy-dfki</id>
+            <id>s3d-main-deploy-dfki</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -94,7 +94,7 @@
         </profile>
 
         <profile>
-            <id>sudplan3D-deploy-cismet</id>
+            <id>s3d-main-deploy-cismet</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -139,6 +139,11 @@
             <artifactId>jogl</artifactId>
             <version>1.2.0</version>
             <scope>${ww-scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.dfki.av.sudplan</groupId>
+            <artifactId>sudplan3D-core</artifactId>
+            <version>0.1</version>            
         </dependency>
         <dependency>
             <groupId>junit</groupId>
