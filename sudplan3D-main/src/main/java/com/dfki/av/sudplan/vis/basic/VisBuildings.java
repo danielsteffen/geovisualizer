@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
-import com.dfki.av.sudplan.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
 import gov.nasa.worldwind.avlist.AVKey;

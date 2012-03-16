@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
-import com.dfki.av.sudplan.io.DataSource;
+import com.dfki.av.sudplan.vis.core.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

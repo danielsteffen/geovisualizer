@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
-import com.dfki.av.sudplan.io.DataSource;
+import com.dfki.av.sudplan.vis.core.DataSource;
 import java.awt.Color;
 
 /**

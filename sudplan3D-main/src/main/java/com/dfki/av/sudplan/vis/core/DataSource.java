@@ -1,5 +1,5 @@
 
-package com.dfki.av.sudplan.io;
+package com.dfki.av.sudplan.vis.core;
 
 /**
  *

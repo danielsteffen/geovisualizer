@@ -8,8 +8,8 @@
 package com.dfki.av.sudplan.vis.functions;
 
 import com.dfki.av.sudplan.vis.core.ICategory;
-import com.dfki.av.sudplan.io.DataSource;
-import com.dfki.av.sudplan.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.core.DataSource;
+import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.utils.ColorUtils;
 import java.awt.Color;
 import java.util.ArrayList;

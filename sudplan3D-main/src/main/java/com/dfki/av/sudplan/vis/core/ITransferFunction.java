@@ -7,8 +7,6 @@
  */
 package com.dfki.av.sudplan.vis.core;
 
-import com.dfki.av.sudplan.io.DataSource;
-
 /**
  *
  * @author steffen

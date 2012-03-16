@@ -3,7 +3,7 @@ package com.dfki.av.sudplan.vis.functions;
 import com.dfki.av.sudplan.vis.functions.ui.TFPColorRuleClassification;
 import com.dfki.av.sudplan.vis.core.TFPanel;
 import com.dfki.av.sudplan.vis.core.IClass;
-import com.dfki.av.sudplan.io.DataSource;
+import com.dfki.av.sudplan.vis.core.DataSource;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

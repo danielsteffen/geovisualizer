@@ -1,6 +1,6 @@
-package com.dfki.av.sudplan.io.shapefile;
+package com.dfki.av.sudplan.vis.io.shapefile;
 
-import com.dfki.av.sudplan.io.DataSource;
+import com.dfki.av.sudplan.vis.core.DataSource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
