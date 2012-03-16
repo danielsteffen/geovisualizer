@@ -3,13 +3,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.dfki.av.sudplanX</groupId>
-    <artifactId>sudplanX</artifactId>
+    <groupId>com.dfki.av.sudplan</groupId>
+    <artifactId>sudplan3D-drafts</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>sudplanX</name>
+    <name>sudplan3D-drafts</name>
     <description>Examples and tests for the SUDPLAN project.</description>
-    <url>http://www.smhi.se/sudplan</url>
+    <url>http://sudplan.kl.dfki.de</url>
     
     <organization>
         <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
