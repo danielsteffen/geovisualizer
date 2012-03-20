@@ -1,4 +1,4 @@
-package com.dfki.av.sudplan.vis.functions;
+package com.dfki.av.sudplan.vis.functions.ui;
 
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
@@ -14,11 +14,17 @@ public class ClassificationTableModel extends DefaultTableModel{
      * Logger.
      */
     private final static Logger log = LoggerFactory.getLogger(ClassificationTableModel.class);
+    /**
+     * 
+     */
     private final static Object[] DATA_TYPES = new Object[]{
         "none",
         "none",
         Color.GRAY
     };
+    /**
+     * 
+     */
     private final static String[] TABLE_HEADER = new String[]{
         "Min",
         "Max",
