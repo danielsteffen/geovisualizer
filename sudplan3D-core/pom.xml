@@ -34,7 +34,7 @@
 
     <profiles>
         <profile>
-            <id>s3d-core-dev</id>
+            <id>s3d-core-dfki</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -44,21 +44,9 @@
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
             </properties>
         </profile>
-        
-        <profile>
-            <id>s3d-core-deploy-dfki</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <distribution.server>dfki-artifactory</distribution.server>
-                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>                
-                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-            </properties>
-        </profile>
 
         <profile>
-            <id>s3d-core-deploy-cismet</id>
+            <id>s3d-core-cismet</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -75,33 +63,32 @@
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwind</artifactId>
             <version>1.2.0</version>
+            <!--scope>provided</scope-->
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>worldwindx</artifactId>
             <version>1.2.0</version>
+            <!--scope>provided</scope-->
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gdal</artifactId>
             <version>1.2.0</version>
+            <!--scope>provided</scope-->
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gluegen-rt</artifactId>
             <version>1.2.0</version>
+            <!--scope>provided</scope-->
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>jogl</artifactId>
             <version>1.2.0</version>
+            <!--scope>provided</scope-->
         </dependency>
-        <!--dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -207,12 +194,6 @@
                 <version>2.4</version>
             </plugin>
             
-            <!--plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jxr-maven-plugin</artifactId>
-                <version>2.0-beta-1</version>
-            </plugin-->              
-                   
         </plugins>
     </reporting>
     
