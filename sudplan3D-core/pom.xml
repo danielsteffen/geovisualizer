@@ -5,7 +5,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D-core</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>sudplan3D-core</name>
     <description>The core interface definitions of the SUDPLAN 3D module</description>
