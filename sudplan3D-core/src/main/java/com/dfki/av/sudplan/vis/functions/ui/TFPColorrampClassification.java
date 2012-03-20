@@ -38,7 +38,7 @@ public class TFPColorrampClassification extends TFPanel {
         initComponents();
 
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
-        jSpinner1.setValue(f.getNumCategories());
+        jSpinner1.setValue(f.getNumClasses());
         jTextField2.setBackground(f.getStartColor());
         jTextField1.setBackground(f.getEndColor());
     }
@@ -177,7 +177,7 @@ public class TFPColorrampClassification extends TFPanel {
         SpinnerModel m = jSpinner1.getModel();
         if (m instanceof SpinnerNumberModel) {
             Number n = ((SpinnerNumberModel) m).getNumber();
-            function.setNumCategories(n.intValue());
+            function.setNumClasses(n.intValue());
         }
     }//GEN-LAST:event_jSpinner1StateChanged
 

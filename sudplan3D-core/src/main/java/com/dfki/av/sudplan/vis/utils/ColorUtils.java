@@ -8,6 +8,8 @@
 package com.dfki.av.sudplan.vis.utils;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,16 +22,16 @@ public class ColorUtils {
      * the first color and {@link Color#RED} the last color in the array.
      *
      * @param numColors the number of colors to return
-     * @return the array of colors
+     * @return the list of colors
      */
-    public static Color[] CreateRedGreenColorGradientAttributes(int numColors) {
+    public static List<Color> CreateRedGreenColorGradientAttributes(int numColors) {
         // Color interpolation from Red (0° degree) to Green (120°)
-        Color[] colors = new Color[numColors];
+        List<Color> colors = new ArrayList<Color>();
         float green = 120.0f;
         float upperLimit = green;
-        for (int i = 0; i < colors.length; i++) {
+        for (int i = 0; i < numColors; i++) {
             float hue = upperLimit * (1 - (i / (float) (numColors - 1)));
-            colors[i] = ColorUtils.HSVtoRGB(hue, 1.0f, 1.0f);
+            colors.add(ColorUtils.HSVtoRGB(hue, 1.0f, 1.0f));
         }
         return colors;
     }
@@ -41,16 +43,16 @@ public class ColorUtils {
      * @param numColors
      * @return
      */
-    public static Color[] CreateLinearHSVColorGradient(Color c1, Color c2, int numColors) {
-        Color[] colors = new Color[numColors];
+    public static List<Color> CreateLinearHSVColorGradient(Color c1, Color c2, int numColors) {
+        List<Color> colors = new ArrayList<Color>();
         double[] hsvColor1 = RGBtoHSV(c1.getRed() / 255.0, c1.getGreen() / 255.0, c1.getBlue() / 255.0);
         double[] hsvColor2 = RGBtoHSV(c2.getRed() / 255.0, c2.getGreen() / 255.0, c2.getBlue() / 255.0);
 
-        for (int i = 0; i < colors.length; i++) {
-            double hue = hsvColor1[0] + (hsvColor2[0] - hsvColor1[0]) / (double) (colors.length - 1) * i;
-            double s = hsvColor1[1] + (hsvColor2[1] - hsvColor1[1]) / (double) (colors.length - 1) * i;
-            double v = hsvColor1[2] + (hsvColor2[2] - hsvColor1[2]) / (double) (colors.length - 1) * i;
-            colors[i] = ColorUtils.HSVtoRGB((float) hue, (float)s, (float)v);
+        for (int i = 0; i < numColors; i++) {
+            double hue = hsvColor1[0] + (hsvColor2[0] - hsvColor1[0]) / (double) (numColors - 1) * i;
+            double s = hsvColor1[1] + (hsvColor2[1] - hsvColor1[1]) / (double) (numColors - 1) * i;
+            double v = hsvColor1[2] + (hsvColor2[2] - hsvColor1[2]) / (double) (numColors - 1) * i;
+            colors.add(ColorUtils.HSVtoRGB((float) hue, (float) s, (float) v));
         }
 
         return colors;

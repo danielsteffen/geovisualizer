@@ -7,9 +7,26 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
+import com.dfki.av.sudplan.vis.core.ICategory;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author steffen
  */
-public abstract class ColorCategorization extends ColorTransferFunction{
+public abstract class ColorCategorization extends ColorTransferFunction {
+
+    /**
+     *
+     */
+    protected List<ICategory> categories;
+
+    /**
+     *
+     */
+    public ColorCategorization() {
+        super();
+        this.categories = new ArrayList<ICategory>();
+    }
 }

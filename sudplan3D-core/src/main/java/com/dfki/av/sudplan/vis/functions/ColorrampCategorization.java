@@ -12,10 +12,6 @@ import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.utils.ColorUtils;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -23,18 +19,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ColorrampCategorization extends ColorCategorization {
 
-    /*
-     *
-     */
-    private static final Logger log = LoggerFactory.getLogger(ColorrampCategorization.class);
-    /**
-     *
-     */
-    private List<ICategory> categories;
-    /**
-     *
-     */
-    private Color[] colorramp;
     /**
      *
      */
@@ -48,11 +32,13 @@ public class ColorrampCategorization extends ColorCategorization {
      *
      */
     public ColorrampCategorization() {
+        super();
+        
         this.startColor = Color.GREEN;
         this.endColor = Color.RED;
-        this.categories = new ArrayList<ICategory>();
+        
         this.categories.add(new StringCategory(""));
-        this.colorramp = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, categories.size());
+        this.colorList = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, 1);
     }
 
     @Override
@@ -65,7 +51,7 @@ public class ColorrampCategorization extends ColorCategorization {
         for (int i = 0; i < categories.size(); i++) {
             ICategory c = categories.get(i);
             if (c.contains(o)) {
-                return colorramp[i];
+                return colorList.get(i);
             }
         }
         log.error("Should not reach this part.");
@@ -96,7 +82,7 @@ public class ColorrampCategorization extends ColorCategorization {
             }
         }
         log.debug("Generated {} categories.", categories.size());
-        this.colorramp = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, categories.size());
+        this.colorList = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, categories.size());
         log.debug("Preprocessing finished.");
     }
 

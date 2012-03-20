@@ -17,12 +17,12 @@ import java.awt.Color;
 public class ConstantColor extends ColorTransferFunction {
 
     /**
-     *
+     * The constant {@link Color} to be used.
      */
     private Color color;
 
     /**
-     *
+     * Constructor of {@link ConstantColor}. The {@link #color} member is set to {@link Color#GRAY}.
      */
     public ConstantColor() {
         this.color = Color.GRAY;
@@ -40,20 +40,21 @@ public class ConstantColor extends ColorTransferFunction {
 
     @Override
     public void preprocess(ISource data, String attribute) {
-        // Nothing to do.
     }
 
     /**
+     * Returns the constant {@link Color} object.
      *
-     * @return
+     * @return the {@link Color} to return.
      */
     public Color getColor() {
         return this.color;
     }
 
     /**
+     * Sets the constant {@link #color} for this transfer function.
      *
-     * @param c
+     * @param c the {@link Color} to set.
      */
     public void setColor(Color c) {
         this.color = c;

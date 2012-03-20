@@ -11,75 +11,37 @@ import com.dfki.av.sudplan.vis.core.IClass;
 import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.utils.ColorUtils;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author steffen
  */
 public class ColorrampClassification extends ColorClassification {
-    /*
-     *
-     */
 
-    private static final Logger log = LoggerFactory.getLogger(ColorrampClassification.class);
     /**
-     *
+     * The number of {@link IClass}es to be used by this transfer function.
      */
     private int numClasses;
     /**
-     *
-     */
-    private List<IClass> classes;
-    /**
-     *
-     */
-    private Color[] colorramp;
-    /**
-     *
+     * The {@link Color} to be mapped to the first {@link IClass}.
      */
     private Color startColor;
     /**
-     *
+     * The {@link Color} to be mapped to the last {@link IClass}.
      */
     private Color endColor;
 
     /**
-     *
+     * Constructor for this {@link ColorrampClassification}.
      */
     public ColorrampClassification() {
-        this.numClasses = 1;
+        super();
+
+        addClassification(new NumberInterval(), Color.GRAY);
+        this.numClasses = colorList.size();
         this.startColor = Color.GREEN;
         this.endColor = Color.RED;
-        this.colorramp = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, numClasses);
-        this.classes = new ArrayList<IClass>();
-        this.classes.add(new NumberInterval());
-    }
-
-    @Override
-    public Object calc(Object o) {
-        if (o == null) {
-            log.error("Argument set to null.");
-            return Color.GRAY;
-        }
-
-        if (o instanceof Number) {
-            double arg = ((Number) o).doubleValue();
-            for(int i = 0; i < classes.size(); i++){
-                IClass c = classes.get(i);
-                if(c.contains(arg)){
-                    return colorramp[i];
-                }
-            }
-            log.error("Should not reach this part.");
-        } else {
-            log.error("Data type {} not supported", o.getClass().getSimpleName());
-            return Color.GRAY;
-        }
-        return Color.GRAY;
     }
 
     @Override
@@ -90,40 +52,42 @@ public class ColorrampClassification extends ColorClassification {
     @Override
     public void preprocess(ISource data, String attribute) {
         log.debug("Preprocessing ...");
-        this.colorramp = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, numClasses);
-        double min = data.min(attribute);
-        double max = data.max(attribute);
-        log.debug("Minimum for attribute {} is {}.", attribute, min);
-        log.debug("Maximum for attribute {} is {}.", attribute, max);
+        clear();
+
+        log.debug("Setting up colors.");
+        List<Color> colors = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, numClasses);
 
         log.debug("Setting up classes.");
-        classes.clear();
-        double intervalSize = (max - min) / (double) this.getNumCategories();
-        for (int i = 0; i < getNumCategories(); i++) {
+        double min = data.min(attribute);
+        double max = data.max(attribute);
+        double intervalSize = (max - min) / (double) this.getNumClasses();
+
+        for (int i = 0; i < getNumClasses(); i++) {
             double t0 = min + i * intervalSize;
             double t1 = min + (i + 1) * intervalSize;
             NumberInterval m = new NumberInterval(t0, t1);
-            classes.add(m);
+            Color c = colors.get(i);
+            addClassification(m, c);
         }
         log.debug("Preprocessing finished.");
     }
 
     /**
-     * @return the numCategories
+     * @return The number of classes to return.
      */
-    public int getNumCategories() {
+    public int getNumClasses() {
         return numClasses;
     }
 
     /**
-     * @param numCategories the numCategories to set
+     * @param num The number of classes to set.
      */
-    public void setNumCategories(int numCategories) {
-        if (numCategories <= 0) {
+    public void setNumClasses(int num) {
+        if (num <= 0) {
             throw new IllegalArgumentException("No valid argument. "
                     + "'numCategories' has to be greater 0.");
         }
-        this.numClasses = numCategories;
+        this.numClasses = num;
     }
 
     /**

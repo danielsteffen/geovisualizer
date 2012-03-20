@@ -34,7 +34,7 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
         this.function = f;
         initComponents();
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
-        jSpinner1.setValue(f.getNumCategories());
+        jSpinner1.setValue(f.getNumClasses());
     }
 
     /**
@@ -105,7 +105,7 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
         SpinnerModel m = jSpinner1.getModel();
         if (m instanceof SpinnerNumberModel) {
             Number n = ((SpinnerNumberModel) m).getNumber();
-            function.setNumCategories(n.intValue());
+            function.setNumClasses(n.intValue());
         }
     }//GEN-LAST:event_jSpinner1StateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -34,6 +34,9 @@ public class StringCategory implements ICategory {
 
     @Override
     public boolean contains(Object o) {
+        if(o == null){
+            throw new IllegalArgumentException("Parameter can not be null.");
+        }
         if (o instanceof String) {
             String s = (String) o;
             return s.equalsIgnoreCase(string);
