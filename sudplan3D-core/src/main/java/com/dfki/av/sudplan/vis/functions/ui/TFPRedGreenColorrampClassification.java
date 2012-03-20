@@ -7,12 +7,16 @@
  */
 package com.dfki.av.sudplan.vis.functions.ui;
 
+import com.dfki.av.sudplan.vis.core.ClassificationFactory;
+import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.TFPanel;
 import com.dfki.av.sudplan.vis.functions.RedGreenColorrampClassification;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
@@ -35,6 +39,22 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
         initComponents();
         jRadioButton.setActionCommand(f.getClass().getSimpleName());
         jSpinner1.setValue(f.getNumClasses());
+        
+        List<String> classifications = ClassificationFactory.getAvailableClassifications();
+        for (String string : classifications) {
+            jComboBox2.addItem(string);
+        }
+        jComboBox2.setSelectedItem(f.getClassification().getClass().getName());
+        jComboBox2.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox jComboBox = (JComboBox)e.getSource();
+                String s = (String)jComboBox.getSelectedItem();
+                IClassification c = ClassificationFactory.get(s);
+                function.setClassification(c);
+            }
+        });
     }
 
     /**
@@ -51,6 +71,8 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
+        jLabel3 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox();
 
         jRadioButton.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampClassification.class, "TFPRedGreenColorrampClassification.jRadioButton.text")); // NOI18N
 
@@ -64,6 +86,8 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
                 jSpinner1StateChanged(evt);
             }
         });
+
+        jLabel3.setText(org.openide.util.NbBundle.getMessage(TFPRedGreenColorrampClassification.class, "TFPRedGreenColorrampClassification.jLabel3.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -81,7 +105,11 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -96,7 +124,9 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -110,8 +140,10 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
     }//GEN-LAST:event_jSpinner1StateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JRadioButton jRadioButton;
     private javax.swing.JSpinner jSpinner1;
     // End of variables declaration//GEN-END:variables

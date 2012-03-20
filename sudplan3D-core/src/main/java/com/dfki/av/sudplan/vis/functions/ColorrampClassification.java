@@ -1,4 +1,4 @@
-/*
+  /*
  *  ColorrampClassification.java 
  *
  *  Created by DFKI AV on 09.03.2012.
@@ -7,7 +7,9 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
+import com.dfki.av.sudplan.vis.core.ClassificationFactory;
 import com.dfki.av.sudplan.vis.core.IClass;
+import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.utils.ColorUtils;
 import java.awt.Color;
@@ -31,6 +33,10 @@ public class ColorrampClassification extends ColorClassification {
      * The {@link Color} to be mapped to the last {@link IClass}.
      */
     private Color endColor;
+    /**
+     * The classification algorithm used for this transferfunction.
+     */
+    private IClassification classification;
 
     /**
      * Constructor for this {@link ColorrampClassification}.
@@ -42,6 +48,8 @@ public class ColorrampClassification extends ColorClassification {
         this.numClasses = colorList.size();
         this.startColor = Color.GREEN;
         this.endColor = Color.RED;
+
+        this.classification = ClassificationFactory.get(EqualIntervals.class.getSimpleName());
     }
 
     @Override
@@ -55,17 +63,14 @@ public class ColorrampClassification extends ColorClassification {
         clear();
 
         log.debug("Setting up colors.");
-        List<Color> colors = ColorUtils.CreateLinearHSVColorGradient(startColor, endColor, numClasses);
+        List<Color> colors = ColorUtils.CreateLinearHSVColorGradient(getStartColor(), getEndColor(), getNumClasses());
 
         log.debug("Setting up classes.");
-        double min = data.min(attribute);
-        double max = data.max(attribute);
-        double intervalSize = (max - min) / (double) this.getNumClasses();
+        List<IClass> classes = getClassification().classify(data, attribute, getNumClasses());
 
+        log.debug("Setting up classification map.");
         for (int i = 0; i < getNumClasses(); i++) {
-            double t0 = min + i * intervalSize;
-            double t1 = min + (i + 1) * intervalSize;
-            NumberInterval m = new NumberInterval(t0, t1);
+            IClass m = classes.get(i);
             Color c = colors.get(i);
             addClassification(m, c);
         }
@@ -91,14 +96,19 @@ public class ColorrampClassification extends ColorClassification {
     }
 
     /**
-     * @return the startColor
+     * Returns the {@link #startColor}.
+     *
+     * @return the startColor to return.
      */
     public Color getStartColor() {
         return startColor;
     }
 
     /**
-     * @param startColor the startColor to set
+     * Returns the {@link #startColor} for the transfer function.
+     *
+     * @param startColor the {@link Color} to set.
+     * @throws IllegalArgumentException if {@code startColor} is {@code null}.
      */
     public void setStartColor(Color startColor) {
         if (startColor == null) {
@@ -108,7 +118,9 @@ public class ColorrampClassification extends ColorClassification {
     }
 
     /**
-     * @return the endColor
+     * Returns the {@link #endColor}.
+     *
+     * @return the endColor to return.
      */
     public Color getEndColor() {
         return endColor;
@@ -122,5 +134,27 @@ public class ColorrampClassification extends ColorClassification {
             throw new IllegalArgumentException("Color parameter is null.");
         }
         this.endColor = endColor;
+    }
+
+    /**
+     * Returns the {@link IClassification} algorithm for this transfer function.
+     *
+     * @return the {@link IClassification} to return.
+     */
+    public IClassification getClassification() {
+        return classification;
+    }
+
+    /**
+     * Sets the {@link #classification} for this transfer function.
+     *
+     * @param classification the {@link IClassification} to set.
+     * @throws IllegalArgumentException if {@code classification} is {@code null}.
+     */
+    public void setClassification(IClassification classification) {
+        if (classification == null) {
+            throw new IllegalArgumentException("Classification can not be set to null.");
+        }
+        this.classification = classification;
     }
 }

@@ -7,16 +7,16 @@
  */
 package com.dfki.av.sudplan.vis.functions.ui;
 
+import com.dfki.av.sudplan.vis.core.ClassificationFactory;
+import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.TFPanel;
 import com.dfki.av.sudplan.vis.functions.ColorrampClassification;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.ButtonGroup;
-import javax.swing.JColorChooser;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 
 /**
  *
@@ -38,6 +38,22 @@ public class TFPColorrampClassification extends TFPanel {
         initComponents();
 
         jRadioButton1.setActionCommand(f.getClass().getSimpleName());
+        
+        List<String> classifications = ClassificationFactory.getAvailableClassifications();
+        for (String string : classifications) {
+            jComboBox2.addItem(string);
+        }
+        jComboBox2.setSelectedItem(f.getClassification().getClass().getName());
+        jComboBox2.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox jComboBox = (JComboBox)e.getSource();
+                String s = (String)jComboBox.getSelectedItem();
+                IClassification c = ClassificationFactory.get(s);
+                function.setClassification(c);
+            }
+        });
         jSpinner1.setValue(f.getNumClasses());
         jTextField2.setBackground(f.getStartColor());
         jTextField1.setBackground(f.getEndColor());
@@ -61,6 +77,8 @@ public class TFPColorrampClassification extends TFPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
+        jComboBox2 = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
 
         jRadioButton1.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jRadioButton1.text")); // NOI18N
 
@@ -83,11 +101,6 @@ public class TFPColorrampClassification extends TFPanel {
                 jTextField2MouseClicked(evt);
             }
         });
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
 
         jLabel2.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel2.text")); // NOI18N
 
@@ -101,6 +114,8 @@ public class TFPColorrampClassification extends TFPanel {
         jLabel3.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel3.text")); // NOI18N
 
         jLabel4.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel4.text")); // NOI18N
+
+        jLabel5.setText(org.openide.util.NbBundle.getMessage(TFPColorrampClassification.class, "TFPColorrampClassification.jLabel5.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -128,7 +143,12 @@ public class TFPColorrampClassification extends TFPanel {
                                         .addComponent(jLabel1)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap())))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jRadioButton1)
@@ -152,7 +172,9 @@ public class TFPColorrampClassification extends TFPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -181,16 +203,14 @@ public class TFPColorrampClassification extends TFPanel {
         }
     }//GEN-LAST:event_jSpinner1StateChanged
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTextField jTextField1;

@@ -7,7 +7,9 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
+import com.dfki.av.sudplan.vis.core.ClassificationFactory;
 import com.dfki.av.sudplan.vis.core.IClass;
+import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.utils.ColorUtils;
 import java.awt.Color;
@@ -23,15 +25,21 @@ public class RedGreenColorrampClassification extends ColorClassification {
      * The number {@link IClass} objects to create for this classification.
      */
     private int numClasses;
+    /**
+     * The classification algorithm used for this transferfunction.
+     */
+    private IClassification classification;
 
     /**
      * Creates an object of {@link RedGreenColorrampClassification}.
      */
     public RedGreenColorrampClassification() {
         super();
-        
+
         addClassification(new NumberInterval(), Color.RED);
         this.numClasses = colorList.size();
+
+        this.classification = ClassificationFactory.get(EqualIntervals.class.getSimpleName());
     }
 
     @Override
@@ -47,14 +55,11 @@ public class RedGreenColorrampClassification extends ColorClassification {
         List<Color> colors = ColorUtils.CreateRedGreenColorGradientAttributes(numClasses);
 
         log.debug("Setting up classes.");
-        double min = data.min(attribute);
-        double max = data.max(attribute);
-        double intervalSize = (max - min) / (double) this.getNumClasses();
+        List<IClass> classes = classification.classify(data, attribute, getNumClasses());
 
+        log.debug("Setting up classification map.");
         for (int i = 0; i < getNumClasses(); i++) {
-            double t0 = min + i * intervalSize;
-            double t1 = min + (i + 1) * intervalSize;
-            NumberInterval m = new NumberInterval(t0, t1);
+            IClass m = classes.get(i);
             Color c = colors.get(i);
             addClassification(m, c);
         }
@@ -83,4 +88,26 @@ public class RedGreenColorrampClassification extends ColorClassification {
         }
         this.numClasses = num;
     }
+    
+    /**
+     * Returns the {@link IClassification} algorithm for this transfer function.
+     *
+     * @return the {@link IClassification} to return.
+     */
+    public IClassification getClassification() {
+        return classification;
+    }
+
+    /**
+     * Sets the {@link #classification} for this transfer function.
+     *
+     * @param classification the {@link IClassification} to set.
+     * @throws IllegalArgumentException if {@code classification} is {@code null}.
+     */
+    public void setClassification(IClassification classification) {
+        if (classification == null) {
+            throw new IllegalArgumentException("Classification can not be set to null.");
+        }
+        this.classification = classification;
+    }    
 }

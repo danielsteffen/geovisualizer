@@ -19,16 +19,16 @@ import java.util.List;
 public abstract class ColorClassification extends ColorTransferFunction {
 
     /**
-     * The list of classes defined for this color classification.
+     * The list of classList defined for this color classification.
      */
-    protected List<IClass> classes;
+    protected List<IClass> classList;
 
     /**
      * Constructor of <code>ColorClassification</code>.
      */
     public ColorClassification() {
         super();
-        this.classes = new ArrayList<IClass>();
+        this.classList = new ArrayList<IClass>();
     }
 
     /**
@@ -38,15 +38,15 @@ public abstract class ColorClassification extends ColorTransferFunction {
      * @param color the {@link Color} to set.
      */
     public void addClassification(IClass c, Color color) {
-        this.classes.add(c);
+        this.classList.add(c);
         this.colorList.add(color);
     }
 
     /**
-     * Clears the {@link #classes} and the {@link #colorList} {@link List}.
+     * Clears the {@link #classList} and the {@link #colorList} {@link List}.
      */
     public void clear() {
-        this.classes.clear();
+        this.classList.clear();
         this.colorList.clear();
     }
 
@@ -59,8 +59,8 @@ public abstract class ColorClassification extends ColorTransferFunction {
 
         if (o instanceof Number) {
             double arg = ((Number) o).doubleValue();
-            for (int i = 0; i < classes.size(); i++) {
-                IClass c = classes.get(i);
+            for (int i = 0; i < classList.size(); i++) {
+                IClass c = classList.get(i);
                 if (c.contains(arg)) {
                     return colorList.get(i);
                 }
