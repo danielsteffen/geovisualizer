@@ -44,7 +44,7 @@ public class NumberInterval implements IClass {
     @Override
     public boolean contains(Number n) {
         if (n == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Can not check for Number equal to null.");
         }
         double value = ((Number) n).doubleValue();
 
