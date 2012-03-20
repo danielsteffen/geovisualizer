@@ -59,6 +59,9 @@ public class NumberParameter implements IVisParameter {
 
     @Override
     public void setSelectedTransferFunction(ITransferFunction f) {
+        if(f == null){
+            throw new IllegalArgumentException("Transferfunction can not be null.");
+        }
         this.transferFunction = f;
     }
 
@@ -69,7 +72,7 @@ public class NumberParameter implements IVisParameter {
                     + NumberTransferFunction.class.getSimpleName());
         } 
         if(f == null){
-            throw new IllegalArgumentException("Transferfunction is null");
+            throw new IllegalArgumentException("Can not add transferfunction equal to null.");
         }
         return this.transferFunctions.add(f);
     }
