@@ -15,9 +15,30 @@ import java.util.List;
  */
 public interface IVisParameter {
 
+    /**
+     * 
+     * @return 
+     */
     public String getName();
+    /**
+     * 
+     * @return 
+     */
     public List<ITransferFunction> getTransferFunctions();
+    /**
+     * 
+     * @return 
+     */
     public ITransferFunction getSelectedTransferFunction();
+    /**
+     * 
+     * @param f 
+     */
     public void setSelectedTransferFunction(ITransferFunction f);
+    /**
+     * 
+     * @param f
+     * @return 
+     */
     public boolean addTransferFunction(ITransferFunction f);
 }
