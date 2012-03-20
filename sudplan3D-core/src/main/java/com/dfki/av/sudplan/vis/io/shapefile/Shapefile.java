@@ -19,10 +19,22 @@ public class Shapefile implements ISource {
     static {
         ogr.RegisterAll();
     }
+    /**
+     * 
+     */
     private static final Logger log = LoggerFactory.getLogger(Shapefile.class);
-    private org.gdal.ogr.DataSource data;
+    /**
+     * 
+     */
     public static final int PolylineType = ogrConstants.wkbLineString;
+    /**
+     * 
+     */
     public static final int PolygonType = ogrConstants.wkbPolygon;
+    /**
+     * 
+     */
+    private org.gdal.ogr.DataSource data;
 
     /**
      *
@@ -63,11 +75,7 @@ public class Shapefile implements ISource {
         return data.GetLayer(0).GetName();
     }
 
-    /**
-     *
-     * @param id
-     * @return
-     */
+    @Override
     public Feature getFeature(int id) {
         if (data == null || data.GetLayerCount() == 0) {
             throw new RuntimeException("Shapefile has no layers.");
@@ -92,7 +100,6 @@ public class Shapefile implements ISource {
         return getAttributeOfFeatureOfLayer(0, i, attribute);
     }
 
-    
     /**
      *
      * @param layerId
@@ -108,11 +115,11 @@ public class Shapefile implements ISource {
         if (featureId >= getFeatureCount()) {
             throw new ArrayIndexOutOfBoundsException();
         }
-        
-        if(!hasAttribute(attribute)){
+
+        if (!hasAttribute(attribute)) {
             return null;
         }
-        
+
         Object ret;
         Feature feature = data.GetLayer(layerId).GetFeature(featureId);
         switch (feature.GetFieldType(attribute)) {
@@ -136,16 +143,17 @@ public class Shapefile implements ISource {
     }
 
     /**
-     * 
+     *
      * @param attribute the attribute to check.
-     * @return true if the shapefile has an attribute called <code>attribute</code>.
+     * @return true if the shapefile has an attribute called
+     * <code>attribute</code>.
      */
-    private boolean hasAttribute(String attribute){
+    private boolean hasAttribute(String attribute) {
         FeatureDefn fdef = data.GetLayer(0).GetLayerDefn();
 
         for (int i = 0; i < fdef.GetFieldCount(); i++) {
             FieldDefn fielddef = fdef.GetFieldDefn(i);
-            if(fielddef.GetName().equalsIgnoreCase(attribute)){
+            if (fielddef.GetName().equalsIgnoreCase(attribute)) {
                 return true;
             }
         }
@@ -153,10 +161,7 @@ public class Shapefile implements ISource {
         return false;
     }
 
-    /**
-     *
-     * @return
-     */
+    @Override
     public int getFeatureCount() {
         if (data == null || data.GetLayerCount() == 0) {
             log.error("Shapefile has no layers.");
@@ -259,30 +264,27 @@ public class Shapefile implements ISource {
 
         for (int i = 0; i < fdef.GetFieldCount(); i++) {
             FieldDefn fielddef = fdef.GetFieldDefn(i);
-//            if(fielddef.GetTypeName().equalsIgnoreCase("String")){
-//                log.warn("Skipping String attribute {}.", fielddef.GetName());
-//                continue;
-//            }
             attributes.put(fielddef.GetName(), fielddef.GetTypeName());
         }
 
         return attributes;
     }
+
     /**
-     * 
+     *
      * @param attribute
-     * @return 
+     * @return
      */
-    public int getTypeOfAttribute(String attribute){
+    public int getTypeOfAttribute(String attribute) {
         if (data == null || data.GetLayerCount() == 0) {
             log.error("Shapefile has no layers.");
             throw new RuntimeException("Shapefile has no layers.");
-        }        
-        
+        }
+
         FeatureDefn fdef = data.GetLayer(0).GetLayerDefn();
         for (int i = 0; i < fdef.GetFieldCount(); i++) {
             FieldDefn fielddef = fdef.GetFieldDefn(i);
-            if(fielddef.GetName().equalsIgnoreCase(attribute)){
+            if (fielddef.GetName().equalsIgnoreCase(attribute)) {
                 return fielddef.GetFieldType();
             }
         }
