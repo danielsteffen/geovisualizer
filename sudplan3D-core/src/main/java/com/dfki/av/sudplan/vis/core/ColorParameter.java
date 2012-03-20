@@ -61,6 +61,9 @@ public class ColorParameter implements IVisParameter {
 
     @Override
     public void setSelectedTransferFunction(ITransferFunction f) {
+        if(f == null){
+            throw new IllegalArgumentException("Parameter can not be null.");
+        }
         this.transferFunction = f;
     }
 
