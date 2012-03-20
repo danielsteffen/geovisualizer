@@ -26,6 +26,9 @@ public class StringCategory implements ICategory {
      * @param s the string defining this category.
      */
     public StringCategory(String s) {
+        if(s == null){
+            throw new IllegalArgumentException("Parameter can not be null.");
+        }
         this.string = s;
     }
 
