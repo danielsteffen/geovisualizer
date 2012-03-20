@@ -8,7 +8,6 @@
 package com.dfki.av.sudplan.vis.functions.ui;
 
 import com.dfki.av.sudplan.vis.core.TFPanel;
-import com.dfki.av.sudplan.vis.functions.ColorRenderer;
 import com.dfki.av.sudplan.vis.functions.ColorRuleClassification;
 import com.dfki.av.sudplan.vis.functions.NumberInterval;
 import java.awt.Color;

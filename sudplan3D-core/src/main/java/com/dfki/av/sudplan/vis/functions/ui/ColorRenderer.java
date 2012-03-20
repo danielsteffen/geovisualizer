@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.vis.functions;
+package com.dfki.av.sudplan.vis.functions.ui;
 
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
@@ -40,13 +40,13 @@ package com.dfki.av.sudplan.vis.functions;
  * TableDialogEditDemo.java.
  */
 
+import java.awt.Color;
+import java.awt.Component;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Color;
-import java.awt.Component;
 
 public class ColorRenderer extends JLabel
                            implements TableCellRenderer {
