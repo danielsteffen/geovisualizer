@@ -33,7 +33,7 @@ public class TFPColorrampCategorization extends TFPanel {
     public TFPColorrampCategorization(final ColorrampCategorization f) {
         this.function = f;
         initComponents();
-        jRadioButton1.setActionCommand(f.getClass().getSimpleName());
+        jRadioButton1.setActionCommand(f.getClass().getName());
         jTextField1.setBackground(f.getStartColor());
         jTextField2.setBackground(f.getEndColor());
     }

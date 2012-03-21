@@ -7,13 +7,9 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
-import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
-import com.dfki.av.sudplan.vis.core.NumberParameter;
-import com.dfki.av.sudplan.vis.core.ColorParameter;
-import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
+import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
@@ -61,21 +57,19 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
                 getResource("icons/VisGeoCPM.png")));
 
         this.parHeight = new NumberParameter("Height [m]");
-        this.parHeight.addTransferFunction(new IdentityFunction());
-        this.parHeight.addTransferFunction(new ScalarMultiplication());
-        this.parHeight.addTransferFunction(new ConstantNumber());
+        this.parHeight.addTransferFunction(IdentityFunction.class.getName());
+        this.parHeight.addTransferFunction(ScalarMultiplication.class.getName());
+        this.parHeight.addTransferFunction(ConstantNumber.class.getName());
         addVisParameter(this.parHeight);
 
         this.parCapColor = new ColorParameter("Color of surface");
-        this.parCapColor.addTransferFunction(new ConstantColor());
-        this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
-        this.parCapColor.addTransferFunction(new ColorrampClassification());
+        this.parCapColor.addTransferFunction(ConstantColor.class.getName());
+        this.parCapColor.addTransferFunction(RedGreenColorrampClassification.class.getName());
+        this.parCapColor.addTransferFunction(ColorrampClassification.class.getName());
         addVisParameter(this.parCapColor);
 
         this.parFilter = new NumberParameter("Filter");
-        ConstantNumber cntf = new ConstantNumber();
-        cntf.setConstant(0.5);
-        this.parFilter.addTransferFunction(cntf);
+        this.parFilter.addTransferFunction(ConstantNumber.class.getName());
         addVisParameter(this.parFilter);
     }
 
@@ -112,11 +106,11 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         log.debug("Using attributes: " + attribute0 + ", " + attribute1);
 
         // 2 - Preprocessing data
-        ITransferFunction function0 = parHeight.getSelectedTransferFunction();
+        ITransferFunction function0 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
 
-        ITransferFunction function1 = parCapColor.getSelectedTransferFunction();
+        ITransferFunction function1 = parCapColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
 
@@ -170,7 +164,7 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         // Use the transfer function for parameter HEIGHT
         //
         Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
-        ITransferFunction tfHeight = parHeight.getSelectedTransferFunction();
+        ITransferFunction tfHeight = parHeight.getTransferFunction();
         Number result = (Number) tfHeight.calc(object0);
         double dResult = result.doubleValue();
         if (dResult < 0) {
@@ -186,7 +180,7 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         //
         // Skip all values lower than a determined value.
         //
-        ITransferFunction tfFilter = parFilter.getSelectedTransferFunction();
+        ITransferFunction tfFilter = parFilter.getTransferFunction();
         Number limit = (Number)tfFilter.calc(null);
         if(dResult < limit.doubleValue()){
             return;
@@ -196,7 +190,7 @@ public class VisGeoCPM extends VisAlgorithmAbstract {
         // Use the transfer function for parameter CAP COLOR
         //
         Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
-        ITransferFunction tfCapColor = parCapColor.getSelectedTransferFunction();
+        ITransferFunction tfCapColor = parCapColor.getTransferFunction();
         Color capColor = (Color) tfCapColor.calc(object1);
         Material m = new Material(capColor);
         BasicShapeAttributes attrCap = new BasicShapeAttributes();

@@ -9,71 +9,28 @@ package com.dfki.av.sudplan.vis.core;
 
 import com.dfki.av.sudplan.vis.functions.ConstantNumber;
 import com.dfki.av.sudplan.vis.functions.NumberTransferFunction;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author steffen
  */
-public class NumberParameter implements IVisParameter {
-
-    /**
-     *
-     */
-    private List<ITransferFunction> transferFunctions;
-    /**
-     *
-     */
-    private String name;
-    /**
-     *
-     */
-    private ITransferFunction transferFunction;
+public class NumberParameter extends VisParameterImpl {
 
     /**
      *
      * @param name
      */
     public NumberParameter(String name) {
-        this.name = name;
-        this.transferFunctions = new ArrayList<ITransferFunction>();
-        // Setting default transfer function
-        this.transferFunction = new ConstantNumber();
+        super(name, new ConstantNumber());
     }
 
     @Override
-    public List<ITransferFunction> getTransferFunctions() {
-        return this.transferFunctions;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public ITransferFunction getSelectedTransferFunction() {
-        return this.transferFunction;
-    }
-
-    @Override
-    public void setSelectedTransferFunction(ITransferFunction f) {
-        if(f == null){
-            throw new IllegalArgumentException("Transferfunction can not be null.");
+    public void setTransferFunction(ITransferFunction f) {
+        if (!(f instanceof NumberTransferFunction)) {
+            throw new IllegalArgumentException("Can not set transferfunction. "
+                    + "Must be of type " + NumberTransferFunction.class.getSimpleName());
         }
-        this.transferFunction = f;
-    }
-
-    @Override
-    public boolean addTransferFunction(final ITransferFunction f) {
-        if(!(f instanceof NumberTransferFunction))                {
-            throw new IllegalArgumentException("Transferfunction must be of typ "
-                    + NumberTransferFunction.class.getSimpleName());
-        } 
-        if(f == null){
-            throw new IllegalArgumentException("Can not add transferfunction equal to null.");
-        }
-        return this.transferFunctions.add(f);
+        
+        super.setTransferFunction(f);
     }
 }

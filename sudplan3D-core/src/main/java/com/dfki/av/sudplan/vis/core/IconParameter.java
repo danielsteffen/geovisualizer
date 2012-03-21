@@ -21,23 +21,22 @@ public class IconParameter implements IVisParameter{
     }
 
     @Override
-    public List<ITransferFunction> getTransferFunctions() {
+    public List<String> getAvailableTransferFunctions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public ITransferFunction getSelectedTransferFunction() {
+    public boolean addTransferFunction(String f) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setSelectedTransferFunction(ITransferFunction f) {
+    public ITransferFunction getTransferFunction() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean addTransferFunction(ITransferFunction f) {
+    public void setTransferFunction(ITransferFunction f) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
 }

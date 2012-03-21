@@ -10,11 +10,11 @@ package com.dfki.av.sudplan.vis.wiz;
 import com.dfki.av.sudplan.vis.core.ITransferFunction;
 import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.core.TFPanel;
-import com.dfki.av.sudplan.vis.functions.ui.TFPanelFactory;
+import com.dfki.av.sudplan.vis.spi.TFPanelFactory;
+import com.dfki.av.sudplan.vis.spi.TransferFunctionFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -54,25 +54,36 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
         this.visParameter = param;
         this.transferFunctionMap = new HashMap<String, ITransferFunction>();
         this.panelMap = new HashMap<String, TFPanel>();
-
+        
         initComponents();
 
         //Create a panel for each available transfer function.
         boolean isFirst = true;
-        TFPanelFactory tfPanelFactory = TFPanelFactory.getInstance();
-        List<ITransferFunction> list = param.getTransferFunctions();
-        for (Iterator<ITransferFunction> it = list.iterator(); it.hasNext();) {
-            ITransferFunction function = it.next();
-            TFPanel panel = tfPanelFactory.get(function, dataAttributes, bgTransferFunctions, this, isFirst);
-            if (panel != null) {
-                if (isFirst) {
-                    setTransferFunction(function);
-                    isFirst = false;
+        List<String> list = visParameter.getAvailableTransferFunctions();
+        for (String functionName : list) {
+            ITransferFunction function = TransferFunctionFactory.newInstance(functionName);
+            if (function != null) {
+                TFPanel panel = TFPanelFactory.newInstance(function);
+                if (panel != null) {
+                    panel.setAttributes(dataAttributes);
+                    panel.setButtonGroup(bgTransferFunctions);
+                    panel.setActionListener(this);
+                    panel.setSelected(isFirst);
+                    
+                    if (isFirst) {
+                        updateTransferFunction(function);
+                        isFirst = false;
+                    }
+                    
+                    transferFunctionMap.put(function.getClass().getName(), function);
+                    panelMap.put(function.getClass().getName(), panel);
+                    this.add(panel);
+                } else {
+                    log.warn("Could not create {} for {}", TFPanel.class.getSimpleName(),
+                            function.getClass().getSimpleName());
                 }
-
-                transferFunctionMap.put(function.getClass().getSimpleName(), function);
-                panelMap.put(function.getClass().getSimpleName(), panel);
-                this.add(panel);
+            } else {
+                log.warn("Could not create transfer function for {}.", functionName);
             }
         }
     }
@@ -103,16 +114,16 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     public String getSelectedAttribute() {
         return panelMap.get(selectedTransferFunction).getSelectedAttribute();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         ITransferFunction f = transferFunctionMap.get(e.getActionCommand());
-        setTransferFunction(f);
+        updateTransferFunction(f);
     }
-
-    private void setTransferFunction(ITransferFunction f) {
-        selectedTransferFunction = f.getClass().getSimpleName();
-        visParameter.setSelectedTransferFunction(f);
+    
+    private void updateTransferFunction(ITransferFunction f) {
+        selectedTransferFunction = f.getClass().getName();
+        visParameter.setTransferFunction(f);
         log.debug("Setting transfer function {} of VisParameter {} ", selectedTransferFunction, visParameter.getName());
     }
 }

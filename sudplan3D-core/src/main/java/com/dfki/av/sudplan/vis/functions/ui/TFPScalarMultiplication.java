@@ -38,7 +38,7 @@ public class TFPScalarMultiplication extends TFPanel {
         this.function = f;
         initComponents();
         jTextField1.setText(function.getScaleValue().toString());
-        jRadioButton.setActionCommand(f.getClass().getSimpleName());
+        jRadioButton.setActionCommand(f.getClass().getName());
     }
 
     /**

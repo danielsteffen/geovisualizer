@@ -7,10 +7,10 @@
  */
 package com.dfki.av.sudplan.vis.functions.ui;
 
-import com.dfki.av.sudplan.vis.core.ClassificationFactory;
 import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.TFPanel;
 import com.dfki.av.sudplan.vis.functions.ColorrampClassification;
+import com.dfki.av.sudplan.vis.spi.ClassificationFactory;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,9 +37,8 @@ public class TFPColorrampClassification extends TFPanel {
 
         initComponents();
 
-        jRadioButton1.setActionCommand(f.getClass().getSimpleName());
-        
-        List<String> classifications = ClassificationFactory.getAvailableClassifications();
+        jRadioButton1.setActionCommand(f.getClass().getName());
+        List<String> classifications = ClassificationFactory.getNames();
         for (String string : classifications) {
             jComboBox2.addItem(string);
         }
@@ -50,7 +49,7 @@ public class TFPColorrampClassification extends TFPanel {
             public void actionPerformed(ActionEvent e) {
                 JComboBox jComboBox = (JComboBox)e.getSource();
                 String s = (String)jComboBox.getSelectedItem();
-                IClassification c = ClassificationFactory.get(s);
+                IClassification c = ClassificationFactory.newInstance(s);
                 function.setClassification(c);
             }
         });

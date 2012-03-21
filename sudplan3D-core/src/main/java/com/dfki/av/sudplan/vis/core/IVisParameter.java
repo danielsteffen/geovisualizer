@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.core;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,29 +17,43 @@ import java.util.List;
 public interface IVisParameter {
 
     /**
-     * 
-     * @return 
+     * Returns the name of the {@link IVisParameter}.
+     *
+     * @return the name of the {@link IVisParameter} to return;
      */
     public String getName();
+
     /**
-     * 
-     * @return 
+     * Returns a list of names of available {@link ITransferFunction}s. The name
+     * will be the same as if calling {@code getName()} of the class
+     * implementing {@link ITransferFunction}.
+     *
+     * @return a list of {@link String} of available {@link ITransferFunction}s
+     * for this {@link IVisParameter}.
      */
-    public List<ITransferFunction> getTransferFunctions();
+    public List<String> getAvailableTransferFunctions();
+
     /**
-     * 
-     * @return 
+     * Returns the {@link ITransferFunction} set for this parameter.
+     *
+     * @return the {@link ITransferFunction} to return.
      */
-    public ITransferFunction getSelectedTransferFunction();
+    public ITransferFunction getTransferFunction();
+
     /**
-     * 
-     * @param f 
+     * Set the {@link ITransferFunction} for this parameter.
+     *
+     * @param f the {@link ITransferFunction} to set.
+     * @throws IllegalArgumentException if {@code f == null}.
      */
-    public void setSelectedTransferFunction(ITransferFunction f);
+    public void setTransferFunction(ITransferFunction f);
+
     /**
+     * Adds a name of an available {@link ITransferFunction} for this parameter.
+     * The name has to be the name of the class implementing the {@link ITransferFunction}.
      * 
-     * @param f
-     * @return 
+     * @param name the name of the {@link ITransferFunction}
+     * @return true (as specified by {@link Collection#add(java.lang.Object)}) 
      */
-    public boolean addTransferFunction(ITransferFunction f);
+    public boolean addTransferFunction(String name);
 }

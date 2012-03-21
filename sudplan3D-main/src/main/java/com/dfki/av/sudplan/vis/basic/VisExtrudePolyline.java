@@ -7,13 +7,9 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
-import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
-import com.dfki.av.sudplan.vis.core.NumberParameter;
-import com.dfki.av.sudplan.vis.core.ColorParameter;
-import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
+import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -55,15 +51,15 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
 
         this.parColor = new ColorParameter("Color of surface");
-        this.parColor.addTransferFunction(new ConstantColor()); 
-        this.parColor.addTransferFunction(new RedGreenColorrampClassification());
-        this.parColor.addTransferFunction(new ColorrampCategorization());
+        this.parColor.addTransferFunction(ConstantColor.class.getName()); 
+        this.parColor.addTransferFunction(RedGreenColorrampClassification.class.getName());
+        this.parColor.addTransferFunction(ColorrampCategorization.class.getName());
         addVisParameter(parColor);        
 
         this.parHeight = new NumberParameter("Extrusion of line [m]");
-        this.parHeight.addTransferFunction(new IdentityFunction());
-        this.parHeight.addTransferFunction(new ScalarMultiplication());
-        this.parHeight.addTransferFunction(new ConstantNumber());
+        this.parHeight.addTransferFunction(IdentityFunction.class.getName());
+        this.parHeight.addTransferFunction(ScalarMultiplication.class.getName());
+        this.parHeight.addTransferFunction(ConstantNumber.class.getName());
         addVisParameter(parHeight);
     }
 
@@ -99,11 +95,11 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         log.debug("Using {} and {} as attributes.", attribute0, attribute1);
 
         // 2 - Pre-processing data
-        ITransferFunction function0 = parColor.getSelectedTransferFunction();
+        ITransferFunction function0 = parColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
 
-        ITransferFunction function1 = parHeight.getSelectedTransferFunction();
+        ITransferFunction function1 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
 
@@ -137,7 +133,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         // Use the transfer function for parameter COLOR
         //
         Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
-        ITransferFunction function0 = parColor.getSelectedTransferFunction();
+        ITransferFunction function0 = parColor.getTransferFunction();
         Color c = (Color) function0.calc(object0);
         Material m = new Material(c);
 
@@ -152,7 +148,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         // Use the transfer function for parameter HEIGHT
         //
         Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
-        ITransferFunction function1 = parHeight.getSelectedTransferFunction();
+        ITransferFunction function1 = parHeight.getTransferFunction();
         Double value1 = (Double) function1.calc(object1);
 
         List<Position> positionList = new ArrayList<Position>();

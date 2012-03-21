@@ -7,13 +7,9 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
-import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
-import com.dfki.av.sudplan.vis.core.NumberParameter;
-import com.dfki.av.sudplan.vis.core.ColorParameter;
-import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
+import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
@@ -71,22 +67,22 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         super(name, description, icon);
 
         this.parHeight = new NumberParameter("Extrusion of polygon [m]");
-        this.parHeight.addTransferFunction(new IdentityFunction());
-        this.parHeight.addTransferFunction(new ScalarMultiplication());
-        this.parHeight.addTransferFunction(new ConstantNumber());
+        this.parHeight.addTransferFunction(IdentityFunction.class.getName());
+        this.parHeight.addTransferFunction(ScalarMultiplication.class.getName());
+        this.parHeight.addTransferFunction(ConstantNumber.class.getName());
         addVisParameter(this.parHeight);
 
         this.parCapColor = new ColorParameter("Color of cap");
-        this.parCapColor.addTransferFunction(new ConstantColor());
-        this.parCapColor.addTransferFunction(new RedGreenColorrampClassification());
-        this.parCapColor.addTransferFunction(new ColorrampClassification());
-        this.parCapColor.addTransferFunction(new ColorrampCategorization());
+        this.parCapColor.addTransferFunction(ConstantColor.class.getName());
+        this.parCapColor.addTransferFunction(RedGreenColorrampClassification.class.getName());
+        this.parCapColor.addTransferFunction(ColorrampClassification.class.getName());
+        this.parCapColor.addTransferFunction(ColorrampCategorization.class.getName());
         addVisParameter(this.parCapColor);
 
         this.parSideColor = new ColorParameter("Color of side");
-        this.parSideColor.addTransferFunction(new ConstantColor());
-        this.parSideColor.addTransferFunction(new RedGreenColorrampClassification());
-        this.parSideColor.addTransferFunction(new ColorrampClassification());
+        this.parSideColor.addTransferFunction(ConstantColor.class.getName());
+        this.parSideColor.addTransferFunction(RedGreenColorrampClassification.class.getName());
+        this.parSideColor.addTransferFunction(ColorrampClassification.class.getName());
         addVisParameter(this.parSideColor);
     }
 
@@ -127,15 +123,15 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         log.debug("Using attributes: " + attribute0 + ", " + attribute1 + ", " + attribute2);
 
         // 2 - Preprocessing data
-        ITransferFunction function0 = parHeight.getSelectedTransferFunction();
+        ITransferFunction function0 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
 
-        ITransferFunction function1 = parCapColor.getSelectedTransferFunction();
+        ITransferFunction function1 = parCapColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
 
-        ITransferFunction function2 = parSideColor.getSelectedTransferFunction();
+        ITransferFunction function2 = parSideColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
 
@@ -189,7 +185,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         // Use the transfer function for parameter HEIGHT
         //
         Object object0 = shpfile.getAttributeOfFeature(featureId, attribute);
-        ITransferFunction tfHeight = parHeight.getSelectedTransferFunction();
+        ITransferFunction tfHeight = parHeight.getTransferFunction();
         Number result = (Number) tfHeight.calc(object0);
         double dResult = result.doubleValue();
         if (dResult < 0) {
@@ -206,7 +202,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         // Use the transfer function for parameter CAP COLOR
         //
         Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
-        ITransferFunction tfCapColor = parCapColor.getSelectedTransferFunction();
+        ITransferFunction tfCapColor = parCapColor.getTransferFunction();
         Color capColor = (Color) tfCapColor.calc(object1);
         Material m = new Material(capColor);
         BasicShapeAttributes attrCap = new BasicShapeAttributes();
@@ -217,7 +213,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         //
         // Use the transfer function for parameter SIDE COLOR
         //
-        ITransferFunction tfSideColor = parSideColor.getSelectedTransferFunction();
+        ITransferFunction tfSideColor = parSideColor.getTransferFunction();
         Color sideColor = (Color) tfSideColor.calc(object1);
         Material sideMaterial = new Material(sideColor);
         BasicShapeAttributes attrSide = new BasicShapeAttributes();

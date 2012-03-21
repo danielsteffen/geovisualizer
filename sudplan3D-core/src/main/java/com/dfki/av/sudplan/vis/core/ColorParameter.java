@@ -9,73 +9,28 @@ package com.dfki.av.sudplan.vis.core;
 
 import com.dfki.av.sudplan.vis.functions.ColorTransferFunction;
 import com.dfki.av.sudplan.vis.functions.ConstantColor;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author steffen
  */
-public class ColorParameter implements IVisParameter {
-
-    /**
-     * The name to display for this
-     * <code>ColorParameter</code>.
-     */
-    private String name;
-    /**
-     * The list of transfer functions the
-     * <code>ColorParameter</code> supports.
-     */
-    private List<ITransferFunction> transferFunctions;
-    /**
-     *
-     */
-    private ITransferFunction transferFunction;
+public class ColorParameter extends VisParameterImpl {
 
     /**
      *
      * @param name
      */
     public ColorParameter(String name) {
-        this.name = name;
-        this.transferFunctions = new ArrayList<ITransferFunction>();
-        // Setting default transfer function.
-        this.transferFunction = new ConstantColor();
+        super(name, new ConstantColor());
     }
 
     @Override
-    public List<ITransferFunction> getTransferFunctions() {
-        return this.transferFunctions;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public ITransferFunction getSelectedTransferFunction() {
-        return transferFunction;
-    }
-
-    @Override
-    public void setSelectedTransferFunction(ITransferFunction f) {
-        if(f == null){
-            throw new IllegalArgumentException("Parameter can not be null.");
+    public void setTransferFunction(ITransferFunction f) {
+        if (!(f instanceof ColorTransferFunction)) {
+            throw new IllegalArgumentException("Can not set transferfunction. "
+                    + "Must be of type " + ColorTransferFunction.class.getSimpleName());
         }
-        this.transferFunction = f;
-    }
 
-    @Override
-    public boolean addTransferFunction(ITransferFunction f) {
-        if(!(f instanceof ColorTransferFunction))                {
-            throw new IllegalArgumentException("Transferfunction must be of typ "
-                    + ColorTransferFunction.class.getSimpleName());
-        } 
-        if(f == null){
-            throw new IllegalArgumentException("Transferfunction is null");
-        }
-        return this.transferFunctions.add(f);
+        super.setTransferFunction(f);
     }
 }

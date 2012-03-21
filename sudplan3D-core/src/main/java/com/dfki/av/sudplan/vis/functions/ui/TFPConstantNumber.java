@@ -38,7 +38,7 @@ public class TFPConstantNumber extends TFPanel{
         
         initComponents();
         jTextField1.setText(f.getConstant().toString());
-        jRadioButton.setActionCommand(f.getClass().getSimpleName());
+        jRadioButton.setActionCommand(f.getClass().getName());
     }
 
     /**

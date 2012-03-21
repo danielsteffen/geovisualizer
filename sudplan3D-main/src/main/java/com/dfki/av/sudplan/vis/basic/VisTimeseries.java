@@ -7,15 +7,11 @@
  */
 package com.dfki.av.sudplan.vis.basic;
 
-import com.dfki.av.sudplan.vis.core.VisAlgorithmAbstract;
-import com.dfki.av.sudplan.vis.core.NumberParameter;
-import com.dfki.av.sudplan.vis.core.ColorParameter;
-import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.ColorRuleClassification;
 import com.dfki.av.sudplan.vis.functions.ConstantNumber;
 import com.dfki.av.sudplan.vis.functions.IdentityFunction;
+import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
@@ -65,19 +61,19 @@ public class VisTimeseries extends VisAlgorithmAbstract {
                 getResource("icons/VisTimeseries.png")));
 
         this.parTimestep0 = new NumberParameter("Timestep (t=0)");
-        this.parTimestep0.addTransferFunction(new IdentityFunction());
+        this.parTimestep0.addTransferFunction(IdentityFunction.class.getName());
         addVisParameter(parTimestep0);
 
         this.parTimestep1 = new NumberParameter("Timestep (t=1)");
-        this.parTimestep1.addTransferFunction(new IdentityFunction());
+        this.parTimestep1.addTransferFunction(IdentityFunction.class.getName());
         addVisParameter(parTimestep1);
 
         this.parHeight = new NumberParameter("Height of Timeseries [m]");
-        this.parHeight.addTransferFunction(new ConstantNumber());
+        this.parHeight.addTransferFunction(ConstantNumber.class.getName());
         addVisParameter(parHeight);
         
         this.parColor = new ColorParameter("Color definition");
-        this.parColor.addTransferFunction(new ColorRuleClassification());
+        this.parColor.addTransferFunction(ColorRuleClassification.class.getName());
         addVisParameter(parColor);
     }
 
@@ -122,19 +118,19 @@ public class VisTimeseries extends VisAlgorithmAbstract {
                 + ", " + attribute2 + /*", and " + attribute3 +*/ " as attributes.");
 
         // 2 - Pre-processing data
-        ITransferFunction function0 = parTimestep0.getSelectedTransferFunction();
+        ITransferFunction function0 = parTimestep0.getTransferFunction();
         log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
 
-        ITransferFunction function1 = parTimestep1.getSelectedTransferFunction();
+        ITransferFunction function1 = parTimestep1.getTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
 
-        ITransferFunction function2 = parHeight.getSelectedTransferFunction();
+        ITransferFunction function2 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
 
-//        ITransferFunction function3 = parColor.getSelectedTransferFunction();
+//        ITransferFunction function3 = parColor.getTransferFunction();
 //        log.debug("Using transfer function {} for attribute 3.", function3.getClass().getSimpleName());
 //        function3.preprocess(shapefile, attribute3);
 
@@ -239,10 +235,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         for (int i = 0; i < firstBuffer.size(); i++) {
             double value = WWMath.mixSmooth(a, firstBuffer.get(i).doubleValue(), secondBuffer.get(i).doubleValue());
 
-            ITransferFunction function0 = parHeight.getSelectedTransferFunction();
+            ITransferFunction function0 = parHeight.getTransferFunction();
             Double height = (Double) function0.calc(null); // Actually, you don't need an argument!!
 
-            ITransferFunction function1 = parColor.getSelectedTransferFunction();
+            ITransferFunction function1 = parColor.getTransferFunction();
             Color color = (Color) function1.calc(value); 
             
             attributesList.add(AnalyticSurface.createGridPointAttributes(height, color));

@@ -26,7 +26,7 @@ public class TFPIdentityFunction extends TFPanel {
     public TFPIdentityFunction(final IdentityFunction f) {
 
         initComponents();
-        jRadioButton.setActionCommand(f.getClass().getSimpleName());
+        jRadioButton.setActionCommand(f.getClass().getName());
     }
 
     /**

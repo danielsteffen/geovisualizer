@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.VisualizationCollection;
+import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -35,10 +35,10 @@ public final class VisualizationSelectionPanel extends JPanel {
         initComponents();
         this.visAlgorithm = null;
 
-        Iterator<String> iter = VisualizationCollection.getNames().iterator();
+        Iterator<String> iter = VisAlgorithmFactory.getNames().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
-            final IVisAlgorithm algo = VisualizationCollection.newInstance(name);
+            final IVisAlgorithm algo = VisAlgorithmFactory.newInstance(name);
             if (algo != null) {
                 log.debug("Adding visualization technique: {}", algo.getName());
                 JButton label = new JButton(algo.getIcon());

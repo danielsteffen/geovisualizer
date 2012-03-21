@@ -9,7 +9,7 @@ import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
-import com.dfki.av.sudplan.vis.VisualizationCollection;
+import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
@@ -602,7 +602,7 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        IVisAlgorithm algo = VisualizationCollection.newInstance(VisPointCloud.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
         if(algo != null){
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
@@ -679,7 +679,7 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        IVisAlgorithm algo = VisualizationCollection.newInstance(VisPointCloud.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
         if(algo != null){
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {

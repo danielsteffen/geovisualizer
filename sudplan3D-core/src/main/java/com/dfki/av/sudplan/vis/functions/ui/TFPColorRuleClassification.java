@@ -43,7 +43,7 @@ public class TFPColorRuleClassification extends TFPanel implements TableModelLis
         this.tableModel.addTableModelListener(this);
 
         initComponents();
-        jRadioButton1.setActionCommand(f.getClass().getSimpleName());
+        jRadioButton1.setActionCommand(f.getClass().getName());
 
         jTable1.setDefaultRenderer(Color.class, new ColorRenderer(true));
         jTable1.setModel(tableModel);

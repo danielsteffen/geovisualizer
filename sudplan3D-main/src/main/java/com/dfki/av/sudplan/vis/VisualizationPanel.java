@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.camera.*;
 import com.dfki.av.sudplan.vis.basic.*;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
@@ -89,7 +90,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void addLayer(Object data) {
-        IVisAlgorithm algo = VisualizationCollection.newInstance(VisPointCloud.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
         if(algo != null){
             addLayer(data, algo, null);
         } else {
@@ -227,7 +228,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Val_200503", "Val_200501"};
-            IVisAlgorithm algo = VisualizationCollection.newInstance(VisTimeseries.class.getName());
+            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisTimeseries.class.getName());
             if(algo != null){
                 addLayer(url, algo, attributes);
             } else {
@@ -254,7 +255,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/Buildings.zip");
             log.debug("URL to load from: {}", url.toString());
             String[] attributes = new String[]{"Elevation"};
-            IVisAlgorithm algo = VisualizationCollection.newInstance(VisExtrudePolygon.class.getName());
+            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisExtrudePolygon.class.getName());
             if(algo != null){
                 addLayer(url, algo, attributes);
             } else {
@@ -302,7 +303,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         try {
             URL url = new URL("http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip");
             String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-            IVisAlgorithm algo = VisualizationCollection.newInstance(VisExtrudePolyline.class.getName());
+            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisExtrudePolyline.class.getName());
             if(algo != null){
                 addLayer(url, algo, attributes);
             } else {

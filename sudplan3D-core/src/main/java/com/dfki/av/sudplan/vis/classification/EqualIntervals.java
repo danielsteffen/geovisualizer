@@ -5,11 +5,12 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis.functions;
+package com.dfki.av.sudplan.vis.classification;
 
 import com.dfki.av.sudplan.vis.core.IClass;
 import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.ISource;
+import com.dfki.av.sudplan.vis.functions.NumberInterval;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;

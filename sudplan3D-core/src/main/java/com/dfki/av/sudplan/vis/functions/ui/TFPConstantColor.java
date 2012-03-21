@@ -32,7 +32,7 @@ public class TFPConstantColor extends TFPanel {
     public TFPConstantColor(final ConstantColor f) {
         this.function = f;
         initComponents();
-        jRadioButton.setActionCommand(f.getClass().getSimpleName());
+        jRadioButton.setActionCommand(f.getClass().getName());
     }
 
     /**

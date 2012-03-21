@@ -1,4 +1,4 @@
-  /*
+/*
  *  ColorrampClassification.java 
  *
  *  Created by DFKI AV on 09.03.2012.
@@ -7,10 +7,11 @@
  */
 package com.dfki.av.sudplan.vis.functions;
 
-import com.dfki.av.sudplan.vis.core.ClassificationFactory;
+import com.dfki.av.sudplan.vis.classification.EqualIntervals;
 import com.dfki.av.sudplan.vis.core.IClass;
 import com.dfki.av.sudplan.vis.core.IClassification;
 import com.dfki.av.sudplan.vis.core.ISource;
+import com.dfki.av.sudplan.vis.spi.ClassificationFactory;
 import com.dfki.av.sudplan.vis.utils.ColorUtils;
 import java.awt.Color;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ColorrampClassification extends ColorClassification {
         this.startColor = Color.GREEN;
         this.endColor = Color.RED;
 
-        this.classification = ClassificationFactory.get(EqualIntervals.class.getSimpleName());
+        this.classification = ClassificationFactory.newInstance(EqualIntervals.class.getName());
     }
 
     @Override
