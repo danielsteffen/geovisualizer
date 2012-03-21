@@ -8,6 +8,7 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.utils.AVUtils;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
@@ -133,6 +134,13 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
         try {
             List<Layer> layerlist = get();
             if (!layerlist.isEmpty()) {
+                log.info("VisConfig");
+                log.info("- {}", algo.getClass().getName());
+                List<IVisParameter> paramters = algo.getVisParameters();
+                for (IVisParameter iVisParameter : paramters) {
+                    log.info("-- {}", iVisParameter.getClass().getName());
+                    log.info("--- {}", iVisParameter.getTransferFunction().getClass().getName());
+                }
                 LayerList layers = wwd.getModel().getLayers();
                 layers.addAllAbsent(layerlist);
                 wwd.repaint();

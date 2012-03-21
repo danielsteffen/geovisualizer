@@ -8,7 +8,10 @@
       <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
     </layout>
   </appender>
-
+  <logger name="com.dfki.av.sudplan.vis.wiz">
+    <!-- Print only messages of level warn or above in the package com.dfki.av.sudplan.vis.wiz -->
+    <level value="warn"/> 
+  </logger>
   <root>
     <priority value ="debug" />
     <appender-ref ref="console" />
