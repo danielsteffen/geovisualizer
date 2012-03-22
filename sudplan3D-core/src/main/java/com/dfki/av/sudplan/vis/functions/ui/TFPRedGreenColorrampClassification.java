@@ -13,6 +13,7 @@ import com.dfki.av.sudplan.vis.functions.RedGreenColorrampClassification;
 import com.dfki.av.sudplan.vis.spi.ClassificationFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ButtonGroup;
@@ -27,7 +28,11 @@ import javax.swing.SpinnerNumberModel;
 public class TFPRedGreenColorrampClassification extends TFPanel {
 
     /**
-     * 
+     *
+     */
+    private List<IClassification> classifications;
+    /**
+     *
      */
     private RedGreenColorrampClassification function;
 
@@ -36,23 +41,27 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
      */
     public TFPRedGreenColorrampClassification(final RedGreenColorrampClassification f) {
         this.function = f;
+        this.classifications = new ArrayList<IClassification>();
+
         initComponents();
+
         jRadioButton.setActionCommand(f.getClass().getName());
         jSpinner1.setValue(f.getNumClasses());
-        
-        List<String> classifications = ClassificationFactory.getNames();
-        for (String string : classifications) {
-            jComboBox2.addItem(string);
+
+        List<String> cNames = ClassificationFactory.getNames();
+        for (String name : cNames) {
+            IClassification c = ClassificationFactory.newInstance(name);
+            classifications.add(c);
+            jComboBox2.addItem(c.getName());
         }
         jComboBox2.setSelectedItem(f.getClassification().getClass().getName());
         jComboBox2.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                JComboBox jComboBox = (JComboBox)e.getSource();
-                String s = (String)jComboBox.getSelectedItem();
-                IClassification c = ClassificationFactory.newInstance(s);
-                function.setClassification(c);
+                JComboBox jComboBox = (JComboBox) e.getSource();
+                int i = jComboBox.getSelectedIndex();
+                function.setClassification(classifications.get(i));
             }
         });
     }
@@ -157,7 +166,7 @@ public class TFPRedGreenColorrampClassification extends TFPanel {
     public boolean setAttributes(List<String[]> attributes) {
         for (Iterator<String[]> it = attributes.iterator(); it.hasNext();) {
             String[] attribute = it.next();
-            if(!attribute[1].equalsIgnoreCase("String")){
+            if (!attribute[1].equalsIgnoreCase("String")) {
                 jComboBox1.addItem(attribute[0]);
             }
         }
