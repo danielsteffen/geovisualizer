@@ -97,7 +97,8 @@ public class TFPConstantColor extends TFPanel {
     }
 
     @Override
-    public void setAttributes(List<String> attributes) {
+    public boolean setAttributes(List<String[]> attributes) {
+        return true;
     }
 
     @Override

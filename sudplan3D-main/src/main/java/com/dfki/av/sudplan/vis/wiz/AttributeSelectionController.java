@@ -90,7 +90,7 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
 
     public void storeSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor)settings;
-        List<String> l = ((AttributeSelectionPanel)getComponent()).getSelectedAttributes();
+        List<String[]> l = ((AttributeSelectionPanel)getComponent()).getSelectedAttributes();
         descriptor.putProperty("DataAttributes", l);
     }
 }

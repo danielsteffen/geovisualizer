@@ -50,11 +50,11 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     /**
      * Creates new form VisParameterPanel
      */
-    public VisParameterPanel(final IVisParameter param, final List<String> dataAttributes) {
+    public VisParameterPanel(final IVisParameter param, final List<String[]> dataAttributes) {
         this.visParameter = param;
         this.transferFunctionMap = new HashMap<String, ITransferFunction>();
         this.panelMap = new HashMap<String, TFPanel>();
-        
+
         initComponents();
 
         //Create a panel for each available transfer function.
@@ -65,19 +65,21 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
             if (function != null) {
                 TFPanel panel = TFPanelFactory.newInstance(function);
                 if (panel != null) {
-                    panel.setAttributes(dataAttributes);
-                    panel.setButtonGroup(bgTransferFunctions);
-                    panel.setActionListener(this);
-                    panel.setSelected(isFirst);
-                    
-                    if (isFirst) {
-                        updateTransferFunction(function);
-                        isFirst = false;
+                    boolean attributesAdded = panel.setAttributes(dataAttributes);
+                    if (attributesAdded) {
+                        panel.setButtonGroup(bgTransferFunctions);
+                        panel.setActionListener(this);
+                        panel.setSelected(isFirst);
+
+                        if (isFirst) {
+                            updateTransferFunction(function);
+                            isFirst = false;
+                        }
+
+                        transferFunctionMap.put(function.getClass().getName(), function);
+                        panelMap.put(function.getClass().getName(), panel);
+                        this.add(panel);
                     }
-                    
-                    transferFunctionMap.put(function.getClass().getName(), function);
-                    panelMap.put(function.getClass().getName(), panel);
-                    this.add(panel);
                 } else {
                     log.warn("Could not create {} for {}", TFPanel.class.getSimpleName(),
                             function.getClass().getSimpleName());
@@ -114,13 +116,13 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     public String getSelectedAttribute() {
         return panelMap.get(selectedTransferFunction).getSelectedAttribute();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         ITransferFunction f = transferFunctionMap.get(e.getActionCommand());
         updateTransferFunction(f);
     }
-    
+
     private void updateTransferFunction(ITransferFunction f) {
         selectedTransferFunction = f.getClass().getName();
         visParameter.setTransferFunction(f);

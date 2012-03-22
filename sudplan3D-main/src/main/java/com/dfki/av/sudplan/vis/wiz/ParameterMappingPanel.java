@@ -80,7 +80,7 @@ public final class ParameterMappingPanel extends JPanel {
      * @param i
      * @param attributes
      */
-    public void setSelectedVisualization(IVisAlgorithm i, List<String> attributes) {
+    public void setSelectedVisualization(IVisAlgorithm i, List<String[]> attributes) {
         this.visAlgorithm = i;
         this.attributes = new String[visAlgorithm.getVisParameters().size()];
         jTabbedPane1.removeAll();

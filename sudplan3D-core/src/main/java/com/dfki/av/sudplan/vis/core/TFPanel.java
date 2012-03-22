@@ -26,7 +26,7 @@ public abstract class TFPanel extends JPanel{
      * 
      * @param attributes 
      */
-    public abstract void setAttributes(final List<String> attributes);
+    public abstract boolean setAttributes(final List<String[]> attributes);
     /**
      * 
      * @param bg 

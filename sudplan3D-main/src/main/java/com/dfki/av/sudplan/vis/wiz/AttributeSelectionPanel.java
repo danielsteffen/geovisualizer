@@ -86,16 +86,26 @@ public final class AttributeSelectionPanel extends JPanel {
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 
-    public List getSelectedAttributes() {
-        ArrayList<String> selectedAttr = new ArrayList<String>();
+    /**
+     * Returns a list of {@link String} arrays. The size of the array is always
+     * 2. At index 0 the name of the attribute and at index 1 the type of the
+     * selected attribute.
+     *
+     * @return the selected attributes to return.
+     */
+    public List<String[]> getSelectedAttributes() {
+        ArrayList<String[]> selectedAttr = new ArrayList<String[]>();
         for (int rowId = 0; rowId < tableModel.getRowCount(); rowId++) {
             Boolean isSelected = (Boolean) tableModel.getValueAt(rowId, 0);
             if (isSelected) {
-                String attr = (String) tableModel.getValueAt(rowId, 1);
-                selectedAttr.add(attr);
-                log.debug("Selected: {}", attr);
+                String[] attribute = new String[2];
+                attribute[0] = (String) tableModel.getValueAt(rowId, 1);
+                attribute[1] = (String) tableModel.getValueAt(rowId, 2);
+                selectedAttr.add(attribute);
+                log.debug("Selected: {}", attribute);
             }
         }
+
         return selectedAttr;
     }
 

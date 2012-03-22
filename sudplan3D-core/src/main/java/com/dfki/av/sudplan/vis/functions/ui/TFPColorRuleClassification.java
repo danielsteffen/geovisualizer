@@ -265,7 +265,8 @@ public class TFPColorRuleClassification extends TFPanel implements TableModelLis
     }
 
     @Override
-    public void setAttributes(List<String> attributes) {
+    public boolean setAttributes(List<String[]> attributes) {
+        return true;
     }
 
     @Override

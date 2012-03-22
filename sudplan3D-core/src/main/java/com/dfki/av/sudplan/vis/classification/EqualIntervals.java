@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class EqualIntervals implements IClassification {
 
     /*
-     * The logger for the all <code>ColorTransferFunction</code>.
+     * The logger for the all <code>EqualIntervals</code>.
      */
     private static final Logger log = LoggerFactory.getLogger(EqualIntervals.class);
 

@@ -13,12 +13,9 @@ import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ParameterMappingController implements WizardDescriptor.Panel {
 
-    private static Logger log = LoggerFactory.getLogger(ParameterMappingController.class);
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
@@ -82,17 +79,15 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
     }
      */
 
-    // You can use a settings object to keep track of state. Normally the
-    // settings object will be the WizardDescriptor, so you can use
-    // WizardDescriptor.getProperty & putProperty to store information entered
-    // by the user.
+    @Override
     public void readSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
         IVisAlgorithm algo = (IVisAlgorithm)wiz.getProperty("SelectedVisualization");
-        List<String> attributes = (List<String>)wiz.getProperty("DataAttributes");        
+        List<String[]> attributes = (List<String[]>)wiz.getProperty("DataAttributes");        
         ((ParameterMappingPanel)getComponent()).setSelectedVisualization(algo, attributes);
     }
 
+    @Override
     public void storeSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
         String[] attributes = ((ParameterMappingPanel)getComponent()).getAttributes();

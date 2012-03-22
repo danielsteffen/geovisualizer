@@ -155,11 +155,12 @@ public class TFPColorrampCategorization extends TFPanel {
     }
 
     @Override
-    public void setAttributes(List<String> attributes) {
-        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
-            String string = it.next();
-            jComboBox1.addItem(string);
+    public boolean setAttributes(List<String[]> attributes) {
+        for (Iterator<String[]> it = attributes.iterator(); it.hasNext();) {
+            String[] attribute = it.next();
+            jComboBox1.addItem(attribute[0]);
         }
+        return jComboBox1.getItemCount() > 0 ? true : false;
     }
 
     @Override
