@@ -5,7 +5,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D</artifactId>
-    <version>0.8.0</version>
+    <version>0.8.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>sudplan3D-main</name>
     <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
@@ -146,6 +146,18 @@
             <version>0.2-SNAPSHOT</version>            
         </dependency>
         <dependency>
+            <groupId>com.dfki.av.sudplan</groupId>
+            <artifactId>sudplan3D-rasterize</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.dfki.av.sudplan</groupId>
+            <artifactId>sudplan3D-classification-advanced</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
@@ -219,7 +231,7 @@
                         <storepass>sudplan</storepass>
                         <alias>sudplan</alias>
                         <validity>3650</validity>
-                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameCn>Deutsches Forschungszentrum f�r K�nstliche Intelligenz (DFKI) GmbH</dnameCn>
                         <dnameOu>AV</dnameOu>
                         <dnameO>DFKI</dnameO>
                         <dnameL>KL</dnameL>
