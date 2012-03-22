@@ -20,19 +20,19 @@ public class Shapefile implements ISource {
         ogr.RegisterAll();
     }
     /**
-     * 
+     *
      */
     private static final Logger log = LoggerFactory.getLogger(Shapefile.class);
     /**
-     * 
+     *
      */
     public static final int PolylineType = ogrConstants.wkbLineString;
     /**
-     * 
+     *
      */
     public static final int PolygonType = ogrConstants.wkbPolygon;
     /**
-     * 
+     *
      */
     private org.gdal.ogr.DataSource data;
 
@@ -317,31 +317,24 @@ public class Shapefile implements ISource {
     @Override
     public double min(String attribute) {
         double minValue = Double.MAX_VALUE;
-        for (int i = 0; i < getFeatureCount(); i++) {
-            Object object = getAttributeOfFeature(i, attribute);
-            if (object instanceof Number) {
-                double value = ((Number) object).doubleValue();
-                if (value < minValue) {
-                    minValue = value;
-                }
-            }
+        String query = "SELECT MIN(" + attribute + ") FROM " + getLayerName();
+        Layer layer = data.ExecuteSQL(query);
+        if (layer.GetFeatureCount() > 0) {
+            minValue = layer.GetFeature(0).GetFieldAsDouble(0);
         }
+        data.ReleaseResultSet(layer);
         return minValue;
     }
 
     @Override
     public double max(String attribute) {
         double maxValue = Double.MIN_VALUE;
-
-        for (int i = 0; i < getFeatureCount(); i++) {
-            Object object = getAttributeOfFeature(i, attribute);
-            if (object instanceof Number) {
-                double value = ((Number) object).doubleValue();
-                if (value > maxValue) {
-                    maxValue = value;
-                }
-            }
+        String query = "SELECT MAX(" + attribute + ") FROM " + getLayerName();
+        Layer layer = data.ExecuteSQL(query);
+        if (layer.GetFeatureCount() > 0) {
+            maxValue = layer.GetFeature(0).GetFieldAsDouble(0);
         }
+        data.ReleaseResultSet(layer);
         return maxValue;
     }
 
