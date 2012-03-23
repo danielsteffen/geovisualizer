@@ -5,7 +5,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D-classification-advanced</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>sudplan3D-classification-advanced</name>
     <description>Advanced classification package for Sudplan3D.</description>
@@ -22,7 +22,7 @@
     
     <profiles>
         <profile>
-            <id>s3d-classification-advanced-dev</id>
+            <id>s3d-class-dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -34,8 +34,8 @@
             </properties>
         </profile>
         
-        <!--profile>
-            <id>s3d-extra-deploy-dfki</id>
+        <profile>
+            <id>s3d-class-deploy-dfki</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -48,7 +48,7 @@
         </profile>
 
         <profile>
-            <id>s3d-extra-deploy-cismet</id>
+            <id>s3d-class-deploy-cismet</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -58,9 +58,8 @@
                 <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>
                 <distribution.server>cismet-artifactory</distribution.server>
             </properties>
-        </profile-->
+        </profile>
     </profiles>  
-    
 
     <dependencies>
         <dependency>
@@ -107,7 +106,7 @@
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-core</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     
