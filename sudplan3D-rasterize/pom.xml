@@ -5,7 +5,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D-rasterize</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>sudplan3D-rasterize</name>
     <description>Create raster from vector data for SUDPLAN 3D.</description>
@@ -34,8 +34,8 @@
             </properties>
         </profile>
         
-        <!--profile>
-            <id>s3d-extra-deploy-dfki</id>
+        <profile>
+            <id>s3d-rasterize-deploy-dfki</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -48,7 +48,7 @@
         </profile>
 
         <profile>
-            <id>s3d-extra-deploy-cismet</id>
+            <id>s3d-rasterize-deploy-cismet</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -58,7 +58,7 @@
                 <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>
                 <distribution.server>cismet-artifactory</distribution.server>
             </properties>
-        </profile-->
+        </profile>
     </profiles>  
     
 
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-core</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     
