@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:annotation>
+        <xs:documentation xml:lang="en">
+        Rehabilitation plan for PAMAP project.
+        Copyright 2011 pamap.org. All rights reserved.
+        </xs:documentation>
+    </xs:annotation>
+
+    <!-- Simple data types -->
+    <xs:simpleType name="TimeUnitType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+               Unit type for time values. Default is minutes (min).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="s"/>
+            <xs:enumeration value="min"/>
+            <xs:enumeration value="h"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SupportedExerciseIDType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+               Supported exercise IDs by the PAMAP Pilot.
+               IDs are associated to the IDs in the Listing and naming.doc
+               document.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+            <xs:enumeration value="10"/>
+            <xs:enumeration value="11"/>
+            <xs:enumeration value="13"/>
+            <xs:enumeration value="17"/>
+            <xs:enumeration value="20"/>
+            <xs:enumeration value="21"/>
+            <xs:enumeration value="25"/>
+            <xs:enumeration value="26"/>
+            <xs:enumeration value="29"/>
+            <xs:enumeration value="33"/>
+            <xs:enumeration value="34"/>
+            <xs:enumeration value="38"/>
+            <xs:enumeration value="39"/>
+            <xs:enumeration value="45"/>
+            <xs:enumeration value="46"/>
+            <xs:enumeration value="47"/>
+            <xs:enumeration value="48"/>
+            <xs:enumeration value="49"/>
+            <xs:enumeration value="50"/>
+            <xs:enumeration value="51"/>
+            <xs:enumeration value="52"/>
+            <xs:enumeration value="53"/>
+            <xs:enumeration value="54"/>
+            <xs:enumeration value="55"/>
+            <xs:enumeration value="56"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SupportedActivityIDType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+               Supported activity IDs by the PAMAP pilot.
+               ID are defined in MTBF specification document.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <!-- Other = 0 -->
+            <xs:enumeration value="0"/>
+            <!-- Walking = 3 -->
+            <xs:enumeration value="3"/>
+            <!-- Running = 4 -->
+            <xs:enumeration value="4"/>
+            <!-- Cycling = 5 -->
+            <xs:enumeration value="5"/>
+            <!-- Nordic Walking = 6 -->
+            <xs:enumeration value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="IntensityLevelType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                For aerobic and general physical activity:
+                - light,
+                - moderate,
+                - vigorous.
+                For other activity types:
+                Borg x/10, where 0  &lt; x  &lt; =10 and:
+                - &lt; 2 (light),
+                - 2-6 (moderate),
+                - and &gt; 7 vigorous intensity.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+            <xs:enumeration value="4"/>
+            <xs:enumeration value="5"/>
+            <xs:enumeration value="6"/>
+            <xs:enumeration value="7"/>
+            <xs:enumeration value="8"/>
+            <xs:enumeration value="9"/>
+            <xs:enumeration value="10"/>
+            <xs:enumeration value="light"/>
+            <xs:enumeration value="moderate"/>
+            <xs:enumeration value="vigorous"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="DurationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+               Duration defines an period of time.
+               It is defined by an integer value and a associated time unit.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:unsignedInt">
+                <xs:attribute name="unit" type="TimeUnitType" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+
+    <xs:simpleType name="WeightValueType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+               Weight value.
+               Real value with constraint &gt;= 0.0.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="WeightType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+               Weight type with has to have a unit defined.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="WeightValueType">
+                <xs:attribute name="unit">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                            <xs:enumeration value="kg"/>
+                            <xs:enumeration value="g"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+  <!-- definition of for reference values -->
+    <xs:complexType name="ReferenceValuesType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                    General recommendations for the patient:
+                    - Safety Recommendations (free text) : string.
+                    - Session Notes (free text) : string.
+                    - Measured Peak Heart Rate: x (bpm) : unsigned integer.
+                    - Predicted Maximum Heart Rate: x (bpm) : unsigned integer.
+                    - Safe or Recommended Heart Rate Threshold (bpm) : unsigned integer.
+                    - Measured Perceived Exertion (x, where 0 &lt; x &lt;=10, according to Borg scale) : unsigned integer.
+                    - Measured Perceived Pain (x, where 0 &lt; x &lt;=10, according to Borg scale) : unsigned integer.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="SafetyRecommendations" type="xs:string"/>
+            <xs:element name="SessionNotes" type="xs:string"/>
+            <xs:element name="MeasuredPeakHeartRate" type="xs:unsignedInt"/>
+            <xs:element name="PredictedMaximumHeartRate" type="xs:unsignedInt"/>
+            <xs:element name="RecommendedHeartRateThreshold" type="xs:unsignedInt"/>
+            <xs:element name="MeasuredPerceivedExertion">
+                <xs:simpleType>
+                    <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="10"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="MeasuredPerceivedDyspnea">
+                <xs:simpleType>
+                    <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="10"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="MeasuredPerceivedPain">
+                <xs:simpleType>
+                    <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="10"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    
+    <!-- Differentiation between cardio- and strength-exercises -->
+    <xs:complexType name="CardioExerciseType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+            Attributes of cardio exercises:
+            - oid : id which is used to define the order of activities : unsigned integer,
+            - id : numerical id of the activity : unsigned integer,
+            - duration is: x minutes : integer,
+            - intensity is one of the following:
+                    * For aerobic and general physical activity: light, moderate, vigorous
+                    * For other activity types:
+                        Borg x/10, where 0  &lt; x  &lt; =10 and:
+                        - &lt; 2 (light),
+                        - 2-6 (moderate),
+                        - and &gt; 7 vigorous intensity.
+
+            Constraints on attributes:
+            - oid has to be unique among exercises for each training session to
+              ensure a well-defined total ordering of the activities,
+            - id has to correspond to the supported activities in the PAMAP system.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="oid" type="xs:unsignedInt"/>
+            <xs:element name="id" type="SupportedActivityIDType"/>
+            <xs:element name="duration" type="DurationType"/>
+            <xs:element name="intensity" type="IntensityLevelType"/>
+        </xs:all>
+    </xs:complexType>
+    
+    <xs:complexType name="StrengthExerciseType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+            Attributes of strength exercises:
+             - oid : id which is used to define the order of exercises : unsigned integer
+             - id : numerical id of the strength exercise : unsigned integer
+             - number of sets: number of sets which have to be executed : unsigned integer
+             - number of repetitions: number of repetitions per set : unsigned integer
+             - weight: x kg : double
+             - transactionid (optional): transactionid : alpha-numeric value
+            Constraints on attributes:
+             - oid has to be unique among exercises for each training session to ensure a well-defined total ordering of the exercises,
+             - id has to correspond to the supported strength exercises in the PAMAP system.
+             - weight >= 0.0 (kg)
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="oid" type="xs:unsignedInt"/>
+            <xs:element name="id" type="SupportedExerciseIDType"/>
+            <xs:element name="sets" type="xs:unsignedInt"/>
+            <xs:element name="repetitions" type="xs:unsignedInt"/>
+            <xs:element name="weight" type="WeightType"/>
+            <xs:element name="transactionid" type="xs:string" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="WarmupPhaseType">
+        <xs:sequence>
+            <xs:element name="cardio-exercise" type="CardioExerciseType"
+                        minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WorkPhaseType">
+        <xs:sequence>
+            <xs:element name="strength-exercise" type="StrengthExerciseType"
+                        minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="cardio-exercise" type="CardioExerciseType"
+                        minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CooldownPhaseType">
+        <xs:sequence>
+            <xs:element name="cardio-exercise" type="CardioExerciseType"
+                        minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="SessionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+            Attributes of the training session:
+                - oid: ordering number of the training sessions : unsigned integer
+                - date : defines the day when the this specific training session should perform : date
+
+             Constraints on attributes:
+                - oid has to be unique among training session to ensure a well-defined total ordering of the activities.
+                - date : rehabilitation plan::start date  &lt; date  &lt; rehabilitation plan::end date
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="oid" type="xs:unsignedInt" minOccurs="1"/>
+            <xs:element name="date" type="xs:date" minOccurs="1"/>
+            <xs:element name="warmup-phase" type="WarmupPhaseType" minOccurs="0">
+                <xs:unique name="uniqueWarmUpOidKey">
+                    <xs:selector xpath="./cardio-exercise"/>
+                    <xs:field xpath="oid"/>
+                </xs:unique>
+            </xs:element>
+            <xs:element name="work-phase" type="WorkPhaseType" minOccurs="1">
+                <xs:unique name="uniqueWorkOidKey">
+                    <xs:selector xpath="./*"/>
+                    <xs:field xpath="oid"/>
+                </xs:unique>
+            </xs:element>
+            <xs:element name="cooldown-phase" type="CooldownPhaseType" minOccurs="0">
+                <xs:unique name="uniqueCoolDownOidKey">
+                    <xs:selector xpath="./cardio-exercise"/>
+                    <xs:field xpath="oid"/>
+                </xs:unique>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:element name="RehabilitationPlan">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+            The Rehabilitation plan consists of several training sessions which have to be performed on a defined date.
+            The PAMAP system currently supports two types of exercises, cardio and strength exercises.
+            But the system can be extended by further types of exercises/activities, such as gymnastics exercise (e.g. Tai Chi).
+
+            Each training session is divided into three possible distinct phases:
+                1. Warm-up phase (optional)- where the patient performs some
+                  cardio exercises, to "warm-up" muscles,
+                2. Work phase - here the patient performs a mixture of strength
+                  and cardio exercises in a predefined order,
+                3. Cool-down phase (optional) - the patient again performs cardio
+                  exercises.
+            
+            The Rehabilitation Plan has the following structure
+            (entities are written in bold, and attributes cursive):
+            Rehabilitation Plan (start date, end date)
+                - Training session (incremental number, date)
+                 -> Phases (drop down list):
+                     - Warm-up phase (type "warm-up"),
+                     - Work phase (type "work"),
+                     - Cool-down phase (type  "cool-down" ):
+             "warm-up" type is:
+            [1:n] Cardio exercise (duration, intensity),
+                  e.g. Nordic walking, cycling on plane circuit.
+
+            "work" type is:
+            [1:m] Strength exercise (weight, number of sets, number of repetitions),
+            e.g. biceps curls, arm-extension, leg extension
+            [0:n] Cardio exercise (duration, intensity),
+
+            "cool-down" type is:
+            [1:n] Cardio exercises (duration, intensity)
+
+            Attributes of the rehabilitation plan:
+                - Start date : Start date of the rehabilitation plan : date
+                - End date : End date of the rehabilitation plan : date
+            Constraints on attributes:
+            Start date &lt; End date
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ReferenceValues" minOccurs="1" type="ReferenceValuesType"/>
+                <xs:element name="startdate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="enddate" type="xs:date" minOccurs="1" maxOccurs="1" />
+                <xs:element name="session" type="SessionType"
+                            minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueOidKey">
+            <xs:selector xpath="./session"/>
+            <xs:field xpath="oid"/>
+        </xs:unique>
+    </xs:element>
+</xs:schema>
