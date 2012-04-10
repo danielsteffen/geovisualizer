@@ -26,7 +26,6 @@ public class BasicVisualizationProvider implements IVisAlgorithmProvider {
         visualizationList.add(VisExtrudePolyline.class.getName());
         visualizationList.add(VisExtrudePolygon.class.getName());
         visualizationList.add(VisTimeseries.class.getName());
-        visualizationList.add(VisGeoCPM.class.getName());
         visualizationList.add(VisPointCloud.class.getName());
         
         return Collections.unmodifiableList(visualizationList);
@@ -44,9 +43,7 @@ public class BasicVisualizationProvider implements IVisAlgorithmProvider {
             return new VisPointCloud();
         } else if (VisBuildings.class.getName().equalsIgnoreCase(name)) {
             return new VisBuildings();
-        } else if (VisGeoCPM.class.getName().equalsIgnoreCase(name)){
-            return new VisGeoCPM();
-        }
+        } 
         return null;
     }
 }
