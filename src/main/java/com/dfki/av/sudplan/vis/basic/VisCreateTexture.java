@@ -32,12 +32,13 @@ public class VisCreateTexture extends VisAlgorithmAbstract {
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
         
         log.debug("Running {}", this.getClass().getSimpleName());        
-        
+        setProgress(0);
         ArrayList<Layer> list = new ArrayList<Layer>();
         if (attributes == null || attributes.length == 0) {
             log.warn("No attributes specified.");
         }
-        
+        setProgress(10);
+                
         if (data instanceof File) {
             File file = (File) data;
             SurfaceImageLayer sul = new SurfaceImageLayer();
@@ -54,7 +55,7 @@ public class VisCreateTexture extends VisAlgorithmAbstract {
         } else {
             log.error("Data type not supported.");
         }
-        
+        setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
         
         return list;

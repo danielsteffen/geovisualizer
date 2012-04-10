@@ -7,10 +7,10 @@
  */
 package com.dfki.av.sudplan.vis;
 
-import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.camera.*;
-import com.dfki.av.sudplan.vis.basic.*;
+import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -24,9 +24,10 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,18 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * The world wind GL canvas.
      */
     private WorldWindowGLCanvas wwd;
-    protected StatusBar statusBar;
+    /**
+     * The {@link StatusBar} attached to this panel.
+     */
+    private StatusBar statusBar;
+    /**
+     * The {@link JProgressBar} added to the {@link #statusBar}.
+     */
+    private JProgressBar progressBar;
+    /**
+     * Support for publishing progress support to the universe :)
+     */
+    private PropertyChangeSupport progressChange;
 
     /**
      * Constructs a visualization panel of the defined
@@ -72,9 +84,15 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         this.wwd.addSelectListener(new ViewControlsSelectListener(this.wwd, viewControlsLayer));
         this.add(this.wwd, BorderLayout.CENTER);
 
+        this.progressBar = new JProgressBar(0, 100);
+        this.progressBar.setVisible(false);
+
         this.statusBar = new StatusBar();
         this.statusBar.setEventSource(wwd);
-        this.add(statusBar, BorderLayout.PAGE_END);
+        this.statusBar.add(progressBar);
+        this.add(statusBar, BorderLayout.SOUTH);
+
+        this.progressChange = new PropertyChangeSupport(this);
     }
 
     /**
@@ -91,7 +109,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public void addLayer(Object data) {
         IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-        if(algo != null){
+        if (algo != null) {
             addLayer(data, algo, null);
         } else {
             log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
@@ -105,6 +123,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * @param attributes
      */
     public void addLayer(Object data, IVisAlgorithm vis, Object[] attributes) {
+        vis.addPropertyChangeListener(this);
         VisWorker producer = new VisWorker(data, vis, attributes, wwd);
         producer.execute();
     }
@@ -220,109 +239,25 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        log.debug("Not supported!");
-    }
-
-    public void addTimeseries() {
-        try {
-            URL url = new URL("http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip");
-            log.debug("URL to load from: {}", url.toString());
-            String[] attributes = new String[]{"Val_200503", "Val_200501"};
-            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisTimeseries.class.getName());
-            if(algo != null){
-                addLayer(url, algo, attributes);
+        if (evt.getPropertyName().equalsIgnoreCase(IVisAlgorithm.PROGRESS_PROPERTY)) {
+            Integer i = (Integer) evt.getNewValue();
+            if (i.intValue() <= 0 || i.intValue() >= 100) {
+                progressBar.setVisible(false);
             } else {
-                log.error("VisAlgorithm {} not supported.", VisTimeseries.class.getName());
+                progressBar.setVisible(true);
             }
-        } catch (MalformedURLException ex) {
-            log.error(ex.toString());
+            progressBar.setValue(i.intValue());
+            progressChange.firePropertyChange(evt);
         }
     }
 
-    public void removeTimeseries() {
-        LayerList layerList = this.wwd.getModel().getLayers();
-        for (Object object : layerList) {
-            Layer layer = (Layer) object;
-            if (layer.getName().startsWith("ts_nox_2m")) {
-                log.debug("Removing layer: {}", layer.getName());
-                removeLayer(layer);
-            }
-        }
+    @Override
+    public void addProgressListener(PropertyChangeListener listener) {
+        this.progressChange.addPropertyChangeListener(IVisAlgorithm.PROGRESS_PROPERTY, listener);
     }
 
-    public void addBuildings() {
-        try {
-            URL url = new URL("http://sudplan.kl.dfki.de/testdata/Buildings.zip");
-            log.debug("URL to load from: {}", url.toString());
-            String[] attributes = new String[]{"Elevation"};
-            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisExtrudePolygon.class.getName());
-            if(algo != null){
-                addLayer(url, algo, attributes);
-            } else {
-                log.error("VisAlgorithm {} not supported.", VisExtrudePolygon.class.getName());
-            }
-        } catch (MalformedURLException ex) {
-            log.error(ex.toString());
-        }
-    }
-
-    public void removeBuildings() {
-        LayerList layerList = this.wwd.getModel().getLayers();
-        for (Object object : layerList) {
-            Layer layer = (Layer) object;
-            if (layer.getName().startsWith("Building")) {
-                log.debug("Removing layer: {}", layer.getName());
-                removeLayer(layer);
-            }
-        }
-    }
-
-    public void addRooftopResults() {
-        try {
-            URL url = new URL("http://sudplan.kl.dfki.de/testdata/rooftop3.tiff");
-            log.debug("URL to load from: {}", url.toString());
-            addLayer(url, new VisCreateTexture(), null);
-        } catch (MalformedURLException ex) {
-            log.error(ex.toString());
-        }
-    }
-
-    public void removeRooftopResults() {
-        LayerList layerList = this.wwd.getModel().getLayers();
-        for (Object object : layerList) {
-            Layer layer = (Layer) object;
-            // TODO <steffen>: Check usage of World Wind constants here.
-            if (layer.getName().endsWith("tiff")) {
-                log.debug("Removing layer: {}", layer.getName());
-                removeLayer(layer);
-            }
-        }
-    }
-
-    public void addStreetLevelResults() {
-        try {
-            URL url = new URL("http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip");
-            String[] attributes = new String[]{"Perc98d", "NrVehTot"};
-            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisExtrudePolyline.class.getName());
-            if(algo != null){
-                addLayer(url, algo, attributes);
-            } else {
-                log.error("VisAlgorithm {} not supported.", VisExtrudePolyline.class.getName());
-            }            
-        } catch (MalformedURLException ex) {
-            log.error(ex.toString());
-        }
-    }
-
-    public void removeStreetLevelResults() {
-        LayerList layerList = this.wwd.getModel().getLayers();
-        for (Object object : layerList) {
-            Layer layer = (Layer) object;
-            // TODO <steffen>: Check usage of World Wind constants here.
-            if (layer.getName().startsWith("AirQuality")) {
-                log.debug("Removing layer: {}", layer.getName());
-                removeLayer(layer);
-            }
-        }
+    @Override
+    public void removeProgressListener(PropertyChangeListener listener) {
+        this.progressChange.removePropertyChangeListener(IVisAlgorithm.PROGRESS_PROPERTY, listener);
     }
 }

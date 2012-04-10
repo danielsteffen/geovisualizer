@@ -49,7 +49,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
      * The attributes / settings for the visualization technique to consider.
      */
     private Object[] attributes;
-
+    
     /**
      *
      * @param data

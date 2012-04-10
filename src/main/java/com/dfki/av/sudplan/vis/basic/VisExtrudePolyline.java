@@ -67,7 +67,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
         log.debug("Running {}", this.getClass().getSimpleName());
-
+        setProgress(0);
         List<Layer> layers = new ArrayList<Layer>();
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
@@ -81,6 +81,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         } else {
             shapefile = (Shapefile) data;
         }
+        setProgress(5);
 
         // 1 - Check and set all attributes
         if (attributes == null || attributes.length == 0) {
@@ -93,16 +94,18 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
             attribute1 = checkAttribute(attributes[1]);
         }
         log.debug("Using {} and {} as attributes.", attribute0, attribute1);
-
+        setProgress(10);
         // 2 - Pre-processing data
         ITransferFunction function0 = parColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
-
+        setProgress(15);
+        
         ITransferFunction function1 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
-
+        setProgress(20);
+        
         // 3 - Create visualization
         if (Shapefile.isPolylineType(shapefile.getShapeType())) {
             RenderableLayer layer = new RenderableLayer();
@@ -115,9 +118,8 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         } else {
             log.warn("Extrude Polyline Visualization does not support shape type {}.", shapefile.getShapeType());
         }
-
+        setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
-
         return layers;
     }
 

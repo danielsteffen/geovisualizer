@@ -81,7 +81,8 @@ public class VisTimeseries extends VisAlgorithmAbstract {
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
         log.debug("Running {}", this.getClass().getSimpleName());
-
+        setProgress(0);
+        
         List<Layer> layers = new ArrayList<Layer>();
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
@@ -96,7 +97,8 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         } else {
             shapefile = (Shapefile) data;
         }
-
+        setProgress(5);
+        
         // 1 - Check and set all attributes
         if (attributes == null || attributes.length == 0) {
             log.error("Attributes set to null. Can not create visualization.");
@@ -116,23 +118,23 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         }
         log.debug("Using " + attribute0 + ", " + attribute1
                 + ", " + attribute2 + /*", and " + attribute3 +*/ " as attributes.");
-
+        setProgress(10);
+        
         // 2 - Pre-processing data
         ITransferFunction function0 = parTimestep0.getTransferFunction();
         log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
-
+        setProgress(15);
+        
         ITransferFunction function1 = parTimestep1.getTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
-
+        setProgress(20);
+        
         ITransferFunction function2 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
-
-//        ITransferFunction function3 = parColor.getTransferFunction();
-//        log.debug("Using transfer function {} for attribute 3.", function3.getClass().getSimpleName());
-//        function3.preprocess(shapefile, attribute3);
+        setProgress(25);
 
         // 3 - Create visualization            
         RenderableLayer layer = new RenderableLayer();
@@ -142,8 +144,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         layer.setName(shapefile.getLayerName());
         layers.add(layer);
 
+        setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
-
+        
         return layers;
     }
 
@@ -166,8 +169,9 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         layer.addRenderable(surface);
 
         List<Double> firstValues = computeGridValues(shpfile, attribute0);
+        setProgress(50);
         List<Double> secondValues = computeGridValues(shpfile, attribute1);
-
+        setProgress(75);
         interpolateValuesOverTime(3000L, firstValues, secondValues, surface);
 
         AnalyticSurfaceAttributes attr = new AnalyticSurfaceAttributes();

@@ -38,6 +38,7 @@ public class VisPointCloud extends VisAlgorithmAbstract {
     public List<Layer> createLayersFromData(Object data, Object[] attriutes) {
 
         log.debug("Running {}", this.getClass().getSimpleName());
+        setProgress(0);
         
         List<Layer> layers = new ArrayList<Layer>();
         if (data instanceof Shapefile) {
@@ -52,7 +53,8 @@ public class VisPointCloud extends VisAlgorithmAbstract {
         } else {
             log.warn("Data type not supported for Extrude Polygon Visualization.");
         }
-
+        
+        setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
         
         return layers;
@@ -69,6 +71,7 @@ public class VisPointCloud extends VisAlgorithmAbstract {
 
             List<Geometry> list = shpfile.getGeometryList(i);
             for (int j = 0; j < list.size(); j++) {
+                setProgress((int)(100 * j/(float)list.size()));
                 Geometry g = list.get(j);
                 for (int u = 0; u < g.GetPointCount(); u++) {
                     double[] point = g.GetPoint_2D(u);

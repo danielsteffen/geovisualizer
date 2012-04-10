@@ -90,7 +90,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
     public List<Layer> createLayersFromData(Object data, Object[] attributes) {
 
         log.debug("Running {}", this.getClass().getSimpleName());
-
+        setProgress(0);
         List<Layer> layers = new ArrayList<Layer>();
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
@@ -105,6 +105,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         } else {
             shapefile = (Shapefile) data;
         }
+        setProgress(5);
 
         // 1 - Check and set all attributes
         if (attributes == null || attributes.length == 0) {
@@ -121,25 +122,28 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
             attribute2 = checkAttribute(attributes[2]);
         }
         log.debug("Using attributes: " + attribute0 + ", " + attribute1 + ", " + attribute2);
-
+        setProgress(10);
+        
         // 2 - Preprocessing data
         ITransferFunction function0 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
-
+        setProgress(15);
+        
         ITransferFunction function1 = parCapColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
-
+        setProgress(20);
         ITransferFunction function2 = parSideColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
-
+        setProgress(25);
+        
         // 3 - Create visualization
         createRenderablesForPolygons(shapefile, attribute0, attribute1, layers);
-
+        setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
-
+        
         return layers;
     }
 
@@ -162,7 +166,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         for (int i = 0; i < shp.getFeatureCount(); i++) {
 
             createExtrudedPolygon(shp, i, attribute0, attribute1, layer);
-
+            setProgress(25 + (int)(75 * i / (double)shp.getFeatureCount()));
             if (layer.getNumRenderables() > this.numPolygonsPerLayer) {
                 layer = new RenderableLayer();
                 layer.setName(shp.getLayerName() + "-" + ++numLayers);
