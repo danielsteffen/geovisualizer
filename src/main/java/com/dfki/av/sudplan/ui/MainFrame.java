@@ -151,30 +151,27 @@ public class MainFrame extends javax.swing.JFrame {
         pVisualization = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
-        miExit = new javax.swing.JMenuItem();
-        mEdit = new javax.swing.JMenu();
+        miFullSphere = new javax.swing.JMenuItem();
         mGoto = new javax.swing.JMenu();
-        miGoto = new javax.swing.JMenuItem();
         miGoToStockhom = new javax.swing.JMenuItem();
         miGotoLinz = new javax.swing.JMenuItem();
         miGotoWuppertal = new javax.swing.JMenuItem();
         miGotoPraque = new javax.swing.JMenuItem();
-        miRemoveAllLayer = new javax.swing.JMenuItem();
-        mAdd = new javax.swing.JMenu();
-        miWizard = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        miGoto = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        miExit = new javax.swing.JMenuItem();
+        mLayer = new javax.swing.JMenu();
+        mLayers = new javax.swing.JMenu();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         mAddLayer = new javax.swing.JMenu();
         miAddGeoTiff = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         miAddShape = new javax.swing.JMenuItem();
         miAddShapeZip = new javax.swing.JMenuItem();
-        mAddDEM = new javax.swing.JMenu();
-        miAddElevation = new javax.swing.JMenuItem();
-        mView = new javax.swing.JMenu();
-        mLayers = new javax.swing.JMenu();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        miChangeOrder = new javax.swing.JMenuItem();
-        miFullSphere = new javax.swing.JMenuItem();
+        miRemoveAllLayer = new javax.swing.JMenuItem();
+        mWizard = new javax.swing.JMenu();
+        miWizard = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
 
@@ -320,29 +317,15 @@ public class MainFrame extends javax.swing.JFrame {
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
 
-        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_MASK));
-        miExit.setText(bundle.getString("MainFrame.miExit.text")); // NOI18N
-        miExit.addActionListener(new java.awt.event.ActionListener() {
+        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
+        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miExitActionPerformed(evt);
+                miFullSphereActionPerformed(evt);
             }
         });
-        mFile.add(miExit);
-
-        mbMain.add(mFile);
-
-        mEdit.setText(bundle.getString("MainFrame.mEdit.text")); // NOI18N
+        mFile.add(miFullSphere);
 
         mGoto.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mGoto.text")); // NOI18N
-
-        miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
-        miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
-        miGoto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoActionPerformed(evt);
-            }
-        });
-        mGoto.add(miGoto);
 
         miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
@@ -379,31 +362,36 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         mGoto.add(miGotoPraque);
+        mGoto.add(jSeparator3);
 
-        mEdit.add(mGoto);
-
-        miRemoveAllLayer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
-        miRemoveAllLayer.setText(bundle.getString("MainFrame.miRemoveAllLayer.text")); // NOI18N
-        miRemoveAllLayer.addActionListener(new java.awt.event.ActionListener() {
+        miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
+        miGoto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miRemoveAllLayerActionPerformed(evt);
+                miGotoActionPerformed(evt);
             }
         });
-        mEdit.add(miRemoveAllLayer);
+        mGoto.add(miGoto);
 
-        mbMain.add(mEdit);
+        mFile.add(mGoto);
+        mFile.add(jSeparator2);
 
-        mAdd.setText(bundle.getString("MainFrame.mAdd.text")); // NOI18N
-
-        miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
-        miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
-        miWizard.addActionListener(new java.awt.event.ActionListener() {
+        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_MASK));
+        miExit.setText(bundle.getString("MainFrame.miExit.text")); // NOI18N
+        miExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miWizardActionPerformed(evt);
+                miExitActionPerformed(evt);
             }
         });
-        mAdd.add(miWizard);
-        mAdd.add(jSeparator4);
+        mFile.add(miExit);
+
+        mbMain.add(mFile);
+
+        mLayer.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mLayer.text")); // NOI18N
+
+        mLayers.setText(bundle.getString("MainFrame.mLayers.text")); // NOI18N
+        mLayer.add(mLayers);
+        mLayer.add(jSeparator1);
 
         mAddLayer.setText(bundle.getString("MainFrame.mAddLayer.text")); // NOI18N
 
@@ -432,37 +420,31 @@ public class MainFrame extends javax.swing.JFrame {
         });
         mAddLayer.add(miAddShapeZip);
 
-        mAdd.add(mAddLayer);
+        mLayer.add(mAddLayer);
 
-        mAddDEM.setText(bundle.getString("MainFrame.mAddDEM.text")); // NOI18N
-        mAddDEM.setEnabled(false);
-
-        miAddElevation.setText(bundle.getString("MainFrame.miAddElevation.text")); // NOI18N
-        mAddDEM.add(miAddElevation);
-
-        mAdd.add(mAddDEM);
-
-        mbMain.add(mAdd);
-
-        mView.setText(bundle.getString("MainFrame.mView.text")); // NOI18N
-
-        mLayers.setText(bundle.getString("MainFrame.mLayers.text")); // NOI18N
-        mView.add(mLayers);
-        mView.add(jSeparator1);
-
-        miChangeOrder.setText(bundle.getString("MainFrame.miChangeOrder.text")); // NOI18N
-        miChangeOrder.setEnabled(false);
-        mView.add(miChangeOrder);
-
-        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
-        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
+        miRemoveAllLayer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        miRemoveAllLayer.setText(bundle.getString("MainFrame.miRemoveAllLayer.text")); // NOI18N
+        miRemoveAllLayer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miFullSphereActionPerformed(evt);
+                miRemoveAllLayerActionPerformed(evt);
             }
         });
-        mView.add(miFullSphere);
+        mLayer.add(miRemoveAllLayer);
 
-        mbMain.add(mView);
+        mbMain.add(mLayer);
+
+        mWizard.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWizard.text")); // NOI18N
+
+        miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
+        miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
+        miWizard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miWizardActionPerformed(evt);
+            }
+        });
+        mWizard.add(miWizard);
+
+        mbMain.add(mWizard);
 
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
 
@@ -686,29 +668,26 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JDialog dGoTo;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JOptionPane jopAddServer;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;
-    private javax.swing.JMenu mAdd;
-    private javax.swing.JMenu mAddDEM;
     private javax.swing.JMenu mAddLayer;
-    private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mGoto;
     private javax.swing.JMenu mHelp;
+    private javax.swing.JMenu mLayer;
     private javax.swing.JMenu mLayers;
-    private javax.swing.JMenu mView;
+    private javax.swing.JMenu mWizard;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
-    private javax.swing.JMenuItem miAddElevation;
     private javax.swing.JMenuItem miAddGeoTiff;
     private javax.swing.JMenuItem miAddShape;
     private javax.swing.JMenuItem miAddShapeZip;
-    private javax.swing.JMenuItem miChangeOrder;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
