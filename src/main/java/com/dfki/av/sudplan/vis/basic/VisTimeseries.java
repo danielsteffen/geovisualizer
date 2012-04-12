@@ -9,9 +9,11 @@ package com.dfki.av.sudplan.vis.basic;
 
 import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.ColorRuleClassification;
+import com.dfki.av.sudplan.vis.functions.ColorTransferFunction;
 import com.dfki.av.sudplan.vis.functions.ConstantNumber;
 import com.dfki.av.sudplan.vis.functions.IdentityFunction;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.render.Legend;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Sector;
@@ -135,6 +137,8 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
         setProgress(25);
+        
+        //missing function3
 
         // 3 - Create visualization            
         RenderableLayer layer = new RenderableLayer();
@@ -144,6 +148,22 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         layer.setName(shapefile.getLayerName());
         layers.add(layer);
 
+        // 4 - Create legends for visualization (if available)
+        List<IVisParameter> parameterList = getVisParameters();
+        for (IVisParameter iVisParameter : parameterList) {
+            ITransferFunction function = iVisParameter.getTransferFunction();
+            if (function instanceof ColorTransferFunction) {
+                ColorTransferFunction ctf = (ColorTransferFunction) function;
+                Legend legend = ctf.getLegend();
+                if (legend != null) {
+                    RenderableLayer rLayer = new RenderableLayer();
+                    rLayer.setName(shapefile.getLayerName() + " - " + iVisParameter.getName());
+                    rLayer.addRenderable(legend);
+                    rLayer.setEnabled(false);
+                    layers.add(rLayer);
+                }
+            }
+        }        
         setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
         

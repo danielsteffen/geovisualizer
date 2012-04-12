@@ -10,6 +10,7 @@ package com.dfki.av.sudplan.vis.basic;
 import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.render.Legend;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
@@ -123,27 +124,47 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         }
         log.debug("Using attributes: " + attribute0 + ", " + attribute1 + ", " + attribute2);
         setProgress(10);
-        
+
         // 2 - Preprocessing data
         ITransferFunction function0 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
         setProgress(15);
-        
+
         ITransferFunction function1 = parCapColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
         setProgress(20);
+
         ITransferFunction function2 = parSideColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
         setProgress(25);
-        
+
         // 3 - Create visualization
         createRenderablesForPolygons(shapefile, attribute0, attribute1, layers);
-        setProgress(100);
+        setProgress(95);
         log.debug("Finished {}", this.getClass().getSimpleName());
+
+        // 4 - Create legends for visualization (if available)
+        List<IVisParameter> parameterList = getVisParameters();
+        for (IVisParameter iVisParameter : parameterList) {
+            ITransferFunction function = iVisParameter.getTransferFunction();
+            if (function instanceof ColorTransferFunction) {
+                ColorTransferFunction ctf = (ColorTransferFunction) function;
+                Legend legend = ctf.getLegend();
+                if (legend != null) {
+                    RenderableLayer rLayer = new RenderableLayer();
+                    rLayer.setName(shapefile.getLayerName() + " - " + iVisParameter.getName());
+                    rLayer.addRenderable(legend);
+                    rLayer.setEnabled(false);
+                    layers.add(rLayer);
+                }
+            }
+        }
         
+        setProgress(100);
+
         return layers;
     }
 
@@ -166,7 +187,7 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
         for (int i = 0; i < shp.getFeatureCount(); i++) {
 
             createExtrudedPolygon(shp, i, attribute0, attribute1, layer);
-            setProgress(25 + (int)(75 * i / (double)shp.getFeatureCount()));
+            setProgress(25 + (int) (70 * i / (double) shp.getFeatureCount()));
             if (layer.getNumRenderables() > this.numPolygonsPerLayer) {
                 layer = new RenderableLayer();
                 layer.setName(shp.getLayerName() + "-" + ++numLayers);
@@ -263,5 +284,4 @@ public class VisExtrudePolygon extends VisAlgorithmAbstract {
             }
         }
     }
-
 }

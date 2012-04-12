@@ -10,6 +10,7 @@ package com.dfki.av.sudplan.vis.basic;
 import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.render.Legend;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -94,7 +95,7 @@ public class VisBuildings extends VisAlgorithmAbstract {
             shapefile = (Shapefile) data;
         }
         setProgress(5);
-        
+
         // 1 - Check and set all attributes
         if (attributes == null || attributes.length == 0) {
             log.warn("Attributes set to null. First and second attribute set to default.");
@@ -117,22 +118,41 @@ public class VisBuildings extends VisAlgorithmAbstract {
         log.debug("Using transfer function {} for attribute.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
         setProgress(15);
-        
+
         ITransferFunction function1 = parCapColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
         setProgress(20);
-        
+
         ITransferFunction function2 = parSideColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
         setProgress(25);
-        
+
         // 3 - Create visualization
         createRenderablesForPolygons(shapefile, attribute0, attribute1, attribute2, layers);
+        setProgress(95);
+
+        // 4 - Create legends for visualization (if available)
+        List<IVisParameter> parameterList = getVisParameters();
+        for (IVisParameter iVisParameter : parameterList) {
+            ITransferFunction function = iVisParameter.getTransferFunction();
+            if (function instanceof ColorTransferFunction) {
+                ColorTransferFunction ctf = (ColorTransferFunction) function;
+                Legend legend = ctf.getLegend();
+                if (legend != null) {
+                    RenderableLayer rLayer = new RenderableLayer();
+                    rLayer.setName(shapefile.getLayerName() + " - " + iVisParameter.getName());
+                    rLayer.addRenderable(legend);
+                    rLayer.setEnabled(false);
+                    layers.add(rLayer);
+                }
+            }
+        }
+
         setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
-        setProgress(0);
+
         return layers;
     }
 
@@ -151,12 +171,12 @@ public class VisBuildings extends VisAlgorithmAbstract {
         int numLayers = 0;
         layer.setName(shp.getLayerName() + "-" + numLayers);
         layers.add(layer);
-        
+
         for (int i = 0; i < shp.getFeatureCount(); i++) {
-            
+
             createExtrudedPolygon(shp, i, attribute0, attribute1, attribute2, layer);
-            setProgress(25 + (int)(75 * i / (double)shp.getFeatureCount()));
-            
+            setProgress(25 + (int) (75 * i / (double) shp.getFeatureCount()));
+
             if (layer.getNumRenderables() > this.numPolygonsPerLayer) {
                 layer = new RenderableLayer();
                 layer.setName(shp.getLayerName() + "-" + ++numLayers);

@@ -10,6 +10,7 @@ package com.dfki.av.sudplan.vis.basic;
 import com.dfki.av.sudplan.vis.core.*;
 import com.dfki.av.sudplan.vis.functions.*;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
+import com.dfki.av.sudplan.vis.render.Legend;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -51,10 +52,10 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
 
         this.parColor = new ColorParameter("Color of surface");
-        this.parColor.addTransferFunction(ConstantColor.class.getName()); 
+        this.parColor.addTransferFunction(ConstantColor.class.getName());
         this.parColor.addTransferFunction(RedGreenColorrampClassification.class.getName());
         this.parColor.addTransferFunction(ColorrampCategorization.class.getName());
-        addVisParameter(parColor);        
+        addVisParameter(parColor);
 
         this.parHeight = new NumberParameter("Extrusion of line [m]");
         this.parHeight.addTransferFunction(IdentityFunction.class.getName());
@@ -95,17 +96,18 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         }
         log.debug("Using {} and {} as attributes.", attribute0, attribute1);
         setProgress(10);
+
         // 2 - Pre-processing data
         ITransferFunction function0 = parColor.getTransferFunction();
         log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
         setProgress(15);
-        
+
         ITransferFunction function1 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
         setProgress(20);
-        
+
         // 3 - Create visualization
         if (Shapefile.isPolylineType(shapefile.getShapeType())) {
             RenderableLayer layer = new RenderableLayer();
@@ -118,7 +120,28 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         } else {
             log.warn("Extrude Polyline Visualization does not support shape type {}.", shapefile.getShapeType());
         }
+
+        setProgress(95);
+
+        // 4 - Create legends for visualization (if available)
+        List<IVisParameter> parameterList = getVisParameters();
+        for (IVisParameter iVisParameter : parameterList) {
+            ITransferFunction function = iVisParameter.getTransferFunction();
+            if (function instanceof ColorTransferFunction) {
+                ColorTransferFunction ctf = (ColorTransferFunction) function;
+                Legend legend = ctf.getLegend();
+                if (legend != null) {
+                    RenderableLayer rLayer = new RenderableLayer();
+                    rLayer.setName(shapefile.getLayerName() + " - " + iVisParameter.getName());
+                    rLayer.addRenderable(legend);
+                    rLayer.setEnabled(false);
+                    layers.add(rLayer);
+                }
+            }
+        }
+        
         setProgress(100);
+
         log.debug("Finished {}", this.getClass().getSimpleName());
         return layers;
     }
