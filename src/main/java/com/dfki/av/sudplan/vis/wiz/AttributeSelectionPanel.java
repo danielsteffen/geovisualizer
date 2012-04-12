@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,22 @@ public final class AttributeSelectionPanel extends JPanel {
     public AttributeSelectionPanel() {
         initComponents();
         // init my components here:
-
         this.tableModel = new AttributeTableModel();
         this.table = new JTable(tableModel);
         this.table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         this.table.setFillsViewportHeight(true);
+
+        // Set constant size of first column
+        TableColumn col = this.table.getColumnModel().getColumn(0);
+        col.setMinWidth(60);
+        col.setMaxWidth(60);
+        col.setPreferredWidth(60);
+        // Set constant size of last column
+        col = this.table.getColumnModel().getColumn(2);
+        col.setMinWidth(60);
+        col.setMaxWidth(60);
+        col.setPreferredWidth(60);
+        
         this.spAttributeTable = new JScrollPane(this.table);
         jPanel2.add(this.spAttributeTable);
     }
