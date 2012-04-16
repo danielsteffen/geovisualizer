@@ -13,10 +13,22 @@ import java.awt.Component;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ParameterMappingPanel extends JPanel {
 
+    /*
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(ParameterMappingPanel.class);
+    /**
+     * The {@link IVisAlgorithm} used for the parameter mapping.
+     */
     private IVisAlgorithm visAlgorithm;
+    /**
+     * The attriubtes set.
+     */
     private String[] attributes;
 
     /**
@@ -57,8 +69,9 @@ public final class ParameterMappingPanel extends JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
+     * Return the selected attributes.
      *
-     * @return
+     * @return the selected attributes to return.
      */
     public String[] getAttributes() {
 
@@ -69,16 +82,18 @@ public final class ParameterMappingPanel extends JPanel {
                 attributes[j] = visParameterPanel.getSelectedAttribute();
                 j++;
             } else {
-                System.out.println("No VisParameterPanel.");
+                log.debug("Component {} not of type {}.", c.getClass().getSimpleName(),
+                        VisParameterPanel.class.getSimpleName());
             }
         }
         return this.attributes;
     }
 
     /**
+     * Sets the {@link IVisAlgorithm} and the attributes to be visualized.
      *
-     * @param i
-     * @param attributes
+     * @param i the {@link IVisAlgorithm} to set.
+     * @param attributes the attributes from the dataset to set.
      */
     public void setSelectedVisualization(IVisAlgorithm i, List<String[]> attributes) {
         this.visAlgorithm = i;
