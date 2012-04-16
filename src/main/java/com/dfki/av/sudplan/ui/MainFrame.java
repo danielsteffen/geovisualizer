@@ -16,14 +16,22 @@ import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.wiz.VisWizIterator;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwindx.examples.WMSLayersPanel;
-import java.awt.BorderLayout;
+import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.openide.DialogDisplayer;
@@ -37,14 +45,27 @@ import org.slf4j.LoggerFactory;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    /**
+     * The logger.
+     */
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
+    /**
+     * An array of WMS.
+     */
     private static final String[] servers = new String[]{
         "http://serv-2118.kl.dfki.de:8888/geoserver/wms",
-        "http://www.wms.nrw.de/geobasis/DOP"
+        "http://www.wms.nrw.de/geobasis/DOP"/*,
+        /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/*,*/
+        /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"*/
     };
+    /**
+     * The size of the {@link #wwPanel}.
+     */
     private Dimension canvasSize;
+    /**
+     * The visualization panel wrapping the WorldWind canvas.
+     */
     private VisualizationPanel wwPanel;
-    private int previousTabIndex;
 
     /**
      * Creates new form MainFrame
@@ -52,7 +73,7 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-        this.canvasSize = new Dimension(1200, 800);
+        this.canvasSize = new Dimension(1500, 800);
         this.wwPanel = new VisualizationPanel(canvasSize);
         this.wwPanel.setPreferredSize(canvasSize);
         this.wwPanel.getWwd().getModel().addPropertyChangeListener(new PropertyChangeListener() {
@@ -65,63 +86,84 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         initComponents();
-        initWMSPanel();
+
+        for (String server : servers) {
+            addLayers(server);
+        }
         updateLayerMenu();
     }
 
     /**
-     * Initialize the WMS server panel.
-     */
-    private void initWMSPanel() {
-        jTabbedPane1.setTitleAt(0, "+");
-        for (int i = 0; i < servers.length; i++) {
-            // i+1 to place all server tabs to the right of the Add Server tab
-            addTab(i + 1, servers[i]);
-        }
-        // Display the first server pane by default.
-        jTabbedPane1.setSelectedIndex(this.jTabbedPane1.getTabCount() > 0 ? 1 : 0);
-        previousTabIndex = this.jTabbedPane1.getSelectedIndex();
-        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
-
-            @Override
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jTabbedPaneStateChanged(evt);
-            }
-        });
-    }
-
-    /**
-     * Add a server to the tabbed dialog at position
-     * <code>position</code>.
      *
-     * @param position
      * @param server
-     * @return
      */
-    private WMSLayersPanel addTab(int position, String server) {
-
+    private void addLayers(String server) {
         try {
-            WMSLayersPanel layersPanel = new WMSLayersPanel(this.wwPanel.getWwd(), server, new Dimension(100, 100));
-            this.jTabbedPane1.add(layersPanel, BorderLayout.CENTER);
-            String title = layersPanel.getServerDisplayString();
-            this.jTabbedPane1.setTitleAt(position, title != null && title.length() > 0 ? title : server);
+            final URI serverURI = new URI(server.trim());
 
-            // Add a listener to notice wms layer selections and tell the layer panel to reflect the new state.
-            layersPanel.addPropertyChangeListener("LayersPanelUpdated", new PropertyChangeListener() {
+            Thread loadingThread = new Thread(new Runnable() {
 
                 @Override
-                public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-//                    this.getLayerPanel().update(wwPanel.getWwd());
-//                    log.debug("property change event from layers panel");
+                public void run() {
+                    WMSCapabilities caps;
+                    final ArrayList<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
+                    try {
+                        caps = WMSCapabilities.retrieve(serverURI);
+                        caps.parse();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        return;
+                    }
+
+                    // Gather up all the named layers and make a world wind layer for each.
+                    final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
+                    if (namedLayerCaps == null) {
+                        log.debug("No named layers available for server: {}.", serverURI);
+                        return;
+                    }
+
+                    try {
+                        for (WMSLayerCapabilities lc : namedLayerCaps) {
+                            Set<WMSLayerStyle> styles = lc.getStyles();
+                            if (styles == null || styles.isEmpty()) {
+                                LayerInfo layerInfo = LayerInfo.create(caps, lc, null);
+                                layerInfos.add(layerInfo);
+                            } else {
+                                for (WMSLayerStyle style : styles) {
+                                    LayerInfo layerInfo = LayerInfo.create(caps, lc, style);
+                                    layerInfos.add(layerInfo);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        return;
+                    }
+
+                    // Fill the panel with the layer titles.
+                    EventQueue.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            for (LayerInfo layerInfo : layerInfos) {
+                                Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
+                                if (component instanceof Layer) {
+                                    Layer layer = (Layer) component;
+                                    LayerList layers = wwPanel.getWwd().getModel().getLayers();
+                                    layer.setEnabled(false);
+                                    if (!layers.contains(layer)) {
+                                        ApplicationTemplate.insertBeforePlacenames(wwPanel.getWwd(), layer);
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
             });
-
-            return layersPanel;
-        } catch (URISyntaxException e) {
-            JOptionPane.showMessageDialog(null, "Server URL is invalid", "Invalid Server URL",
-                    JOptionPane.ERROR_MESSAGE);
-            jTabbedPane1.setSelectedIndex(previousTabIndex);
-            return null;
+            loadingThread.setPriority(Thread.MIN_PRIORITY);
+            loadingThread.start();
+        } catch (URISyntaxException ex) {
+            log.error(ex.getMessage());
         }
     }
 
@@ -146,18 +188,15 @@ public class MainFrame extends javax.swing.JFrame {
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         pServer = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
         pVisualization = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
-        miFullSphere = new javax.swing.JMenuItem();
-        mGoto = new javax.swing.JMenu();
-        miGoToStockhom = new javax.swing.JMenuItem();
         miGotoLinz = new javax.swing.JMenuItem();
-        miGotoWuppertal = new javax.swing.JMenuItem();
         miGotoPraque = new javax.swing.JMenuItem();
-        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        miGoToStockhom = new javax.swing.JMenuItem();
+        miGotoWuppertal = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        miFullSphere = new javax.swing.JMenuItem();
         miGoto = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         miExit = new javax.swing.JMenuItem();
@@ -169,6 +208,8 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         miAddShape = new javax.swing.JMenuItem();
         miAddShapeZip = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        miAddWMS = new javax.swing.JMenuItem();
         miRemoveAllLayer = new javax.swing.JMenuItem();
         mWizard = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
@@ -272,32 +313,9 @@ public class MainFrame extends javax.swing.JFrame {
         jSplitPane1.setLastDividerLocation(1);
         jSplitPane1.setPreferredSize(new java.awt.Dimension(1024, 768));
 
-        pServer.setPreferredSize(new java.awt.Dimension(150, 603));
         pServer.setLayout(new java.awt.BorderLayout());
-
-        jTabbedPane1.setMinimumSize(new java.awt.Dimension(0, 0));
-        jTabbedPane1.setPreferredSize(new java.awt.Dimension(200, 603));
-
-        jPanel1.setPreferredSize(new java.awt.Dimension(33, 50));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 199, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 580, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
-
-        pServer.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
-
         jSplitPane1.setLeftComponent(pServer);
 
-        pVisualization.setPreferredSize(new java.awt.Dimension(100, 100));
         pVisualization.setLayout(new java.awt.BorderLayout());
 
         pVisualization.add(wwPanel, java.awt.BorderLayout.CENTER);
@@ -317,25 +335,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
 
-        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
-        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miFullSphereActionPerformed(evt);
-            }
-        });
-        mFile.add(miFullSphere);
-
-        mGoto.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mGoto.text")); // NOI18N
-
-        miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
-        miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGoToStockhomActionPerformed(evt);
-            }
-        });
-        mGoto.add(miGoToStockhom);
-
         miGotoLinz.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
         miGotoLinz.setText(bundle.getString("MainFrame.miGotoLinz.text")); // NOI18N
         miGotoLinz.addActionListener(new java.awt.event.ActionListener() {
@@ -343,16 +342,7 @@ public class MainFrame extends javax.swing.JFrame {
                 miGotoLinzActionPerformed(evt);
             }
         });
-        mGoto.add(miGotoLinz);
-
-        miGotoWuppertal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
-        miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoWuppertalActionPerformed(evt);
-            }
-        });
-        mGoto.add(miGotoWuppertal);
+        mFile.add(miGotoLinz);
 
         miGotoPraque.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         miGotoPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoPraque.text")); // NOI18N
@@ -361,8 +351,34 @@ public class MainFrame extends javax.swing.JFrame {
                 miGotoPraqueActionPerformed(evt);
             }
         });
-        mGoto.add(miGotoPraque);
-        mGoto.add(jSeparator3);
+        mFile.add(miGotoPraque);
+
+        miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
+        miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGoToStockhomActionPerformed(evt);
+            }
+        });
+        mFile.add(miGoToStockhom);
+
+        miGotoWuppertal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
+        miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoWuppertalActionPerformed(evt);
+            }
+        });
+        mFile.add(miGotoWuppertal);
+        mFile.add(jSeparator5);
+
+        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
+        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miFullSphereActionPerformed(evt);
+            }
+        });
+        mFile.add(miFullSphere);
 
         miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
         miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
@@ -371,9 +387,7 @@ public class MainFrame extends javax.swing.JFrame {
                 miGotoActionPerformed(evt);
             }
         });
-        mGoto.add(miGoto);
-
-        mFile.add(mGoto);
+        mFile.add(miGoto);
         mFile.add(jSeparator2);
 
         miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_MASK));
@@ -419,6 +433,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         mAddLayer.add(miAddShapeZip);
+        mAddLayer.add(jSeparator4);
+
+        miAddWMS.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddWMS.text")); // NOI18N
+        miAddWMS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddWMSActionPerformed(evt);
+            }
+        });
+        mAddLayer.add(miAddWMS);
 
         mLayer.add(mAddLayer);
 
@@ -503,19 +526,19 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
         JOptionPane.showMessageDialog(this, "This is the sudplan3D application."
                 + "\nDFKI (c) 2011-2012",
-                "About Sudplan",
+                "About Sudplan3D",
                 JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_miAboutActionPerformed
 
     private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff"));
-        
+
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        
+
         wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
 
     }//GEN-LAST:event_miAddGeoTiffActionPerformed
@@ -523,14 +546,14 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp"));
-        
+
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        
+
         IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-        if(algo != null){
+        if (algo != null) {
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
             log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
@@ -589,14 +612,21 @@ public class MainFrame extends javax.swing.JFrame {
         if (ret != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        
+
         IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-        if(algo != null){
+        if (algo != null) {
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
             log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
-        }        
+        }
     }//GEN-LAST:event_miAddShapeZipActionPerformed
+
+    private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
+        //String s = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE, null, null, "http://");
+        String s = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE);
+        addLayers(s);
+        updateLayerMenu();
+    }//GEN-LAST:event_miAddWMSActionPerformed
 
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -666,19 +696,17 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelGoToDialoag;
     private javax.swing.JButton btnGo;
     private javax.swing.JDialog dGoTo;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JOptionPane jopAddServer;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;
     private javax.swing.JMenu mAddLayer;
     private javax.swing.JMenu mFile;
-    private javax.swing.JMenu mGoto;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mLayer;
     private javax.swing.JMenu mLayers;
@@ -688,6 +716,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miAddGeoTiff;
     private javax.swing.JMenuItem miAddShape;
     private javax.swing.JMenuItem miAddShapeZip;
+    private javax.swing.JMenuItem miAddWMS;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
@@ -704,22 +733,4 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;
     // End of variables declaration//GEN-END:variables
-
-    private void jTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {
-        if (jTabbedPane1.getSelectedIndex() != 0) {
-            previousTabIndex = jTabbedPane1.getSelectedIndex();
-            return;
-        }
-
-        String server = JOptionPane.showInputDialog("Enter wms server URL");
-        if (server == null || server.length() < 1) {
-            jTabbedPane1.setSelectedIndex(previousTabIndex);
-            return;
-        }
-
-        // Respond by adding a new WMSLayerPanel to the tabbed pane.
-        if (addTab(jTabbedPane1.getTabCount(), server.trim()) != null) {
-            jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
-        }
-    }
 }

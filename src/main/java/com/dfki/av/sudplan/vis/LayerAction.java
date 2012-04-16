@@ -20,8 +20,9 @@ import org.slf4j.LoggerFactory;
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class LayerAction extends AbstractAction {
+
     private final Logger log = LoggerFactory.getLogger(getClass());
-    WorldWindow wwd;
+    private WorldWindow wwd;
     private Layer layer;
     private boolean selected;
 
@@ -42,8 +43,8 @@ public class LayerAction extends AbstractAction {
         }
         wwd.redraw();
     }
-    
-    public boolean isSelected(){
+
+    public boolean isSelected() {
         return this.selected;
     }
 }
