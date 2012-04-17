@@ -30,6 +30,14 @@ import org.gdal.ogr.Geometry;
  */
 public class VisExtrudePolyline extends VisAlgorithmAbstract {
 
+    /*
+     *
+     */
+    private final Double DEFAULT_HEIGHT = 1.0;
+    /*
+     *
+     */
+    private final Color DEFAULT_COLOR = new Color(1.0f, 1.0f, 1.0f, 0.0f);
     /**
      * The surface color of the extruded polyline.
      */
@@ -139,7 +147,7 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
                 }
             }
         }
-        
+
         setProgress(100);
 
         log.debug("Finished {}", this.getClass().getSimpleName());
@@ -160,8 +168,11 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
         ITransferFunction function0 = parColor.getTransferFunction();
         Color c = (Color) function0.calc(object0);
+        if (c == null) {
+            c = DEFAULT_COLOR;
+        }
+        
         Material m = new Material(c);
-
         ShapeAttributes sa = new BasicShapeAttributes();
         sa.setOutlineWidth(0.3);
         sa.setInteriorOpacity(0.6);
@@ -175,7 +186,10 @@ public class VisExtrudePolyline extends VisAlgorithmAbstract {
         Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         ITransferFunction function1 = parHeight.getTransferFunction();
         Double value1 = (Double) function1.calc(object1);
-
+        if(value1 == null){
+            value1 = DEFAULT_HEIGHT;
+        }
+                
         List<Position> positionList = new ArrayList<Position>();
         List<Geometry> list = shpfile.getGeometryList(featureId);
         for (int i = 0; i < list.size(); i++) {

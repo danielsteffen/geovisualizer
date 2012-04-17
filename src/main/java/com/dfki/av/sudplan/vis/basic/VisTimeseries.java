@@ -37,6 +37,14 @@ import org.gdal.ogr.Feature;
  */
 public class VisTimeseries extends VisAlgorithmAbstract {
 
+    /*
+     *
+     */
+    private final Double DEFAULT_HEIGHT = 1.0;
+    /*
+     *
+     */
+    private final Color DEFAULT_COLOR = new Color(1.0f, 1.0f, 1.0f, 0.0f);
     /**
      *
      */
@@ -50,9 +58,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      */
     private NumberParameter parHeight;
     /**
-     * 
+     *
      */
     private ColorParameter parColor;
+
     /**
      *
      */
@@ -73,7 +82,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
         this.parHeight = new NumberParameter("Height of Timeseries [m]");
         this.parHeight.addTransferFunction(ConstantNumber.class.getName());
         addVisParameter(parHeight);
-        
+
         this.parColor = new ColorParameter("Color definition");
         this.parColor.addTransferFunction(ColorRuleClassification.class.getName());
         addVisParameter(parColor);
@@ -84,7 +93,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
         log.debug("Running {}", this.getClass().getSimpleName());
         setProgress(0);
-        
+
         List<Layer> layers = new ArrayList<Layer>();
         String attribute0 = IVisAlgorithm.NO_ATTRIBUTE;
         String attribute1 = IVisAlgorithm.NO_ATTRIBUTE;
@@ -100,7 +109,7 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             shapefile = (Shapefile) data;
         }
         setProgress(5);
-        
+
         // 1 - Check and set all attributes
         if (attributes == null || attributes.length == 0) {
             log.error("Attributes set to null. Can not create visualization.");
@@ -119,25 +128,27 @@ public class VisTimeseries extends VisAlgorithmAbstract {
             attribute2 = checkAttribute(attributes[2]);
         }
         log.debug("Using " + attribute0 + ", " + attribute1
-                + ", " + attribute2 + /*", and " + attribute3 +*/ " as attributes.");
+                + ", " + attribute2 + /*
+                 * ", and " + attribute3 +
+                 */ " as attributes.");
         setProgress(10);
-        
+
         // 2 - Pre-processing data
         ITransferFunction function0 = parTimestep0.getTransferFunction();
         log.debug("Using transfer function {} for attribute 0.", function0.getClass().getSimpleName());
         function0.preprocess(shapefile, attribute0);
         setProgress(15);
-        
+
         ITransferFunction function1 = parTimestep1.getTransferFunction();
         log.debug("Using transfer function {} for attribute 1.", function1.getClass().getSimpleName());
         function1.preprocess(shapefile, attribute1);
         setProgress(20);
-        
+
         ITransferFunction function2 = parHeight.getTransferFunction();
         log.debug("Using transfer function {} for attribute 2.", function2.getClass().getSimpleName());
         function2.preprocess(shapefile, attribute2);
         setProgress(25);
-        
+
         //missing function3
 
         // 3 - Create visualization            
@@ -163,10 +174,10 @@ public class VisTimeseries extends VisAlgorithmAbstract {
                     layers.add(rLayer);
                 }
             }
-        }        
+        }
         setProgress(100);
         log.debug("Finished {}", this.getClass().getSimpleName());
-        
+
         return layers;
     }
 
@@ -174,6 +185,8 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      *
      * @param shpfile
      * @param layer
+     * @param attribute0
+     * @param attribute1
      */
     private void createTimeSeriesSurface(Shapefile shpfile, RenderableLayer layer, String attribute0, String attribute1) {
 
@@ -206,10 +219,6 @@ public class VisTimeseries extends VisAlgorithmAbstract {
      * @param timeToMix
      * @param firstBuffer
      * @param secondBuffer
-     * @param minValue
-     * @param maxValue
-     * @param minHue
-     * @param maxHue
      * @param surface
      */
     private void interpolateValuesOverTime(
@@ -261,10 +270,16 @@ public class VisTimeseries extends VisAlgorithmAbstract {
 
             ITransferFunction function0 = parHeight.getTransferFunction();
             Double height = (Double) function0.calc(null); // Actually, you don't need an argument!!
+            if (height == null) {
+                height = DEFAULT_HEIGHT;
+            }
 
             ITransferFunction function1 = parColor.getTransferFunction();
-            Color color = (Color) function1.calc(value); 
-            
+            Color color = (Color) function1.calc(value);
+            if (color == null) {
+                color = DEFAULT_COLOR;
+            }
+
             attributesList.add(AnalyticSurface.createGridPointAttributes(height, color));
         }
 

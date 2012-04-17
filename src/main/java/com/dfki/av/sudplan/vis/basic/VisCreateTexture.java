@@ -22,7 +22,7 @@ import java.util.List;
 public class VisCreateTexture extends VisAlgorithmAbstract {
 
     /**
-     *
+     * Constructor.
      */
     public VisCreateTexture() {
         super("CreateTexture", "Creates a texture visualization");

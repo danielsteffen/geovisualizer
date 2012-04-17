@@ -34,7 +34,19 @@ public class VisBuildings extends VisAlgorithmAbstract {
     /**
      *
      */
-    private final int numPolygonsPerLayer = 10000;
+    private final int NUM_POLYGONS_PER_LAYER = 10000;
+    /*
+     * 
+     */
+    private final Number DEFAULT_HEIGHT = 1.0;
+    /*
+     * 
+     */
+    private final Color DEFAULT_CAP_COLOR = Color.BLACK;
+    /*
+     * 
+     */
+    private final Color DEFAULT_SIDE_COLOR = Color.GRAY;
     /**
      *
      */
@@ -177,7 +189,7 @@ public class VisBuildings extends VisAlgorithmAbstract {
             createExtrudedPolygon(shp, i, attribute0, attribute1, attribute2, layer);
             setProgress(25 + (int) (75 * i / (double) shp.getFeatureCount()));
 
-            if (layer.getNumRenderables() > this.numPolygonsPerLayer) {
+            if (layer.getNumRenderables() > this.NUM_POLYGONS_PER_LAYER) {
                 layer = new RenderableLayer();
                 layer.setName(shp.getLayerName() + "-" + ++numLayers);
                 layer.setEnabled(false);
@@ -186,12 +198,15 @@ public class VisBuildings extends VisAlgorithmAbstract {
         }
     }
 
+
     /**
-     *
+     * 
      * @param shpfile
      * @param featureId
      * @param attribute0
-     * @param layer
+     * @param attribute1
+     * @param attribute2
+     * @param layer 
      */
     private void createExtrudedPolygon(Shapefile shpfile, int featureId, String attribute0, String attribute1, String attribute2, RenderableLayer layer) {
 
@@ -201,6 +216,10 @@ public class VisBuildings extends VisAlgorithmAbstract {
         Object object0 = shpfile.getAttributeOfFeature(featureId, attribute0);
         ITransferFunction tfHeight = parHeight.getTransferFunction();
         Number result = (Number) tfHeight.calc(object0);
+        if(result == null){
+            result = DEFAULT_HEIGHT;
+        }
+        
         double dResult = result.doubleValue();
         if (dResult < 0) {
             log.error("The input value for ExtrudedPolygon < 0."
@@ -218,6 +237,10 @@ public class VisBuildings extends VisAlgorithmAbstract {
         Object object1 = shpfile.getAttributeOfFeature(featureId, attribute1);
         ITransferFunction tfCapColor = parCapColor.getTransferFunction();
         Color capColor = (Color) tfCapColor.calc(object1);
+        if(capColor == null){
+            capColor = DEFAULT_CAP_COLOR;
+        }
+        
         Material capMaterial = new Material(capColor);
         BasicShapeAttributes attrCap = new BasicShapeAttributes();
         attrCap.setDrawOutline(false);
@@ -230,6 +253,10 @@ public class VisBuildings extends VisAlgorithmAbstract {
         Object object2 = shpfile.getAttributeOfFeature(featureId, attribute2);
         ITransferFunction tfSideColor = parSideColor.getTransferFunction();
         Color sideColor = (Color) tfSideColor.calc(object2);
+        if(sideColor == null){
+            sideColor = DEFAULT_SIDE_COLOR;
+        }
+        
         Material sideMaterial = new Material(sideColor);
         BasicShapeAttributes attrSide = new BasicShapeAttributes();
         attrSide.setDrawOutline(true);
