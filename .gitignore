@@ -8,4 +8,9 @@ VS08/
 .test
 .DS_Store
 target/
-nbactions.xml
+nbactions.xmlnbactions-s3d-main-deploy-cismet.xml
+nbactions-s3d-main-deploy-dfki.xml
+nbactions-s3D-main-dev.xml
+nbactions-s3D-main-webstart-offical.xml
+nbactions-s3D-main-webstart-steffen.xml
+*.jpr
