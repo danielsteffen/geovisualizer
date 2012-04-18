@@ -145,12 +145,12 @@
             <artifactId>sudplan3D-core</artifactId>
             <version>1.1-SNAPSHOT</version>            
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-rasterize</artifactId>
             <version>1.0</version>
             <scope>runtime</scope>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
