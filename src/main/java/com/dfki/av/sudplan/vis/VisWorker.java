@@ -12,6 +12,7 @@ import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.utils.AVUtils;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import java.io.File;
@@ -125,7 +126,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
         }
 
         layerList = algo.createLayersFromData(data, attributes);
-
+        
         return layerList;
     }
 
@@ -141,8 +142,19 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
                     log.info("-- {}", iVisParameter.getClass().getName());
                     log.info("--- {}", iVisParameter.getTransferFunction().getClass().getName());
                 }
+                
                 LayerList layers = wwd.getModel().getLayers();
                 layers.addAllAbsent(layerlist);
+                
+                SelectListener listener = algo.getSelectListener();
+                if(listener != null){
+                    wwd.addSelectListener(listener);
+                } else {
+                    log.debug("No {} available to control visualization {}", 
+                            SelectListener.class.getSimpleName(), 
+                            algo.getClass().getSimpleName());
+                }
+                
                 wwd.repaint();
             } else {
                 log.warn("Parameter 'layerlist' is empty. Nothing to add.");
