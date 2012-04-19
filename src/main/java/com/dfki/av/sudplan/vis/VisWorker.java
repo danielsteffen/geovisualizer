@@ -2,7 +2,7 @@
  *  VisWorker.java 
  *
  *  Created by DFKI AV on 07.10.2011.
- *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis;
@@ -11,7 +11,7 @@ import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
 import com.dfki.av.sudplan.vis.utils.AVUtils;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
@@ -39,9 +39,9 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
      */
     private Object dataSource;
     /**
-     * The canvas where the layer will be added.
+     * The {@link WorldWindow} where the layer will be added.
      */
-    private WorldWindowGLCanvas wwd;
+    private WorldWindow worldWindow;
     /**
      * The visualization algorithm used to create the layer.
      */
@@ -57,7 +57,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
      * @param vis
      * @param canvas
      */
-    public VisWorker(final Object data, final IVisAlgorithm vis, final Object[] attributes, WorldWindowGLCanvas canvas) {
+    public VisWorker(final Object data, final IVisAlgorithm vis, final Object[] attributes, WorldWindow canvas) {
         if (data == null) {
             log.error("Parameter 'data' is null.");
             throw new IllegalArgumentException("Parameter 'data' is null.");
@@ -76,7 +76,7 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
         this.dataSource = data;
         this.algo = vis;
         this.attributes = attributes;
-        this.wwd = canvas;
+        this.worldWindow = canvas;
     }
 
     @Override
@@ -143,19 +143,19 @@ public class VisWorker extends SwingWorker<List<Layer>, Void> {
                     log.info("--- {}", iVisParameter.getTransferFunction().getClass().getName());
                 }
                 
-                LayerList layers = wwd.getModel().getLayers();
+                LayerList layers = worldWindow.getModel().getLayers();
                 layers.addAllAbsent(layerlist);
                 
                 SelectListener listener = algo.getSelectListener();
                 if(listener != null){
-                    wwd.addSelectListener(listener);
+                    worldWindow.addSelectListener(listener);
                 } else {
                     log.debug("No {} available to control visualization {}", 
                             SelectListener.class.getSimpleName(), 
                             algo.getClass().getSimpleName());
                 }
                 
-                wwd.repaint();
+                worldWindow.redraw();
             } else {
                 log.warn("Parameter 'layerlist' is empty. Nothing to add.");
             }

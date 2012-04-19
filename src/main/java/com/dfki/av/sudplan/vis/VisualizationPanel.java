@@ -2,7 +2,7 @@
  *  VisualizationPanel.java 
  *
  *  Created by DFKI AV on 15.09.2011.
- *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis;
@@ -11,6 +11,7 @@ import com.dfki.av.sudplan.camera.*;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
+import com.dfki.av.sudplan.vis.wiz.VisWiz;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -96,11 +97,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Returns the
-     * <code>WorldWindowGLCanvas</code>.
+     * Returns the {@link WorldWindowGLCanvas} used by the {@link VisualizationPanel}
      *
-     * @return the
-     * <code>WorldWindowGLCanvas</code> to return.
+     * @return the {@link WorldWindowGLCanvas} to return.
      */
     public WorldWindowGLCanvas getWwd() {
         return this.wwd;
@@ -117,10 +116,13 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
+     * Add a layer visualization to the {@link WorldWindowGLCanvas}. The
+     * visualization is created by using the {@code data}, the {@link IVisAlgorithm},
+     * and the {@code attributes}.
      *
-     * @param data
-     * @param vis
-     * @param attributes
+     * @param data the data source for the visualization.
+     * @param vis the visualization technique.
+     * @param attributes the attributes of the data source to be visualized.
      */
     public void addLayer(Object data, IVisAlgorithm vis, Object[] attributes) {
         vis.addPropertyChangeListener(this);
@@ -259,5 +261,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public void removeProgressListener(PropertyChangeListener listener) {
         this.progressChange.removePropertyChangeListener(IVisAlgorithm.PROGRESS_PROPERTY, listener);
+    }
+
+    /**
+     * Run the {@link VisWiz} and add its result to the {@link #wwd}.
+     */
+    public void runVisWiz() {
+        VisWiz.execute(wwd, this);
     }
 }

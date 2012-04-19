@@ -561,23 +561,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_miAddShapeActionPerformed
 
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
-        // Check all vis algos and collect them somehow.
-        WizardDescriptor.Iterator iterator = new VisWizIterator();
-        WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
-        // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
-        // {1} will be replaced by WizardDescriptor.Iterator.name()
-        wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
-        wizardDescriptor.setTitle("VisWiz");
-        Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
-        dialog.setVisible(true);
-        dialog.toFront();
-        boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
-        if (!cancelled) {
-            Object data = wizardDescriptor.getProperty("SelectedDataSource");
-            IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("SelectedVisualization");
-            String[] dataAttributes = (String[]) wizardDescriptor.getProperty("SelectedDataAttributes");
-            wwPanel.addLayer(data, visAlgo, dataAttributes);
-        }
+        wwPanel.runVisWiz();
     }//GEN-LAST:event_miWizardActionPerformed
 
     private void miRemoveAllLayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveAllLayerActionPerformed
