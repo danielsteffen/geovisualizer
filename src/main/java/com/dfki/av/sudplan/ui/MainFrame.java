@@ -49,9 +49,14 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private static final String[] servers = new String[]{
         "http://serv-2118.kl.dfki.de:8888/geoserver/wms",
-        "http://www.wms.nrw.de/geobasis/DOP"/*,
-        /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/*,*/
-        /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"*/
+        "http://www.wms.nrw.de/geobasis/DOP"/*
+     * ,
+     * /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/*,
+     */
+    /*
+     * "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"
+     */
+
     };
     /**
      * The size of the {@link #wwPanel}.
@@ -180,6 +185,13 @@ public class MainFrame extends javax.swing.JFrame {
         btnCancelGoToDialoag = new javax.swing.JButton();
         btnGo = new javax.swing.JButton();
         jopAddServer = new javax.swing.JOptionPane();
+        dChangeLayerOrder = new javax.swing.JDialog();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        btnUp = new javax.swing.JButton();
+        btnDown = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         pServer = new javax.swing.JPanel();
@@ -206,6 +218,7 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         miAddWMS = new javax.swing.JMenuItem();
         miRemoveAllLayer = new javax.swing.JMenuItem();
+        miChangeLayerOrder = new javax.swing.JMenuItem();
         mWizard = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
@@ -296,6 +309,81 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(btnCancelGoToDialoag)
                     .addComponent(btnGo))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        dChangeLayerOrder.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dChangeLayerOrder.title")); // NOI18N
+        dChangeLayerOrder.setMinimumSize(new java.awt.Dimension(435, 300));
+        dChangeLayerOrder.setResizable(false);
+
+        jLabel1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jLabel1.text")); // NOI18N
+
+        btnUp.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnUp.text")); // NOI18N
+        btnUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpActionPerformed(evt);
+            }
+        });
+
+        btnDown.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnDown.text")); // NOI18N
+        btnDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDownActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnDown, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(btnUp)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnDown))
+        );
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(jList1);
+
+        javax.swing.GroupLayout dChangeLayerOrderLayout = new javax.swing.GroupLayout(dChangeLayerOrder.getContentPane());
+        dChangeLayerOrder.getContentPane().setLayout(dChangeLayerOrderLayout);
+        dChangeLayerOrderLayout.setHorizontalGroup(
+            dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        dChangeLayerOrderLayout.setVerticalGroup(
+            dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                    .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -449,6 +537,14 @@ public class MainFrame extends javax.swing.JFrame {
         });
         mLayer.add(miRemoveAllLayer);
 
+        miChangeLayerOrder.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miChangeLayerOrder.text")); // NOI18N
+        miChangeLayerOrder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miChangeLayerOrderActionPerformed(evt);
+            }
+        });
+        mLayer.add(miChangeLayerOrder);
+
         mbMain.add(mLayer);
 
         mWizard.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWizard.text")); // NOI18N
@@ -601,11 +697,47 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
-        //String s = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE, null, null, "http://");
         String s = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE);
         addLayers(s);
-        updateLayerMenu();
     }//GEN-LAST:event_miAddWMSActionPerformed
+
+    private void miChangeLayerOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miChangeLayerOrderActionPerformed
+        updateListModel();
+        dChangeLayerOrder.setVisible(true);
+    }//GEN-LAST:event_miChangeLayerOrderActionPerformed
+
+    private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
+        int id = jList1.getSelectedIndex();
+        if (id > 0) {
+            LayerList layerlist = wwPanel.getWwd().getModel().getLayers();
+            Layer layer = layerlist.remove(id);
+            layerlist.add(id - 1, layer);
+            updateListModel();
+            jList1.setSelectedIndex(id - 1);
+            jList1.ensureIndexIsVisible(id - 1);
+        }
+    }//GEN-LAST:event_btnUpActionPerformed
+
+    private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
+        int id = jList1.getSelectedIndex();
+        if (id < jList1.getModel().getSize() - 1) {
+            LayerList layerlist = wwPanel.getWwd().getModel().getLayers();
+            Layer layer = layerlist.remove(id);
+            layerlist.add(id + 1, layer);
+            updateListModel();
+            jList1.setSelectedIndex(id + 1);
+            jList1.ensureIndexIsVisible(id + 1);
+        }
+    }//GEN-LAST:event_btnDownActionPerformed
+
+    private void updateListModel() {
+        DefaultListModel listModel = new DefaultListModel();
+        LayerList layerlist = wwPanel.getWwd().getModel().getLayers();
+        for (Layer l : layerlist) {
+            listModel.addElement(l.getName());
+        }
+        jList1.setModel(listModel);
+    }
 
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -673,8 +805,15 @@ public class MainFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelGoToDialoag;
+    private javax.swing.JButton btnDown;
     private javax.swing.JButton btnGo;
+    private javax.swing.JButton btnUp;
+    private javax.swing.JDialog dChangeLayerOrder;
     private javax.swing.JDialog dGoTo;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -696,6 +835,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miAddShape;
     private javax.swing.JMenuItem miAddShapeZip;
     private javax.swing.JMenuItem miAddWMS;
+    private javax.swing.JMenuItem miChangeLayerOrder;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
