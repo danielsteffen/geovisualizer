@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dfki.av.sudplan.ui;
+package com.dfki.av.sudplan.vis;
 
 import gov.nasa.worldwind.Factory;
 import gov.nasa.worldwind.WorldWind;

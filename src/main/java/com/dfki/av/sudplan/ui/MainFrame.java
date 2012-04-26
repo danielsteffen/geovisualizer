@@ -16,19 +16,9 @@ import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
-import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
-import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
@@ -88,83 +78,9 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
 
         for (String server : servers) {
-            addLayers(server);
+            wwPanel.addWMS(server);
         }
         updateLayerMenu();
-    }
-
-    /**
-     *
-     * @param server
-     */
-    private void addLayers(String server) {
-        try {
-            final URI serverURI = new URI(server.trim());
-
-            Thread loadingThread = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    WMSCapabilities caps;
-                    final ArrayList<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
-                    try {
-                        caps = WMSCapabilities.retrieve(serverURI);
-                        caps.parse();
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return;
-                    }
-
-                    // Gather up all the named layers and make a world wind layer for each.
-                    final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
-                    if (namedLayerCaps == null) {
-                        log.debug("No named layers available for server: {}.", serverURI);
-                        return;
-                    }
-
-                    try {
-                        for (WMSLayerCapabilities lc : namedLayerCaps) {
-                            Set<WMSLayerStyle> styles = lc.getStyles();
-                            if (styles == null || styles.isEmpty()) {
-                                LayerInfo layerInfo = LayerInfo.create(caps, lc, null);
-                                layerInfos.add(layerInfo);
-                            } else {
-                                for (WMSLayerStyle style : styles) {
-                                    LayerInfo layerInfo = LayerInfo.create(caps, lc, style);
-                                    layerInfos.add(layerInfo);
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return;
-                    }
-
-                    // Fill the panel with the layer titles.
-                    EventQueue.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (LayerInfo layerInfo : layerInfos) {
-                                Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
-                                if (component instanceof Layer) {
-                                    Layer layer = (Layer) component;
-                                    LayerList layers = wwPanel.getWwd().getModel().getLayers();
-                                    layer.setEnabled(false);
-                                    if (!layers.contains(layer)) {
-                                        ApplicationTemplate.insertBeforePlacenames(wwPanel.getWwd(), layer);
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-            loadingThread.setPriority(Thread.MIN_PRIORITY);
-            loadingThread.start();
-        } catch (URISyntaxException ex) {
-            log.error(ex.getMessage());
-        }
     }
 
     /**
@@ -631,7 +547,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
-
     }//GEN-LAST:event_miAddGeoTiffActionPerformed
 
     private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
@@ -698,7 +613,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
         String s = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE);
-        addLayers(s);
+        wwPanel.addWMS(s);
     }//GEN-LAST:event_miAddWMSActionPerformed
 
     private void miChangeLayerOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miChangeLayerOrderActionPerformed

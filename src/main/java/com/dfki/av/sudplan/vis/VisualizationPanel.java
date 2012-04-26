@@ -15,18 +15,29 @@ import com.dfki.av.sudplan.vis.wiz.VisWiz;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.StatusBar;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
@@ -103,6 +114,93 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     public WorldWindowGLCanvas getWwd() {
         return this.wwd;
+    }
+
+    /**
+     * Contect to the WMS at the given {@link URI}. Adds all available layers to
+     * the {@link WorldWindow}. The layers are disabled by default.
+     *
+     * @param uri the server string to be parsed into a {@link URI}.
+     * @throws IllegalArgumentException if uri is {@code null} or is empty.
+     */
+    public void addWMS(String uri) {
+        if (uri == null) {
+            String msg = "URI is null. No valid URI for WMS.";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (uri.isEmpty()) {
+            String msg = "URI is empty. No valid URI for WMS.";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        try {
+            final URI serverURI = new URI(uri.trim());
+            Thread loadingThread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    WMSCapabilities caps;
+                    final ArrayList<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
+                    try {
+                        caps = WMSCapabilities.retrieve(serverURI);
+                        caps.parse();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        return;
+                    }
+
+                    // Gather up all the named layers and make a world wind layer for each.
+                    final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
+                    if (namedLayerCaps == null) {
+                        log.debug("No named layers available for server: {}.", serverURI);
+                        return;
+                    }
+
+                    try {
+                        for (WMSLayerCapabilities lc : namedLayerCaps) {
+                            Set<WMSLayerStyle> styles = lc.getStyles();
+                            if (styles == null || styles.isEmpty()) {
+                                LayerInfo layerInfo = LayerInfo.create(caps, lc, null);
+                                layerInfos.add(layerInfo);
+                            } else {
+                                for (WMSLayerStyle style : styles) {
+                                    LayerInfo layerInfo = LayerInfo.create(caps, lc, style);
+                                    layerInfos.add(layerInfo);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        return;
+                    }
+
+                    // Add the layers to the world window
+                    EventQueue.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            for (LayerInfo layerInfo : layerInfos) {
+                                Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
+                                if (component instanceof Layer) {
+                                    Layer layer = (Layer) component;
+                                    LayerList layers = wwd.getModel().getLayers();
+                                    layer.setEnabled(false);
+                                    if (!layers.contains(layer)) {
+                                        ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            loadingThread.setPriority(Thread.MIN_PRIORITY);
+            loadingThread.start();
+        } catch (URISyntaxException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     @Override
