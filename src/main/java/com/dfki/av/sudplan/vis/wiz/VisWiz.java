@@ -7,8 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.VisWorker;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.VisWorker;
 import gov.nasa.worldwind.WorldWindow;
 import java.awt.Dialog;
 import java.beans.PropertyChangeEvent;
