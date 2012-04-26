@@ -18,29 +18,44 @@ import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 
 /**
- * This class provides the visualization wizard VisWiz. 
- * 
+ * This class provides the visualization wizard VisWiz.
+ *
  * @author steffen
  */
 public final class VisWiz {
 
     /**
      * Starts the visualization wizard VisWiz. After finishing the visualization
-     * will be added automatically to the {@link WorldWindow} instance. The
-     * {@link PropertyChangeListener} can be used to montior the progress of
-     * the visualization creation process. The name of the {@link PropertyChangeEvent}
-     * event is {@link IVisAlgorithm#PROGRESS_PROPERTY}.
-     * 
-     * @param worldWindow the {@link WorldWindow} where to add the visualization.
-     * @param listener the {@link PropertyChangeListener} to add.
+     * will be added automatically to the {@link WorldWindow} instance.
+     *
+     * @param worldWindow the {@link WorldWindow} where to add the
+     * visualization.
+     * @return the configuration to return or {@code null}
      * @throws IllegalArgumentException if {@code worldWindow} set to null.
      */
-    public static void execute(WorldWindow worldWindow, PropertyChangeListener listener) {
+    public static Object execute(WorldWindow worldWindow) {
+        return execute(worldWindow, null);
+    }
 
-        if(worldWindow == null){
+    /**
+     * Starts the visualization wizard VisWiz. After finishing the visualization
+     * will be added automatically to the {@link WorldWindow} instance. The
+     * {@link PropertyChangeListener} can be used to montior the progress of the
+     * visualization creation process. The name of the {@link PropertyChangeEvent}
+     * event is {@link IVisAlgorithm#PROGRESS_PROPERTY}.
+     *
+     * @param worldWindow the {@link WorldWindow} where to add the
+     * visualization.
+     * @param listener the {@link PropertyChangeListener} to add.
+     * @return the configuration to return or {@code null}.
+     * @throws IllegalArgumentException if {@code worldWindow} set to null.
+     */
+    public static Object execute(WorldWindow worldWindow, PropertyChangeListener listener) {
+
+        if (worldWindow == null) {
             throw new IllegalArgumentException("WorldWindow not defined. Set to null.");
         }
-        
+
         WizardDescriptor.Iterator iterator = new VisWizIterator();
         WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
         wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
@@ -61,5 +76,6 @@ public final class VisWiz {
             VisWorker producer = new VisWorker(data, visAlgo, dataAttributes, worldWindow);
             producer.execute();
         }
+        return null;
     }
 }
