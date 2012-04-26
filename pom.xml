@@ -352,5 +352,9 @@
     <ciManagement>
         <system>hudson</system>
         <url>http://serv-2110.kl.dfki.de:8080/</url>
-    </ciManagement>    
+    </ciManagement>
+    
+    <scm>
+        <connection>scm:git:git://serv-2100/sudplan.git</connection>
+    </scm>
 </project>
