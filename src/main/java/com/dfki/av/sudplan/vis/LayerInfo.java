@@ -1,6 +1,9 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  LayerInfo.java 
+ *
+ *  Created by DFKI AV on 15.04.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.vis;
 
@@ -15,9 +18,15 @@ import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwind.util.WWUtil;
 import java.util.Set;
 
+/**
+ *
+ *
+ * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
+ */
 public class LayerInfo {
 
     protected WMSCapabilities caps;
+    protected WMSLayerCapabilities lcaps;
     protected AVListImpl params = new AVListImpl();
 
     protected String getTitle() {
@@ -32,11 +41,24 @@ public class LayerInfo {
         return params.getStringValue(AVKey.LAYER_ABSTRACT);
     }
 
-    protected static LayerInfo create(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
+    public WMSCapabilities getWMSCapabilities() {
+        return caps;
+    }
+
+    public WMSLayerCapabilities getLayerCapabilities() {
+        return lcaps;
+    }
+
+    public AVListImpl getParameter() {
+        return params;
+    }
+
+    public static LayerInfo create(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
         // Create the layer info specified by the layer's capabilities entry and the selected style.
 
         LayerInfo linfo = new LayerInfo();
         linfo.caps = caps;
+        linfo.lcaps = layerCaps;
         linfo.params = new AVListImpl();
         linfo.params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
         if (style != null) {
@@ -52,6 +74,12 @@ public class LayerInfo {
         return linfo;
     }
 
+    /**
+     *
+     * @param caps
+     * @param layerInfo
+     * @return
+     */
     protected static String makeTitle(WMSCapabilities caps, LayerInfo layerInfo) {
         String layerNames = layerInfo.params.getStringValue(AVKey.LAYER_NAMES);
         String styleNames = layerInfo.params.getStringValue(AVKey.STYLE_NAMES);
@@ -87,7 +115,13 @@ public class LayerInfo {
         return sb.toString();
     }
 
-    protected static Object createComponent(WMSCapabilities caps, AVList params) {
+    /**
+     *
+     * @param caps
+     * @param params
+     * @return
+     */
+    public static Object createComponent(WMSCapabilities caps, AVList params) {
         AVList configParams = params.copy(); // Copy to insulate changes from the caller.
 
         // Some wms servers are slow, so increase the timeouts and limits used by world wind's retrievers.
@@ -106,6 +140,11 @@ public class LayerInfo {
         return null;
     }
 
+    /**
+     *
+     * @param caps
+     * @return
+     */
     protected static String getFactoryKeyForCapabilities(WMSCapabilities caps) {
         boolean hasApplicationBilFormat = false;
 
@@ -118,5 +157,10 @@ public class LayerInfo {
         }
 
         return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
+    }
+
+    @Override
+    public String toString() {
+        return params.getStringValue(AVKey.DISPLAY_NAME);
     }
 }

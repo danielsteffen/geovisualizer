@@ -18,6 +18,7 @@ import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -367,5 +368,28 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     public void runVisWiz() {
         VisWiz.execute(wwd, this);
+    }
+    
+    /**
+     * 
+     * @param caps
+     * @param lcaps
+     * @param params
+     * @param elevation
+     * @param opacity 
+     */
+    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity){
+        SurfaceImageLayer sul = new SurfaceImageLayer();
+        addLayer(sul);
+        WMSHeightUtils.addComponent(sul, caps, lcaps, params, elevation, opacity);
+    }
+    
+    /**
+     * 
+     * @param serverURI
+     * @return 
+     */
+    public List<LayerInfo> getWMSLayerInfos(URI serverURI) {
+        return WMSHeightUtils.getLayerInfos(serverURI);
     }
 }
