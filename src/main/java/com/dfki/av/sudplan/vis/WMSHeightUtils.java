@@ -7,11 +7,8 @@
  */
 package com.dfki.av.sudplan.vis;
 
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Globe;
@@ -19,9 +16,8 @@ import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
-import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.ExtrudedPolygon;
-import gov.nasa.worldwind.render.ShapeAttributes;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import java.awt.image.BufferedImage;
 import java.net.URI;
@@ -33,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Utility class for the generation of elevated WMS Layers
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
@@ -43,21 +39,53 @@ public class WMSHeightUtils {
      * The logger.
      */
     private static final Logger log = LoggerFactory.getLogger(WMSHeightUtils.class);
+    /**
+     * Image resolution
+     */
+    private static final int RESOLUTION = 512;
 
     /**
+     * Devides
+     * <code>Sector</code> from the WMS data in subsectors and fill the
+     * <code>SurfaceImageLayer</code> with the images retrieved for this
+     * subsectors, in an elevation specified with the parameter
+     * <code>elevation</code> and an opacity specified by the parameter
+     * <code>opacity</code>.
+     *
+     * The amount of subsectors is decided in dependency of the length of the
+     * diagonal (in kilometers) of the
+     * <code>Sector</code>:
+     *
+     * <code>sector.subdivide(4 + (int) Math.sqrt(distance))</code> Which
+     * results in (4+squrt(distance))^2 subsectors
+     *
+     * The images for the subsectors are retrieved with a hardcoded resolution
+     * of 128px x 128px (
+     * <code>private static final int RESOLUTION = 128;</code>)
+     *
+     * The level parameter for the WMSTiledImageLayer.composeImageForSector is
+     * hardcoded to -1 which retrieves all levels with content for the image. (
+     * <code>int level = -1;</code>)
+     *
+     * The scale parameter for the WMSTiledImageLayer.composeImageForSector is
+     * hardcoded tp 1. because we don't want to change the scale of the image.
      *
      * @param caps
+     * <code>WMSCapabiilities</code> of the Layer</code>
      * @param lcaps
+     * <code>WMSLayerCapabilities</code> of the
+     * <code>Layer</code>
      * @param params
-     * @param elevation
-     * @param opacity
+     * <code>Parameters</code> for the
+     * <code>Layer</code>
+     * @param elevation Elevation for the layer (in meter)
+     * @param opacity Opacity for the layer (100 is transparent, 0 is
+     * intransparent)
      */
-    protected static void addComponent(SurfaceImageLayer sul, WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
-        AVList configParams = params.copy(); // Copy to insulate changes from the caller.
+    protected static void addWMSDataToLayer(SurfaceImageLayer sul, WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+        // Copy AVList to insulate changes from the caller.
+        AVList configParams = params.copy();
         String image_format = "";
-        for (String s : caps.getImageFormats()) {
-            log.debug(s);
-        }
         for (String s : caps.getImageFormats()) {
             if (s.endsWith("gif") || s.endsWith("png")) {
                 image_format = s;
@@ -79,58 +107,56 @@ public class WMSHeightUtils {
         }
         Sector sector = lcaps.getGeographicBoundingBox();
         double distance = distance(sector.getMinLatitude().degrees, sector.getMinLongitude().degrees, sector.getMaxLatitude().degrees, sector.getMaxLongitude().degrees, "K");
-        int parts = 2 + (int) (distance / 3);
-        Sector[] sectors = sector.subdivide(parts);
+        Sector[] sectors = sector.subdivide(4 + (int) Math.sqrt(distance));
+//        Sector[] sectors = sector.subdivide(1);
 
-        int width = 512;
-        int height = 512;
+        int width = RESOLUTION;
+        int height = RESOLUTION;
         double scale = 1.0;
         int level = -1;
-
-        LatLon location = getReferenceLocation(sector);
-        if (elevation > 0) {
-            WorldWindowGLCanvas ww = new WorldWindowGLCanvas();
-            Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
-            ww.setModel(m);
-            Globe globe = ww.getModel().getGlobe();
-            elevation += globe.getMinAndMaxElevations(sector)[1];
-            log.debug("Elevation: " + elevation);
-            log.debug("Reference Location: " + location + " Ele: " + globe.getElevation(location.getLatitude(), location.getLongitude()));
-            double fix = globe.getElevation(location.getLatitude(), location.getLongitude());
-            if (fix < 0) {
-//                elevation += fix;
-            } else {
-                elevation -= fix;
-            }
-            log.debug("Elevation Fix: " + elevation);
+        BufferedImage[] imgs = new BufferedImage[sectors.length];
+        for (int i = 0; i < sectors.length; i++) {
+            imgs[i] = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
+        int i = -1;
+        ElevatedSurfaceImage last = null;
+        ElevatedSurfaceImage current = null;
+        ElevatedSurfaceImage next;
         for (Sector sec : sectors) {
+            i++;
             try {
-                BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 tmp.composeImageForSector(sec, width, height, scale,
-                        level, image_format, false, img, 40000);
-                sul = createLayer(sul, location, params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation, img, sec, elevation, opacity);
+                        level, image_format, false, imgs[i], 40000);
+                next = addImageToLayer(sul, params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation, imgs[i], sec, elevation, opacity);
+                if (last != null) {
+                    last.refresh();
+                }
+                if (current != null) {
+                    current.refresh();
+                }
+                last = current;
+                current = next;
             } catch (Exception e) {
                 log.error("" + e);
             }
         }
+        for (Renderable r : sul.getRenderables()) {
+            ((ElevatedSurfaceImage) r).refresh();
+        }
     }
 
     /**
+     * Retrieves the reference location of an
+     * <code>ExtrudedPolygon</code> with is created on the
+     * <code>Sector</code>
+     * <code>sector</code>
      *
-     * @param name
-     * @param image
      * @param sector
+     * <code>Sector</code> in which the reference location for the
+     * <code>ExtrudedPolygon</code> should be calculated.
      * @return
      */
-    private static SurfaceImageLayer createLayer(SurfaceImageLayer sul, String name, BufferedImage image, Sector sector, double opacity) {
-        sul.addImage(name, image, sector);
-        sul.setOpacity(opacity);
-        sul.setPickEnabled(false);
-        return sul;
-    }
-
-    private static LatLon getReferenceLocation(Sector sector) {
+    public static LatLon getReferenceLocation(Sector sector) {
         ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
         Iterator<LatLon> iterator = sector.iterator();
         while (iterator.hasNext()) {
@@ -140,57 +166,62 @@ public class WMSHeightUtils {
         return pgon.getReferenceLocation();
     }
 
+    public static double getMaxElevationOfSector(Sector sector, Globe globe) {
+        return globe.getMinAndMaxElevations(sector)[1];
+    }
+
     /**
      *
+     * Adds an image to the
+     * <code>SurfaceImageLayer</code>
+     * <code>sul</code> mapped to the ground terrain.
+     *
+     * @param sul the
+     * <code>SurfaceLayer</code>
      * @param name
      * @param image
+     * <code>BufferedImage</code> in which the image is stored
      * @param sector
-     * @param height
+     * <code>Sector</code> in which the image should be mapped
+     * @param opacity the Opacity for the image (1.0 is fully transparent)
      * @return
      */
-    private static SurfaceImageLayer createLayer(SurfaceImageLayer sul, LatLon ref, String name, BufferedImage image, Sector sector, double elevation, double opacity) {
+    private static void addImageToLayer(SurfaceImageLayer sul, String name, BufferedImage image, Sector sector, double opacity) {
+        sul.addImage(name, image, sector);
+        sul.setOpacity(opacity);
+        sul.setPickEnabled(false);
+
+    }
+
+    /**
+     * Adds an image to the
+     * <code>SurfaceImageLayer</code>
+     * <code>sul</code> mapped to the ground terrain.
+     *
+     * @param sul the
+     * <code>SurfaceLayer</code>
+     * @param name
+     * @param image
+     * <code>BufferedImage</code> in which the image is stored
+     * @param sector
+     * <code>Sector</code> in which the image should be mapped
+     * @param elevation the elevation for the image (in meter)
+     * @param opacity the Opacity for the image (1.0 is fully transparent)
+     * @return
+     */
+    private static ElevatedSurfaceImage addImageToLayer(SurfaceImageLayer sul, String name, BufferedImage image, Sector sector, double elevation, double opacity) {
+        sul.setName(name);
         if (elevation == 0) {
-            return createLayer(sul, name, image, sector, opacity);
+            addImageToLayer(sul, name, image, sector, opacity);
+            return null;
         }
-        if (elevation < 0) {
-            log.warn("Invalid elevation value. Set elevation = 0.");
-            return createLayer(sul, name, image, sector, opacity);
-        }
-        ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
-        Iterator<LatLon> iterator = sector.iterator();
-        while (iterator.hasNext()) {
-            pathLocations.add(iterator.next());
-        }
-        ExtrudedPolygon pgon = new ExtrudedPolygon(pathLocations, elevation);
-        if (ref != null) {
-            pgon.setReferenceLocation(ref);
-        }
-
-        float[] corners = new float[8];
-        corners[0] = 0.0f;
-        corners[1] = 0.0f;
-        corners[2] = 1.0f;
-        corners[3] = 0.0f;
-        corners[4] = 1.0f;
-        corners[5] = 1.0f;
-        corners[6] = 0.0f;
-        corners[7] = 1.0f;
-
-        pgon.setCapImageSource(image, corners, 4);
-
-        ShapeAttributes capAttributes = new BasicShapeAttributes();
-        capAttributes.setImageScale(1.0);
-        capAttributes.setDrawInterior(true);
-        capAttributes.setEnableLighting(true);
-        capAttributes.setEnableAntialiasing(true);
-        capAttributes.setDrawOutline(false);
-        capAttributes.setInteriorOpacity(opacity);
-
-
-        pgon.setEnableSides(false);
-        pgon.setCapAttributes(capAttributes);
-        sul.addRenderable(pgon);
-        return sul;
+        ElevatedSurfaceImage tl = new ElevatedSurfaceImage(image, sector);
+        tl.setElevation(elevation);
+        tl.setOpacity(opacity);
+        tl.setFloating(true);
+        tl.needsUpdate = true;
+        sul.addRenderable(tl);
+        return tl;
     }
 
     /**
@@ -240,12 +271,34 @@ public class WMSHeightUtils {
         return (rad * 180.0 / Math.PI);
     }
 
+    public static LayerInfo parseWMSRequest(String request) throws Exception {
+        URI url = new URI(request.trim());
+        String[] parts = request.split("&");
+        String layerName = "";
+        for (String part : parts) {
+            if (part.startsWith("layers=")) {
+                layerName = part.replaceFirst("layers=", "");
+            }
+        }
+        for (LayerInfo li : getLayerInfos(url)) {
+            if (li.getTitle().equals(layerName)) {
+                return li;
+            }
+        }
+
+        return null;
+    }
+
     /**
+     * Retrieve a list with
+     * <code>LayerInfo</code> for each layer from the wms server specified with
+     * the parameter
+     * <code>serverURI</code>.
      *
      * @param serverURI
      * @return
      */
-    protected static List<LayerInfo> getLayerInfos(URI serverURI) {
+    public static List<LayerInfo> getLayerInfos(URI serverURI) {
         WMSCapabilities caps;
         final ArrayList<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
         try {

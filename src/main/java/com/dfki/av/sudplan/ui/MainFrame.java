@@ -10,11 +10,19 @@ import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.LayerAction;
 import com.dfki.av.sudplan.vis.LayerInfo;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
+import com.dfki.av.sudplan.vis.WMSHeightUtils;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
+import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import java.awt.Dimension;
@@ -23,8 +31,10 @@ import java.beans.PropertyChangeListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,19 +123,29 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         dWMSHeight = new javax.swing.JDialog();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel2 = new javax.swing.JPanel();
         pWMSHeight = new javax.swing.JPanel();
         txtServerURL = new javax.swing.JTextField();
         bGoWMSHeight = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox();
+        cbServerURL = new javax.swing.JComboBox();
         lServerURL = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        pbWMS = new javax.swing.JProgressBar();
+        rbTxtServerUrl = new javax.swing.JRadioButton();
+        rbCbServerUrl = new javax.swing.JRadioButton();
+        jPanel3 = new javax.swing.JPanel();
+        txtRequest = new javax.swing.JTextField();
+        pbWMSLayer = new javax.swing.JProgressBar();
+        bGoWMSHeight1 = new javax.swing.JButton();
         cLayerList = new javax.swing.JComboBox();
-        bAddWMSHeight = new javax.swing.JButton();
-        bCancelWMSHeight = new javax.swing.JButton();
+        lOpacity = new javax.swing.JLabel();
         lHeight = new javax.swing.JLabel();
         txtHeight = new javax.swing.JTextField();
+        bAddWMSHeight = new javax.swing.JButton();
         txtOpacity = new javax.swing.JTextField();
-        lOpacity = new javax.swing.JLabel();
+        bCancelWMSHeight = new javax.swing.JButton();
+        lMaxEle = new javax.swing.JLabel();
+        bgWMS = new javax.swing.ButtonGroup();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         pServer = new javax.swing.JPanel();
@@ -322,8 +342,8 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
-        dWMSHeight.setMinimumSize(new java.awt.Dimension(700, 300));
-        dWMSHeight.setPreferredSize(new java.awt.Dimension(700, 300));
+        dWMSHeight.setMinimumSize(new java.awt.Dimension(720, 325));
+        dWMSHeight.setPreferredSize(new java.awt.Dimension(720, 325));
         dWMSHeight.setResizable(false);
 
         txtServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.text")); // NOI18N
@@ -337,14 +357,24 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0" }));
+        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0" }));
 
         lServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lServerURL.text")); // NOI18N
 
-        jCheckBox1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jCheckBox1.text")); // NOI18N
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        bgWMS.add(rbTxtServerUrl);
+        rbTxtServerUrl.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.rbTxtServerUrl.text")); // NOI18N
+        rbTxtServerUrl.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                rbTxtServerUrlActionPerformed(evt);
+            }
+        });
+
+        bgWMS.add(rbCbServerUrl);
+        rbCbServerUrl.setSelected(true);
+        rbCbServerUrl.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.rbCbServerUrl.text")); // NOI18N
+        rbCbServerUrl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbCbServerUrlActionPerformed(evt);
             }
         });
 
@@ -353,45 +383,114 @@ public class MainFrame extends javax.swing.JFrame {
         pWMSHeightLayout.setHorizontalGroup(
             pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pWMSHeightLayout.createSequentialGroup()
-                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(bGoWMSHeight)
-                    .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(txtServerURL)
-                        .addComponent(jComboBox1, 0, 660, Short.MAX_VALUE)
-                        .addComponent(lServerURL, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pWMSHeightLayout.createSequentialGroup()
+                        .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pWMSHeightLayout.createSequentialGroup()
+                                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(rbCbServerUrl)
+                                    .addComponent(rbTxtServerUrl))
+                                .addGap(10, 10, 10)
+                                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(cbServerURL, 0, 561, Short.MAX_VALUE)
+                                    .addComponent(txtServerURL))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(pWMSHeightLayout.createSequentialGroup()
+                                .addComponent(pbWMS, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bGoWMSHeight)))
+                        .addContainerGap())
+                    .addGroup(pWMSHeightLayout.createSequentialGroup()
+                        .addComponent(lServerURL)
+                        .addContainerGap())))
         );
         pWMSHeightLayout.setVerticalGroup(
             pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pWMSHeightLayout.createSequentialGroup()
                 .addComponent(lServerURL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bGoWMSHeight))
+                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbCbServerUrl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbTxtServerUrl))
+                .addGap(13, 13, 13)
+                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(bGoWMSHeight, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pbWMS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(bundle.getString("MainFrame.jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
+
+        txtRequest.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtRequest.text")); // NOI18N
+        txtRequest.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtRequest.toolTipText")); // NOI18N
+
+        bGoWMSHeight1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bGoWMSHeight1.text")); // NOI18N
+        bGoWMSHeight1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bGoWMSHeight1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(19, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(txtRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(pbWMSLayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(bGoWMSHeight1)
+                        .addGap(39, 39, 39))))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(txtRequest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(bGoWMSHeight1)
+                    .addComponent(pbWMSLayer, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(58, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(bundle.getString("MainFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+
         cLayerList.setEnabled(false);
-
-        bAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeight.text")); // NOI18N
-        bAddWMSHeight.setEnabled(false);
-        bAddWMSHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bAddWMSHeightActionPerformed(evt);
+        cLayerList.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cLayerListItemStateChanged(evt);
             }
         });
 
-        bCancelWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bCancelWMSHeight.text")); // NOI18N
-        bCancelWMSHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCancelWMSHeightActionPerformed(evt);
-            }
-        });
+        lOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lOpacity.text")); // NOI18N
 
         lHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lHeight.text")); // NOI18N
 
@@ -402,6 +501,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        bAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeight.text")); // NOI18N
+        bAddWMSHeight.setEnabled(false);
+        bAddWMSHeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAddWMSHeightActionPerformed(evt);
+            }
+        });
+
         txtOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtOpacity.text")); // NOI18N
         txtOpacity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -409,51 +516,64 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        lOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lOpacity.text")); // NOI18N
+        bCancelWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bCancelWMSHeight.text")); // NOI18N
+        bCancelWMSHeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCancelWMSHeightActionPerformed(evt);
+            }
+        });
+
+        lMaxEle.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lMaxEle.text")); // NOI18N
 
         javax.swing.GroupLayout dWMSHeightLayout = new javax.swing.GroupLayout(dWMSHeight.getContentPane());
         dWMSHeight.getContentPane().setLayout(dWMSHeightLayout);
         dWMSHeightLayout.setHorizontalGroup(
             dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dWMSHeightLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(dWMSHeightLayout.createSequentialGroup()
-                        .addComponent(bCancelWMSHeight)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bAddWMSHeight))
-                    .addComponent(cLayerList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addComponent(jTabbedPane1))
                     .addGroup(dWMSHeightLayout.createSequentialGroup()
-                        .addComponent(lHeight)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lOpacity)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(pWMSHeight, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                        .addGap(20, 20, 20)
+                        .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(dWMSHeightLayout.createSequentialGroup()
+                                .addComponent(lHeight)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(319, 319, 319)
+                                .addComponent(lOpacity)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(dWMSHeightLayout.createSequentialGroup()
+                                .addComponent(bCancelWMSHeight)
+                                .addGap(90, 90, 90)
+                                .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bAddWMSHeight))
+                            .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         dWMSHeightLayout.setVerticalGroup(
             dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dWMSHeightLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lOpacity)
-                        .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lHeight)
-                        .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(3, 3, 3)
-                .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lHeight)
+                    .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lOpacity)
+                    .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bCancelWMSHeight)
-                    .addComponent(bAddWMSHeight))
-                .addContainerGap(95, Short.MAX_VALUE))
+                    .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -808,106 +928,21 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDownActionPerformed
 
     private void bGoWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeightActionPerformed
-        bGoWMSHeight.setEnabled(false);
-        Thread loadingThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                String urlString;
-                if (!jCheckBox1.isSelected()) {
-                    urlString = jComboBox1.getSelectedItem().toString();
-                } else {
-                    urlString = txtServerURL.getText();
-                }
-
-                try {
-                    URI serverURI = new URI(urlString.trim());
-                    List<LayerInfo> layerInfos = wwPanel.getWMSLayerInfos(serverURI);
-                    if (layerInfos == null) {
-                        resetWMSHeightDialog();
-                        JOptionPane.showMessageDialog(dWMSHeight,
-                                "Could not retreive WMS data from server.",
-                                "WMS-Server Error",
-                                JOptionPane.WARNING_MESSAGE);
-                    } else {
-                        cLayerList.removeAllItems();
-                        for (LayerInfo layerInfo : layerInfos) {
-                            cLayerList.addItem(layerInfo);
-                        }
-                        cLayerList.setEnabled(true);
-                        bAddWMSHeight.setEnabled(true);
-                    }
-                } catch (URISyntaxException ex) {
-                    log.error("URL syntax error: "+ex);
-                }
-                txtHeight.setVisible(true);
-                lHeight.setVisible(true);
-                txtOpacity.setVisible(true);
-                lOpacity.setVisible(true);
-                txtServerURL.setEnabled(false);
-                jComboBox1.setEnabled(false);
-                jCheckBox1.setEnabled(false);
-            }
-        });
-        loadingThread.setPriority(Thread.MIN_PRIORITY);
-        loadingThread.start();
-    }//GEN-LAST:event_bGoWMSHeightActionPerformed
-
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        if (jCheckBox1.isSelected()) {
-            txtServerURL.setEnabled(true);
+        String urlString;
+        if (rbCbServerUrl.isSelected()) {
+            urlString = cbServerURL.getSelectedItem().toString();
         } else {
-            txtServerURL.setEditable(false);
+            urlString = txtServerURL.getText();
         }
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+        SwingWorker worker = new WMSDataRetriever(urlString);
+        worker.execute();
+    }//GEN-LAST:event_bGoWMSHeightActionPerformed
 
     private void bAddWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddWMSHeightActionPerformed
         dWMSHeight.setVisible(false);
-
-        Thread loadingThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                LayerInfo layerInfo = (LayerInfo) cLayerList.getSelectedItem();
-                resetWMSHeightDialog();
-                double wmsHeight;
-                double wmsOpacity;
-                try {
-                    wmsHeight = Double.parseDouble(txtHeight.getText());
-                } catch (NumberFormatException nfe) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("The content of the \"height\" "
-                                + "component must be a double value.");
-                    }
-                    wmsHeight = 0.0;
-                    txtHeight.setText("0.0");
-                }
-                try {
-                    wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
-                } catch (NumberFormatException nfe) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("The content of the \"opacity\" "
-                                + "component must be a double value between."
-                                + "0.0 and 100.0 " + nfe);
-                    }
-                    wmsOpacity = 0.0;
-                    txtOpacity.setText("0.0");
-                }
-                if (wmsOpacity > 1.0 || wmsOpacity < 0.0) {
-                    log.warn("The content of the \"opacity\" "
-                            + "component must be a double value between."
-                            + "0.0 and 100.0");
-                }
-                if (layerInfo == null) {
-                    log.error("Layer info is empty");
-                } else {
-                    wwPanel.addWMSHeightLayer(layerInfo.getWMSCapabilities(), layerInfo.getLayerCapabilities(), layerInfo.getParameter(), wmsHeight, wmsOpacity);
-                }
-
-            }
-        });
-        loadingThread.setPriority(Thread.MIN_PRIORITY);
-        loadingThread.start();
+        Globe globe = wwPanel.getWwd().getModel().getGlobe();
+        SwingWorker worker = new WMSSurfaceLayerGenerator(globe);
+        worker.execute();
     }//GEN-LAST:event_bAddWMSHeightActionPerformed
 
     private void bCancelWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelWMSHeightActionPerformed
@@ -925,7 +960,43 @@ public class MainFrame extends javax.swing.JFrame {
     private void miAddWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSHeightActionPerformed
         resetWMSHeightDialog();
         dWMSHeight.setVisible(true);
+        dWMSHeight.setModal(true);
     }//GEN-LAST:event_miAddWMSHeightActionPerformed
+
+    private void rbCbServerUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbCbServerUrlActionPerformed
+        if (rbCbServerUrl.isSelected()) {
+            cbServerURL.setEnabled(true);
+            txtServerURL.setEnabled(false);
+        } else {
+            cbServerURL.setEnabled(false);
+            txtServerURL.setEnabled(true);
+        }
+    }//GEN-LAST:event_rbCbServerUrlActionPerformed
+
+    private void rbTxtServerUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbTxtServerUrlActionPerformed
+        if (rbTxtServerUrl.isSelected()) {
+            txtServerURL.setEnabled(true);
+            cbServerURL.setEnabled(false);
+        } else {
+            txtServerURL.setEnabled(false);
+            cbServerURL.setEnabled(true);
+        }
+    }//GEN-LAST:event_rbTxtServerUrlActionPerformed
+
+    private void cLayerListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cLayerListItemStateChanged
+//        if (cLayerList.getItemCount() > 0) {
+//            Globe globe = wwPanel.getWwd().getModel().getGlobe();
+//            LayerInfo li = (LayerInfo) cLayerList.getSelectedItem();
+//            lMaxEle.setText("Maximum elevation of selected layer = "
+//                    + WMSHeightUtils.getMaxElevationOfSector(
+//                    li.getLayerCapabilities().getGeographicBoundingBox(), globe));
+//        }
+    }//GEN-LAST:event_cLayerListItemStateChanged
+
+    private void bGoWMSHeight1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeight1ActionPerformed
+        SwingWorker worker = new WMSLayerRetriever(txtRequest.getText());
+        worker.execute();
+    }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
 
     private void updateListModel() {
         DefaultListModel listModel = new DefaultListModel();
@@ -1004,19 +1075,22 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton bAddWMSHeight;
     private javax.swing.JButton bCancelWMSHeight;
     private javax.swing.JButton bGoWMSHeight;
+    private javax.swing.JButton bGoWMSHeight1;
+    private javax.swing.ButtonGroup bgWMS;
     private javax.swing.JButton btnCancelGoToDialoag;
     private javax.swing.JButton btnDown;
     private javax.swing.JButton btnGo;
     private javax.swing.JButton btnUp;
     private javax.swing.JComboBox cLayerList;
+    private javax.swing.JComboBox cbServerURL;
     private javax.swing.JDialog dChangeLayerOrder;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWMSHeight;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
@@ -1024,10 +1098,12 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JOptionPane jopAddServer;
     private javax.swing.JLabel lHeight;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;
+    private javax.swing.JLabel lMaxEle;
     private javax.swing.JLabel lOpacity;
     private javax.swing.JLabel lServerURL;
     private javax.swing.JMenu mAddLayer;
@@ -1058,17 +1134,27 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel pServer;
     private javax.swing.JPanel pVisualization;
     private javax.swing.JPanel pWMSHeight;
+    private javax.swing.JProgressBar pbWMS;
+    private javax.swing.JProgressBar pbWMSLayer;
+    private javax.swing.JRadioButton rbCbServerUrl;
+    private javax.swing.JRadioButton rbTxtServerUrl;
     private javax.swing.JTextField txtHeight;
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;
     private javax.swing.JTextField txtOpacity;
+    private javax.swing.JTextField txtRequest;
     private javax.swing.JTextField txtServerURL;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Resets the
+     * <code>jDialog</code> WMSHeight.
+     */
     private void resetWMSHeightDialog() {
         dWMSHeight.setVisible(false);
         txtServerURL.setText("http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0");
         txtServerURL.setEnabled(true);
+        txtHeight.setText("200.0");
         txtHeight.setVisible(false);
         lHeight.setVisible(false);
         lOpacity.setVisible(false);
@@ -1077,9 +1163,193 @@ public class MainFrame extends javax.swing.JFrame {
         bAddWMSHeight.setEnabled(false);
         cLayerList.setEnabled(false);
         txtServerURL.setEnabled(false);
-        jComboBox1.setEnabled(true);
-        jCheckBox1.setSelected(false);
-        jCheckBox1.setEnabled(true);
+        cbServerURL.setEnabled(true);
+        pbWMS.setVisible(false);
+        pbWMS.setIndeterminate(false);
+        rbCbServerUrl.setSelected(true);
     }
-    
+
+    /**
+     *
+     */
+    private class WMSLayerRetriever extends SwingWorker<LayerInfo, Void> {
+
+        private String wmsURL;
+        
+        private WMSLayerRetriever() {
+        }
+
+        public WMSLayerRetriever(String wmsURL) {
+            this.wmsURL = wmsURL;
+        }
+
+        @Override
+        protected LayerInfo doInBackground() throws URISyntaxException, Exception {
+            bGoWMSHeight1.setEnabled(false);
+            return retrieveWMS(wmsURL);
+        }
+
+        private LayerInfo retrieveWMS(String wmsURL) throws URISyntaxException, Exception {
+            pbWMSLayer.setIndeterminate(true);
+            pbWMSLayer.setVisible(true);
+            return WMSHeightUtils.parseWMSRequest(wmsURL);
+        }
+
+        @Override
+        protected void done() {
+            LayerInfo li = null;
+            try {
+                li = get();
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ExecutionException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            if (li == null) {
+                resetWMSHeightDialog();
+                JOptionPane.showMessageDialog(dWMSHeight,
+                        "Could not retreive WMS data from server.",
+                        "WMS-Server Error",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                cLayerList.removeAllItems();
+                cLayerList.addItem(li);
+                bAddWMSHeight.setEnabled(true);
+                pbWMSLayer.setIndeterminate(false);
+                txtHeight.setVisible(true);
+                txtOpacity.setVisible(true);
+                lHeight.setVisible(true);
+                lOpacity.setVisible(true);
+                bGoWMSHeight1.setEnabled(true);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private class WMSDataRetriever extends SwingWorker<List<LayerInfo>, Void> {
+
+        private WMSDataRetriever() {
+        }
+
+        public WMSDataRetriever(String wmsURL) {
+            this.wmsURL = wmsURL;
+            
+        }
+
+        @Override
+        protected List<LayerInfo> doInBackground() throws URISyntaxException {
+            bGoWMSHeight.setEnabled(false);
+            return retrieveWMS(wmsURL);
+        }
+
+        private List<LayerInfo> retrieveWMS(String wmsURL) throws URISyntaxException {
+            pbWMS.setIndeterminate(true);
+            pbWMS.setVisible(true);
+            URI serverURI = new URI(wmsURL.trim());
+            return WMSHeightUtils.getLayerInfos(serverURI);
+        }
+
+        @Override
+        protected void done() {
+            pbWMS.setIndeterminate(false);
+            List<LayerInfo> layerInfos = null;
+            try {
+                layerInfos = get();
+            } catch (Exception ex) {
+                log.error("Error: " + ex);
+            }
+            if (layerInfos == null) {
+                resetWMSHeightDialog();
+                JOptionPane.showMessageDialog(dWMSHeight,
+                        "Could not retreive WMS data from server.",
+                        "WMS-Server Error",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                cLayerList.removeAllItems();
+                for (LayerInfo layerInfo : layerInfos) {
+                    cLayerList.addItem(layerInfo);
+                }
+                cLayerList.setEnabled(true);
+                bAddWMSHeight.setEnabled(true);
+                txtHeight.setVisible(true);
+                txtOpacity.setVisible(true);
+                lHeight.setVisible(true);
+                lOpacity.setVisible(true);
+                bGoWMSHeight.setEnabled(true);
+            }
+        }
+        private String wmsURL;
+    }
+
+    /**
+     *
+     */
+    private class WMSSurfaceLayerGenerator extends SwingWorker<Boolean, Void> {
+        private final Globe globe;
+
+        private WMSSurfaceLayerGenerator(Globe globe) {
+            this.globe = globe;
+        }
+
+        @Override
+        protected Boolean doInBackground() throws URISyntaxException {
+            return generateLayer();
+        }
+
+        private Boolean generateLayer() throws URISyntaxException {
+            LayerInfo layerInfo = (LayerInfo) cLayerList.getSelectedItem();
+            double wmsHeight;
+            double wmsOpacity;
+            try {
+                wmsHeight = Double.parseDouble(txtHeight.getText());
+            } catch (NumberFormatException nfe) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The content of the \"height\" "
+                            + "component must be a double value.");
+                }
+                wmsHeight = 0.0;
+                txtHeight.setText("0.0");
+            }
+            try {
+                wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
+            } catch (NumberFormatException nfe) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The content of the \"opacity\" "
+                            + "component must be a double value between."
+                            + "0.0 and 100.0 " + nfe);
+                }
+                wmsOpacity = 0.0;
+                txtOpacity.setText("0.0");
+            }
+            if (wmsOpacity > 1.0 || wmsOpacity < 0.0) {
+                log.warn("The content of the \"opacity\" "
+                        + "component must be a double value between."
+                        + "0.0 and 100.0");
+                wmsOpacity = 0.0;
+                txtOpacity.setText("0.0");
+            }
+            if (layerInfo == null) {
+                log.error("Layer info is empty");
+            } else {
+                LatLon location = WMSHeightUtils.getReferenceLocation(layerInfo.getLayerCapabilities().getGeographicBoundingBox());
+//                wmsHeight -= globe.getElevation(location.getLatitude(), location.getLongitude());
+//                log.debug("Elevation: "+wmsHeight);
+                wwPanel.addWMSHeightLayer(layerInfo.getWMSCapabilities(), layerInfo.getLayerCapabilities(), layerInfo.getParameter(), wmsHeight, wmsOpacity);
+            }
+            return true;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                if (get()) {
+                } else {
+                }
+            } catch (Exception ex) {
+                log.error("Error: " + ex);
+            }
+        }
+    }
 }

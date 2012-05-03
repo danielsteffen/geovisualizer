@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -371,25 +372,37 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
     
     /**
+     * Adds a WMS Layer from the given parameters.
      * 
-     * @param caps
-     * @param lcaps
-     * @param params
-     * @param elevation
-     * @param opacity 
+     * @param caps the wms capabilities
+     * @param lcaps the wms layer capabilities
+     * @param params the wms paramters
+     * @param elevation the elevation (meters above sea level) for the result layer (0 = mapped to terrain)
+     * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
     public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity){
         SurfaceImageLayer sul = new SurfaceImageLayer();
+        sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         addLayer(sul);
-        WMSHeightUtils.addComponent(sul, caps, lcaps, params, elevation, opacity);
+        WMSHeightUtils.addWMSDataToLayer(sul, caps, lcaps, params, elevation, opacity);
     }
     
     /**
+     * Adds a WMS Layer from the given url request (<code>request</code>).
      * 
-     * @param serverURI
-     * @return 
+     * @param request the request url for the wms layer
+     * @param elevation the elevation (meters above sea level) for the result layer (0 = mapped to terrain)
+     * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public List<LayerInfo> getWMSLayerInfos(URI serverURI) {
-        return WMSHeightUtils.getLayerInfos(serverURI);
+    public void addWMSHeightLayer(String request, double elevation, double opacity){
+        LayerInfo li = null;
+        try {
+            li = WMSHeightUtils.parseWMSRequest(request);
+        } catch (Exception ex) {
+            log.warn(""+ex);
+        }
+        if(li != null){
+            addWMSHeightLayer(li.caps, li.lcaps, li.params, elevation, opacity);
+        }
     }
 }
