@@ -1,11 +1,10 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>sudplan3D-main</name>
     <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
@@ -101,7 +100,7 @@
             <properties>
                 <ww-scope>provided</ww-scope>                
                 <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
-                <codebase></codebase>
+                <codebase />
                 <repository.url>http://flexo.cismet.de:8081/artifactory/repo</repository.url>
                 <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>
                 <distribution.server>cismet-artifactory</distribution.server>
