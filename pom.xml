@@ -356,5 +356,6 @@
     
     <scm>
         <connection>scm:git:git://serv-2100/sudplan.git</connection>
+        <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/sudplan.git</developerConnection>
     </scm>
 </project>
