@@ -349,8 +349,8 @@
     </distributionManagement>    
     
     <ciManagement>
-        <system>hudson</system>
-        <url>http://serv-2110.kl.dfki.de:8080/</url>
+        <system>Jenkins</system>
+        <url>http://serv-2118.kl.dfki.de:8081/</url>
     </ciManagement>
     
     <scm>
