@@ -18,10 +18,11 @@
  <all-permissions/>
  </security>
  <resources>
-	<j2se version="1.6+" initial-heap-size="1024m" max-heap-size="1024m" />
+    <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="1024m"
+              max-heap-size="1024m"/>
     <property name="jnlp.versionEnabled" value="true"/>
+    <property name="sun.java2d.noddraw" value="true"/>
     $dependencies
-	<!--extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/-->
 	<extension name="worldwindx" href="http://sudplan.kl.dfki.de/worldwind/1.3.0/worldwindx.jnlp"/>
 	<extension name="gdal" href="http://sudplan.kl.dfki.de/gdal/gdal.jnlp"/>
  </resources>
