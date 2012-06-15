@@ -104,6 +104,7 @@ public class WMSHeightUtils {
 
         if (lcaps == null) {
             log.error("LayerCaps == null");
+            return;
         }
         Sector sector = lcaps.getGeographicBoundingBox();
         double distance = distance(sector.getMinLatitude().degrees, sector.getMinLongitude().degrees, sector.getMaxLatitude().degrees, sector.getMaxLongitude().degrees, "K");

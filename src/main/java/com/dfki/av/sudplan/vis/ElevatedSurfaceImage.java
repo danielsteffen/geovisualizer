@@ -20,7 +20,7 @@ import javax.media.opengl.GL;
 public class ElevatedSurfaceImage extends SurfaceImage {
 
     // Display quality of the surface
-    private final int QUALITY = 1;
+    private final static int QUALITY = 1;
     // Default elevation set to zero meters over sea level
     private double elevation = 0;
     private boolean imageRepeat;
@@ -36,6 +36,26 @@ public class ElevatedSurfaceImage extends SurfaceImage {
 
     public ElevatedSurfaceImage(Object imageSource, Sector sector) {
         super(imageSource, sector);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        // TODO
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // TODO
+        int hash = 3;
+        hash = 29 * hash + (int) (Double.doubleToLongBits(this.elevation) ^ (Double.doubleToLongBits(this.elevation) >>> 32));
+        return hash;
     }
 
     public double getElevation() {

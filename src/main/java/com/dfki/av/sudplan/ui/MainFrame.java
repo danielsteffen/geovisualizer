@@ -940,8 +940,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void bAddWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddWMSHeightActionPerformed
         dWMSHeight.setVisible(false);
-        Globe globe = wwPanel.getWwd().getModel().getGlobe();
-        SwingWorker worker = new WMSSurfaceLayerGenerator(globe);
+        SwingWorker worker = new WMSSurfaceLayerGenerator();
         worker.execute();
     }//GEN-LAST:event_bAddWMSHeightActionPerformed
 
@@ -1287,11 +1286,6 @@ public class MainFrame extends javax.swing.JFrame {
      *
      */
     private class WMSSurfaceLayerGenerator extends SwingWorker<Boolean, Void> {
-        private final Globe globe;
-
-        private WMSSurfaceLayerGenerator(Globe globe) {
-            this.globe = globe;
-        }
 
         @Override
         protected Boolean doInBackground() throws URISyntaxException {
@@ -1333,7 +1327,7 @@ public class MainFrame extends javax.swing.JFrame {
             if (layerInfo == null) {
                 log.error("Layer info is empty");
             } else {
-                LatLon location = WMSHeightUtils.getReferenceLocation(layerInfo.getLayerCapabilities().getGeographicBoundingBox());
+//                LatLon location = WMSHeightUtils.getReferenceLocation(layerInfo.getLayerCapabilities().getGeographicBoundingBox());
 //                wmsHeight -= globe.getElevation(location.getLatitude(), location.getLongitude());
 //                log.debug("Elevation: "+wmsHeight);
                 wwPanel.addWMSHeightLayer(layerInfo.getWMSCapabilities(), layerInfo.getLayerCapabilities(), layerInfo.getParameter(), wmsHeight, wmsOpacity);
