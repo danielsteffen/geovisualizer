@@ -15,16 +15,8 @@ import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.LayerList;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -52,8 +44,8 @@ public class MainFrame extends javax.swing.JFrame {
      * An array of WMS.
      */
     private static final String[] servers = new String[]{
-        "http://serv-2118.kl.dfki.de:8888/geoserver/wms",
-        "http://www.wms.nrw.de/geobasis/DOP"/*
+        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"/*,
+        "http://www.wms.nrw.de/geobasis/DOP"*//*
      * ,
      * /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/*,
      */
@@ -95,6 +87,14 @@ public class MainFrame extends javax.swing.JFrame {
             wwPanel.addWMS(server);
         }
         updateLayerMenu();
+        
+        // Add LayerComponent to the left split panel.
+        JPanel layerComponent = wwPanel.getLayerComponent();
+        if(layerComponent != null){
+            pLeftPanel.add(layerComponent);
+        } else {
+            log.debug("No layer component available. Could not add the panel.");
+        }
     }
 
     /**
@@ -115,13 +115,6 @@ public class MainFrame extends javax.swing.JFrame {
         btnCancelGoToDialoag = new javax.swing.JButton();
         btnGo = new javax.swing.JButton();
         jopAddServer = new javax.swing.JOptionPane();
-        dChangeLayerOrder = new javax.swing.JDialog();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        btnUp = new javax.swing.JButton();
-        btnDown = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
         dWMSHeight = new javax.swing.JDialog();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
@@ -148,7 +141,7 @@ public class MainFrame extends javax.swing.JFrame {
         bgWMS = new javax.swing.ButtonGroup();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
-        pServer = new javax.swing.JPanel();
+        pLeftPanel = new javax.swing.JPanel();
         pVisualization = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
@@ -173,7 +166,6 @@ public class MainFrame extends javax.swing.JFrame {
         miAddWMS = new javax.swing.JMenuItem();
         miAddWMSHeight = new javax.swing.JMenuItem();
         miRemoveAllLayer = new javax.swing.JMenuItem();
-        miChangeLayerOrder = new javax.swing.JMenuItem();
         mWizard = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
@@ -266,84 +258,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        dChangeLayerOrder.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dChangeLayerOrder.title")); // NOI18N
-        dChangeLayerOrder.setMinimumSize(new java.awt.Dimension(435, 300));
-        dChangeLayerOrder.setResizable(false);
-
-        jLabel1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jLabel1.text")); // NOI18N
-
-        btnUp.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnUp.text")); // NOI18N
-        btnUp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUpActionPerformed(evt);
-            }
-        });
-
-        btnDown.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnDown.text")); // NOI18N
-        btnDown.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDownActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnDown, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(btnUp)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnDown))
-        );
-
-        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(jList1);
-
-        javax.swing.GroupLayout dChangeLayerOrderLayout = new javax.swing.GroupLayout(dChangeLayerOrder.getContentPane());
-        dChangeLayerOrder.getContentPane().setLayout(dChangeLayerOrderLayout);
-        dChangeLayerOrderLayout.setHorizontalGroup(
-            dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        dChangeLayerOrderLayout.setVerticalGroup(
-            dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dChangeLayerOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                    .addGroup(dChangeLayerOrderLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
         dWMSHeight.setMinimumSize(new java.awt.Dimension(720, 325));
-        dWMSHeight.setPreferredSize(new java.awt.Dimension(720, 325));
         dWMSHeight.setResizable(false);
 
         txtServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.text")); // NOI18N
@@ -431,7 +347,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -458,7 +374,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(19, Short.MAX_VALUE)
+                .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(txtRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -495,11 +411,6 @@ public class MainFrame extends javax.swing.JFrame {
         lHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lHeight.text")); // NOI18N
 
         txtHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtHeight.text")); // NOI18N
-        txtHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtHeightActionPerformed(evt);
-            }
-        });
 
         bAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeight.text")); // NOI18N
         bAddWMSHeight.setEnabled(false);
@@ -510,11 +421,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         txtOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtOpacity.text")); // NOI18N
-        txtOpacity.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtOpacityActionPerformed(evt);
-            }
-        });
 
         bCancelWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bCancelWMSHeight.text")); // NOI18N
         bCancelWMSHeight.addActionListener(new java.awt.event.ActionListener() {
@@ -581,13 +487,13 @@ public class MainFrame extends javax.swing.JFrame {
 
         pMain.setPreferredSize(new java.awt.Dimension(1200, 1024));
 
-        jSplitPane1.setResizeWeight(0.1);
+        jSplitPane1.setResizeWeight(0.5);
         jSplitPane1.setContinuousLayout(true);
         jSplitPane1.setLastDividerLocation(1);
         jSplitPane1.setPreferredSize(new java.awt.Dimension(1024, 768));
 
-        pServer.setLayout(new java.awt.BorderLayout());
-        jSplitPane1.setLeftComponent(pServer);
+        pLeftPanel.setLayout(new java.awt.BorderLayout());
+        jSplitPane1.setLeftComponent(pLeftPanel);
 
         pVisualization.setLayout(new java.awt.BorderLayout());
 
@@ -734,14 +640,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         mLayer.add(miRemoveAllLayer);
-
-        miChangeLayerOrder.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miChangeLayerOrder.text")); // NOI18N
-        miChangeLayerOrder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miChangeLayerOrderActionPerformed(evt);
-            }
-        });
-        mLayer.add(miChangeLayerOrder);
 
         mbMain.add(mLayer);
 
@@ -898,35 +796,6 @@ public class MainFrame extends javax.swing.JFrame {
         wwPanel.addWMS(s);
     }//GEN-LAST:event_miAddWMSActionPerformed
 
-    private void miChangeLayerOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miChangeLayerOrderActionPerformed
-        updateListModel();
-        dChangeLayerOrder.setVisible(true);
-    }//GEN-LAST:event_miChangeLayerOrderActionPerformed
-
-    private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
-        int id = jList1.getSelectedIndex();
-        if (id > 0) {
-            LayerList layerlist = wwPanel.getWwd().getModel().getLayers();
-            Layer layer = layerlist.remove(id);
-            layerlist.add(id - 1, layer);
-            updateListModel();
-            jList1.setSelectedIndex(id - 1);
-            jList1.ensureIndexIsVisible(id - 1);
-        }
-    }//GEN-LAST:event_btnUpActionPerformed
-
-    private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
-        int id = jList1.getSelectedIndex();
-        if (id < jList1.getModel().getSize() - 1) {
-            LayerList layerlist = wwPanel.getWwd().getModel().getLayers();
-            Layer layer = layerlist.remove(id);
-            layerlist.add(id + 1, layer);
-            updateListModel();
-            jList1.setSelectedIndex(id + 1);
-            jList1.ensureIndexIsVisible(id + 1);
-        }
-    }//GEN-LAST:event_btnDownActionPerformed
-
     private void bGoWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeightActionPerformed
         String urlString;
         if (rbCbServerUrl.isSelected()) {
@@ -947,14 +816,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void bCancelWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelWMSHeightActionPerformed
         resetWMSHeightDialog();
     }//GEN-LAST:event_bCancelWMSHeightActionPerformed
-
-    private void txtHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHeightActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtHeightActionPerformed
-
-    private void txtOpacityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtOpacityActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtOpacityActionPerformed
 
     private void miAddWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSHeightActionPerformed
         resetWMSHeightDialog();
@@ -996,15 +857,6 @@ public class MainFrame extends javax.swing.JFrame {
         SwingWorker worker = new WMSLayerRetriever(txtRequest.getText());
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
-
-    private void updateListModel() {
-        DefaultListModel listModel = new DefaultListModel();
-        LayerList layerlist = wwPanel.getWwd().getModel().getLayers();
-        for (Layer l : layerlist) {
-            listModel.addElement(l.getName());
-        }
-        jList1.setModel(listModel);
-    }
 
     private void updateLayerMenu() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -1077,20 +929,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton bGoWMSHeight1;
     private javax.swing.ButtonGroup bgWMS;
     private javax.swing.JButton btnCancelGoToDialoag;
-    private javax.swing.JButton btnDown;
     private javax.swing.JButton btnGo;
-    private javax.swing.JButton btnUp;
     private javax.swing.JComboBox cLayerList;
     private javax.swing.JComboBox cbServerURL;
-    private javax.swing.JDialog dChangeLayerOrder;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWMSHeight;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -1118,7 +963,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miAddShapeZip;
     private javax.swing.JMenuItem miAddWMS;
     private javax.swing.JMenuItem miAddWMSHeight;
-    private javax.swing.JMenuItem miChangeLayerOrder;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
@@ -1129,8 +973,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
+    private javax.swing.JPanel pLeftPanel;
     private javax.swing.JPanel pMain;
-    private javax.swing.JPanel pServer;
     private javax.swing.JPanel pVisualization;
     private javax.swing.JPanel pWMSHeight;
     private javax.swing.JProgressBar pbWMS;

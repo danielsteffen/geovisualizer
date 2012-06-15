@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +72,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Support for publishing progress support to the universe :)
      */
     private PropertyChangeSupport progressChange;
-
+    /**
+     * The {@link LayerComponent} interface to manage the layer items.
+     */
+    private LayerComponent layerComponent;
+    
     /**
      * Constructs a visualization panel of the defined
      * <code>Dimension</code>.
@@ -108,6 +111,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         this.add(statusBar, BorderLayout.SOUTH);
 
         this.progressChange = new PropertyChangeSupport(this);
+        
+        this.layerComponent = new LayerComponent(this.wwd);
+        this.wwd.getModel().addPropertyChangeListener(layerComponent);
     }
 
     /**
@@ -404,5 +410,15 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         if(li != null){
             addWMSHeightLayer(li.caps, li.lcaps, li.params, elevation, opacity);
         }
+    }
+    
+    /**
+     * Returns the {@link LayerComponent} that manages all currently available
+     * Layer.
+     * 
+     * @return the {@link LayerComponent} to return.
+     */
+    public LayerComponent getLayerComponent(){
+        return this.layerComponent;
     }
 }
