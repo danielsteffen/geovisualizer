@@ -1,5 +1,5 @@
 /*
- *  LayerComponent.java 
+ *  LayerPanel.java 
  *
  *  Created by DFKI AV on 15.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -13,54 +13,36 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.DefaultListModel;
+import javax.swing.JPanel;
+import javax.swing.tree.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides the UI to manage the layers of the 3D canvas. Currently,
- * you can change the order of the layers. Using the buttons you are able to 
- * move a layer up and down.
- * 
+ * A {@link JPanel} holding all available {@link Layer}.
+ *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class LayerComponent extends javax.swing.JPanel implements PropertyChangeListener {
+public class LayerPanel extends javax.swing.JPanel implements PropertyChangeListener {
 
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(LayerComponent.class);
+    private static final Logger log = LoggerFactory.getLogger(LayerPanel.class);
     /**
-     * The {@link WorldWindow} for the LayerComponent.
+     * The {@link WorldWindow} that has all the information about the layers.
      */
-    private WorldWindow worldWindow;
+    private final WorldWindow worldWindow;
 
     /**
-     * Creates new form LayerComponent
+     * Creates new form LayerPanel
      */
-    public LayerComponent(final WorldWindow ww) {
-
+    public LayerPanel(WorldWindow ww) {
         this.worldWindow = ww;
 
         initComponents();
 
-        updateListModel();
-    }
-
-    /*
-     * To update the list model of the layer component panel.
-     */
-    private void updateListModel() {
-        DefaultListModel listModel = new DefaultListModel();
-        if (worldWindow != null) {
-            LayerList layerlist = worldWindow.getModel().getLayers();
-            for (Layer l : layerlist) {
-                listModel.addElement(l.getName());
-            }
-        } else {
-            log.debug("WorldWindow equals null. Could not update list.");
-        }
-        layerList.setModel(listModel);
+        jTree1.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
     /**
@@ -72,31 +54,28 @@ public class LayerComponent extends javax.swing.JPanel implements PropertyChange
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lTitle = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        layerList = new javax.swing.JList();
+        jTree1 = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
         btnUp = new javax.swing.JButton();
         btnDown = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
-        lTitle.setText(org.openide.util.NbBundle.getMessage(LayerComponent.class, "LayerComponent.lTitle.text")); // NOI18N
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTree1.setAutoscrolls(true);
+        jTree1.setEditable(true);
+        jTree1.setRootVisible(false);
+        jScrollPane1.setViewportView(jTree1);
 
-        layerList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        layerList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(layerList);
-
-        btnUp.setText(org.openide.util.NbBundle.getMessage(LayerComponent.class, "LayerComponent.btnUp.text")); // NOI18N
+        btnUp.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnUp.text")); // NOI18N
         btnUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUpActionPerformed(evt);
             }
         });
 
-        btnDown.setText(org.openide.util.NbBundle.getMessage(LayerComponent.class, "LayerComponent.btnDown.text")); // NOI18N
+        btnDown.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDown.text")); // NOI18N
         btnDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDownActionPerformed(evt);
@@ -111,7 +90,7 @@ public class LayerComponent extends javax.swing.JPanel implements PropertyChange
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnDown, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                    .addComponent(btnDown, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -124,69 +103,92 @@ public class LayerComponent extends javax.swing.JPanel implements PropertyChange
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.jLabel2.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lTitle)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lTitle)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
-        int id = layerList.getSelectedIndex();
-        if (id > 0) {
-            LayerList layerlist = worldWindow.getModel().getLayers();
-            Layer layer = layerlist.remove(id);
-            layerlist.add(id - 1, layer);
-            updateListModel();
-            layerList.setSelectedIndex(id - 1);
-            layerList.ensureIndexIsVisible(id - 1);
+        TreePath tp = jTree1.getSelectionPath();
+        if (tp == null) {
+            log.debug("No layer has been selected. Not moving a layer.");
+            return;
+        }
+        DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
+        Layer lcbn = (Layer) dmtn.getUserObject();
+        LayerList layerList = worldWindow.getModel().getLayers();
+        if (!layerList.moveLower(lcbn)) {
+            log.debug("Could not move layer. Selected layer is first layer.");
         }
     }//GEN-LAST:event_btnUpActionPerformed
 
-        private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
-            int id = layerList.getSelectedIndex();
-            if (id < layerList.getModel().getSize() - 1) {
-                LayerList layerlist = worldWindow.getModel().getLayers();
-                Layer layer = layerlist.remove(id);
-                layerlist.add(id + 1, layer);
-                updateListModel();
-                layerList.setSelectedIndex(id + 1);
-                layerList.ensureIndexIsVisible(id + 1);
-            }
+    private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
+        TreePath tp = jTree1.getSelectionPath();
+        if (tp == null) {
+            log.debug("No layer has been selected. Not moving a layer.");
+            return;
+        }
+        DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
+        Layer lcbn = (Layer) dmtn.getUserObject();
+        LayerList layerList = worldWindow.getModel().getLayers();
+        if (!layerList.moveHigher(lcbn)) {
+            log.debug("Could not move layer. Selected layer is last layer.");
+        }
     }//GEN-LAST:event_btnDownActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDown;
     private javax.swing.JButton btnUp;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lTitle;
-    private javax.swing.JList layerList;
+    private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(AVKey.LAYERS)) {
-            this.updateListModel();
+            this.updateTreeModel();
         }
+    }
+
+    private void updateTreeModel() {
+
+        DefaultMutableTreeNode defaultLayerNode = new DefaultMutableTreeNode("Default Layer");
+        TreeModel tm = new DefaultTreeModel(defaultLayerNode);
+
+        if (worldWindow != null) {
+            LayerList layerlist = worldWindow.getModel().getLayers();
+            for (Layer l : layerlist) {
+                DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(l);
+                defaultLayerNode.add(dmt);
+            }
+        } else {
+            log.debug("WorldWindow equals null. Could not create layer tree.");
+        }
+        jTree1.setModel(tm);
+        jTree1.setRootVisible(false);
     }
 }

@@ -73,10 +73,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     private PropertyChangeSupport progressChange;
     /**
-     * The {@link LayerComponent} interface to manage the layer items.
+     * A {@link LayerPanel} panel to manage the layer settings.
      */
-    private LayerComponent layerComponent;
-    
+    private LayerPanel layerPanel;
+
     /**
      * Constructs a visualization panel of the defined
      * <code>Dimension</code>.
@@ -111,9 +111,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         this.add(statusBar, BorderLayout.SOUTH);
 
         this.progressChange = new PropertyChangeSupport(this);
-        
-        this.layerComponent = new LayerComponent(this.wwd);
-        this.wwd.getModel().addPropertyChangeListener(layerComponent);
+
+        this.layerPanel = new LayerPanel(this.wwd);
+        this.wwd.getModel().addPropertyChangeListener(layerPanel);
     }
 
     /**
@@ -376,49 +376,52 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void runVisWiz() {
         VisWiz.execute(wwd, this);
     }
-    
+
     /**
      * Adds a WMS Layer from the given parameters.
-     * 
+     *
      * @param caps the wms capabilities
      * @param lcaps the wms layer capabilities
      * @param params the wms paramters
-     * @param elevation the elevation (meters above sea level) for the result layer (0 = mapped to terrain)
+     * @param elevation the elevation (meters above sea level) for the result
+     * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity){
+    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
         SurfaceImageLayer sul = new SurfaceImageLayer();
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         addLayer(sul);
         WMSHeightUtils.addWMSDataToLayer(sul, caps, lcaps, params, elevation, opacity);
     }
-    
+
     /**
-     * Adds a WMS Layer from the given url request (<code>request</code>).
-     * 
+     * Adds a WMS Layer from the given url request (
+     * <code>request</code>).
+     *
      * @param request the request url for the wms layer
-     * @param elevation the elevation (meters above sea level) for the result layer (0 = mapped to terrain)
+     * @param elevation the elevation (meters above sea level) for the result
+     * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public void addWMSHeightLayer(String request, double elevation, double opacity){
+    public void addWMSHeightLayer(String request, double elevation, double opacity) {
         LayerInfo li = null;
         try {
             li = WMSHeightUtils.parseWMSRequest(request);
         } catch (Exception ex) {
-            log.warn(""+ex);
+            log.warn("" + ex);
         }
-        if(li != null){
+        if (li != null) {
             addWMSHeightLayer(li.caps, li.lcaps, li.params, elevation, opacity);
         }
     }
-    
+
     /**
-     * Returns the {@link LayerComponent} that manages all currently available
-     * Layer.
-     * 
-     * @return the {@link LayerComponent} to return.
+     * Returns the {@link LayerPanel} that manages all currently
+     * available layer elements. The structure for the UI is currently a tree.
+     *
+     * @return the {@link LayerPanel} to return.
      */
-    public LayerComponent getLayerComponent(){
-        return this.layerComponent;
+    public LayerPanel getLayerPanel() {
+        return this.layerPanel;
     }
 }

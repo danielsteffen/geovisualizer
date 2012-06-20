@@ -88,12 +88,12 @@ public class MainFrame extends javax.swing.JFrame {
         }
         updateLayerMenu();
         
-        // Add LayerComponent to the left split panel.
-        JPanel layerComponent = wwPanel.getLayerComponent();
-        if(layerComponent != null){
-            pLeftPanel.add(layerComponent);
+        // Add LayerTreeComponent to the left split panel.
+        JPanel layerTreeComponent = wwPanel.getLayerPanel();
+        if(layerTreeComponent != null){
+            pLeftPanel.add(layerTreeComponent);
         } else {
-            log.debug("No layer component available. Could not add the panel.");
+            log.debug("No layer tree component available. Could not add the panel.");
         }
     }
 
