@@ -11,6 +11,8 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
@@ -23,7 +25,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class LayerPanel extends javax.swing.JPanel implements PropertyChangeListener {
+public class LayerPanel extends javax.swing.JPanel implements PropertyChangeListener, MouseListener {
 
     /**
      * The logger.
@@ -37,12 +39,19 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     /**
      * Creates new form LayerPanel
      */
-    public LayerPanel(WorldWindow ww) {
+    public LayerPanel(final WorldWindow ww) {
         this.worldWindow = ww;
 
         initComponents();
 
+        LayerCheckBoxNodeRenderer renderer = new LayerCheckBoxNodeRenderer();
+        jTree1.setCellRenderer(renderer);
+
+        LayerCheckBoxNodeEditor editor = new LayerCheckBoxNodeEditor(jTree1);
+        jTree1.setCellEditor(editor);
+        
         jTree1.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        jTree1.addMouseListener(this);
     }
 
     /**
@@ -138,10 +147,16 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             return;
         }
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
-        Layer lcbn = (Layer) dmtn.getUserObject();
+        LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
+        String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
-        if (!layerList.moveLower(lcbn)) {
-            log.debug("Could not move layer. Selected layer is first layer.");
+        Layer layer = layerList.getLayerByName(layerName);
+        int index = layerList.indexOf(layer);
+        if (index <= 0) {
+            log.debug("Could not move layer up. Selected layer is first layer.");
+        } else {
+            layerList.remove(index);
+            layerList.add(index - 1, layer);
         }
     }//GEN-LAST:event_btnUpActionPerformed
 
@@ -152,10 +167,16 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             return;
         }
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
-        Layer lcbn = (Layer) dmtn.getUserObject();
+        LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
+        String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
-        if (!layerList.moveHigher(lcbn)) {
-            log.debug("Could not move layer. Selected layer is last layer.");
+        Layer layer = layerList.getLayerByName(layerName);
+        int index = layerList.indexOf(layer);
+        if (index < layerList.size() - 1) {
+            layerList.remove(index);
+            layerList.add(index + 1, layer);
+        } else {
+            log.debug("Could not move layer down. Selected layer is last layer.");
         }
     }//GEN-LAST:event_btnDownActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -170,25 +191,54 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(AVKey.LAYERS)) {
-            this.updateTreeModel();
+            DefaultMutableTreeNode defaultLayerNode = new DefaultMutableTreeNode("Default Layer");
+            TreeModel tm = new DefaultTreeModel(defaultLayerNode);
+
+            if (worldWindow != null) {
+                LayerList layerlist = worldWindow.getModel().getLayers();
+                for (Layer layer : layerlist) {
+                    LayerCheckBoxNode node = new LayerCheckBoxNode(layer.getName(), layer.isEnabled());
+                    DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(node);
+                    defaultLayerNode.add(dmt);
+                }
+            } else {
+                log.debug("WorldWindow equals null. Could not create layer tree.");
+            }
+            jTree1.setModel(tm);
+            jTree1.setRootVisible(false);
         }
     }
 
-    private void updateTreeModel() {
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        int row = jTree1.getRowForLocation(x, y);
+        TreePath path = jTree1.getPathForRow(row);
 
-        DefaultMutableTreeNode defaultLayerNode = new DefaultMutableTreeNode("Default Layer");
-        TreeModel tm = new DefaultTreeModel(defaultLayerNode);
-
-        if (worldWindow != null) {
-            LayerList layerlist = worldWindow.getModel().getLayers();
-            for (Layer l : layerlist) {
-                DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(l);
-                defaultLayerNode.add(dmt);
-            }
-        } else {
-            log.debug("WorldWindow equals null. Could not create layer tree.");
+        if (path != null) {
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            LayerCheckBoxNode node = (LayerCheckBoxNode) treeNode.getUserObject();
+            LayerList layerList = worldWindow.getModel().getLayers();
+            Layer layer = layerList.getLayerByName(node.getText());
+            layer.setEnabled(!layer.isEnabled());
+            worldWindow.redraw();
         }
-        jTree1.setModel(tm);
-        jTree1.setRootVisible(false);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
     }
 }

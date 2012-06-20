@@ -86,7 +86,6 @@ public class MainFrame extends javax.swing.JFrame {
         for (String server : servers) {
             wwPanel.addWMS(server);
         }
-        updateLayerMenu();
         
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
