@@ -70,6 +70,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         jPanel1 = new javax.swing.JPanel();
         btnUp = new javax.swing.JButton();
         btnDown = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
@@ -93,6 +94,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             }
         });
 
+        btnDelete.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDelete.text")); // NOI18N
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -101,7 +109,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnDown, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
+                    .addComponent(btnDown, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -111,6 +120,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 .addComponent(btnUp)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDown)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDelete)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -136,7 +147,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -181,7 +192,28 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             layerList.add(index - 1, layer);
         }
     }//GEN-LAST:event_btnDownActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        TreePath tp = jTree1.getSelectionPath();
+        if (tp == null) {
+            log.debug("No layer has been selected. Not moving a layer.");
+            return;
+        }
+        DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
+        LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
+        String layerName = cbn.getText();
+        LayerList layerList = worldWindow.getModel().getLayers();
+        Layer layer = layerList.getLayerByName(layerName);
+        int index = layerList.indexOf(layer);
+        if (index < 0) {
+            log.debug("Could not remove layer.");
+        } else {
+            layerList.remove(index);
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDown;
     private javax.swing.JButton btnUp;
     private javax.swing.JLabel jLabel2;
