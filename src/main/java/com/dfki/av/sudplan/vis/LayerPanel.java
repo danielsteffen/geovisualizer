@@ -154,11 +154,11 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
         int index = layerList.indexOf(layer);
-        if (index <= 0) {
-            log.debug("Could not move layer up. Selected layer is first layer.");
-        } else {
+        if (index < layerList.size() - 1) {
             layerList.remove(index);
-            layerList.add(index - 1, layer);
+            layerList.add(index + 1, layer);
+        } else {
+            log.debug("Could not move layer down. Selected layer is last layer.");
         }
     }//GEN-LAST:event_btnUpActionPerformed
 
@@ -174,11 +174,11 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
         int index = layerList.indexOf(layer);
-        if (index < layerList.size() - 1) {
-            layerList.remove(index);
-            layerList.add(index + 1, layer);
+        if (index <= 0) {
+            log.debug("Could not move layer up. Selected layer is first layer.");
         } else {
-            log.debug("Could not move layer down. Selected layer is last layer.");
+            layerList.remove(index);
+            layerList.add(index - 1, layer);
         }
     }//GEN-LAST:event_btnDownActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -196,7 +196,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
 
         if (worldWindow != null) {
             LayerList layerlist = worldWindow.getModel().getLayers();
-            for (Layer layer : layerlist) {
+            for (int id = layerlist.size() - 1; id >= 0; id--) {
+                Layer layer = layerlist.get(id);
                 LayerCheckBoxNode node = new LayerCheckBoxNode(layer.getName(), layer.isEnabled());
                 DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(node);
                 defaultLayerNode.add(dmt);
