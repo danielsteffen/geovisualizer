@@ -196,7 +196,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         TreePath tp = jTree1.getSelectionPath();
         if (tp == null) {
-            log.debug("No layer has been selected. Not moving a layer.");
+            log.debug("No layer has been selected.");
             return;
         }
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();

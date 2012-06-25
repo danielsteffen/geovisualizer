@@ -72,15 +72,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.canvasSize = new Dimension(1500, 800);
         this.wwPanel = new VisualizationPanel(canvasSize);
         this.wwPanel.setPreferredSize(canvasSize);
-        this.wwPanel.getWwd().getModel().addPropertyChangeListener(new PropertyChangeListener() {
 
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(AVKey.LAYERS)) {
-                    updateLayerMenu();
-                }
-            }
-        });
         initComponents();
 
         for (String server : servers) {
@@ -154,8 +146,6 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         miExit = new javax.swing.JMenuItem();
         mLayer = new javax.swing.JMenu();
-        mLayers = new javax.swing.JMenu();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         mAddLayer = new javax.swing.JMenu();
         miAddGeoTiff = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
@@ -581,10 +571,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         mLayer.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mLayer.text")); // NOI18N
 
-        mLayers.setText(bundle.getString("MainFrame.mLayers.text")); // NOI18N
-        mLayer.add(mLayers);
-        mLayer.add(jSeparator1);
-
         mAddLayer.setText(bundle.getString("MainFrame.mAddLayer.text")); // NOI18N
 
         miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
@@ -857,23 +843,6 @@ public class MainFrame extends javax.swing.JFrame {
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
 
-    private void updateLayerMenu() {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                mLayers.removeAll();
-                for (Layer layer : wwPanel.getWwd().getModel().getLayers()) {
-                    LayerAction action = new LayerAction(layer, wwPanel.getWwd(), layer.isEnabled());
-                    JCheckBoxMenuItem cbmi = new JCheckBoxMenuItem(action);
-                    cbmi.setSelected(action.isSelected());
-                    cbmi.setName(layer.getName());
-                    mLayers.add(cbmi);
-                }
-            }
-        });
-    }
-
     /**
      * @param args the command line arguments
      */
@@ -935,7 +904,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JDialog dWMSHeight;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
@@ -953,7 +921,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mLayer;
-    private javax.swing.JMenu mLayers;
     private javax.swing.JMenu mWizard;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
