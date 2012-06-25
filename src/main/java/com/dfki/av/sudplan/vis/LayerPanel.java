@@ -49,9 +49,11 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
 
         LayerCheckBoxNodeEditor editor = new LayerCheckBoxNodeEditor(jTree1);
         jTree1.setCellEditor(editor);
-        
+
         jTree1.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         jTree1.addMouseListener(this);
+
+        updateTreeModel();
     }
 
     /**
@@ -188,24 +190,28 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
+    private void updateTreeModel() {
+        DefaultMutableTreeNode defaultLayerNode = new DefaultMutableTreeNode("Default Layer");
+        TreeModel tm = new DefaultTreeModel(defaultLayerNode);
+
+        if (worldWindow != null) {
+            LayerList layerlist = worldWindow.getModel().getLayers();
+            for (Layer layer : layerlist) {
+                LayerCheckBoxNode node = new LayerCheckBoxNode(layer.getName(), layer.isEnabled());
+                DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(node);
+                defaultLayerNode.add(dmt);
+            }
+        } else {
+            log.debug("WorldWindow equals null. Could not create layer tree.");
+        }
+        jTree1.setModel(tm);
+        jTree1.setRootVisible(false);
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(AVKey.LAYERS)) {
-            DefaultMutableTreeNode defaultLayerNode = new DefaultMutableTreeNode("Default Layer");
-            TreeModel tm = new DefaultTreeModel(defaultLayerNode);
-
-            if (worldWindow != null) {
-                LayerList layerlist = worldWindow.getModel().getLayers();
-                for (Layer layer : layerlist) {
-                    LayerCheckBoxNode node = new LayerCheckBoxNode(layer.getName(), layer.isEnabled());
-                    DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(node);
-                    defaultLayerNode.add(dmt);
-                }
-            } else {
-                log.debug("WorldWindow equals null. Could not create layer tree.");
-            }
-            jTree1.setModel(tm);
-            jTree1.setRootVisible(false);
+            updateTreeModel();
         }
     }
 
