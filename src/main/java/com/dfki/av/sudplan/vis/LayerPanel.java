@@ -16,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
+import javax.swing.text.Position;
 import javax.swing.tree.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,16 +155,18 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
-        TreePath tp = jTree1.getSelectionPath();
-        if (tp == null) {
+        TreePath treePath1 = jTree1.getSelectionPath();
+        if (treePath1 == null) {
             log.debug("No layer has been selected. Not moving a layer.");
             return;
         }
-        DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
+        
+        DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) treePath1.getLastPathComponent();
         LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
         String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
+        
         int index = layerList.indexOf(layer);
         if (index < layerList.size() - 1) {
             layerList.remove(index);
@@ -171,6 +174,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         } else {
             log.debug("Could not move layer down. Selected layer is last layer.");
         }
+        
+        TreePath treePath2 = jTree1.getNextMatch(layerName, 0, Position.Bias.Forward);
+        jTree1.setSelectionPath(treePath2);
     }//GEN-LAST:event_btnUpActionPerformed
 
     private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
@@ -179,11 +185,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             log.debug("No layer has been selected. Not moving a layer.");
             return;
         }
+        
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
         LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
         String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
+        
         int index = layerList.indexOf(layer);
         if (index <= 0) {
             log.debug("Could not move layer up. Selected layer is first layer.");
@@ -191,6 +199,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             layerList.remove(index);
             layerList.add(index - 1, layer);
         }
+        
+        TreePath treePath2 = jTree1.getNextMatch(layerName, 0, Position.Bias.Forward);
+        jTree1.setSelectionPath(treePath2);
     }//GEN-LAST:event_btnDownActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -199,11 +210,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             log.debug("No layer has been selected.");
             return;
         }
+        
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
         LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
         String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
+        
         int index = layerList.indexOf(layer);
         if (index < 0) {
             log.debug("Could not remove layer.");
@@ -211,7 +224,6 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             layerList.remove(index);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDown;
