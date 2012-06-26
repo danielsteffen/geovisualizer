@@ -66,7 +66,7 @@
                       <EmptySpace pref="22" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="txtLatitude" min="-2" pref="113" max="-2" attributes="0"/>
-                          <Component id="txtLongitude" pref="113" max="32767" attributes="0"/>
+                          <Component id="txtLongitude" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -155,7 +155,7 @@
           <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.dWMSHeight.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[720, 325]"/>
+          <Dimension value="[760, 380]"/>
         </Property>
         <Property name="resizable" type="boolean" value="false"/>
       </Properties>
@@ -346,9 +346,14 @@
                     <Component class="javax.swing.JComboBox" name="cbServerURL">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="2">
+                          <StringArray count="7">
                             <StringItem index="0" value="http://geoportal.wuppertal.de:8083/deegree/wms?"/>
                             <StringItem index="1" value="http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&amp;version=1.1.0"/>
+                            <StringItem index="2" value="http://www2.demis.nl/worldmap/wms.asp?Service=WMS&amp;Version=1.1.0&amp;Request=GetCapabilities"/>
+                            <StringItem index="3" value="http://www.wms.nrw.de/geobasis/DOP"/>
+                            <StringItem index="4" value="http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&amp;VERSION=1.1.1&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS"/>
+                            <StringItem index="5" value="http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/>
+                            <StringItem index="6" value="http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"/>
                           </StringArray>
                         </Property>
                       </Properties>
@@ -497,6 +502,9 @@
               <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.txtHeight.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtHeightActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="bAddWMSHeight">
           <Properties>

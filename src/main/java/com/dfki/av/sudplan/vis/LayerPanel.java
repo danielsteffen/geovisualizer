@@ -7,10 +7,13 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
+import com.dfki.av.sudplan.wms.ElevatedSurfaceSupportLayer;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
@@ -217,12 +220,24 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
 
+
+
         int index = layerList.indexOf(layer);
         if (index < 0) {
             log.debug("Could not remove layer.");
         } else {
             layerList.remove(index);
         }
+
+        if (layer instanceof ElevatedSurfaceLayer) {
+            index = layerList.indexOf(((ElevatedSurfaceLayer) layer).getSupportLayer());
+            if (index < 0) {
+                log.debug("Could not remove layer.");
+            } else {
+                layerList.remove(index);
+            }
+        }
+
     }//GEN-LAST:event_btnDeleteActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
@@ -242,6 +257,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             LayerList layerlist = worldWindow.getModel().getLayers();
             for (int id = layerlist.size() - 1; id >= 0; id--) {
                 Layer layer = layerlist.get(id);
+                if (layer instanceof ElevatedSurfaceSupportLayer) {
+                    continue;
+                }
                 LayerCheckBoxNode node = new LayerCheckBoxNode(layer.getName(), layer.isEnabled());
                 DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(node);
                 defaultLayerNode.add(dmt);
@@ -268,11 +286,11 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         TreePath path = jTree1.getPathForRow(row);
 
         if (path != null) {
-            
+
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
             LayerCheckBoxNode node = (LayerCheckBoxNode) treeNode.getUserObject();
             LayerList layerList = worldWindow.getModel().getLayers();
-            
+
             Layer layer = layerList.getLayerByName(node.getText());
             if (layer != null) {
                 layer.setEnabled(!layer.isEnabled());

@@ -5,7 +5,7 @@
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
  *  Use is subject to license terms.
  */
-package com.dfki.av.sudplan.vis;
+package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.Factory;
 import gov.nasa.worldwind.WorldWind;
@@ -25,34 +25,65 @@ import java.util.Set;
  */
 public class LayerInfo {
 
-    protected WMSCapabilities caps;
-    protected WMSLayerCapabilities lcaps;
-    protected AVListImpl params = new AVListImpl();
+    public WMSCapabilities caps;
+    public WMSLayerCapabilities lcaps;
+    public AVListImpl params = new AVListImpl();
 
-    protected String getTitle() {
+    /**
+     * 
+     * @return title of layer
+     */
+    public String getTitle() {
         return params.getStringValue(AVKey.DISPLAY_NAME);
     }
 
-    protected String getName() {
+    /**
+     * 
+     * @return name of layer
+     */
+    public String getName() {
         return params.getStringValue(AVKey.LAYER_NAMES);
     }
 
-    protected String getAbstract() {
+    /**
+     * 
+     * @return layer abstract
+     */
+    public String getAbstract() {
         return params.getStringValue(AVKey.LAYER_ABSTRACT);
     }
 
+    /**
+     * 
+     * @return wms capabilities
+     */
     public WMSCapabilities getWMSCapabilities() {
         return caps;
     }
 
+    /**
+     * 
+     * @return layer capabilities
+     */
     public WMSLayerCapabilities getLayerCapabilities() {
         return lcaps;
     }
 
+    /**
+     * 
+     * @return  wms parameter
+     */
     public AVListImpl getParameter() {
         return params;
     }
 
+    /**
+     * 
+     * @param caps
+     * @param layerCaps
+     * @param style
+     * @return <code>LayerInfo</code> of requestet wms data
+     */
     public static LayerInfo create(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
         // Create the layer info specified by the layer's capabilities entry and the selected style.
 
@@ -78,7 +109,7 @@ public class LayerInfo {
      *
      * @param caps
      * @param layerInfo
-     * @return
+     * @return title for wms data
      */
     protected static String makeTitle(WMSCapabilities caps, LayerInfo layerInfo) {
         String layerNames = layerInfo.params.getStringValue(AVKey.LAYER_NAMES);
@@ -119,7 +150,7 @@ public class LayerInfo {
      *
      * @param caps
      * @param params
-     * @return
+     * @return wms layer
      */
     public static Object createComponent(WMSCapabilities caps, AVList params) {
         AVList configParams = params.copy(); // Copy to insulate changes from the caller.
@@ -143,7 +174,7 @@ public class LayerInfo {
     /**
      *
      * @param caps
-     * @return
+     * @return factory key
      */
     protected static String getFactoryKeyForCapabilities(WMSCapabilities caps) {
         boolean hasApplicationBilFormat = false;
@@ -159,6 +190,10 @@ public class LayerInfo {
         return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
     }
 
+    /**
+     * 
+     * @return layer name
+     */
     @Override
     public String toString() {
         return params.getStringValue(AVKey.DISPLAY_NAME);

@@ -7,21 +7,21 @@ package com.dfki.av.sudplan.ui;
 
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
-import com.dfki.av.sudplan.vis.LayerInfo;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
-import com.dfki.av.sudplan.vis.WMSHeightUtils;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
+import com.dfki.av.sudplan.wms.LayerInfo;
+import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
+import com.dfki.av.sudplan.wms.WMSLayerRetreiver;
 import java.awt.Dimension;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame implements PropertyChangeListener {
 
     /**
      * The logger.
@@ -39,14 +39,17 @@ public class MainFrame extends javax.swing.JFrame {
      * An array of WMS.
      */
     private static final String[] servers = new String[]{
-        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"/*,
-        "http://www.wms.nrw.de/geobasis/DOP"*//*
+        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"/*
+     * ,
+     * "http://www.wms.nrw.de/geobasis/DOP"
+     *//*
      * ,
      * /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/*,
      */
     /*
      * "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"
      */
+
 
     };
     /**
@@ -73,10 +76,10 @@ public class MainFrame extends javax.swing.JFrame {
         for (String server : servers) {
             wwPanel.addWMS(server);
         }
-        
+
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
-        if(layerTreeComponent != null){
+        if (layerTreeComponent != null) {
             pLeftPanel.add(layerTreeComponent);
         } else {
             log.debug("No layer tree component available. Could not add the panel.");
@@ -184,7 +187,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtLatitude, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtLongitude, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE))
+                    .addComponent(txtLongitude))
                 .addContainerGap())
         );
         pGoToLayout.setVerticalGroup(
@@ -242,7 +245,8 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
-        dWMSHeight.setMinimumSize(new java.awt.Dimension(720, 325));
+        dWMSHeight.setMinimumSize(new java.awt.Dimension(760, 380));
+        dWMSHeight.setPreferredSize(new java.awt.Dimension(760, 380));
         dWMSHeight.setResizable(false);
 
         txtServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.text")); // NOI18N
@@ -256,7 +260,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0" }));
+        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?" }));
 
         lServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lServerURL.text")); // NOI18N
 
@@ -394,6 +398,11 @@ public class MainFrame extends javax.swing.JFrame {
         lHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lHeight.text")); // NOI18N
 
         txtHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtHeight.text")); // NOI18N
+        txtHeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtHeightActionPerformed(evt);
+            }
+        });
 
         bAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeight.text")); // NOI18N
         bAddWMSHeight.setEnabled(false);
@@ -782,14 +791,42 @@ public class MainFrame extends javax.swing.JFrame {
         } else {
             urlString = txtServerURL.getText();
         }
-        SwingWorker worker = new WMSDataRetriever(urlString);
+        bGoWMSHeight.setEnabled(false);
+        pbWMS.setIndeterminate(true);
+        pbWMS.setVisible(true);
+        SwingWorker worker = new LayerInfoRetreiver(urlString);
+        worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeightActionPerformed
 
     private void bAddWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddWMSHeightActionPerformed
         dWMSHeight.setVisible(false);
-        SwingWorker worker = new WMSSurfaceLayerGenerator();
-        worker.execute();
+        double wmsHeight;
+        double wmsOpacity;
+        try {
+            wmsHeight = Double.parseDouble(txtHeight.getText());
+        } catch (NumberFormatException nfe) {
+            if (log.isWarnEnabled()) {
+                log.warn("The content of the \"height\" "
+                        + "component must be a double value.");
+            }
+            wmsHeight = 0.0;
+            txtHeight.setText("0.0");
+        }
+        try {
+            wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
+        } catch (NumberFormatException nfe) {
+            if (log.isWarnEnabled()) {
+                log.warn("The content of the \"opacity\" "
+                        + "component must be a double value between."
+                        + "0.0 and 100.0 " + nfe);
+            }
+            wmsOpacity = 0.0;
+            txtOpacity.setText("0.0");
+        }
+        if (cLayerList.getSelectedItem() instanceof LayerInfo) {
+            wwPanel.addWMSHeightLayer((LayerInfo) cLayerList.getSelectedItem(), wmsHeight, wmsOpacity);
+        }
     }//GEN-LAST:event_bAddWMSHeightActionPerformed
 
     private void bCancelWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelWMSHeightActionPerformed
@@ -823,19 +860,52 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_rbTxtServerUrlActionPerformed
 
     private void cLayerListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cLayerListItemStateChanged
-//        if (cLayerList.getItemCount() > 0) {
-//            Globe globe = wwPanel.getWwd().getModel().getGlobe();
-//            LayerInfo li = (LayerInfo) cLayerList.getSelectedItem();
-//            lMaxEle.setText("Maximum elevation of selected layer = "
-//                    + WMSHeightUtils.getMaxElevationOfSector(
-//                    li.getLayerCapabilities().getGeographicBoundingBox(), globe));
-//        }
+
     }//GEN-LAST:event_cLayerListItemStateChanged
 
     private void bGoWMSHeight1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeight1ActionPerformed
-        SwingWorker worker = new WMSLayerRetriever(txtRequest.getText());
+        bGoWMSHeight1.setEnabled(false);
+        pbWMSLayer.setIndeterminate(true);
+        pbWMSLayer.setVisible(true);
+        SwingWorker worker = new WMSLayerRetreiver(txtRequest.getText());
+        worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
+
+    private void txtHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHeightActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtHeightActionPerformed
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("WMSLayerInfoRetreiver done")) {
+            pbWMS.setIndeterminate(false);
+            cLayerList.removeAllItems();
+            if (evt.getNewValue() instanceof List<?>) {
+                for (LayerInfo layerInfo : (List<LayerInfo>) evt.getNewValue()) {
+                    cLayerList.addItem(layerInfo);
+                }
+            } else if (evt.getNewValue() instanceof LayerInfo) {
+                cLayerList.addItem((LayerInfo) evt.getNewValue());
+            } else {
+                log.error("Wrong event value (not instanceof LayerInfo or List<LayerInfo>)");
+            }
+            cLayerList.setEnabled(true);
+            bAddWMSHeight.setEnabled(true);
+            txtHeight.setVisible(true);
+            txtOpacity.setVisible(true);
+            lHeight.setVisible(true);
+            lOpacity.setVisible(true);
+            bGoWMSHeight.setEnabled(true);
+        }
+        if (evt.getPropertyName().equals("WMSLayerInfoRetreiver failed")) {
+            resetWMSHeightDialog();
+            JOptionPane.showMessageDialog(dWMSHeight,
+                    "Could not retreive WMS data from server.",
+                    "WMS-Server Error",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -956,7 +1026,7 @@ public class MainFrame extends javax.swing.JFrame {
         dWMSHeight.setVisible(false);
         txtServerURL.setText("http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0");
         txtServerURL.setEnabled(true);
-        txtHeight.setText("200.0");
+        txtHeight.setText("1500.0");
         txtHeight.setVisible(false);
         lHeight.setVisible(false);
         lOpacity.setVisible(false);
@@ -969,184 +1039,5 @@ public class MainFrame extends javax.swing.JFrame {
         pbWMS.setVisible(false);
         pbWMS.setIndeterminate(false);
         rbCbServerUrl.setSelected(true);
-    }
-
-    /**
-     *
-     */
-    private class WMSLayerRetriever extends SwingWorker<LayerInfo, Void> {
-
-        private String wmsURL;
-        
-        private WMSLayerRetriever() {
-        }
-
-        public WMSLayerRetriever(String wmsURL) {
-            this.wmsURL = wmsURL;
-        }
-
-        @Override
-        protected LayerInfo doInBackground() throws URISyntaxException, Exception {
-            bGoWMSHeight1.setEnabled(false);
-            return retrieveWMS(wmsURL);
-        }
-
-        private LayerInfo retrieveWMS(String wmsURL) throws URISyntaxException, Exception {
-            pbWMSLayer.setIndeterminate(true);
-            pbWMSLayer.setVisible(true);
-            return WMSHeightUtils.parseWMSRequest(wmsURL);
-        }
-
-        @Override
-        protected void done() {
-            LayerInfo li = null;
-            try {
-                li = get();
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (ExecutionException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            if (li == null) {
-                resetWMSHeightDialog();
-                JOptionPane.showMessageDialog(dWMSHeight,
-                        "Could not retreive WMS data from server.",
-                        "WMS-Server Error",
-                        JOptionPane.WARNING_MESSAGE);
-            } else {
-                cLayerList.removeAllItems();
-                cLayerList.addItem(li);
-                bAddWMSHeight.setEnabled(true);
-                pbWMSLayer.setIndeterminate(false);
-                txtHeight.setVisible(true);
-                txtOpacity.setVisible(true);
-                lHeight.setVisible(true);
-                lOpacity.setVisible(true);
-                bGoWMSHeight1.setEnabled(true);
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    private class WMSDataRetriever extends SwingWorker<List<LayerInfo>, Void> {
-
-        private WMSDataRetriever() {
-        }
-
-        public WMSDataRetriever(String wmsURL) {
-            this.wmsURL = wmsURL;
-            
-        }
-
-        @Override
-        protected List<LayerInfo> doInBackground() throws URISyntaxException {
-            bGoWMSHeight.setEnabled(false);
-            return retrieveWMS(wmsURL);
-        }
-
-        private List<LayerInfo> retrieveWMS(String wmsURL) throws URISyntaxException {
-            pbWMS.setIndeterminate(true);
-            pbWMS.setVisible(true);
-            URI serverURI = new URI(wmsURL.trim());
-            return WMSHeightUtils.getLayerInfos(serverURI);
-        }
-
-        @Override
-        protected void done() {
-            pbWMS.setIndeterminate(false);
-            List<LayerInfo> layerInfos = null;
-            try {
-                layerInfos = get();
-            } catch (Exception ex) {
-                log.error("Error: " + ex);
-            }
-            if (layerInfos == null) {
-                resetWMSHeightDialog();
-                JOptionPane.showMessageDialog(dWMSHeight,
-                        "Could not retreive WMS data from server.",
-                        "WMS-Server Error",
-                        JOptionPane.WARNING_MESSAGE);
-            } else {
-                cLayerList.removeAllItems();
-                for (LayerInfo layerInfo : layerInfos) {
-                    cLayerList.addItem(layerInfo);
-                }
-                cLayerList.setEnabled(true);
-                bAddWMSHeight.setEnabled(true);
-                txtHeight.setVisible(true);
-                txtOpacity.setVisible(true);
-                lHeight.setVisible(true);
-                lOpacity.setVisible(true);
-                bGoWMSHeight.setEnabled(true);
-            }
-        }
-        private String wmsURL;
-    }
-
-    /**
-     *
-     */
-    private class WMSSurfaceLayerGenerator extends SwingWorker<Boolean, Void> {
-
-        @Override
-        protected Boolean doInBackground() throws URISyntaxException {
-            return generateLayer();
-        }
-
-        private Boolean generateLayer() throws URISyntaxException {
-            LayerInfo layerInfo = (LayerInfo) cLayerList.getSelectedItem();
-            double wmsHeight;
-            double wmsOpacity;
-            try {
-                wmsHeight = Double.parseDouble(txtHeight.getText());
-            } catch (NumberFormatException nfe) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The content of the \"height\" "
-                            + "component must be a double value.");
-                }
-                wmsHeight = 0.0;
-                txtHeight.setText("0.0");
-            }
-            try {
-                wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
-            } catch (NumberFormatException nfe) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The content of the \"opacity\" "
-                            + "component must be a double value between."
-                            + "0.0 and 100.0 " + nfe);
-                }
-                wmsOpacity = 0.0;
-                txtOpacity.setText("0.0");
-            }
-            if (wmsOpacity > 1.0 || wmsOpacity < 0.0) {
-                log.warn("The content of the \"opacity\" "
-                        + "component must be a double value between."
-                        + "0.0 and 100.0");
-                wmsOpacity = 0.0;
-                txtOpacity.setText("0.0");
-            }
-            if (layerInfo == null) {
-                log.error("Layer info is empty");
-            } else {
-//                LatLon location = WMSHeightUtils.getReferenceLocation(layerInfo.getLayerCapabilities().getGeographicBoundingBox());
-//                wmsHeight -= globe.getElevation(location.getLatitude(), location.getLongitude());
-//                log.debug("Elevation: "+wmsHeight);
-                wwPanel.addWMSHeightLayer(layerInfo.getWMSCapabilities(), layerInfo.getLayerCapabilities(), layerInfo.getParameter(), wmsHeight, wmsOpacity);
-            }
-            return true;
-        }
-
-        @Override
-        protected void done() {
-            try {
-                if (get()) {
-                } else {
-                }
-            } catch (Exception ex) {
-                log.error("Error: " + ex);
-            }
-        }
     }
 }

@@ -13,6 +13,9 @@ import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.wiz.VisWiz;
+import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
+import com.dfki.av.sudplan.wms.LayerInfo;
+import com.dfki.av.sudplan.wms.WMSHeightUtils;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -328,7 +331,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             view.setRoll(roll);
             view.setPitch(pitch);
             view.setHeading(heading);
-            
+
             if (c instanceof AnimatedCamera) {
                 Position pos = Position.fromDegrees(c.getLatitude(), c.getLongitude());
                 view.goTo(pos, c.getAltitude());
@@ -393,6 +396,17 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             progressBar.setValue(i.intValue());
             progressChange.firePropertyChange(evt);
         }
+        if (evt.getPropertyName().equals("wwd redraw")) {
+            wwd.redraw();
+        }
+        if (evt.getPropertyName().equals("wms download")) {
+            progressBar.setVisible(true);
+            progressBar.setIndeterminate(true);
+        }
+        if (evt.getPropertyName().equals("wms done")) {
+            progressBar.setVisible(false);
+            progressBar.setIndeterminate(false);
+        }
     }
 
     @Override
@@ -422,12 +436,30 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps,
-            AVList params, double elevation, double opacity) {
-        SurfaceImageLayer sul = new SurfaceImageLayer();
+    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+        ElevatedSurfaceLayer sul = new ElevatedSurfaceLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
+        sul.addPropertyChangeListener(this);
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
-        addLayer(sul);
-        WMSHeightUtils.addWMSDataToLayer(sul, caps, lcaps, params, elevation, opacity);
+        ApplicationTemplate.insertBeforePlacenames(wwd, sul);
+        ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
+    }
+
+    /**
+     * 
+     * @param layerInfo
+     * @param elevation
+     * @param opacity 
+     */
+    public void addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
+        if (opacity > 1.0 || opacity < 0.0) {
+            log.warn("The content of the \"opacity\" "
+                    + "component must be a double value between."
+                    + "0.0 and 100.0");
+            opacity = 0.0;
+        }
+        addWMSHeightLayer(layerInfo.getWMSCapabilities()
+                , layerInfo.getLayerCapabilities()
+                , layerInfo.getParameter(), elevation, opacity);
     }
 
     /**

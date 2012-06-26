@@ -1,4 +1,11 @@
-package com.dfki.av.sudplan.vis;
+/*
+ *  ElevatedSurfaceImage.java 
+ *
+ *  Created by DFKI AV on 15.06.2012.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
+package com.dfki.av.sudplan.wms;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.texture.Texture;
@@ -17,10 +24,14 @@ import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
 
+/**
+ * 
+ * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
+ */
 public class ElevatedSurfaceImage extends SurfaceImage {
 
-    // Display quality of the surface
-    private final static int QUALITY = 1;
+    // Display quality of the surface (Amount of supporting points)
+    private final static int QUALITY = 32;
     // Default elevation set to zero meters over sea level
     private double elevation = 0;
     private boolean imageRepeat;
@@ -33,31 +44,22 @@ public class ElevatedSurfaceImage extends SurfaceImage {
     private IntBuffer indices;
     boolean needsUpdate = true;
     boolean floating = true;
+    
+    private int id;
 
-    public ElevatedSurfaceImage(Object imageSource, Sector sector) {
+    public ElevatedSurfaceImage(Object imageSource, Sector sector, int id) {
         super(imageSource, sector);
+        this.id = id;
+    }
+
+    public int getId(){
+        return id;
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        // TODO
-        return false;
+    public void setId(int id){
+        this.id = id;
     }
-
-    @Override
-    public int hashCode() {
-        // TODO
-        int hash = 3;
-        hash = 29 * hash + (int) (Double.doubleToLongBits(this.elevation) ^ (Double.doubleToLongBits(this.elevation) >>> 32));
-        return hash;
-    }
-
+    
     public double getElevation() {
         return this.elevation;
     }
@@ -172,13 +174,7 @@ public class ElevatedSurfaceImage extends SurfaceImage {
                 } else {
                     texture.setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
                 }
-
-//                gl.glScaled(1d / imageScale, 1d / imageScale, 1d);
-//                if (imageOffset != null) {
-//                    gl.glTranslated(-(double) imageOffset.x / texture.getWidth(),
-//                            -(double) imageOffset.y / texture.getHeight(), 0d);
-//                }
-
+                
                 // Draw
                 renderSurface(dc);
 
@@ -255,8 +251,6 @@ public class ElevatedSurfaceImage extends SurfaceImage {
         if (this.texCoords == null) {
             this.texCoords = getTextureCoordinates(QUALITY);
         }
-
-
     }
 
     // Compute indices for triangle strips
@@ -329,8 +323,15 @@ public class ElevatedSurfaceImage extends SurfaceImage {
             GL gl = dc.getGL();
             gl.glTexParameterf(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST_MIPMAP_NEAREST);
             gl.glTexParameterf(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
-            BufferedImage src = (BufferedImage) this.getImageSource();
-            TextureData texdata = new TextureData(0, 0, false, src);
+            TextureData texdata;
+            
+            if (getImageSource() instanceof TextureData) {
+                texdata = (TextureData) getImageSource();
+            } else {
+                BufferedImage src = (BufferedImage) this.getImageSource();
+                texdata = new TextureData(0, 0, false, src);
+            }
+
 
             gl.glTexImage2D(gl.GL_TEXTURE_2D,
                     0,
