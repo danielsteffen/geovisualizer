@@ -100,7 +100,6 @@ public class MainFrame extends javax.swing.JFrame {
         txtLongitude = new javax.swing.JTextField();
         btnCancelGoToDialoag = new javax.swing.JButton();
         btnGo = new javax.swing.JButton();
-        jopAddServer = new javax.swing.JOptionPane();
         dWMSHeight = new javax.swing.JDialog();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
@@ -905,7 +904,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JOptionPane jopAddServer;
     private javax.swing.JLabel lHeight;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;

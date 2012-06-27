@@ -12,7 +12,8 @@ import gov.nasa.worldwind.geom.Position;
 
 /**
  * Provides a data container of the most interesting data used by any 
- * other component. 
+ * other component. Using the {@link #viewingDirection} one can set the
+ * Roll-Pitch-Yaw angles in radians of the camera.
  * <p>
  * Note: If used in {@link VisualizationComponent#setCamera(com.dfki.av.sudplan.camera.Camera) }
  * the movement of the camera is not animated.
@@ -34,7 +35,8 @@ public class SimpleCamera implements Camera {
      */
     private double altitude;
     /**
-     * The <code>viewingDirection</code> of the camera.
+     * The <code>viewingDirection</code> of the camera defined by angles in
+     * radians for Roll-Pitch-Yaw.
      */
     private Vector3D viewingDirection;
 
@@ -131,7 +133,7 @@ public class SimpleCamera implements Camera {
 
     @Override
     public BoundingVolume getBoundingVolume() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override

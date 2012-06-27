@@ -14,7 +14,9 @@ import gov.nasa.worldwind.geom.Position;
  * The <i>AnimatedCamera</i> class is extended from {@link SimpleCamera}. It 
  * provides the same methods and constructors. However, when used in
  * {@link VisualizationComponent#setCamera(com.dfki.av.sudplan.camera.Camera) }
- * the camera is animated to the specified endposition.
+ * the camera is animated to the specified endposition. Using the 
+ * {@link #viewingDirection} one can set the Roll-Pitch-Yaw angles in radians 
+ * of the camera.
  * <p>
  * 
  * @author Daniel Steffen <daniel.steffen at dfki.de>
@@ -71,8 +73,9 @@ public class AnimatedCamera extends SimpleCamera{
     }
 
     /**
-     * Creates a <code>AnimatedCamera</code> object at {@link Position} <code>(lat, lon, alt)</code>
-     * and a {@link #viewingDirection} of <code>vec</code>.
+     * Creates a <code>AnimatedCamera</code> object at {@link Position} 
+     * <code>(lat, lon, alt)</code> and a {@link #viewingDirection} 
+     * of <code>vec</code>.
      * <p>
      * Note: The <code>vec</code> is copied by value not by reference.
      * 

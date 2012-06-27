@@ -10,35 +10,41 @@ package com.dfki.av.sudplan.camera;
 import gov.nasa.worldwind.geom.Vec4;
 
 /**
+ * A data structure for a 3-D vector. Another one ;)
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class Vector3D {
 
     /**
-     * The <code>x</code> component of the {@link Vector3D}.
+     * The
+     * <code>x</code> component of the {@link Vector3D}.
      */
     private double x;
     /**
-     * The <code>y</code> component of the {@link Vector3D}.
+     * The
+     * <code>y</code> component of the {@link Vector3D}.
      */
     private double y;
     /**
-     * The <code>z</code> component of the {@link Vector3D}.
+     * The
+     * <code>z</code> component of the {@link Vector3D}.
      */
     private double z;
 
     /**
-     * 
+     * Constructor. Sets all components to zero.
      */
     public Vector3D() {
         this(0.0, 0.0, 0.0);
     }
 
     /**
-     * 
+     * Constructor.
+     *
      * @param vec the {@link Vec4} to set.
-     * @throws IllegalArgumentException if <code>vec</code> is null.
+     * @throws IllegalArgumentException if
+     * <code>vec</code> is null.
      */
     public Vector3D(Vec4 vec) {
         if (vec == null) {
@@ -50,9 +56,11 @@ public class Vector3D {
     }
 
     /**
-     * 
+     * Copy constructor.
+     *
      * @param vec the {@link Vector3D} to set.
-     * @throws IllegalArgumentException if <code>vec</code> is null.
+     * @throws IllegalArgumentException if
+     * <code>vec</code> is null.
      */
     public Vector3D(Vector3D vec) {
         if (vec == null) {
@@ -64,10 +72,11 @@ public class Vector3D {
     }
 
     /**
-     * 
-     * @param x
-     * @param y
-     * @param z 
+     * Constructor.
+     *
+     * @param x the x component to set.
+     * @param y the y component to set.
+     * @param z the z component to set.
      */
     public Vector3D(double x, double y, double z) {
         this.x = x;
@@ -76,41 +85,53 @@ public class Vector3D {
     }
 
     /**
-     * @return the x
+     * Returns the x component.
+     *
+     * @return the x component to return.
      */
     public double getX() {
         return x;
     }
 
     /**
-     * @param x the x to set
+     * Set the x component.
+     *
+     * @param x the value to set for the x component.
      */
     public void setX(double x) {
         this.x = x;
     }
 
     /**
-     * @return the y
+     * Returns the y component of the vector.
+     *
+     * @return the y component to return.
      */
     public double getY() {
         return y;
     }
 
     /**
-     * @param y the y to set
+     * Set the y component of the vector.
+     *
+     * @param y the y to set.
      */
     public void setY(double y) {
         this.y = y;
     }
 
     /**
-     * @return the z
+     * Returns the z component of the vector.
+     *
+     * @return the z component to return.
      */
     public double getZ() {
         return z;
     }
 
     /**
+     * The z component to set for this vector.
+     *
      * @param z the z to set
      */
     public void setZ(double z) {

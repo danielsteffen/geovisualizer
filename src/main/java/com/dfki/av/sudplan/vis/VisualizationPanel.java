@@ -284,24 +284,59 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     @Override
     public Camera getCamera() {
-        Position p = this.wwd.getView().getEyePosition();
-        Vector3D vec = new Vector3D(wwd.getView().getForwardVector());
-        return new SimpleCamera(p, vec);
+        Camera camera = null;
+        View view = this.wwd.getView();
+        if (view != null) {
+            Position p = view.getEyePosition();
+            Angle heading = view.getHeading();
+            Angle roll = view.getRoll();
+            Angle pitch = view.getPitch();
+            Vector3D vector = new Vector3D(roll.getRadians(),
+                    pitch.getRadians(),
+                    heading.getRadians());
+            camera = new SimpleCamera(p, vector);
+        } else {
+            log.debug("No view available. Could not init camera object.");
+        }
+        return camera;
     }
 
     @Override
     public void setCamera(Camera c) {
-        // TODO <steffen>: Move behaviour into camera classes.
         if (c == null) {
             throw new IllegalArgumentException("Parameter Camera is null.");
         }
-        if (c instanceof AnimatedCamera) {
-            View view = this.wwd.getView();
-            view.goTo(Position.fromDegrees(c.getLatitude(), c.getLongitude()), c.getAltitude());
-        } else if (c instanceof SimpleCamera) {
-            View view = this.wwd.getView();
-            view.setEyePosition(Position.fromDegrees(c.getLatitude(), c.getLongitude(), c.getAltitude()));
-            wwd.redraw();
+
+        View view = this.wwd.getView();
+        if (view != null) {
+
+            Angle roll;
+            Angle pitch;
+            Angle heading;
+
+            Vector3D vector = c.getViewingDirection();
+
+            if (vector != null) {
+                roll = Angle.fromRadians(vector.getX());
+                pitch = Angle.fromRadians(vector.getY());
+                heading = Angle.fromRadians(vector.getZ());
+            } else {
+                log.warn("No vector defined for camera. Using zero vector.");
+                roll = pitch = heading = Angle.ZERO;
+            }
+
+            view.setRoll(roll);
+            view.setPitch(pitch);
+            view.setHeading(heading);
+            
+            if (c instanceof AnimatedCamera) {
+                Position pos = Position.fromDegrees(c.getLatitude(), c.getLongitude());
+                view.goTo(pos, c.getAltitude());
+            } else if (c instanceof SimpleCamera) {
+                Position pos = Position.fromDegrees(c.getLatitude(), c.getLongitude(), c.getAltitude());
+                view.setEyePosition(pos);
+                wwd.redraw();
+            }
         }
     }
 
@@ -387,7 +422,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps,
+            AVList params, double elevation, double opacity) {
         SurfaceImageLayer sul = new SurfaceImageLayer();
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         addLayer(sul);
@@ -416,8 +452,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Returns the {@link LayerPanel} that manages all currently
-     * available layer elements. The structure for the UI is currently a tree.
+     * Returns the {@link LayerPanel} that manages all currently available layer
+     * elements. The structure for the UI is currently a tree.
      *
      * @return the {@link LayerPanel} to return.
      */
