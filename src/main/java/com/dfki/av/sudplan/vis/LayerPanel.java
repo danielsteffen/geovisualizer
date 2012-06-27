@@ -160,13 +160,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             log.debug("No layer has been selected. Not moving a layer.");
             return;
         }
-        
+
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) treePath1.getLastPathComponent();
         LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
         String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
-        
+
         int index = layerList.indexOf(layer);
         if (index < layerList.size() - 1) {
             layerList.remove(index);
@@ -174,7 +174,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         } else {
             log.debug("Could not move layer down. Selected layer is last layer.");
         }
-        
+
         TreePath treePath2 = jTree1.getNextMatch(layerName, 0, Position.Bias.Forward);
         jTree1.setSelectionPath(treePath2);
     }//GEN-LAST:event_btnUpActionPerformed
@@ -185,13 +185,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             log.debug("No layer has been selected. Not moving a layer.");
             return;
         }
-        
+
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
         LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
         String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
-        
+
         int index = layerList.indexOf(layer);
         if (index <= 0) {
             log.debug("Could not move layer up. Selected layer is first layer.");
@@ -199,7 +199,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             layerList.remove(index);
             layerList.add(index - 1, layer);
         }
-        
+
         TreePath treePath2 = jTree1.getNextMatch(layerName, 0, Position.Bias.Forward);
         jTree1.setSelectionPath(treePath2);
     }//GEN-LAST:event_btnDownActionPerformed
@@ -210,13 +210,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             log.debug("No layer has been selected.");
             return;
         }
-        
+
         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tp.getLastPathComponent();
         LayerCheckBoxNode cbn = (LayerCheckBoxNode) dmtn.getUserObject();
         String layerName = cbn.getText();
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
-        
+
         int index = layerList.indexOf(layer);
         if (index < 0) {
             log.debug("Could not remove layer.");
@@ -268,12 +268,18 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         TreePath path = jTree1.getPathForRow(row);
 
         if (path != null) {
+            
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
             LayerCheckBoxNode node = (LayerCheckBoxNode) treeNode.getUserObject();
             LayerList layerList = worldWindow.getModel().getLayers();
+            
             Layer layer = layerList.getLayerByName(node.getText());
-            layer.setEnabled(!layer.isEnabled());
-            worldWindow.redraw();
+            if (layer != null) {
+                layer.setEnabled(!layer.isEnabled());
+                worldWindow.redraw();
+            } else {
+                log.warn("Selected node {} not in layerlist.", node.getText());
+            }
         }
     }
 
