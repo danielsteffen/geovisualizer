@@ -76,7 +76,7 @@
             </properties>
         </profile>
         
-        <profile>
+        <!--profile>
             <id>s3d-main-deploy-dfki</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -88,9 +88,9 @@
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
                 <distribution.server>dfki-artifactory</distribution.server>
             </properties>
-        </profile>
+        </profile-->
 
-        <profile>
+        <!--profile>
             <id>s3d-main-deploy-cismet</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -102,7 +102,7 @@
                 <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>
                 <distribution.server>cismet-artifactory</distribution.server>
             </properties>
-        </profile>
+        </profile-->
     </profiles>  
     
     <dependencies>
