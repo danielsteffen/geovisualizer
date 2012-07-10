@@ -30,6 +30,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compileSource>1.6</compileSource>
+        <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
     </properties>
 
     <profiles>
@@ -40,7 +41,6 @@
             </activation>
             <properties>
                 <ww-scope>compile</ww-scope>                   
-                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
@@ -55,7 +55,6 @@
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                   
-                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
@@ -70,7 +69,6 @@
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                
-                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
@@ -85,7 +83,6 @@
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                
-                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase>http://sudplan.kl.dfki.de/</codebase>
                 <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
                 <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
@@ -100,7 +97,6 @@
             </activation>
             <properties>
                 <ww-scope>provided</ww-scope>                
-                <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
                 <codebase />
                 <repository.url>http://flexo.cismet.de:8081/artifactory/repo</repository.url>
                 <distribution.url>http://flexo.cismet.de:8081/artifactory/ext-releases-local</distribution.url>
