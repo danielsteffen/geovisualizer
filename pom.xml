@@ -29,6 +29,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <compileSource>1.6</compileSource>
     </properties>
 
     <profiles>
@@ -190,8 +191,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${compileSource}</source>
+                    <target>${compileSource}</target>
                 </configuration>
             </plugin>
 
@@ -293,7 +294,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>${compileSource}</targetJdk>
                 </configuration>
             </plugin>
             
