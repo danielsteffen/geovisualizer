@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.Sector;
@@ -15,44 +16,62 @@ import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.Renderable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Extended {@link SurfaceImageLayer} which receives {@link PropertyChangeEvent}
+ * from a {@link ElevatedSurfaceSupportLayer} to add and remove
+ * {@link ElevatedSurfaceImage} if needed for the current {@link View}
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceLayer extends SurfaceImageLayer {   
+public class ElevatedSurfaceLayer extends SurfaceImageLayer {
+
+    /**
+     * Last image_id
+     */
     private int image_id;
     /*
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(ElevatedSurfaceLayer.class);
+    /**
+     * Support layer for the {@link ElevatedSurfaceLayer}
+     */
     private final ElevatedSurfaceSupportLayer supportLayer;
+    /**
+     * The elevation for the {@link ElevatedSurfaceImage}s
+     */
     private final Double elevation;
+    /**
+     * The opacity for the {@link ElevatedSurfaceImage}s
+     */
     private final Double opac;
-    private WMSImageRemover remover;
+    /**
+     * {@link SwingWorker} to check if {@link ElevatedSurfaceImage} must be
+     * removed
+     */
+    private ElevatedSurfaceImageRemover remover;
 
     /**
+     * Constructs a elevated surface layer with the definied capabilities,
+     * prameters, elevation and opacity
      *
-     * @param layer
-     * @param image_format
-     * @param elevation
-     * @param opac
-     * @param sector
+     * @param caps WMSCapabilities for the support layer
+     * @param params WMS parameter for the support layer
+     * @param elevation Elevation for the ElevatedSurfaceImages
+     * @param opac Opacity for the ElevatedSurfaceImages
+     * @param sector Bounding box of the ElevatedSurfaceLayer
      */
     public ElevatedSurfaceLayer(WMSCapabilities caps, AVList params, Double elevation, Double opac, Sector sector) {
         super();
         this.elevation = elevation;
         this.opac = opac;
         this.setPickEnabled(false);
-        
+
         AVList configParams = params.copy();
         String image_format = "";
         for (String s : caps.getImageFormats()) {
@@ -69,7 +88,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         }
         if (image_format.equals("")) {
             log.warn("No supported image format available.");
-        }  
+        }
         image_id = 0;
         // Some wms servers are slow, so increase the timeouts and limits used by world wind's retrievers.
         configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
@@ -78,14 +97,50 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         ElevatedSurfaceSupportLayer tmp = new ElevatedSurfaceSupportLayer(caps, configParams, image_format, this);
         this.supportLayer = tmp;
     }
-    
-    
+
+    /**
+     * Returns the support layer
+     *
+     * @return The support layer ({@link ElevatedSurfaceSupportLayer})
+     */
+    public ElevatedSurfaceSupportLayer getSupportLayer() {
+        return supportLayer;
+    }
+
+    /**
+     * Removes all {@link ElevatedSurfaceImage}s from the type
+     * {@link ElevatedSurfaceLayer}
+     *
+     * @param renderables list of {@link Renderable}s to remove
+     */
+    public void removeRenderables(List<Renderable> renderables) {
+        for (Renderable renderable : renderables) {
+            if (renderable instanceof ElevatedSurfaceImage) {
+                ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
+                removeRenderable(renderable);
+                image.dispose();
+            }
+        }
+    }
+
+    /**
+     * Forces all {@link Renderable} from type
+     * {@link ElevatedSurfaceImage} to refresh.
+     */
+    void refresh() {
+        for (Renderable renderable : getRenderables()) {
+            if (renderable instanceof ElevatedSurfaceImage) {
+                ((ElevatedSurfaceImage) renderable).refresh();
+            }
+        }
+    }
+
     @Override
-    public void setEnabled(boolean bln){
+    public void setEnabled(boolean bln) {
         super.setEnabled(bln);
         getSupportLayer().setEnabled(bln);
     }
-    
+
     @Override
     public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
         super.addPropertyChangeListener(pl);
@@ -94,22 +149,22 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("toRemove")) {
-            if(evt.getNewValue() instanceof List<?>){
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_REMOVAL)) {
+            if (evt.getNewValue() instanceof List<?>) {
                 List<Renderable> toRemove = (List<Renderable>) evt.getNewValue();
                 removeRenderables(toRemove);
-            }else if (remover == null || remover.isDone()) {
-                remover = new WMSImageRemover(getRenderables());
+            } else if (remover == null || remover.isDone()) {
+                remover = new ElevatedSurfaceImageRemover(getRenderables());
                 remover.addPropertyChangeListener(this);
                 remover.execute();
             } else {
                 // TODO
             }
         }
-        if (evt.getPropertyName().equals("RemoveAll")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_REMOVAL_COMPLETE)) {
             removeAllRenderables();
         }
-        if (evt.getPropertyName().equals("compose complete")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_CREATION_COMPLETE)) {
             if (evt.getNewValue() instanceof ElevatedSurfaceImage && evt.getOldValue() instanceof List<?>) {
                 ElevatedSurfaceImage image = (ElevatedSurfaceImage) evt.getNewValue();
                 image.setElevation(elevation);
@@ -123,111 +178,4 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
             }
         }
     }
-
-    /**
-     *
-     * @return the wms data as
-     * <code>WMSTiledImageLayer</code>
-     */
-    public ElevatedSurfaceSupportLayer getSupportLayer() {
-        return supportLayer;
-    }
-
-    /**
-     * Removes all
-     * <code>ElevatedSurfaceImage</code> from Layer
-     *
-     * @param renderables
-     */
-    public void removeRenderables(List<Renderable> renderables) {
-        for (Renderable renderable : renderables) {
-            if (renderable instanceof ElevatedSurfaceImage) {
-                ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
-                removeRenderable(renderable);
-                image.dispose();
-            }
-        }
-    }
-
-    /**
-     * Forces all
-     * <code>Renderable</code> from type
-     * <code>ElevatedSurfaceImage</code> to refresh.
-     */
-    void refresh() {
-        for (Renderable renderable : getRenderables()) {
-            if (renderable instanceof ElevatedSurfaceImage) {
-                ((ElevatedSurfaceImage) renderable).refresh();
-            }
-        }
-    }
-    
-    
-class WMSImageRemover extends SwingWorker<List<Renderable> , Void> {
-
-    protected Iterable<Renderable> images;
-
-
-    /**
-     *
-     * @param sul
-     * @param elevation
-     * @param opacity
-     * @param wms
-     * @param List<sector>
-     */
-    public WMSImageRemover(Iterable<Renderable> images) {
-        this.images = images;
-    }
-
-    /**
-     *
-     * @return true if wms data retreival was successfull
-     * @throws URISyntaxException
-     * @throws Exception
-     */
-    @Override
-    protected List<Renderable> doInBackground() throws URISyntaxException, Exception {
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-        Thread.sleep(200);
-        List<Renderable> toRemove = new ArrayList<Renderable>();
-        for (Renderable renderable : images) {
-            if (renderable instanceof ElevatedSurfaceImage) {
-                ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
-                for (Renderable renderable2 : images) {
-                    if (renderable2 instanceof ElevatedSurfaceImage) {
-                        ElevatedSurfaceImage image2 = (ElevatedSurfaceImage) renderable2;
-                        if (image.getSector().contains(image2.getSector())
-                                || image2.getSector().contains(image.getSector())) {
-                            if (image.getId() < image2.getId()) {
-                                toRemove.add(renderable);
-                            }else if (image.getId() > image2.getId()){
-                                toRemove.add(renderable2);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return toRemove;
-    }
-
-    /**
-     *
-     */
-    @Override
-    protected void done() {
-        try {
-            if (get() != null) {
-                firePropertyChange("toRemove", null, get());
-            } 
-        } catch (InterruptedException ex) {
-            log.warn("done (InterruptedException)" + ex);
-        } catch (ExecutionException ex) {
-            log.warn("done (ExecutionException)" + ex);
-        } catch (CancellationException ex) {
-            log.warn("done (CancellationException)" + ex);
-        }
-    }
-}
 }

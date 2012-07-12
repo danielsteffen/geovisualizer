@@ -13,8 +13,9 @@ import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.LayerInfo;
+import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
-import com.dfki.av.sudplan.wms.WMSLayerRetreiver;
+import com.dfki.av.sudplan.wms.PropertyChangeEventHolder;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -794,7 +795,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         bGoWMSHeight.setEnabled(false);
         pbWMS.setIndeterminate(true);
         pbWMS.setVisible(true);
-        SwingWorker worker = new LayerInfoRetreiver(urlString);
+        SwingWorker worker = new LayerInfoListRetreiver(urlString);
         worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeightActionPerformed
@@ -867,7 +868,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         bGoWMSHeight1.setEnabled(false);
         pbWMSLayer.setIndeterminate(true);
         pbWMSLayer.setVisible(true);
-        SwingWorker worker = new WMSLayerRetreiver(txtRequest.getText());
+        SwingWorker worker = new LayerInfoRetreiver(txtRequest.getText());
         worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
@@ -878,7 +879,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("WMSLayerInfoRetreiver done")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_COMPLETE)) {
             pbWMS.setIndeterminate(false);
             cLayerList.removeAllItems();
             if (evt.getNewValue() instanceof List<?>) {
@@ -898,7 +899,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             lOpacity.setVisible(true);
             bGoWMSHeight.setEnabled(true);
         }
-        if (evt.getPropertyName().equals("WMSLayerInfoRetreiver failed")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED)) {
             resetWMSHeightDialog();
             JOptionPane.showMessageDialog(dWMSHeight,
                     "Could not retreive WMS data from server.",

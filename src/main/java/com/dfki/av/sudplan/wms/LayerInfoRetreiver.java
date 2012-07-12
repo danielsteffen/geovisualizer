@@ -7,56 +7,72 @@
  */
 package com.dfki.av.sudplan.wms;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openide.util.Exceptions;
 
 /**
+ * SwingWorker for the retreival of {@link LayerInfo} for a given wms request
+ * url
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
+public class LayerInfoRetreiver extends SwingWorker<LayerInfo, Void> {
 
-    private String wmsURL;
-    /*
-     * Logger.
+    /**
+     * wms request url as {@link String}
      */
-    private static final Logger log = LoggerFactory.getLogger(LayerInfoRetreiver.class);
-    
+    private String wmsURL;
 
+    /**
+     * Creates a {@link LayerInfoRetreiver} with the defined wms source {@item
+     * String} wmsURL.
+     *
+     * @param wmsURL wms request url as {@link String}
+     */
     public LayerInfoRetreiver(String wmsURL) {
         this.wmsURL = wmsURL;
+    }
 
+    /**
+     * Retreives a {@link LayerInfo} from the defined wms source
+     * ({@link String} wmsURL})
+     *
+     * @param wmsURL
+     * @return parsed {@link LayerInfo} of the data returned from the wms server
+     * @throws URISyntaxException if the parsing of the {@link String} wmsURL to {@link URI}
+     * failed.
+     * @throws Exception if the parsing of the layer info failed
+     */
+    private LayerInfo retreiveLayerInfo(String wmsURL) throws URISyntaxException, Exception {
+        return WMSUtils.parseWMSRequest(wmsURL);
     }
 
     @Override
-    protected List<LayerInfo> doInBackground() throws URISyntaxException {
-        return retrieveWMS(wmsURL);
-    }
-
-    private List<LayerInfo> retrieveWMS(String wmsURL) throws URISyntaxException {
-        URI serverURI = new URI(wmsURL.trim());
-        return WMSHeightUtils.getLayerInfos(serverURI);
+    protected LayerInfo doInBackground() throws URISyntaxException, Exception {
+        return retreiveLayerInfo(wmsURL);
     }
 
     @Override
     protected void done() {
-        List<LayerInfo> layerInfos = null;
+        LayerInfo li;
         try {
-            layerInfos = get();
-        } catch (Exception ex) {
-            firePropertyChange("WMSLayerInfoRetreiver failed", this, wmsURL);
-            log.error("Error: " + ex);
+            li = get();
+        } catch (InterruptedException ex) {
+            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            Exceptions.printStackTrace(ex);
+            return;
+        } catch (ExecutionException ex) {
+            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            Exceptions.printStackTrace(ex);
             return;
         }
-        if (layerInfos == null) {
-            firePropertyChange("WMSLayerInfoRetreiver failed", this, wmsURL);
+        if (li == null) {
+            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
         } else {
-            firePropertyChange("WMSLayerInfoRetreiver done", this, layerInfos);
-            
+            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_COMPLETE, this, li);
+
         }
     }
 }

@@ -15,7 +15,8 @@ import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.wiz.VisWiz;
 import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
 import com.dfki.av.sudplan.wms.LayerInfo;
-import com.dfki.av.sudplan.wms.WMSHeightUtils;
+import com.dfki.av.sudplan.wms.PropertyChangeEventHolder;
+import com.dfki.av.sudplan.wms.WMSUtils;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -174,11 +175,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                         for (WMSLayerCapabilities lc : namedLayerCaps) {
                             Set<WMSLayerStyle> styles = lc.getStyles();
                             if (styles == null || styles.isEmpty()) {
-                                LayerInfo layerInfo = LayerInfo.create(caps, lc, null);
+                                LayerInfo layerInfo = new LayerInfo(caps, lc, null);
                                 layerInfos.add(layerInfo);
                             } else {
                                 for (WMSLayerStyle style : styles) {
-                                    LayerInfo layerInfo = LayerInfo.create(caps, lc, style);
+                                    LayerInfo layerInfo = new LayerInfo(caps, lc, style);
                                     layerInfos.add(layerInfo);
                                 }
                             }
@@ -396,14 +397,14 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             progressBar.setValue(i.intValue());
             progressChange.firePropertyChange(evt);
         }
-        if (evt.getPropertyName().equals("wwd redraw")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WWD_REDRAW)) {
             wwd.redraw();
         }
-        if (evt.getPropertyName().equals("wms download")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLOAD_ACTIVE)) {
             progressBar.setVisible(true);
             progressBar.setIndeterminate(true);
         }
-        if (evt.getPropertyName().equals("wms done")) {
+        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE)) {
             progressBar.setVisible(false);
             progressBar.setIndeterminate(false);
         }
@@ -457,9 +458,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     + "0.0 and 100.0");
             opacity = 0.0;
         }
-        addWMSHeightLayer(layerInfo.getWMSCapabilities()
-                , layerInfo.getLayerCapabilities()
-                , layerInfo.getParameter(), elevation, opacity);
+        addWMSHeightLayer(layerInfo.caps, layerInfo.layerCaps, 
+                layerInfo.params, elevation, opacity);
     }
 
     /**
@@ -474,12 +474,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public void addWMSHeightLayer(String request, double elevation, double opacity) {
         LayerInfo li = null;
         try {
-            li = WMSHeightUtils.parseWMSRequest(request);
+            li = WMSUtils.parseWMSRequest(request);
         } catch (Exception ex) {
             log.warn("" + ex);
         }
         if (li != null) {
-            addWMSHeightLayer(li.caps, li.lcaps, li.params, elevation, opacity);
+            addWMSHeightLayer(li.caps, li.layerCaps, li.params, elevation, opacity);
         }
     }
 

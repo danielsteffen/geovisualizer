@@ -1,5 +1,5 @@
 /*
- *  WMSHeightUtils.java 
+ *  WMSUtils.java 
  *
  *  Created by DFKI AV on 15.04.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -24,17 +24,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for the generation of elevated WMS Layers
+ * Utility class for the generation of elevated WMS data handeling
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class WMSHeightUtils {
+public class WMSUtils {
 
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(WMSHeightUtils.class);
-    private static String image_format = "image/png";
+    private static final Logger log = LoggerFactory.getLogger(WMSUtils.class);
 
     /**
      * Retrieves the reference location of an
@@ -45,7 +44,7 @@ public class WMSHeightUtils {
      * @param sector
      * <code>Sector</code> in which the reference location for the
      * <code>ExtrudedPolygon</code> should be calculated.
-     * @return
+     * @return reference location of the given sector
      */
     public static LatLon getReferenceLocation(Sector sector) {
         ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
@@ -57,43 +56,39 @@ public class WMSHeightUtils {
         return pgon.getReferenceLocation();
     }
 
-    public static String getImageFormat() {
-        return image_format;
-    }
-
+    /**
+     * Returns maximum elevation of the given sector on the given globe
+     *
+     * @param sector
+     * @param globe
+     * @return maximum elevation
+     */
     public static double getMaxElevationOfSector(Sector sector, Globe globe) {
         return globe.getMinAndMaxElevations(sector)[1];
     }
 
     /**
-     * Adds an image to the
-     * <code>SurfaceImageLayer</code>
-     * <code>sul</code> mapped to the ground terrain.
+     * Adds a {@link ElevatedSurfaceImage} to the {@link ElevatedSurfaceLayer}
      *
-     * @param sul the
-     * <code>SurfaceLayer</code>
-     * @param name
-     * @param image
-     * <code>BufferedImage</code> in which the image is stored
-     * @param sector
-     * <code>Sector</code> in which the image should be mapped
+     * @param sul the {@link ElevatedSurfaceLayer} in which the image should be
+     * added.
+     * @param image {@link BufferedImage} in which the image is stored
+     * @param sector {@link Sector} in which the image should be mapped
      * @param elevation the elevation for the image (in meter)
      * @param opacity the Opacity for the image (1.0 is fully transparent)
-     * @return
      */
     public static void addImageToLayer(ElevatedSurfaceLayer sul, BufferedImage image, Sector sector, double elevation, double opacity) {
         if (elevation == 0) {
-            sul.addImage(sul.getName()+sector.toString(), image, sector);
+            sul.addImage(sul.getName() + sector.toString(), image, sector);
             sul.setOpacity(opacity);
             sul.setPickEnabled(false);
             return;
         }
-        ElevatedSurfaceImage tl = new ElevatedSurfaceImage(image, sector, -1);
+        ElevatedSurfaceImage tl = new ElevatedSurfaceImage(image, sector);
         tl.setElevation(elevation);
         tl.setOpacity(opacity);
         tl.setFloating(true);
         sul.addRenderable(tl);
-//        sul.refresh();
     }
 
     /**
@@ -102,12 +97,13 @@ public class WMSHeightUtils {
      * unit you desire for results where: 'M' is statute miles 'K' is kilometers
      * (default) 'N' is nautical miles
      *
-     * @param lat1
-     * @param lon1
-     * @param lat2
-     * @param lon2
-     * @param unit
-     * @return
+     * @param lat1 Latitude value in decimal degrees of the first point
+     * @param lon1 Longitude value in decimal degrees of the first point
+     * @param lat2 Latitude value in decimal degrees of the second point
+     * @param lon2 Longitude value in decimal degrees of the second point
+     * @param unit unit for the distance calculation 'M' is statute miles, 'K'
+     * is kilometers, (default) 'N' is nautical miles
+     * @return distance
      */
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
         double theta = lon1 - lon2;
@@ -123,6 +119,13 @@ public class WMSHeightUtils {
         return (dist);
     }
 
+    /**
+     * Calculates the greatest distance between the corner points of the given
+     * bounding box
+     *
+     * @param s bounding box for which the distance should be calculated
+     * @return distance as double (in kilometers)
+     */
     public static double distance(Sector s) {
         return distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, "K");
     }
@@ -130,8 +133,8 @@ public class WMSHeightUtils {
     /**
      * Converts decimal degrees to radians
      *
-     * @param deg
-     * @return
+     * @param deg degree value
+     * @return radian value
      */
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
@@ -140,13 +143,20 @@ public class WMSHeightUtils {
     /**
      * Converts radians to decimal degrees
      *
-     * @param rad
-     * @return
+     * @param rad radian value
+     * @return degree value
      */
     private static double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
 
+    /**
+     * Parses the data reveived from the wms server to {@link LayerInfo}
+     *
+     * @param request request url
+     * @return parsed data as {@link LayerInfo}
+     * @throws Exception
+     */
     public static LayerInfo parseWMSRequest(String request) throws Exception {
         URI url = new URI(request.trim());
         String[] parts = request.split("&");
@@ -171,7 +181,7 @@ public class WMSHeightUtils {
      * <code>serverURI</code>.
      *
      * @param serverURI
-     * @return
+     * @return parsed data as list of {@link LayerInfo}
      */
     public static List<LayerInfo> getLayerInfos(URI serverURI) {
         WMSCapabilities caps;
@@ -195,11 +205,11 @@ public class WMSHeightUtils {
             for (WMSLayerCapabilities lc : namedLayerCaps) {
                 Set<WMSLayerStyle> styles = lc.getStyles();
                 if (styles == null || styles.isEmpty()) {
-                    LayerInfo layerInfo = LayerInfo.create(caps, lc, null);
+                    LayerInfo layerInfo = new LayerInfo(caps, lc, null);
                     layerInfos.add(layerInfo);
                 } else {
                     for (WMSLayerStyle style : styles) {
-                        LayerInfo layerInfo = LayerInfo.create(caps, lc, style);
+                        LayerInfo layerInfo = new LayerInfo(caps, lc, style);
                         layerInfos.add(layerInfo);
                     }
                 }
