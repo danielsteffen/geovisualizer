@@ -95,9 +95,8 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
     private void updateTiles() {
         if (currentTiles.size() < tileCount) {
             if (lastCurrentTiles == null || lastCurrentTiles.isEmpty() || !previousCurrentTiles.equals(lastCurrentTiles)) {
-                lastCurrentTiles = new ArrayList<TextureTile>(previousCurrentTiles);
-
                 if (worker == null || worker.isDone()) {
+                    lastCurrentTiles = new ArrayList<TextureTile>(previousCurrentTiles);
                     oldTiles = new ArrayList<Sector>(newTiles);
                     newTiles = new ArrayList<Sector>();
                     for (TextureTile textureTile : lastCurrentTiles) {
@@ -107,8 +106,6 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
                     worker.addPropertyChangeListener(layer);
                     worker.addPropertyChangeListener(this);
                     worker.execute();
-                } else {
-                    // TODO
                 }
             }
             tileCount = currentTiles.size();
@@ -137,8 +134,22 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
         if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE)) {
             firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE, null, null);
         }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE)) {
-            updateTiles();
+        if (evt.getNewValue() != null && evt.getNewValue().equals(SwingWorker.StateValue.DONE)) {
+            if (lastCurrentTiles == null || lastCurrentTiles.isEmpty() || !previousCurrentTiles.equals(lastCurrentTiles)) {
+                if (worker == null || worker.isDone()) {
+                    lastCurrentTiles = new ArrayList<TextureTile>(previousCurrentTiles);
+                    oldTiles = new ArrayList<Sector>(newTiles);
+                    newTiles = new ArrayList<Sector>();
+                    for (TextureTile textureTile : lastCurrentTiles) {
+                        newTiles.add(textureTile.getSector());
+                    }
+                    worker = new ElevatedSurfaceImageRetreiver(image_format, this, new ArrayList<Sector>(oldTiles), new ArrayList<Sector>(newTiles));
+                    worker.addPropertyChangeListener(layer);
+                    worker.addPropertyChangeListener(this);
+                    worker.execute();
+                }
+            }
         }
+
     }
 }
