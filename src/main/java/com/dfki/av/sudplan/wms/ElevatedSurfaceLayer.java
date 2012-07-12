@@ -153,12 +153,16 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
             if (evt.getNewValue() instanceof List<?>) {
                 List<Renderable> toRemove = (List<Renderable>) evt.getNewValue();
                 removeRenderables(toRemove);
-            } else if (remover == null || remover.isDone()) {
+            } else if(evt.getOldValue() instanceof List<?>) {
+                List<Sector> toRemove = (List<Sector>) evt.getOldValue();
+                ElevatedSurfaceImageRemover removeOld = new ElevatedSurfaceImageRemover(getRenderables(), toRemove);
+                removeOld.addPropertyChangeListener(this);
+                removeOld.execute();
+            } else if (evt.getNewValue() == null && evt.getOldValue() == null 
+                    && (remover == null || remover.isDone())) {
                 remover = new ElevatedSurfaceImageRemover(getRenderables());
                 remover.addPropertyChangeListener(this);
                 remover.execute();
-            } else {
-                // TODO
             }
         }
         if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_REMOVAL_COMPLETE)) {

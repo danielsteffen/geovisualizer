@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.Renderable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -32,6 +33,10 @@ public class ElevatedSurfaceImageRemover extends SwingWorker<List<Renderable>, V
      * The logger.
      */
     private static final Logger log = LoggerFactory.getLogger(ElevatedSurfaceImageRemover.class);
+    /**
+     * {@link List} of Sectors to check
+     */
+    private final List<Sector> toRemove;
 
     /**
      * Creates a {@link ElevatedSurfaceImageRemover} with a defined
@@ -41,6 +46,37 @@ public class ElevatedSurfaceImageRemover extends SwingWorker<List<Renderable>, V
      */
     public ElevatedSurfaceImageRemover(Iterable<Renderable> images) {
         this.images = images;
+        toRemove = null;
+    }
+
+    /**
+     * Creates a {@link ElevatedSurfaceImageRemover} with a defined
+     * {@link Iterable} of {@link Renderable} to check.
+     *
+     * @param images current list of all Renderable in the layer
+     */
+    public ElevatedSurfaceImageRemover(Iterable<Renderable> images, List<Sector> toRemove) {
+        this.images = images;
+        this.toRemove = toRemove;
+    }
+
+    /**
+     * Retreive teh to removing {@link Renderable}s from a list of {@link Sector}s
+     * @return List of {@link Renderable}s
+     */
+    private List<Renderable> getRenderable() {
+        List<Renderable> remove = new ArrayList<Renderable>();
+        for (Sector sector : toRemove) {
+            for (Renderable renderable : images) {
+                if (renderable instanceof ElevatedSurfaceImage) {
+                    ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
+                    if (image.getSector().equals(sector)) {
+                        remove.add(renderable);
+                    }
+                }
+            }
+        }
+        return remove;
     }
 
     /**
@@ -50,7 +86,7 @@ public class ElevatedSurfaceImageRemover extends SwingWorker<List<Renderable>, V
      * @return List of {@link Renderable} which must be removed
      */
     private List<Renderable> check() {
-        List<Renderable> toRemove = new ArrayList<Renderable>();
+        List<Renderable> remove = new ArrayList<Renderable>();
         for (Renderable renderable : images) {
             if (renderable instanceof ElevatedSurfaceImage) {
                 ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
@@ -60,23 +96,25 @@ public class ElevatedSurfaceImageRemover extends SwingWorker<List<Renderable>, V
                         if (image.getSector().contains(image2.getSector())
                                 || image2.getSector().contains(image.getSector())) {
                             if (image.getId() < image2.getId()) {
-                                toRemove.add(renderable);
+                                remove.add(renderable);
                             } else if (image.getId() > image2.getId()) {
-                                toRemove.add(renderable2);
+                                remove.add(renderable2);
                             }
                         }
                     }
                 }
             }
         }
-        return toRemove;
+        return remove;
     }
 
     @Override
     protected List<Renderable> doInBackground() throws URISyntaxException, Exception {
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-        Thread.sleep(200);
-        return check();
+        if (toRemove == null) {
+            return check();
+        } else {
+            return getRenderable();
+        }
     }
 
     @Override

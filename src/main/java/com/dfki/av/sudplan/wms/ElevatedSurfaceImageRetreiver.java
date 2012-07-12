@@ -10,6 +10,7 @@ package com.dfki.av.sudplan.wms;
 import gov.nasa.worldwind.geom.Sector;
 import java.awt.image.BufferedImage;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -50,6 +51,11 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
      * List of bounding boxes of the next set of ElevatedSurfaceImage
      */
     private List<Sector> newTiles;
+    /**
+     * {@link SwingWorker} to check if {@link ElevatedSurfaceImage} must be
+     * removed
+     */
+    private ElevatedSurfaceImageRemover remover;
 
     /**
      * Creates a {@link ElevatedSurfaceImageRetreiver} which retreives
@@ -102,6 +108,13 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
                 firePropertyChange(PropertyChangeEventHolder.IMAGE_REMOVAL, null, null);
             }
         } else {
+            List<Sector> toRemove = new ArrayList<Sector>();
+            for (Sector sector : oldTiles) {
+                if(!newTiles.contains(sector)){
+                    toRemove.add(sector);
+                }
+            }
+            firePropertyChange(PropertyChangeEventHolder.IMAGE_REMOVAL, toRemove, null);
             for (Sector sector : newTiles) {
                 Boolean add = true;
                 for (Sector oldSector : oldTiles) {
