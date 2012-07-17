@@ -12,7 +12,9 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
+public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer implements OrderedRenderable{
 
     /*
      * Logger.
@@ -151,5 +153,16 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
             }
         }
 
+    }
+    
+    @Override
+    public double getDistanceFromEye() {
+        // TODO
+        return 0;
+    }
+
+    @Override
+    public void pick(DrawContext dc, Point point) {
+        // Do nothing
     }
 }

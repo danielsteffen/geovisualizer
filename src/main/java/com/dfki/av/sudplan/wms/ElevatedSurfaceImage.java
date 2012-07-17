@@ -16,6 +16,7 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Point;
@@ -30,13 +31,13 @@ import javax.media.opengl.GL;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceImage extends SurfaceImage {
+public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRenderable {
 
     /**
      * Display quality of the surface (Amount of supporting points)
      *
      */
-    private final static int QUALITY = 32;
+    private int QUALITY = 2;
     /**
      * Default elevation set to zero meters over sea level
      *
@@ -91,6 +92,13 @@ public class ElevatedSurfaceImage extends SurfaceImage {
     public ElevatedSurfaceImage(Object imageSource, Sector sector) {
         super(imageSource, sector);
         this.id = -1;
+        if(WMSUtils.distance(sector)>3500){
+            QUALITY = 32;
+        }else if(WMSUtils.distance(sector)>2000){
+            QUALITY = 16;
+        }else if(WMSUtils.distance(sector)>1000){
+            QUALITY = 8;
+        }
     }
 
     /**
@@ -455,5 +463,16 @@ public class ElevatedSurfaceImage extends SurfaceImage {
             }
         }
 
+    }
+
+    @Override
+    public double getDistanceFromEye() {
+        // TODO
+        return 0;
+    }
+
+    @Override
+    public void pick(DrawContext dc, Point point) {
+        // Do nothing
     }
 }
