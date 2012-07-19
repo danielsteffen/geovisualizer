@@ -7,27 +7,25 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
-import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Support layer for a {@link ElevatedSurfaceLayer} which provides the wms data.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
+ * 
+* @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer implements OrderedRenderable{
+public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
 
     /*
      * Logger.
@@ -46,14 +44,6 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer implements O
      */
     private String image_format = "image/png";
     /**
-     * List of last known current {@link Sector}s
-     */
-    private List<Sector> oldTiles = new ArrayList<Sector>();
-    /**
-     * List of new current {@link Sector}s
-     */
-    private List<Sector> newTiles = new ArrayList<Sector>();
-    /**
      * Amount of tiles
      */
     private int tileCount;
@@ -66,6 +56,10 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer implements O
      * {@link ElevatedSurfaceSupportLayer}
      */
     private ElevatedSurfaceLayer layer;
+    /**
+     * Timeout value (ms) for image retreival
+     */
+    private int timeout = 10000;
 
     /**
      * Creates a {@link ElevatedSurfaceSupportLayer} with the defined
@@ -81,47 +75,59 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer implements O
     public ElevatedSurfaceSupportLayer(WMSCapabilities caps, AVList params, String image_format, ElevatedSurfaceLayer esl) {
         super(wmsGetParamsFromCapsDoc(caps, params));
         this.layer = esl;
+        this.timeout = (Integer) params.getValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
         this.setName(esl.getName() + "_support");
         this.addPropertyChangeListener(esl);
         this.setOpacity(0.0);
         this.image_format = image_format;
         this.tileCount = 0;
         this.lastCurrentTiles = new ArrayList<TextureTile>();
+        this.previousCurrentTiles = new ArrayList<TextureTile>();
     }
 
     /**
-     * Checks if a new tile has been added in the {@link ElevatedSurfaceSupportLayer}
-     * and starts the {@link ElevatedSurfaceImageRetreiver} if new images must
-     * be loaded.
+     * Retreives a {@link BufferedImage} of the {@link TextureTile}
+     *
+     * @param tile for retreiving the {@link BufferedImage}
+     * @return  {@link BufferedImage} corresponding to the given tile
+     * @throws {@link Exception} if the retreival failed
      */
-    private void updateTiles() {
-        if (currentTiles.size() < tileCount) {
-            if (lastCurrentTiles == null || lastCurrentTiles.isEmpty() || !previousCurrentTiles.equals(lastCurrentTiles)) {
-                if (worker == null || worker.isDone()) {
-                    lastCurrentTiles = new ArrayList<TextureTile>(previousCurrentTiles);
-                    oldTiles = new ArrayList<Sector>(newTiles);
-                    newTiles = new ArrayList<Sector>();
-                    for (TextureTile textureTile : lastCurrentTiles) {
-                        newTiles.add(textureTile.getSector());
-                    }
-                    worker = new ElevatedSurfaceImageRetreiver(image_format, this, new ArrayList<Sector>(oldTiles), new ArrayList<Sector>(newTiles));
-                    worker.addPropertyChangeListener(layer);
-                    worker.addPropertyChangeListener(this);
-                    worker.execute();
-                }
+    public BufferedImage getImage(TextureTile tile) {
+        try {
+            BufferedImage img = getImage(tile, image_format, timeout);
+            return img;
+        } catch (Exception ex) {
+            if (!(ex instanceof RuntimeException)) {
+                log.error(ex.toString());
             }
-            tileCount = currentTiles.size();
-        } else {
-            tileCount = currentTiles.size();
-            previousCurrentTiles = new ArrayList<TextureTile>(currentTiles);
         }
+        return null;
     }
 
     @Override
     protected void addTile(DrawContext dc, TextureTile tile) {
         super.addTile(dc, tile);
-        if (isLayerActive(dc) && isLayerInView(dc) && layer != null) {
-            updateTiles();
+        if (currentTiles.size() > tileCount) {
+            tileCount = currentTiles.size();
+            lastCurrentTiles = new ArrayList<TextureTile>(currentTiles);
+        } else {
+            tileCount = 0;
+            if (previousCurrentTiles.isEmpty()) {
+                previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
+            }
+            if (isLayerActive(dc) && isLayerInView(dc) && layer != null) {
+                if (!lastCurrentTiles.equals(previousCurrentTiles) && !layer.hasSector(tile.getSector())) {
+                    if (worker == null || worker.isDone()) {
+                        previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
+                        worker = new ElevatedSurfaceImageRetreiver(this, layer, new ArrayList<TextureTile>(lastCurrentTiles), dc);
+                        worker.addPropertyChangeListener(this);
+                        worker.execute();
+                    } else {
+                        previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
+                        worker.addTiles(new ArrayList<TextureTile>(lastCurrentTiles));
+                    }
+                }
+            }
         }
     }
 
@@ -136,33 +142,5 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer implements O
         if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE)) {
             firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE, null, null);
         }
-        if (evt.getNewValue() != null && evt.getNewValue().equals(SwingWorker.StateValue.DONE)) {
-            if (lastCurrentTiles == null || lastCurrentTiles.isEmpty() || !previousCurrentTiles.equals(lastCurrentTiles)) {
-                if (worker == null || worker.isDone()) {
-                    lastCurrentTiles = new ArrayList<TextureTile>(previousCurrentTiles);
-                    oldTiles = new ArrayList<Sector>(newTiles);
-                    newTiles = new ArrayList<Sector>();
-                    for (TextureTile textureTile : lastCurrentTiles) {
-                        newTiles.add(textureTile.getSector());
-                    }
-                    worker = new ElevatedSurfaceImageRetreiver(image_format, this, new ArrayList<Sector>(oldTiles), new ArrayList<Sector>(newTiles));
-                    worker.addPropertyChangeListener(layer);
-                    worker.addPropertyChangeListener(this);
-                    worker.execute();
-                }
-            }
-        }
-
-    }
-    
-    @Override
-    public double getDistanceFromEye() {
-        // TODO
-        return 0;
-    }
-
-    @Override
-    public void pick(DrawContext dc, Point point) {
-        // Do nothing
     }
 }

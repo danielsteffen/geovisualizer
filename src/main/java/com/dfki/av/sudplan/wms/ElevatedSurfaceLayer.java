@@ -17,7 +17,6 @@ import gov.nasa.worldwind.render.Renderable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,10 +50,9 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
      */
     private final Double opac;
     /**
-     * {@link SwingWorker} to check if {@link ElevatedSurfaceImage} must be
-     * removed
+     * Timeout value (ms) for image retreival and url request
      */
-    private ElevatedSurfaceImageRemover remover;
+    private int timeout = 10000;
 
     /**
      * Constructs a elevated surface layer with the definied capabilities,
@@ -91,9 +89,9 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         }
         image_id = 0;
         // Some wms servers are slow, so increase the timeouts and limits used by world wind's retrievers.
-        configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
-        configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
-        configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+        configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, timeout);
+        configParams.setValue(AVKey.URL_READ_TIMEOUT, timeout);
+        configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, timeout);
         ElevatedSurfaceSupportLayer tmp = new ElevatedSurfaceSupportLayer(caps, configParams, image_format, this);
         this.supportLayer = tmp;
     }
@@ -127,12 +125,63 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
      * Forces all {@link Renderable} from type
      * {@link ElevatedSurfaceImage} to refresh.
      */
-    void refresh() {
+    public void refresh() {
         for (Renderable renderable : getRenderables()) {
             if (renderable instanceof ElevatedSurfaceImage) {
                 ((ElevatedSurfaceImage) renderable).refresh();
             }
         }
+    }
+
+    /**
+     *
+     * @param image
+     */
+    public void addImage(ElevatedSurfaceImage image) {
+        image.setElevation(elevation);
+        image.setOpacity(opac);
+        image.setFloating(true);
+        image.setId(image_id);
+        image_id++;
+        addRenderable(image);
+    }
+
+    /**
+     *
+     * @param image
+     */
+    public void addImages(List<ElevatedSurfaceImage> images) {
+        for (ElevatedSurfaceImage image : images) {
+            image.setElevation(elevation);
+            image.setOpacity(opac);
+            image.setFloating(true);
+            image.setId(image_id);
+            image_id++;
+            addRenderable(image);
+        }
+    }
+
+//    public void cleanup(DrawContext dc){
+//        if (remover == null || remover.isDone()) {
+//            remover = new ElevatedSurfaceImageRemover(this, dc);
+//            remover.execute();
+//        }
+//    }
+    /**
+     *
+     * @param sector
+     * @return
+     */
+    public Boolean hasSector(Sector sector) {
+        for (Renderable renderable : getRenderables()) {
+            if (renderable instanceof ElevatedSurfaceImage) {
+                ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
+                if (image.getSector().equals(sector)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -145,41 +194,5 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     public synchronized void addPropertyChangeListener(PropertyChangeListener pl) {
         super.addPropertyChangeListener(pl);
         supportLayer.addPropertyChangeListener(pl);
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_REMOVAL)) {
-            if (evt.getNewValue() instanceof List<?>) {
-                List<Renderable> toRemove = (List<Renderable>) evt.getNewValue();
-                removeRenderables(toRemove);
-            } else if(evt.getOldValue() instanceof List<?>) {
-                List<Sector> toRemove = (List<Sector>) evt.getOldValue();
-                ElevatedSurfaceImageRemover removeOld = new ElevatedSurfaceImageRemover(getRenderables(), toRemove);
-                removeOld.addPropertyChangeListener(this);
-                removeOld.execute();
-            } else if (evt.getNewValue() == null && evt.getOldValue() == null 
-                    && (remover == null || remover.isDone())) {
-                remover = new ElevatedSurfaceImageRemover(getRenderables());
-                remover.addPropertyChangeListener(this);
-                remover.execute();
-            }
-        }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_REMOVAL_COMPLETE)) {
-            removeAllRenderables();
-        }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.IMAGE_CREATION_COMPLETE)) {
-            if (evt.getNewValue() instanceof ElevatedSurfaceImage && evt.getOldValue() instanceof List<?>) {
-                ElevatedSurfaceImage image = (ElevatedSurfaceImage) evt.getNewValue();
-                image.setElevation(elevation);
-                image.setOpacity(opac);
-                image.setFloating(true);
-                image.setId(image_id);
-                image_id++;
-                addRenderable(image);
-            } else {
-                log.warn("No ElevatedSurfaceImage");
-            }
-        }
     }
 }

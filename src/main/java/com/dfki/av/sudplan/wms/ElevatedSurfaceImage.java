@@ -16,7 +16,6 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Point;
@@ -31,13 +30,13 @@ import javax.media.opengl.GL;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRenderable {
+public class ElevatedSurfaceImage extends SurfaceImage {
 
     /**
      * Display quality of the surface (Amount of supporting points)
      *
      */
-    private int QUALITY = 2;
+    private int quality = 1;
     /**
      * Default elevation set to zero meters over sea level
      *
@@ -83,8 +82,8 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     /**
      * ID of the {@link ElevatedSurfaceImage} Note: Needed to determine the if a
      * newer verison is available for a given sector
-     * 
-     * Note: the id is set by the {@link ElevatedSurfaceLayer}, the default 
+     *
+     * Note: the id is set by the {@link ElevatedSurfaceLayer}, the default
      * value after creation is -1 and will be set to an value >= 0.
      */
     private int id;
@@ -92,12 +91,34 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     public ElevatedSurfaceImage(Object imageSource, Sector sector) {
         super(imageSource, sector);
         this.id = -1;
-        if(WMSUtils.distance(sector)>3500){
-            QUALITY = 32;
-        }else if(WMSUtils.distance(sector)>2000){
-            QUALITY = 16;
-        }else if(WMSUtils.distance(sector)>1000){
-            QUALITY = 8;
+        // increase amount of support points if area of sector is high
+        if (WMSUtils.area(sector) > 5000000) {
+            quality = 32;
+        } else if (WMSUtils.area(sector) > 1000000) {
+            quality = 16;
+        } else if (WMSUtils.area(sector) > 60000) {
+            quality = 8;
+        } else if (WMSUtils.area(sector) > 30000) {
+            quality = 4;
+        } else if (WMSUtils.area(sector) > 15000) {
+            quality = 2;
+        } else if (WMSUtils.area(sector) == 0) {
+            quality = 0;
+        }
+        Double[] verticies = WMSUtils.verticies(sector);
+        double min = Math.min(Math.min(verticies[0], verticies[1]), Math.min(verticies[2], verticies[3]));
+        // Check if Sector is on noth/southpole
+        if(min == 0){
+            double max = Math.max(Math.max(verticies[0], verticies[1]), Math.max(verticies[2], verticies[3]));
+            if(max > 2000){
+                quality = 16;
+            }else if(max > 800){
+                quality = 8;
+            }else if(max > 400){
+                quality = 4;
+            }else if(max > 200){
+                quality = 2;
+            }
         }
     }
 
@@ -108,6 +129,10 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      */
     public int getId() {
         return id;
+    }
+
+    public int getQuality() {
+        return quality;
     }
 
     /**
@@ -239,17 +264,17 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
         this.geometrySector = sector;
         this.referenceCenter = globe.computePointFromPosition(centroid.getLatitude(), centroid.getLongitude(), 0d);
 
-        Angle dLat = sector.getDeltaLat().divide(QUALITY);
-        Angle dLon = sector.getDeltaLon().divide(QUALITY);
+        Angle dLat = sector.getDeltaLat().divide(quality);
+        Angle dLon = sector.getDeltaLon().divide(quality);
 
         // Compute vertices
-        int numVertices = (QUALITY + 1) * (QUALITY + 1);
+        int numVertices = (quality + 1) * (quality + 1);
         this.vertices = BufferUtil.newDoubleBuffer(numVertices * 3);
         int iv = 0;
         Angle lat = sector.getMinLatitude();
-        for (int j = 0; j <= QUALITY; j++) {
+        for (int j = 0; j <= quality; j++) {
             Angle lon = sector.getMinLongitude();
-            for (int i = 0; i <= QUALITY; i++) {
+            for (int i = 0; i <= quality; i++) {
                 Vec4 p = globe.computePointFromPosition(lat, lon, elevation);
                 this.vertices.put(iv++, p.x - referenceCenter.x).put(iv++, p.y - referenceCenter.y).put(iv++, p.z - referenceCenter.z);
                 lon = lon.add(dLon);
@@ -259,11 +284,11 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
 
         // Compute indices
         if (this.indices == null) {
-            this.indices = getIndices(QUALITY);
+            this.indices = getIndices(quality);
         }
         // Compute texture coordinates
         if (this.texCoords == null) {
-            this.texCoords = getTextureCoordinates(QUALITY);
+            this.texCoords = getTextureCoordinates(quality);
         }
     }
 
@@ -463,16 +488,5 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
             }
         }
 
-    }
-
-    @Override
-    public double getDistanceFromEye() {
-        // TODO
-        return 0;
-    }
-
-    @Override
-    public void pick(DrawContext dc, Point point) {
-        // Do nothing
     }
 }

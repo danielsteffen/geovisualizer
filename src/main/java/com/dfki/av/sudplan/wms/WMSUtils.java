@@ -68,30 +68,6 @@ public class WMSUtils {
     }
 
     /**
-     * Adds a {@link ElevatedSurfaceImage} to the {@link ElevatedSurfaceLayer}
-     *
-     * @param sul the {@link ElevatedSurfaceLayer} in which the image should be
-     * added.
-     * @param image {@link BufferedImage} in which the image is stored
-     * @param sector {@link Sector} in which the image should be mapped
-     * @param elevation the elevation for the image (in meter)
-     * @param opacity the Opacity for the image (1.0 is fully transparent)
-     */
-    public static void addImageToLayer(ElevatedSurfaceLayer sul, BufferedImage image, Sector sector, double elevation, double opacity) {
-        if (elevation == 0) {
-            sul.addImage(sul.getName() + sector.toString(), image, sector);
-            sul.setOpacity(opacity);
-            sul.setPickEnabled(false);
-            return;
-        }
-        ElevatedSurfaceImage tl = new ElevatedSurfaceImage(image, sector);
-        tl.setElevation(elevation);
-        tl.setOpacity(opacity);
-        tl.setFloating(true);
-        sul.addRenderable(tl);
-    }
-
-    /**
      * lat1, lon1 = Latitude and Longitude of point 1 (in decimal degrees) lat2,
      * lon2 = Latitude and Longitude of point 2 (in decimal degrees) unit = the
      * unit you desire for results where: 'M' is statute miles 'K' is kilometers
@@ -128,6 +104,31 @@ public class WMSUtils {
      */
     public static double distance(Sector s) {
         return distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, "K");
+    }
+
+    public static double area(Sector s) {
+        double dist1 = distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMinLatitude().degrees, s.getMaxLongitude().degrees, "K");
+        if (dist1 == 0) {
+            dist1 = distance(s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, s.getMaxLatitude().degrees, s.getMinLongitude().degrees, "K");
+        }
+        double dist2 = distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMaxLatitude().degrees, s.getMinLongitude().degrees, "K");
+        if (dist2 == 0) {
+            dist2 = distance(s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, s.getMinLatitude().degrees, s.getMaxLongitude().degrees, "K");
+        }
+        return dist1 * dist2;
+    }
+
+    public static Double[] verticies(Sector s) {
+        double dist1 = distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMinLatitude().degrees, s.getMaxLongitude().degrees, "K");
+        double dist2 = distance(s.getMinLatitude().degrees, s.getMaxLongitude().degrees, s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, "K");
+        double dist3 = distance(s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, s.getMaxLatitude().degrees, s.getMinLongitude().degrees, "K");
+        double dist4 = distance(s.getMaxLatitude().degrees, s.getMinLongitude().degrees, s.getMinLatitude().degrees, s.getMinLatitude().degrees, "K");
+        Double[] dist = new Double[4];
+        dist[0] = dist1;
+        dist[1] = dist2;
+        dist[2] = dist3;
+        dist[3] = dist4;
+        return dist;
     }
 
     /**
