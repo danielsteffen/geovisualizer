@@ -50,7 +50,7 @@ public class LayerInfoListRetreiver extends SwingWorker<List<LayerInfo>, Void> {
      * @param wmsURL wms server url as {@link String}
      * @return list of {@link LayerInfo} parsed of the data returned from the
      * wms server
-     * @throws URISyntaxException if the {@link String can not be parsed
+     * @throws URISyntaxException if the {@link String} can not be parsed
      * as {@link URI}
      */
     private List<LayerInfo> retreiveLayerInfo(String wmsURL) throws URISyntaxException {

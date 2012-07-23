@@ -7,21 +7,16 @@
  */
 package com.dfki.av.sudplan.wms;
 
-import com.sun.j3d.utils.behaviors.interpolators.KBCubicSplineCurve;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.Renderable;
-import java.awt.image.BufferedImage;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
-import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +52,7 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
     /**
      * time to sleep after requesting new image
      */
-    private static final int SLEEPTIME = 500;
+    private static final int SLEEPTIME = 250;
     private List<TextureTile> newTiles = new ArrayList<TextureTile>();
 
     /**
@@ -79,54 +74,43 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
     }
 
     /**
-     * Generates a {@link ElevatedSurfaceImage} for the given bounding box from
-     * the date of the {@link ElevatedSurfaceSupportLayer}
+     * Removes all {@link ElevatedSurfaceImage}s which are not needed for the
+     * current view.
      *
-     * @param suppertLayer support layer with the wms data
-     * @param sector sector for the {@link ElevatedSurfaceImage} creation
-     * @throws {@link InterruptedException}
+     * @return true if cleanup of {@link ElevatedSurfaceImage}s was successfull
      */
-    protected ElevatedSurfaceImage createElevatedSurfaceImage(BufferedImage img, Sector sector) {
-        if (img != null) {
-            return new ElevatedSurfaceImage(img, sector);
-        }
-        return null;
-    }
-
-    private void addElevatedSurfaceImage(ElevatedSurfaceImage image) {
-        try {
-            layer.addImage(image);
-            Thread.sleep(SLEEPTIME);
-            check();
-        } catch (InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
-
-    /**
-     *
-     * @return
-     */
-    private Boolean check() {
+    private Boolean cleanup() {
         if (layer == null) {
             return false;
         }
         List<Renderable> toRemove = new ArrayList<Renderable>();
         for (Renderable renderable : layer.getRenderables()) {
-            if (renderable != null && renderable instanceof ElevatedSurfaceImage) {
-                ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
-                if (image != null && dc != null && image.getSector() != null && dc.getVisibleSector() != null) {
-                    if (dc.getVisibleSector().equals(Sector.EMPTY_SECTOR) || image.getSector().intersects(dc.getVisibleSector())) {
+            if (renderable != null) {
+                Sector sector = Sector.EMPTY_SECTOR;
+                int id = 0;
+                Sector sector2 = Sector.EMPTY_SECTOR;
+                int id2 = 0;
+                if (renderable instanceof ElevatedSurfaceImage) {
+                    ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable;
+                    sector = image.getSector();
+                    id = image.getId();
+                }
+                if (dc != null && sector != null && dc.getVisibleSector() != null) {
+                    if (dc.getVisibleSector().equals(Sector.EMPTY_SECTOR) || sector.intersects(dc.getVisibleSector())) {
                         for (Renderable renderable2 : layer.getRenderables()) {
-                            if (renderable2 != null && renderable2 instanceof ElevatedSurfaceImage) {
-                                ElevatedSurfaceImage image2 = (ElevatedSurfaceImage) renderable2;
-                                if (image != null && image2 != null && image.getSector().contains(image2.getSector())
-                                        || image2.getSector().contains(image.getSector())) {
-                                    if (image != null && image2 != null && image.getId() < image2.getId()) {
+                            if (renderable2 != null) {
+                                if (renderable2 instanceof ElevatedSurfaceImage) {
+                                    ElevatedSurfaceImage image = (ElevatedSurfaceImage) renderable2;
+                                    sector2 = image.getSector();
+                                    id2 = image.getId();
+                                }
+                                if (sector.contains(sector2)
+                                        || sector2.contains(sector)) {
+                                    if (id < id2) {
                                         if (!toRemove.contains(renderable)) {
                                             toRemove.add(renderable);
                                         }
-                                    } else if (image != null && image2 != null && image.getId() > image2.getId()) {
+                                    } else if (id > id2) {
                                         if (!toRemove.contains(renderable2)) {
                                             toRemove.add(renderable2);
                                         }
@@ -151,7 +135,8 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
     }
 
     /**
-     * Adds a new list of {@link TextureTiles}
+     * Adds a new list of {@link TextureTile}
+     *
      * @param tiles tiles to add
      */
     public void addTiles(List<TextureTile> tiles) {
@@ -161,29 +146,27 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
     @Override
     protected Boolean doInBackground() throws URISyntaxException, Exception {
         firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLOAD_ACTIVE, null, this);
-        List<ElevatedSurfaceImage> images = new ArrayList<ElevatedSurfaceImage>();
-
+        Thread.sleep(SLEEPTIME);
+        if (!newTiles.isEmpty()) {
+            tiles = new ArrayList<TextureTile>(newTiles);
+            newTiles.clear();
+            cleanup();
+            doInBackground();
+            return true;
+        }
         for (TextureTile tile : tiles) {
-            images.add(createElevatedSurfaceImage(supportLayer.getImage(tile), tile.getSector()));
-        }
-        if (!newTiles.isEmpty()) {
-            tiles = new ArrayList<TextureTile>(newTiles);
-            images.clear();
-            newTiles.clear();
-            doInBackground();
-        }
-        for (ElevatedSurfaceImage image : images) {
+            layer.addImage(new ElevatedSurfaceImage(supportLayer.getImage(tile), tile.getSector()));
+            Thread.sleep(SLEEPTIME);
+            firePropertyChange(PropertyChangeEventHolder.WWD_REDRAW, null, this);
             if (!newTiles.isEmpty()) {
-                continue;
+                tiles = new ArrayList<TextureTile>(newTiles);
+                newTiles.clear();
+                cleanup();
+                doInBackground();
+                return true;
             }
-            addElevatedSurfaceImage(image);
         }
-        if (!newTiles.isEmpty()) {
-            tiles = new ArrayList<TextureTile>(newTiles);
-            images.clear();
-            newTiles.clear();
-            doInBackground();
-        }
+        cleanup();
         return true;
     }
 
@@ -201,7 +184,6 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
             log.warn("done (InterruptedException)" + ex);
         } catch (ExecutionException ex) {
             log.warn("done (ExecutionException)" + ex);
-            ex.printStackTrace();
         } catch (CancellationException ex) {
             log.warn("done (CancellationException)" + ex);
         }

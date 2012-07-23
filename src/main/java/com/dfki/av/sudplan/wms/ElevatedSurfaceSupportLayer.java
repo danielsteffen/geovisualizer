@@ -105,18 +105,12 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
     }
 
     @Override
-    protected void addTile(DrawContext dc, TextureTile tile) {
-        super.addTile(dc, tile);
-        if (currentTiles.size() > tileCount) {
-            tileCount = currentTiles.size();
+    protected void assembleTiles(DrawContext dc) {
+        super.assembleTiles(dc);
+        if (!currentTiles.isEmpty()) {
             lastCurrentTiles = new ArrayList<TextureTile>(currentTiles);
-        } else {
-            tileCount = 0;
-            if (previousCurrentTiles.isEmpty()) {
-                previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
-            }
             if (isLayerActive(dc) && isLayerInView(dc) && layer != null) {
-                if (!lastCurrentTiles.equals(previousCurrentTiles) && !layer.hasSector(tile.getSector())) {
+                if (!lastCurrentTiles.equals(previousCurrentTiles) || previousCurrentTiles.isEmpty()) {
                     if (worker == null || worker.isDone()) {
                         previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
                         worker = new ElevatedSurfaceImageRetreiver(this, layer, new ArrayList<TextureTile>(lastCurrentTiles), dc);

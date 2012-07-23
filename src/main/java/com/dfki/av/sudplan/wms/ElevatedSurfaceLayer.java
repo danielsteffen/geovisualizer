@@ -8,14 +8,22 @@
 package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.render.BasicShapeAttributes;
+import gov.nasa.worldwind.render.ExtrudedPolygon;
 import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.ShapeAttributes;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,8 +155,9 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     }
 
     /**
+     * Adds a list of {@link ElevatedSurfaceImage}s
      *
-     * @param image
+     * @param images List of images which should be added
      */
     public void addImages(List<ElevatedSurfaceImage> images) {
         for (ElevatedSurfaceImage image : images) {
@@ -161,16 +170,11 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         }
     }
 
-//    public void cleanup(DrawContext dc){
-//        if (remover == null || remover.isDone()) {
-//            remover = new ElevatedSurfaceImageRemover(this, dc);
-//            remover.execute();
-//        }
-//    }
     /**
+     * Checks if a image for the given sector exists
      *
-     * @param sector
-     * @return
+     * @param sector Sector to check
+     * @return true if an image exists for the given sector
      */
     public Boolean hasSector(Sector sector) {
         for (Renderable renderable : getRenderables()) {

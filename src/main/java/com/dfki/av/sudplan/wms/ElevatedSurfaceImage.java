@@ -10,18 +10,20 @@ package com.dfki.av.sudplan.wms;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.geom.Vec4;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.ExtrudedPolygon;
+import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.media.opengl.GL;
 
 /**
@@ -30,8 +32,36 @@ import javax.media.opengl.GL;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceImage extends SurfaceImage {
+public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRenderable {
 
+    /**
+     * Geographic position of the cube.
+     */
+    protected Position position;
+    /**
+     * Length of each face, in meters.
+     */
+    protected double size;
+    /**
+     * Support object to help with pick resolution.
+     */
+    protected PickSupport pickSupport = new PickSupport();
+    /**
+     * Determined each frame
+     */
+    protected long frameTimestamp = -1L;
+    /**
+     * Cartesian position of the cube, computed from {@link #position}.
+     */
+    protected Vec4 placePoint;
+    /**
+     * Distance from the eye point to the cube.
+     */
+    protected double eyeDistance;
+    /**
+     * Extend which encloses all points of the {@link ElevatedSurfaceImage}
+     */
+    protected Extent extent;
     /**
      * Display quality of the surface (Amount of supporting points)
      *
@@ -81,7 +111,7 @@ public class ElevatedSurfaceImage extends SurfaceImage {
     private boolean floating = true;
     /**
      * ID of the {@link ElevatedSurfaceImage} Note: Needed to determine the if a
-     * newer verison is available for a given sector
+     * newer version is available for a given sector
      *
      * Note: the id is set by the {@link ElevatedSurfaceLayer}, the default
      * value after creation is -1 and will be set to an value >= 0.
@@ -90,34 +120,38 @@ public class ElevatedSurfaceImage extends SurfaceImage {
 
     public ElevatedSurfaceImage(Object imageSource, Sector sector) {
         super(imageSource, sector);
+        Double[] verticies = WMSUtils.verticies(sector);
+        double max = Math.max(Math.max(verticies[0], verticies[1]), Math.max(verticies[2], verticies[3]));
+        double min = Math.min(Math.min(verticies[0], verticies[1]), Math.min(verticies[2], verticies[3]));
+        position = new Position(sector.getCentroid(), elevation);
+        size = max * 1000;
         this.id = -1;
         // increase amount of support points if area of sector is high
         if (WMSUtils.area(sector) > 5000000) {
-            quality = 32;
+            quality = 256;
         } else if (WMSUtils.area(sector) > 1000000) {
-            quality = 16;
+            quality = 128;
         } else if (WMSUtils.area(sector) > 60000) {
-            quality = 8;
+            quality = 64;
         } else if (WMSUtils.area(sector) > 30000) {
-            quality = 4;
+            quality = 32;
         } else if (WMSUtils.area(sector) > 15000) {
-            quality = 2;
+            quality = 16;
         } else if (WMSUtils.area(sector) == 0) {
             quality = 0;
         }
-        Double[] verticies = WMSUtils.verticies(sector);
-        double min = Math.min(Math.min(verticies[0], verticies[1]), Math.min(verticies[2], verticies[3]));
+
+
         // Check if Sector is on noth/southpole
-        if(min == 0){
-            double max = Math.max(Math.max(verticies[0], verticies[1]), Math.max(verticies[2], verticies[3]));
-            if(max > 2000){
+        if (min == 0) {
+            if (max > 2000) {
+                quality = 128;
+            } else if (max > 800) {
+                quality = 64;
+            } else if (max > 400) {
+                quality = 36;
+            } else if (max > 200) {
                 quality = 16;
-            }else if(max > 800){
-                quality = 8;
-            }else if(max > 400){
-                quality = 4;
-            }else if(max > 200){
-                quality = 2;
             }
         }
     }
@@ -160,6 +194,7 @@ public class ElevatedSurfaceImage extends SurfaceImage {
      */
     public void setElevation(double elevation) {
         this.elevation = elevation;
+        this.position = new Position(getSector().getCentroid(), elevation);
         this.geometrySector = null;  // invalidate geometry
     }
 
@@ -404,6 +439,128 @@ public class ElevatedSurfaceImage extends SurfaceImage {
 
     @Override
     public void render(DrawContext dc) {
+        // Render is called three times:
+        // 1) During picking. The cube is drawn in a single color.
+        // 2) As a normal renderable. The cube is added to the ordered renderable queue.
+        // 3) As an OrderedRenderable. The cube is drawn.
+
+        if (this.extent != null) {
+            if (!this.intersectsFrustum(dc)) {
+                return;
+            }
+
+            // If the shape is less that a pixel in size, don't render it.
+            if (dc.isSmall(this.extent, 1)) {
+                return;
+            }
+        }
+
+        if (dc.isOrderedRenderingMode()) {
+            this.drawOrderedRenderable(dc, this.pickSupport);
+        } else {
+            this.makeOrderedRenderable(dc);
+        }
+    }
+
+    /**
+     * Compute per-frame attributes, and add the ordered renderable to the
+     * ordered renderable list.
+     *
+     * @param dc Current draw context.
+     */
+    protected void makeOrderedRenderable(DrawContext dc) {
+        // This method is called twice each frame: once during picking and once during rendering. We only need to
+        // compute the placePoint and eye distance once per frame, so check the frame timestamp to see if this is a
+        // new frame.
+        if (dc.getFrameTimeStamp() != this.frameTimestamp) {
+            // Compute a bounding box that encloses the cube. We'll use this sphere for intersection calculations to determine
+            // if the cube is actually visible.            
+            this.extent = computeExtent(dc);
+
+            // Convert the cube's geographic position to a position in Cartesian coordinates.
+            this.placePoint = extent.getCenter();
+
+            // Compute the distance from the eye to the surface image position.
+            this.eyeDistance = computeEyeDistance(dc);
+
+            this.frameTimestamp = dc.getFrameTimeStamp();
+        }
+
+        // Add the cube to the ordered renderable list. The SceneController sorts the ordered renderables by eye
+        // distance, and then renders them back to front. render will be called again in ordered rendering mode, and at
+        // that point we will actually draw the cube.
+        dc.addOrderedRenderable(this);
+    }
+
+    /**
+     * Computes the minimum distance between this shape and the eye point.
+     *
+     * @param dc the draw context.
+     *
+     * @return the minimum distance from the shape to the eye point.
+     */
+    protected double computeEyeDistance(DrawContext dc) {
+        double minDistance = Double.MAX_VALUE;
+        Vec4 eyePoint = dc.getView().getEyePoint();
+
+        Vec4[] points = new Vec4[8];
+        points[0] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[0], elevation);
+        points[1] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[1], elevation);
+        points[2] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[2], elevation);
+        points[3] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[3], elevation);
+        points[4] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[0]);
+        points[5] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[1]);
+        points[6] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[2]);
+        points[7] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[3]);
+
+        for (Vec4 point : points) {
+            double d = point.distanceTo3(eyePoint);
+            if (d < minDistance) {
+                minDistance = d;
+            }
+        }
+
+        return minDistance;
+    }
+
+    /**
+     * Computes this shapes extent. If a reference point is specified, the
+     * extent is translated to that reference point.
+     *
+     * @param outerBoundary the shape's outer boundary.
+     *
+     * @return the computed extent, or null if the extent cannot be computed.
+     */
+    protected Extent computeExtent(DrawContext dc) {
+        Vec4[] topVertices = new Vec4[4];
+        topVertices[0] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[0], elevation);
+        topVertices[1] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[1], elevation);
+        topVertices[2] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[2], elevation);
+        topVertices[3] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[3], elevation);
+        Vec4[] botVertices = new Vec4[4];
+        botVertices[0] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[0]);
+        botVertices[1] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[1]);
+        botVertices[2] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[2]);
+        botVertices[3] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[3]);
+
+        ArrayList<Vec4> allVertices = new ArrayList<Vec4>(2 * topVertices.length);
+        allVertices.addAll(Arrays.asList(topVertices));
+        allVertices.addAll(Arrays.asList(botVertices));
+
+        Box boundingBox = Box.computeBoundingBox(allVertices);
+
+        // The bounding box is computed relative to the polygon's reference point, so it needs to be translated to
+        // model coordinates in order to indicate its model-coordinate extent.
+        return boundingBox;
+    }
+
+    /**
+     * Set up drawing state, and draw the cube. This method is called when the
+     * cube is rendered in ordered rendering mode.
+     *
+     * @param dc Current draw context.
+     */
+    private void drawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
         if (!floating) {
             super.render(dc);
             return;
@@ -488,5 +645,34 @@ public class ElevatedSurfaceImage extends SurfaceImage {
             }
         }
 
+    }
+
+    /**
+     * Determines whether the cube intersects the view frustum.
+     *
+     * @param dc the current draw context.
+     *
+     * @return true if this cube intersects the frustum, otherwise false.
+     */
+    protected boolean intersectsFrustum(DrawContext dc) {
+        if (this.extent == null) {
+            return true; // don't know the visibility, shape hasn't been computed yet
+        }
+        if (dc.isPickingMode()) {
+            return dc.getPickFrustums().intersectsAny(this.extent);
+        }
+
+        return dc.getView().getFrustumInModelCoordinates().intersects(this.extent);
+    }
+
+    @Override
+    public double getDistanceFromEye() {
+        return this.eyeDistance;
+    }
+
+    @Override
+    public void pick(DrawContext dc, Point point) {
+        // Use same code for rendering and picking.
+        this.render(dc);
     }
 }
