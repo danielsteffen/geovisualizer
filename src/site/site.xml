@@ -15,8 +15,9 @@
         <menu name="SUDPLAN 3D">
             <item name="About" href="index.html"/>
             <item name="Demo" href="demo.html"/>
-			<item name="Videos" href="videos.html"/>
-			<item name="FAQ" href="faq.html"/>
+	        <item name="Videos" href="videos.html"/>
+	        <item name="Releases" href="releases.html"/>
+	        <item name="FAQ" href="faq.html"/>
     	</menu>
         <menu ref="reports"/>
     </body>	
