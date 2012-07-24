@@ -6,14 +6,14 @@
 		 2011-09-19
 		 ----
 		 
-Welcome to the SUDPLAN 3D Project
+Welcome to the SUDPLAN 3-D Project
 
-  Welcome to the SUDPLAN 3D Project, we hope you enjoy your time on this project site. The SUDPLAN 3D is one challenging part of the SUDPLAN project. The official website of SUDPLAN can be found {{{http://www.smhi.se/sudplan}here}}. The SUDPLAN 3D visualization component will be integrated in the SUDPLAN Scenario Management System (SMS) and will handle the visualisation of SUDPLAN data/results in a geographical three-dimensional context. The datatypes which will be handled by the SUDPLAN Visualisation Component reach from 1D data, e.g. georeferenced measurements of precipitation, to temporal 3D datasets, e.g. 3D air pollution time series.
+  Welcome to the SUDPLAN 3-D Project, we hope you enjoy your time on this project site. The SUDPLAN 3-D software component is one challenging part of the European project {{{http://www.sudplan.eu}SUDPLAN}}. The SUDPLAN 3-D visualization component is integrated into SUDPLAN's Scenario Management System ({{{http://sudplanwp3.cismet.de/sms/}SMS}}) and handles the visualization of SUDPLAN's data and simulation results in a geographical three-dimensional context. The datatypes which will be handled by the SUDPLAN Visualisation Component reach from 1-D data, e.g. georeferenced measurements of precipitation, to temporal 3-D datasets, e.g. 3-D air pollution time series. 
 
-[images/Sudplan3D-v0704-1.jpg] The User Interface (UI) of the SUDPLAN 3D component showing results of Södermalm (Stockholm).  
+[images/Sudplan3D-v0704-1.jpg] The stand-alone user interface of the SUDPLAN 3-D component showing air quality measurements for the city of Stockholm.  
   
-  The SUDPLAN Visualisation Component will utilise the capabilities of the SUDPLAN SMS for data and scenario management and tightly integrate with the 2D map component of the SMS. This allows for an easy transition between the 2D and 3D views. The 3D visualisation will allow the user to relate spatial data/results directly to the underlying terrain model which has, for example when looking at hydrological simulation results, a big influence on the data and thus can give more insight and understanding of the simulated results.
+  The SUDPLAN Visualization Component will utilise the capabilities of the SMS for data and scenario management and tightly integrate with the 2-D map component of the SMS. This allows for an easy transition between the 2-D and 3-D views. The 3-D visualization will allow the user to relate spatial data directly to the underlying terrain model.
 
-  The SUDPLAN Visualisation Component will, at a later stage, also include different viewing modes, e.g. for large screens, stereoscopic displays, to enable the user to utilise such hardware and reach a higher level of immersion into, and understanding of, the data.
+  The SUDPLAN visualization component will, at a later stage, also include different viewing modes, e.g. for large screens, stereoscopic displays, to enable the user to utilise such hardware and reach a higher level of immersion into, and understanding of, the data.
 
-  To have a look at the SUDPLAN Visualisation Component head for the Demo section. Here you will find a JNLP webstart application which can be started directly from your browser.
+  To have a look at the SUDPLAN Visualization Component head for the Demo section. Here you will find a JNLP webstart application which can be started directly from your browser.
