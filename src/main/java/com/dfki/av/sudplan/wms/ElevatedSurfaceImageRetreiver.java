@@ -11,6 +11,7 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.Renderable;
+import java.awt.image.BufferedImage;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,13 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
      */
     private static final Logger log = LoggerFactory.getLogger(ElevatedSurfaceImageRetreiver.class);
     /**
+     * time to sleep after requesting new image
+     */
+    private static final int SLEEPTIME = 250;
+    /**
      * The support layer with the wms data
      */
-    protected ElevatedSurfaceSupportLayer supportLayer;
+    private ElevatedSurfaceSupportLayer supportLayer;
     /**
      * {@link ElevatedSurfaceLayer} layer which the {@link ElevatedSurfaceImage}
      * will be added
@@ -50,9 +55,8 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
      */
     private final DrawContext dc;
     /**
-     * time to sleep after requesting new image
+     * list of tiles to download
      */
-    private static final int SLEEPTIME = 250;
     private List<TextureTile> newTiles = new ArrayList<TextureTile>();
 
     /**
@@ -66,7 +70,8 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
      * should be created
      * @param dc current {@link DrawContext}
      */
-    public ElevatedSurfaceImageRetreiver(ElevatedSurfaceSupportLayer supportLayer, ElevatedSurfaceLayer layer, List<TextureTile> tiles, DrawContext dc) {
+    public ElevatedSurfaceImageRetreiver(ElevatedSurfaceSupportLayer supportLayer,
+            ElevatedSurfaceLayer layer, List<TextureTile> tiles, DrawContext dc) {
         this.supportLayer = supportLayer;
         this.layer = layer;
         this.tiles = tiles;
@@ -96,7 +101,8 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
                     id = image.getId();
                 }
                 if (dc != null && sector != null && dc.getVisibleSector() != null) {
-                    if (dc.getVisibleSector().equals(Sector.EMPTY_SECTOR) || sector.intersects(dc.getVisibleSector())) {
+                    if (dc.getVisibleSector().equals(Sector.EMPTY_SECTOR)
+                            || sector.intersects(dc.getVisibleSector())) {
                         for (Renderable renderable2 : layer.getRenderables()) {
                             if (renderable2 != null) {
                                 if (renderable2 instanceof ElevatedSurfaceImage) {
@@ -143,27 +149,38 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
         newTiles = tiles;
     }
 
-    @Override
-    protected Boolean doInBackground() throws URISyntaxException, Exception {
-        firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLOAD_ACTIVE, null, this);
+    /**
+     * Downloads the requiered {@link BufferedImage}s and creates the {@link ElevatedSurfaceImage}s.
+     *
+     * @return true of retreival was succesfull
+     * @throws InterruptedException if the retreival was interuppted during
+     * sleep
+     */
+    private Boolean download() throws InterruptedException {
+        firePropertyChange(EventHolder.WMS_DOWNLOAD_ACTIVE, null, this);
         Thread.sleep(SLEEPTIME);
         if (!newTiles.isEmpty()) {
             tiles = new ArrayList<TextureTile>(newTiles);
             newTiles.clear();
             cleanup();
-            doInBackground();
-            return true;
+            return download();
         }
         for (TextureTile tile : tiles) {
-            layer.addImage(new ElevatedSurfaceImage(supportLayer.getImage(tile), tile.getSector()));
-            Thread.sleep(SLEEPTIME);
-            firePropertyChange(PropertyChangeEventHolder.WWD_REDRAW, null, this);
-            if (!newTiles.isEmpty()) {
-                tiles = new ArrayList<TextureTile>(newTiles);
-                newTiles.clear();
-                cleanup();
-                doInBackground();
-                return true;
+            Sector s = tile.getSector();
+            if (!layer.hasSector(s)) {
+                BufferedImage img = supportLayer.getImage(tile);
+                if (img != null) {
+                    layer.addImage(new ElevatedSurfaceImage(img, s));
+                    Thread.sleep(SLEEPTIME);
+                    firePropertyChange(EventHolder.WWD_REDRAW, null, this);
+                    if (!newTiles.isEmpty()) {
+                        tiles = new ArrayList<TextureTile>(newTiles);
+                        newTiles.clear();
+                        cleanup();
+                        return download();
+                    }
+                    cleanup();
+                }
             }
         }
         cleanup();
@@ -171,12 +188,19 @@ public class ElevatedSurfaceImageRetreiver extends SwingWorker<Boolean, Void> {
     }
 
     @Override
+    protected Boolean doInBackground() throws URISyntaxException, Exception {
+        Thread.currentThread().setName(layer.getName() + "_retreiver");
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        return download();
+    }
+
+    @Override
     protected void done() {
-        firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE, null, this);
+        firePropertyChange(EventHolder.WMS_DOWNLAOD_COMPLETE, null, this);
         layer.refresh();
         try {
             if (get()) {
-                firePropertyChange(PropertyChangeEventHolder.WWD_REDRAW, null, this);
+                firePropertyChange(EventHolder.WWD_REDRAW, null, this);
             } else {
                 log.warn("Download failed");
             }

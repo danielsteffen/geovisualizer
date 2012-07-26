@@ -50,8 +50,7 @@ public class LayerInfoListRetreiver extends SwingWorker<List<LayerInfo>, Void> {
      * @param wmsURL wms server url as {@link String}
      * @return list of {@link LayerInfo} parsed of the data returned from the
      * wms server
-     * @throws URISyntaxException if the {@link String} can not be parsed
-     * as {@link URI}
+     * @throws URISyntaxException if the {@link String} can not be parsed as {@link URI}
      */
     private List<LayerInfo> retreiveLayerInfo(String wmsURL) throws URISyntaxException {
         URI serverURI = new URI(wmsURL.trim());
@@ -69,14 +68,14 @@ public class LayerInfoListRetreiver extends SwingWorker<List<LayerInfo>, Void> {
         try {
             layerInfos = get();
         } catch (Exception ex) {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
             log.error("Error: " + ex);
             return;
         }
         if (layerInfos == null) {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
         } else {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_COMPLETE, this, layerInfos);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_COMPLETE, this, layerInfos);
 
         }
     }

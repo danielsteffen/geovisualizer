@@ -8,22 +8,14 @@
 package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.render.BasicShapeAttributes;
-import gov.nasa.worldwind.render.ExtrudedPolygon;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.render.ShapeAttributes;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +29,14 @@ import org.slf4j.LoggerFactory;
  */
 public class ElevatedSurfaceLayer extends SurfaceImageLayer {
 
-    /**
-     * Last image_id
-     */
-    private int image_id;
     /*
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(ElevatedSurfaceLayer.class);
+    /**
+     * Last image_id
+     */
+    private int image_id;
     /**
      * Support layer for the {@link ElevatedSurfaceLayer}
      */
@@ -60,7 +52,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     /**
      * Timeout value (ms) for image retreival and url request
      */
-    private int timeout = 10000;
+    private int timeout;
 
     /**
      * Constructs a elevated surface layer with the definied capabilities,
@@ -74,6 +66,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
      */
     public ElevatedSurfaceLayer(WMSCapabilities caps, AVList params, Double elevation, Double opac, Sector sector) {
         super();
+        timeout = 10000;
         this.elevation = elevation;
         this.opac = opac;
         this.setPickEnabled(false);
@@ -100,7 +93,8 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, timeout);
         configParams.setValue(AVKey.URL_READ_TIMEOUT, timeout);
         configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, timeout);
-        ElevatedSurfaceSupportLayer tmp = new ElevatedSurfaceSupportLayer(caps, configParams, image_format, this);
+        ElevatedSurfaceSupportLayer tmp = new ElevatedSurfaceSupportLayer(caps,
+                configParams, image_format, this);
         this.supportLayer = tmp;
     }
 
@@ -142,8 +136,9 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     }
 
     /**
+     * Adds a {@link ElevatedSurfaceImage}
      *
-     * @param image
+     * @param image {@link ElevatedSurfaceImage} to add
      */
     public void addImage(ElevatedSurfaceImage image) {
         image.setElevation(elevation);

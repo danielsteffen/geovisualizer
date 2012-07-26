@@ -13,7 +13,7 @@ package com.dfki.av.sudplan.wms;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public interface PropertyChangeEventHolder {
+public interface EventHolder {
 
     /**
      * Name of the event which is fired when a wms download is active.

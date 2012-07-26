@@ -44,10 +44,6 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
      */
     private String image_format = "image/png";
     /**
-     * Amount of tiles
-     */
-    private int tileCount;
-    /**
      * List of previous known current {@link TextureTile}s
      */
     private ArrayList<TextureTile> previousCurrentTiles;
@@ -59,7 +55,7 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
     /**
      * Timeout value (ms) for image retreival
      */
-    private int timeout = 10000;
+    private int timeout;
 
     /**
      * Creates a {@link ElevatedSurfaceSupportLayer} with the defined
@@ -80,7 +76,6 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
         this.addPropertyChangeListener(esl);
         this.setOpacity(0.0);
         this.image_format = image_format;
-        this.tileCount = 0;
         this.lastCurrentTiles = new ArrayList<TextureTile>();
         this.previousCurrentTiles = new ArrayList<TextureTile>();
     }
@@ -111,13 +106,16 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
             lastCurrentTiles = new ArrayList<TextureTile>(currentTiles);
             if (isLayerActive(dc) && isLayerInView(dc) && layer != null) {
                 if (!lastCurrentTiles.equals(previousCurrentTiles) || previousCurrentTiles.isEmpty()) {
-                    if (worker == null || worker.isDone()) {
-                        previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
+                    previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
+                    if (worker == null) {
                         worker = new ElevatedSurfaceImageRetreiver(this, layer, new ArrayList<TextureTile>(lastCurrentTiles), dc);
                         worker.addPropertyChangeListener(this);
                         worker.execute();
+                    } else if (worker.isDone()) {
+                        worker.removePropertyChangeListener(this);
+                        worker = new ElevatedSurfaceImageRetreiver(this, layer, new ArrayList<TextureTile>(lastCurrentTiles), dc);
+                        worker.execute();
                     } else {
-                        previousCurrentTiles = new ArrayList<TextureTile>(lastCurrentTiles);
                         worker.addTiles(new ArrayList<TextureTile>(lastCurrentTiles));
                     }
                 }
@@ -127,14 +125,14 @@ public class ElevatedSurfaceSupportLayer extends WMSTiledImageLayer {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WWD_REDRAW)) {
-            firePropertyChange(PropertyChangeEventHolder.WWD_REDRAW, null, null);
+        if (evt.getPropertyName().equals(EventHolder.WWD_REDRAW)) {
+            firePropertyChange(EventHolder.WWD_REDRAW, null, null);
         }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLOAD_ACTIVE)) {
-            firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLOAD_ACTIVE, null, null);
+        if (evt.getPropertyName().equals(EventHolder.WMS_DOWNLOAD_ACTIVE)) {
+            firePropertyChange(EventHolder.WMS_DOWNLOAD_ACTIVE, null, null);
         }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE)) {
-            firePropertyChange(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE, null, null);
+        if (evt.getPropertyName().equals(EventHolder.WMS_DOWNLAOD_COMPLETE)) {
+            firePropertyChange(EventHolder.WMS_DOWNLAOD_COMPLETE, null, null);
         }
     }
 }

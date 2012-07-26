@@ -12,9 +12,7 @@ import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.ExtrudedPolygon;
 import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.Logging;
@@ -23,7 +21,7 @@ import java.awt.image.BufferedImage;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import javax.media.opengl.GL;
 
 /**
@@ -35,43 +33,27 @@ import javax.media.opengl.GL;
 public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRenderable {
 
     /**
-     * Geographic position of the cube.
-     */
-    protected Position position;
-    /**
-     * Length of each face, in meters.
-     */
-    protected double size;
-    /**
-     * Support object to help with pick resolution.
-     */
-    protected PickSupport pickSupport = new PickSupport();
-    /**
      * Determined each frame
      */
-    protected long frameTimestamp = -1L;
-    /**
-     * Cartesian position of the cube, computed from {@link #position}.
-     */
-    protected Vec4 placePoint;
+    private long frameTimestamp;
     /**
      * Distance from the eye point to the cube.
      */
-    protected double eyeDistance;
+    private double eyeDistance;
     /**
      * Extend which encloses all points of the {@link ElevatedSurfaceImage}
      */
-    protected Extent extent;
+    private Extent extent;
     /**
-     * Display quality of the surface (Amount of supporting points)
-     *
+     * Display quality of the surface (Amount of supporting points) which
+     * determines how much polygons will be rendered to display the surface of
+     * the {@link ElevatedSurfaceImage}.
      */
-    private int quality = 1;
+    private int quality;
     /**
      * Default elevation set to zero meters over sea level
-     *
      */
-    private double elevation = 0;
+    private double elevation;
     /**
      * If true image will be repeated on the surface
      */
@@ -104,11 +86,11 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     /**
      * Flag for force update
      */
-    private boolean needsUpdate = true;
+    private boolean needsUpdate;
     /**
      * Flag for enable floating Note: Must be enabled for elevation != 0
      */
-    private boolean floating = true;
+    private boolean floating;
     /**
      * ID of the {@link ElevatedSurfaceImage} Note: Needed to determine the if a
      * newer version is available for a given sector
@@ -118,14 +100,35 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      */
     private int id;
 
+    /**
+     * Creates a {@link ElevatedSurfaceImage}, which is an extended version of a {@link SurfaceImage}
+     * with the possibility to chenge the elevation.
+     *
+     * @param imageSource
+     * @param sector
+     */
     public ElevatedSurfaceImage(Object imageSource, Sector sector) {
         super(imageSource, sector);
-        Double[] verticies = WMSUtils.verticies(sector);
-        double max = Math.max(Math.max(verticies[0], verticies[1]), Math.max(verticies[2], verticies[3]));
-        double min = Math.min(Math.min(verticies[0], verticies[1]), Math.min(verticies[2], verticies[3]));
-        position = new Position(sector.getCentroid(), elevation);
-        size = max * 1000;
-        this.id = -1;
+        needsUpdate = true;
+        floating = true;
+        elevation = 0;
+        quality = 4;
+        id = -1;
+        frameTimestamp = -1L;
+        initialization(sector);
+    }
+
+    /**
+     * Initialize the {@link ElevatedSurfaceImage} parameters
+     *
+     * @param sector {@link Sector} for the initialize calculation
+     */
+    private void initialization(Sector sector) {
+        Double[] v = WMSUtils.verticies(sector);
+        double max = Math.max(Math.max(v[0], v[1]),
+                Math.max(v[2], v[3]));
+        double min = Math.min(Math.min(v[0], v[1]),
+                Math.min(v[2], v[3]));
         // increase amount of support points if area of sector is high
         if (WMSUtils.area(sector) > 5000000) {
             quality = 256;
@@ -140,7 +143,6 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
         } else if (WMSUtils.area(sector) == 0) {
             quality = 0;
         }
-
 
         // Check if Sector is on noth/southpole
         if (min == 0) {
@@ -157,7 +159,8 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     }
 
     /**
-     * Return the id
+     * Return the id Note: Through the id the version of the {@link ElevatedSurfaceImage}
+     * is determined.
      *
      * @return the id of the {@link ElevatedSurfaceImage}
      */
@@ -165,6 +168,13 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
         return id;
     }
 
+    /**
+     * Return the quality value Note: Display quality of the surface (Amount of
+     * supporting points), which determines how much polygons will be rendered
+     * to display the surface of the {@link ElevatedSurfaceImage}.
+     *
+     * @return the quality value of the {@link ElevatedSurfaceImage}
+     */
     public int getQuality() {
         return quality;
     }
@@ -194,7 +204,6 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      */
     public void setElevation(double elevation) {
         this.elevation = elevation;
-        this.position = new Position(getSector().getCentroid(), elevation);
         this.geometrySector = null;  // invalidate geometry
     }
 
@@ -204,7 +213,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      * @return true if floating (elevation) is enable for the
      * {@link ElevatedSurfaceImage}
      */
-    public boolean getFloating() {
+    public boolean isFloating() {
         return floating;
     }
 
@@ -241,7 +250,9 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      * @param offset the offset to set as {@link Point}
      */
     public void setImageOffset(Point offset) {
-        this.imageOffset = offset;
+        if (offset != null) {
+            this.imageOffset = offset;
+        }
     }
 
     /**
@@ -297,7 +308,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
 
         LatLon centroid = sector.getCentroid();
         this.geometrySector = sector;
-        this.referenceCenter = globe.computePointFromPosition(centroid.getLatitude(), centroid.getLongitude(), 0d);
+        this.referenceCenter = globe.computePointFromPosition(centroid, 0d);
 
         Angle dLat = sector.getDeltaLat().divide(quality);
         Angle dLon = sector.getDeltaLon().divide(quality);
@@ -311,7 +322,10 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
             Angle lon = sector.getMinLongitude();
             for (int i = 0; i <= quality; i++) {
                 Vec4 p = globe.computePointFromPosition(lat, lon, elevation);
-                this.vertices.put(iv++, p.x - referenceCenter.x).put(iv++, p.y - referenceCenter.y).put(iv++, p.z - referenceCenter.z);
+                Vec4 res = p.subtract3(referenceCenter);
+                vertices.put(iv++, res.x);
+                vertices.put(iv++, res.y);
+                vertices.put(iv++, res.z);
                 lon = lon.add(dLon);
             }
             lat = lat.add(dLat);
@@ -411,8 +425,10 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
 
         if (needsUpdate) {
             GL gl = dc.getGL();
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+                    GL.GL_NEAREST_MIPMAP_NEAREST);
+            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+                    GL.GL_NEAREST);
             TextureData texdata;
 
             if (getImageSource() instanceof TextureData) {
@@ -456,7 +472,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
         }
 
         if (dc.isOrderedRenderingMode()) {
-            this.drawOrderedRenderable(dc, this.pickSupport);
+            this.drawOrderedRenderable(dc);
         } else {
             this.makeOrderedRenderable(dc);
         }
@@ -469,16 +485,9 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      * @param dc Current draw context.
      */
     protected void makeOrderedRenderable(DrawContext dc) {
-        // This method is called twice each frame: once during picking and once during rendering. We only need to
-        // compute the placePoint and eye distance once per frame, so check the frame timestamp to see if this is a
-        // new frame.
         if (dc.getFrameTimeStamp() != this.frameTimestamp) {
-            // Compute a bounding box that encloses the cube. We'll use this sphere for intersection calculations to determine
-            // if the cube is actually visible.            
+            // Compute a bounding box that encloses the image.
             this.extent = computeExtent(dc);
-
-            // Convert the cube's geographic position to a position in Cartesian coordinates.
-            this.placePoint = extent.getCenter();
 
             // Compute the distance from the eye to the surface image position.
             this.eyeDistance = computeEyeDistance(dc);
@@ -486,8 +495,10 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
             this.frameTimestamp = dc.getFrameTimeStamp();
         }
 
-        // Add the cube to the ordered renderable list. The SceneController sorts the ordered renderables by eye
-        // distance, and then renders them back to front. render will be called again in ordered rendering mode, and at
+        // Add the cube to the ordered renderable list. 
+        // The SceneController sorts the ordered renderables by eye
+        // distance, and then renders them back to front. 
+        // Render will be called again in ordered rendering mode, and at
         // that point we will actually draw the cube.
         dc.addOrderedRenderable(this);
     }
@@ -503,15 +514,13 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
         double minDistance = Double.MAX_VALUE;
         Vec4 eyePoint = dc.getView().getEyePoint();
 
-        Vec4[] points = new Vec4[8];
-        points[0] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[0], elevation);
-        points[1] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[1], elevation);
-        points[2] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[2], elevation);
-        points[3] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[3], elevation);
-        points[4] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[0]);
-        points[5] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[1]);
-        points[6] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[2]);
-        points[7] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[3]);
+        List<Vec4> points = new ArrayList<Vec4>();
+        List<LatLon> cornerList = getCorners();
+
+        for (LatLon c : cornerList) {
+            points.add(dc.getGlobe().computePointFromPosition(c, elevation));
+            points.add(dc.getGlobe().computePointFromLocation(c));
+        }
 
         for (Vec4 point : points) {
             double d = point.distanceTo3(eyePoint);
@@ -527,27 +536,20 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      * Computes this shapes extent. If a reference point is specified, the
      * extent is translated to that reference point.
      *
-     * @param outerBoundary the shape's outer boundary.
+     * @param dc the current {@link DrawContext}
      *
      * @return the computed extent, or null if the extent cannot be computed.
      */
     protected Extent computeExtent(DrawContext dc) {
-        Vec4[] topVertices = new Vec4[4];
-        topVertices[0] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[0], elevation);
-        topVertices[1] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[1], elevation);
-        topVertices[2] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[2], elevation);
-        topVertices[3] = dc.getGlobe().computePointFromPosition(getSector().getCorners()[3], elevation);
-        Vec4[] botVertices = new Vec4[4];
-        botVertices[0] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[0]);
-        botVertices[1] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[1]);
-        botVertices[2] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[2]);
-        botVertices[3] = dc.getGlobe().computePointFromLocation(getSector().getCorners()[3]);
+        List<Vec4> points = new ArrayList<Vec4>();
+        List<LatLon> cornerList = getCorners();
 
-        ArrayList<Vec4> allVertices = new ArrayList<Vec4>(2 * topVertices.length);
-        allVertices.addAll(Arrays.asList(topVertices));
-        allVertices.addAll(Arrays.asList(botVertices));
+        for (LatLon c : cornerList) {
+            points.add(dc.getGlobe().computePointFromPosition(c, elevation));
+            points.add(dc.getGlobe().computePointFromLocation(c));
+        }
 
-        Box boundingBox = Box.computeBoundingBox(allVertices);
+        Box boundingBox = Box.computeBoundingBox(points);
 
         // The bounding box is computed relative to the polygon's reference point, so it needs to be translated to
         // model coordinates in order to indicate its model-coordinate extent.
@@ -560,7 +562,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      *
      * @param dc Current draw context.
      */
-    private void drawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
+    private void drawOrderedRenderable(DrawContext dc) {
         if (!floating) {
             super.render(dc);
             return;
@@ -585,9 +587,12 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
             GL gl = dc.getGL();
 
             gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT // for alpha func
-                    | GL.GL_ENABLE_BIT | GL.GL_CURRENT_BIT | GL.GL_DEPTH_BUFFER_BIT // for depth func
+                    | GL.GL_ENABLE_BIT
+                    | GL.GL_CURRENT_BIT
+                    | GL.GL_DEPTH_BUFFER_BIT // for depth func
                     | GL.GL_TEXTURE_BIT // for texture env
-                    | GL.GL_TRANSFORM_BIT | GL.GL_POLYGON_BIT);
+                    | GL.GL_TRANSFORM_BIT
+                    | GL.GL_POLYGON_BIT);
             try {
                 if (!dc.isPickingMode()) {
                     double opacity = this.getOpacity();
@@ -612,11 +617,14 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
                 gl.glMatrixMode(GL.GL_TEXTURE);
                 gl.glPushMatrix();
                 if (!dc.isPickingMode()) {
-                    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+                    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
+                            GL.GL_MODULATE);
                 } else {
-                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_COMBINE);
+                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
+                            GL.GL_COMBINE);
                     gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_SRC0_RGB, GL.GL_PREVIOUS);
-                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB, GL.GL_REPLACE);
+                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB,
+                            GL.GL_REPLACE);
                 }
 
                 // Texture transforms

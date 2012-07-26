@@ -15,7 +15,7 @@ import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.wiz.VisWiz;
 import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
 import com.dfki.av.sudplan.wms.LayerInfo;
-import com.dfki.av.sudplan.wms.PropertyChangeEventHolder;
+import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.WMSUtils;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
@@ -397,14 +397,14 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             progressBar.setValue(i.intValue());
             progressChange.firePropertyChange(evt);
         }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WWD_REDRAW)) {
+        if (evt.getPropertyName().equals(EventHolder.WWD_REDRAW)) {
             wwd.redraw();
         }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLOAD_ACTIVE)) {
+        if (evt.getPropertyName().equals(EventHolder.WMS_DOWNLOAD_ACTIVE)) {
             progressBar.setVisible(true);
             progressBar.setIndeterminate(true);
         }
-        if (evt.getPropertyName().equals(PropertyChangeEventHolder.WMS_DOWNLAOD_COMPLETE)) {
+        if (evt.getPropertyName().equals(EventHolder.WMS_DOWNLAOD_COMPLETE)) {
             progressBar.setVisible(false);
             progressBar.setIndeterminate(false);
         }

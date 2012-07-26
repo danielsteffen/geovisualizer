@@ -41,8 +41,8 @@ public class LayerInfoRetreiver extends SwingWorker<LayerInfo, Void> {
      *
      * @param wmsURL
      * @return parsed {@link LayerInfo} of the data returned from the wms server
-     * @throws URISyntaxException if the parsing of the {@link String} wmsURL to URI
-     * failed.
+     * @throws URISyntaxException if the parsing of the {@link String} wmsURL to
+     * URI failed.
      * @throws Exception if the parsing of the layer info failed
      */
     private LayerInfo retreiveLayerInfo(String wmsURL) throws URISyntaxException, Exception {
@@ -60,18 +60,18 @@ public class LayerInfoRetreiver extends SwingWorker<LayerInfo, Void> {
         try {
             li = get();
         } catch (InterruptedException ex) {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
             Exceptions.printStackTrace(ex);
             return;
         } catch (ExecutionException ex) {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
             Exceptions.printStackTrace(ex);
             return;
         }
         if (li == null) {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
         } else {
-            firePropertyChange(PropertyChangeEventHolder.LAYERINFO_RETREIVAL_COMPLETE, this, li);
+            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_COMPLETE, this, li);
 
         }
     }

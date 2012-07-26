@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Globe;
@@ -105,29 +106,38 @@ public class WMSUtils {
         return distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, "K");
     }
 
+    /**
+     * Calculates the area of the {@link Sector}
+     *
+     * @param s bounding box for which the distance should be calculated
+     * @return area as double (in kilometers)
+     */
     public static double area(Sector s) {
-        double dist1 = distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMinLatitude().degrees, s.getMaxLongitude().degrees, "K");
-        if (dist1 == 0) {
-            dist1 = distance(s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, s.getMaxLatitude().degrees, s.getMinLongitude().degrees, "K");
+        Double[] verticies = verticies(s);
+        if (verticies[0] == 0 || verticies[1] == 0) {
+            return verticies[2] * verticies[3];
+        } else {
+            return verticies[0] * verticies[1];
         }
-        double dist2 = distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMaxLatitude().degrees, s.getMinLongitude().degrees, "K");
-        if (dist2 == 0) {
-            dist2 = distance(s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, s.getMinLatitude().degrees, s.getMaxLongitude().degrees, "K");
-        }
-        return dist1 * dist2;
     }
 
+    /**
+     * Calculates the verticies of the {@link Sector}
+     *
+     * @param s bounding box for which the distance should be calculated
+     * @return verticies as array of {@link Double} (in kilometers)
+     */
     public static Double[] verticies(Sector s) {
-        double dist1 = distance(s.getMinLatitude().degrees, s.getMinLongitude().degrees, s.getMinLatitude().degrees, s.getMaxLongitude().degrees, "K");
-        double dist2 = distance(s.getMinLatitude().degrees, s.getMaxLongitude().degrees, s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, "K");
-        double dist3 = distance(s.getMaxLatitude().degrees, s.getMaxLongitude().degrees, s.getMaxLatitude().degrees, s.getMinLongitude().degrees, "K");
-        double dist4 = distance(s.getMaxLatitude().degrees, s.getMinLongitude().degrees, s.getMinLatitude().degrees, s.getMinLatitude().degrees, "K");
-        Double[] dist = new Double[4];
-        dist[0] = dist1;
-        dist[1] = dist2;
-        dist[2] = dist3;
-        dist[3] = dist4;
-        return dist;
+        Angle a = s.getMinLatitude();
+        Angle b = s.getMinLongitude();
+        Angle c = s.getMaxLatitude();
+        Angle d = s.getMaxLongitude();
+        Double[] vericies = new Double[4];
+        vericies[0] = distance(a.degrees, b.degrees, a.degrees, d.degrees, "K");
+        vericies[1] = distance(a.degrees, d.degrees, c.degrees, d.degrees, "K");
+        vericies[2] = distance(c.degrees, d.degrees, c.degrees, b.degrees, "K");
+        vericies[3] = distance(c.degrees, b.degrees, a.degrees, b.degrees, "K");
+        return vericies;
     }
 
     /**
