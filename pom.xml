@@ -11,7 +11,7 @@
     <url>http://sudplan.kl.dfki.de</url>
     
     <organization>
-        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -115,12 +115,6 @@
             <artifactId>sudplan3D-core</artifactId>
             <version>1.3</version>            
         </dependency>
-        <!--dependency>
-            <groupId>com.dfki.av.sudplan</groupId>
-            <artifactId>sudplan3D-rasterize</artifactId>
-            <version>1.0</version>
-            <scope>runtime</scope>
-        </dependency-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -195,7 +189,7 @@
                         <storepass>sudplan</storepass>
                         <alias>sudplan</alias>
                         <validity>3650</validity>
-                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameCn>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</dnameCn>
                         <dnameOu>AV</dnameOu>
                         <dnameO>DFKI</dnameO>
                         <dnameL>KL</dnameL>

@@ -10,17 +10,15 @@ Releases
 
   This section list the releases of the SUDPLAN 3D components: sudplan3D-main, sudplan3D-core, etc. 
 
-* 2012-07-24, sudplan3D-main 1.3.4  
+* 2012-08-01, sudplan3D-main 1.3.4  
   
   * Changelog
+    
+	* Updated sudplan.kl.dfki.de project website.
   
   * Bug fixes
-  
-* 2012-07-24, sudplan3D-core 1.4
-  
-  * Changelog
-  
-  * Bug fixes
+   
+    * none
   
 * SUDPLAN 3D compatibility 
 
@@ -29,7 +27,7 @@ Releases
 *----------------*---------------------*----------------*
 | sudplan3D-main | sudplan3D-core      | WorldWind SDK  |
 *----------------*---------------------*----------------*
-| 1.3.4          |  ???                |  ???           | 
+| 1.3.4          |  1.3                |  1.3.0         | 
 *----------------*---------------------*----------------*
 | 1.3.3          |  1.3                |  1.3.0         | 
 *----------------*---------------------*----------------*
