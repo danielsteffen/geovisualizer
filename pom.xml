@@ -31,7 +31,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compileSource>1.6</compileSource>
         <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
-        <worldwind.version>1.3.0</worldwind.version>
+        <worldwind.version>1.4.0-without-jackson</worldwind.version>
+        <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
     </properties>
 
     <profiles>
@@ -95,25 +96,25 @@
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gdal</artifactId>
-            <version>${worldwind.version}</version>
+            <version>${worldwind.3rdparty.version}</version>
             <scope>${worldwind.scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>gluegen-rt</artifactId>
-            <version>${worldwind.version}</version>
+            <version>${worldwind.3rdparty.version}</version>
             <scope>${worldwind.scope}</scope>
         </dependency>
         <dependency>
             <groupId>gov.nasa.worldwind</groupId>
             <artifactId>jogl</artifactId>
-            <version>${worldwind.version}</version>
+            <version>${worldwind.3rdparty.version}</version>
             <scope>${worldwind.scope}</scope>
         </dependency>
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-core</artifactId>
-            <version>1.4</version>            
+            <version>1.5</version>            
         </dependency>
         <dependency>
             <groupId>junit</groupId>
