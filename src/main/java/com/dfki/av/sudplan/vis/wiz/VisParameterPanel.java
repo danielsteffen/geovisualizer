@@ -130,8 +130,9 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     // End of variables declaration//GEN-END:variables
 
     /**
+     * Return the selected attribute.
      *
-     * @return
+     * @return the selected attribute to return.
      */
     public String getSelectedAttribute() {
         int i = jComboBox1.getSelectedIndex();

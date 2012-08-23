@@ -27,8 +27,9 @@ public class LayerCheckBoxNode {
 
     /**
      * Constructor.
-     *
-     * @param layer the {@link Layer} to set.
+     * 
+     * @param text the name of the layer.
+     * @param selected whether the layer is selected or not.
      */
     public LayerCheckBoxNode(String text, boolean selected) {
         this.text = text;
