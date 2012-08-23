@@ -79,7 +79,7 @@ public class SideBySideStereoSetup {
      * @param worldWindow WorldWindow of the single view,
      * IllegalArgumentException is thrown if null.
      */
-    SideBySideStereoSetup(JFrame root, WorldWindow worldWindow) {
+    public SideBySideStereoSetup(JFrame root, WorldWindow worldWindow) {
 
         if (root == null) {
             throw new IllegalArgumentException("Parameter for JFrame set to null.");
@@ -149,8 +149,6 @@ public class SideBySideStereoSetup {
         stereoView.requestFocus();
         stereoView.setResizable(false);
 
-
-
         double aspectLeft = (double) (width) / (double) (height);
         SceneController sc = ((WorldWindowGLCanvas) vpWwd).getSceneController();
         if (sc instanceof AdvancedStereoOptionSceneController) {
@@ -163,7 +161,6 @@ public class SideBySideStereoSetup {
             throw new IllegalArgumentException("SceneController is not instance of"
                     + " AdvancedStereoOptionSceneController");
         }
-
     }
 
     /**

@@ -9,6 +9,7 @@ package com.dfki.av.sudplan.ui;
 
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
+import com.dfki.av.sudplan.stereo.SideBySideStereoSetup;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
@@ -18,6 +19,7 @@ import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
+import gov.nasa.worldwind.WorldWindow;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -156,6 +158,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miRemoveAllLayer = new javax.swing.JMenuItem();
         mWizard = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
+        mView = new javax.swing.JMenu();
+        miSideBySide = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
 
@@ -248,7 +252,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
         dWMSHeight.setMinimumSize(new java.awt.Dimension(760, 380));
-        dWMSHeight.setPreferredSize(new java.awt.Dimension(760, 380));
         dWMSHeight.setResizable(false);
 
         txtServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.text")); // NOI18N
@@ -646,6 +649,19 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mbMain.add(mWizard);
 
+        mView.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mView.text")); // NOI18N
+
+        miSideBySide.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miSideBySide.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miSideBySide.text")); // NOI18N
+        miSideBySide.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSideBySideActionPerformed(evt);
+            }
+        });
+        mView.add(miSideBySide);
+
+        mbMain.add(mView);
+
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
 
         miAbout.setText(bundle.getString("MainFrame.miAbout.text")); // NOI18N
@@ -878,6 +894,12 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         // TODO add your handling code here:
     }//GEN-LAST:event_txtHeightActionPerformed
 
+    private void miSideBySideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSideBySideActionPerformed
+        WorldWindow worldWindow = wwPanel.getWwd();
+        SideBySideStereoSetup stereoSetup = new SideBySideStereoSetup(this, worldWindow);
+        stereoSetup.start();
+    }//GEN-LAST:event_miSideBySideActionPerformed
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(EventHolder.LAYERINFO_RETREIVAL_COMPLETE)) {
@@ -986,6 +1008,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mLayer;
+    private javax.swing.JMenu mView;
     private javax.swing.JMenu mWizard;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
@@ -1002,6 +1025,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
     private javax.swing.JMenuItem miRemoveAllLayer;
+    private javax.swing.JMenuItem miSideBySide;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pLeftPanel;
