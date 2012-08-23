@@ -1,5 +1,5 @@
 /*
- *  DataSourceSelectionController.java 
+ *  AttributeSelectionController.java 
  *
  *  Created by DFKI AV on 01.01.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.

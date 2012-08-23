@@ -1,7 +1,9 @@
 /*
- * MainFrame.java
+ *  MainFrame.java 
  *
- * Created on 14.09.2011, 15:27:50
+ *  Created by DFKI AV on 14.09.2011.
+ *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
  */
 package com.dfki.av.sudplan.ui;
 
@@ -12,10 +14,10 @@ import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
+import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
-import com.dfki.av.sudplan.wms.EventHolder;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
