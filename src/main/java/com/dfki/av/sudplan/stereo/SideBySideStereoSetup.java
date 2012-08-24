@@ -22,7 +22,8 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.JFrame;
-import org.openide.util.Exceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -39,6 +40,10 @@ import org.openide.util.Exceptions;
  */
 public class SideBySideStereoSetup {
 
+    /**
+     * The logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(SideBySideStereoSetup.class);
     /**
      * JFrame of the root single view window.
      */
@@ -73,31 +78,28 @@ public class SideBySideStereoSetup {
      * singleView and the worldWindow attributes to the passed input parameters.
      * It calls the init method that initializes the rest of the components.
      *
-     *
-     * @param root JFrame of the single view, IllegalArgument exception is
-     * thrown if null.
-     * @param worldWindow WorldWindow of the single view,
-     * IllegalArgumentException is thrown if null.
+     * @param root JFrame of the single view
+     * @param worldWindow WorldWindow of the single view
+     * @throws IllegalArgumentException is parameters set to {@code null}.
      */
     public SideBySideStereoSetup(JFrame root, WorldWindow worldWindow) {
 
         if (root == null) {
-            throw new IllegalArgumentException("Parameter for JFrame set to null.");
+            String msg = "Parameter for JFrame set to null.";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
 
         if (worldWindow == null) {
-            throw new IllegalArgumentException("Parameter for worldwindow"
-                    + " set to null.");
+            String msg = "Parameter for worldwindow set to null.";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
 
         this.singleView = root;
         this.worldWindow = (WorldWindowGLCanvas) worldWindow;
-        try {
-            init(worldWindow);
-        } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
-        }
 
+        init(worldWindow);
     }
 
     /**
@@ -107,21 +109,44 @@ public class SideBySideStereoSetup {
      * side by side stereo mode by setting the corresponding flag in the
      * Advanced Stereo option scene controller instance associated.
      *
-     * @param worldWindow worldWindow of the singleView, throws an
-     * IllegalArgumentException if null.
-     *
+     * @param worldWindow worldWindow of the singleView,
+     * @throws RuntimeException if wrong xml configuration.
+     * @throws RuntimeException if not enough screens available.
      */
     private void init(WorldWindow worldWindow) {
-        if (worldWindow == null) {
-            throw new IllegalArgumentException("Paramerer for worldwindow"
-                    + " set to null");
-        }
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] graphicsDevices = ge.getScreenDevices();
-        DisplayMode displayMode = graphicsDevices[0].getDisplayMode();
-        width = displayMode.getWidth();
-        height = displayMode.getHeight();
+
+        // Check if valid screen configuration
+        log.debug("Number of GraphicsDevices: {}", graphicsDevices.length);
+        int numScreens = 0;
+        for (int i = 0; i < graphicsDevices.length; i++) {
+            if (graphicsDevices[i].getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
+                numScreens++;
+            }
+        }
+        log.debug("Number of screens: {}", numScreens);
+        if (numScreens < 2) {
+            String msg = "Could not init side-by-side stereo mode. "
+                    + "Only" + numScreens + " screens available.";
+            log.error(msg);
+            throw new RuntimeException(msg);
+        }
+
+        DisplayMode displayMode0 = graphicsDevices[0].getDisplayMode();
+        width = displayMode0.getWidth();
+        height = displayMode0.getHeight();
+
+        DisplayMode displayMode1 = graphicsDevices[1].getDisplayMode();
+        int wDisplay1 = displayMode1.getWidth();
+        int hDisplay1 = displayMode1.getHeight();
+
+        if (width != wDisplay1 || height != hDisplay1) {
+            String msg = "No valid configuration for side-by-side stereo mode. "
+                    + "Screens have different resolution.";
+            log.warn(msg);
+        }
 
         vp = new VisualizationPanel(new Dimension(width, height));
         WorldWindowGLCanvas vpWwd = vp.getWwd();
@@ -158,8 +183,9 @@ public class SideBySideStereoSetup {
             my.setHeight(height);
             my.setSideBySide(true);
         } else {
-            throw new IllegalArgumentException("SceneController is not instance of"
-                    + " AdvancedStereoOptionSceneController");
+            String msg = "SceneController is not instance of AdvancedStereoOptionSceneController";
+            log.error(msg);
+            throw new RuntimeException(msg);
         }
     }
 
