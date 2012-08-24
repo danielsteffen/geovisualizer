@@ -39,6 +39,20 @@ Shortcuts
 *----------------------+---------------------------------------+
 <<Key / key combinations and what they do>>
 
+  In order to use the side-by-side stereoscopic fullscreen mode you can use the following short cuts. 
+
+*----------------------+---------------------------------------+
+| <STRG> + <ALT> + <S> | Switch to side-by-side stereo mode    |
+*----------------------+---------------------------------------+
+| <ESC>                | Leave side-by-side stereo mode        |
+*----------------------+---------------------------------------+
+| <e>  / <E>           | In-/Decrease eye separation           |
+*----------------------+---------------------------------------+
+| <SPACE>              | Swap left and right eye               |
+*----------------------+---------------------------------------+
+<<Key / key combinations for side-by-side stereo>>
+
+
 Test Data Sets
 
   The following lists some data sets for testing the SUDPLAN 3D component:
