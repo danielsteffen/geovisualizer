@@ -8,6 +8,7 @@
 package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.camera.*;
+import com.dfki.av.sudplan.stereo.SideBySideStereoSetup;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
@@ -44,6 +45,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
@@ -446,10 +448,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * 
+     *
      * @param layerInfo
      * @param elevation
-     * @param opacity 
+     * @param opacity
      */
     public void addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
         if (opacity > 1.0 || opacity < 0.0) {
@@ -458,7 +460,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     + "0.0 and 100.0");
             opacity = 0.0;
         }
-        addWMSHeightLayer(layerInfo.caps, layerInfo.layerCaps, 
+        addWMSHeightLayer(layerInfo.caps, layerInfo.layerCaps,
                 layerInfo.params, elevation, opacity);
     }
 
@@ -491,5 +493,22 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     public LayerPanel getLayerPanel() {
         return this.layerPanel;
+    }
+
+    /**
+     * Switches to stereoscopic side-by-side mode in fullscreen.
+     *
+     * @param parent the {@link JFrame} as parent frame.
+     * @throws RuntimeException if parent set to {@code null}
+     */
+    public void startStereo(JFrame parent) {
+        if (parent == null) {
+            String msg = "Illegal arguemtn for JFrame";
+            log.error(msg);
+            throw new RuntimeException(msg);
+
+        }
+        SideBySideStereoSetup stereoSetup = new SideBySideStereoSetup(parent, wwd);
+        stereoSetup.start();
     }
 }

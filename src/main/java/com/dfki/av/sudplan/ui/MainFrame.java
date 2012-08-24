@@ -9,7 +9,6 @@ package com.dfki.av.sudplan.ui;
 
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
-import com.dfki.av.sudplan.stereo.SideBySideStereoSetup;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
@@ -19,7 +18,6 @@ import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
-import gov.nasa.worldwind.WorldWindow;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -877,9 +875,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
 
     private void miSideBySideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSideBySideActionPerformed
-        WorldWindow worldWindow = wwPanel.getWwd();
-        SideBySideStereoSetup stereoSetup = new SideBySideStereoSetup(this, worldWindow);
-        stereoSetup.start();
+        wwPanel.startStereo(this);
     }//GEN-LAST:event_miSideBySideActionPerformed
 
     @Override
