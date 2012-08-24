@@ -392,22 +392,12 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         jTabbedPane1.addTab(bundle.getString("MainFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
         cLayerList.setEnabled(false);
-        cLayerList.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cLayerListItemStateChanged(evt);
-            }
-        });
 
         lOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lOpacity.text")); // NOI18N
 
         lHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lHeight.text")); // NOI18N
 
         txtHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtHeight.text")); // NOI18N
-        txtHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtHeightActionPerformed(evt);
-            }
-        });
 
         bAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeight.text")); // NOI18N
         bAddWMSHeight.setEnabled(false);
@@ -877,10 +867,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         }
     }//GEN-LAST:event_rbTxtServerUrlActionPerformed
 
-    private void cLayerListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cLayerListItemStateChanged
-
-    }//GEN-LAST:event_cLayerListItemStateChanged
-
     private void bGoWMSHeight1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeight1ActionPerformed
         bGoWMSHeight1.setEnabled(false);
         pbWMSLayer.setIndeterminate(true);
@@ -889,10 +875,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
-
-    private void txtHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHeightActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtHeightActionPerformed
 
     private void miSideBySideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSideBySideActionPerformed
         WorldWindow worldWindow = wwPanel.getWwd();
