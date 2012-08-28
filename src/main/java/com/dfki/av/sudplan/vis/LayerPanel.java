@@ -9,11 +9,11 @@ package com.dfki.av.sudplan.vis;
 
 import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
 import com.dfki.av.sudplan.wms.ElevatedSurfaceSupportLayer;
+import com.dfki.av.sudplan.wms.WMSControlLayer;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
@@ -220,15 +220,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         LayerList layerList = worldWindow.getModel().getLayers();
         Layer layer = layerList.getLayerByName(layerName);
 
-
-
-        int index = layerList.indexOf(layer);
-        if (index < 0) {
-            log.debug("Could not remove layer.");
-        } else {
-            layerList.remove(index);
-        }
-
+        int index;
+        
         if (layer instanceof ElevatedSurfaceLayer) {
             index = layerList.indexOf(((ElevatedSurfaceLayer) layer).getSupportLayer());
             if (index < 0) {
@@ -237,6 +230,31 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 layerList.remove(index);
             }
         }
+        if (layer instanceof WMSControlLayer) {
+            for (ElevatedSurfaceLayer l : ((WMSControlLayer) layer).getLayers()) {
+                index = layerList.indexOf(l.getSupportLayer());
+                if (index < 0) {
+                    log.debug("Could not remove layer.");
+                } else {
+                    layerList.remove(index);
+                }
+                index = layerList.indexOf(l);
+                if (index < 0) {
+                    log.debug("Could not remove layer.");
+                } else {
+                    layerList.remove(index);
+                }
+            }
+        }
+
+        index = layerList.indexOf(layer);
+        if (index < 0) {
+            log.debug("Could not remove layer.");
+        } else {
+            layerList.remove(index);
+        }
+
+
 
     }//GEN-LAST:event_btnDeleteActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -259,6 +277,12 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 Layer layer = layerlist.get(id);
                 if (layer instanceof ElevatedSurfaceSupportLayer) {
                     continue;
+                }
+                if (layer instanceof ElevatedSurfaceLayer) {
+                    ElevatedSurfaceLayer l = (ElevatedSurfaceLayer) layer;
+                    if (l.isSlave()) {
+                        continue;
+                    }
                 }
                 LayerCheckBoxNode node = new LayerCheckBoxNode(layer.getName(), layer.isEnabled());
                 DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(node);

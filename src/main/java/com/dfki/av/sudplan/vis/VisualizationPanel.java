@@ -16,10 +16,7 @@ import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.utils.AVUtils;
 import com.dfki.av.sudplan.vis.wiz.AttributeSelectionPanel;
 import com.dfki.av.sudplan.vis.wiz.VisWiz;
-import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
-import com.dfki.av.sudplan.wms.EventHolder;
-import com.dfki.av.sudplan.wms.LayerInfo;
-import com.dfki.av.sudplan.wms.WMSUtils;
+import com.dfki.av.sudplan.wms.*;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -50,6 +47,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +87,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Constructs a visualization panel of the defined
      * <code>Dimension</code>.
      *
-     * @param canvasSize size of the
-     * <code>WorldWindowGLCanvas</code>.
+     * @param canvasSize size of the <code>WorldWindowGLCanvas</code>.
      */
     public VisualizationPanel(Dimension canvasSize) {
         super(new BorderLayout());
@@ -125,7 +122,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Returns the {@link WorldWindowGLCanvas} used by the {@link VisualizationPanel}
+     * Returns the {@link WorldWindowGLCanvas} used by the
+     * {@link VisualizationPanel}
      *
      * @return the {@link WorldWindowGLCanvas} to return.
      */
@@ -155,7 +153,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         try {
             final URI serverURI = new URI(uri.trim());
             Thread loadingThread = new Thread(new Runnable() {
-
                 @Override
                 public void run() {
                     WMSCapabilities caps;
@@ -195,7 +192,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
                     // Add the layers to the world window
                     EventQueue.invokeLater(new Runnable() {
-
                         @Override
                         public void run() {
                             for (LayerInfo layerInfo : layerInfos) {
@@ -232,8 +228,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     /**
      * Add a layer visualization to the {@link WorldWindowGLCanvas}. The
-     * visualization is created by using the {@code data}, the {@link IVisAlgorithm},
-     * and the {@code attributes}.
+     * visualization is created by using the {@code data}, the
+     * {@link IVisAlgorithm}, and the {@code attributes}.
      *
      * @param data the data source for the visualization.
      * @param vis the visualization technique.
@@ -455,12 +451,15 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public void addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+    public ElevatedSurfaceLayer addWMSHeightLayer(WMSCapabilities caps
+            , WMSLayerCapabilities lcaps, AVList params, double elevation
+            , double opacity) {
         ElevatedSurfaceLayer sul = new ElevatedSurfaceLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
         sul.addPropertyChangeListener(this);
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         ApplicationTemplate.insertBeforePlacenames(wwd, sul);
         ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
+        return sul;
     }
 
     /**
@@ -478,6 +477,52 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
         addWMSHeightLayer(layerInfo.caps, layerInfo.layerCaps,
                 layerInfo.params, elevation, opacity);
+    }
+
+    public void addWMSHeightListLayer(List<String> requestList, String name, double elevation, double opacity) {
+        List<LayerInfo> layerList = new ArrayList<LayerInfo>();
+        for(String request : requestList){
+            try {
+                layerList.add(WMSUtils.parseWMSRequest(request));
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        addWMSHeightListLayer(name, layerList, elevation, opacity);
+    }
+    
+    /**
+     *
+     * @param layerInfo
+     * @param elevation
+     * @param opacity
+     */
+    public void addWMSHeightListLayer(String name, List<LayerInfo> layerList, double elevation, double opacity) {
+        if (opacity > 1.0 || opacity < 0.0) {
+            log.warn("The content of the \"opacity\" "
+                    + "component must be a double value between."
+                    + "0.0 and 100.0");
+            opacity = 0.0;
+        }
+        ArrayList<ElevatedSurfaceLayer> layers = new ArrayList<ElevatedSurfaceLayer>();
+        for (LayerInfo layerInfo : layerList) {
+            ElevatedSurfaceLayer layer = addWMSHeightLayer(layerInfo.caps, 
+                    layerInfo.layerCaps, layerInfo.params, elevation, opacity);
+            layer.setSlave(true);
+            layer.setOpacity(0.0d);
+            layers.add(layer);
+        }
+        WMSControlLayer cl = new WMSControlLayer(layers);
+        cl.setName(name);
+        WMSControlListener clistener = new WMSControlListener(cl, layers);
+        clistener.setName(name + " Control Listener");
+        boolean[] valSelected = new boolean[layers.size()];
+        valSelected[0] = true;
+        wwd.addSelectListener(clistener);
+        clistener.addPropertyChangeListener(this);
+        ApplicationTemplate.insertBeforePlacenames(wwd, cl);
+        cl.setValSelected(valSelected);
+        clistener.mark();
     }
 
     /**

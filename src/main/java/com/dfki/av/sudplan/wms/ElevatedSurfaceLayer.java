@@ -46,13 +46,22 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
      */
     private final Double elevation;
     /**
-     * The opacity for the {@link ElevatedSurfaceImage}s
+     * The maximum opacity for the {@link ElevatedSurfaceImage}s
      */
     private final Double opac;
     /**
      * Timeout value (ms) for image retreival and url request
      */
     private int timeout;
+    /**
+     * Represents the percentage of the maximal opacity. Opacity of the
+     * {@link ElevatedSurfaceImage}s = opacityLevel * opac.
+     */
+    private double opacityLevel;
+    /**
+     * If true the layer corresponse to a {@link WMSControlLayer}.
+     */
+    private boolean slave;
 
     /**
      * Constructs a elevated surface layer with the definied capabilities,
@@ -69,6 +78,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         timeout = 10000;
         this.elevation = elevation;
         this.opac = opac;
+        this.opacityLevel = 1.0d;
         this.setPickEnabled(false);
 
         AVList configParams = params.copy();
@@ -108,6 +118,26 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     }
 
     /**
+     * Sets the layer slave status. If true the layer corresponse to a
+     * {@link WMSControlLayer}.
+     *
+     * @param slave If true the layer corresponse to a {@link WMSControlLayer}.
+     */
+    public void setSlave(boolean slave) {
+        this.slave = slave;
+    }
+
+    /**
+     * Returns the layer slave status. If true the layer corresponse to a
+     * {@link WMSControlLayer}.
+     *
+     * @return true if the layer corresponse to a {@link WMSControlLayer}.
+     */
+    public boolean isSlave() {
+        return slave;
+    }
+
+    /**
      * Removes all {@link ElevatedSurfaceImage}s from the type
      * {@link ElevatedSurfaceLayer}
      *
@@ -124,8 +154,8 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     }
 
     /**
-     * Forces all {@link Renderable} from type
-     * {@link ElevatedSurfaceImage} to refresh.
+     * Forces all {@link Renderable} from type {@link ElevatedSurfaceImage} to
+     * refresh.
      */
     public void refresh() {
         for (Renderable renderable : getRenderables()) {
@@ -142,7 +172,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
      */
     public void addImage(ElevatedSurfaceImage image) {
         image.setElevation(elevation);
-        image.setOpacity(opac);
+        image.setOpacity(opacityLevel * opac);
         image.setFloating(true);
         image.setId(image_id);
         image_id++;
@@ -157,7 +187,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     public void addImages(List<ElevatedSurfaceImage> images) {
         for (ElevatedSurfaceImage image : images) {
             image.setElevation(elevation);
-            image.setOpacity(opac);
+            image.setOpacity(opacityLevel * opac);
             image.setFloating(true);
             image.setId(image_id);
             image_id++;
@@ -187,6 +217,21 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
     public void setEnabled(boolean bln) {
         super.setEnabled(bln);
         getSupportLayer().setEnabled(bln);
+    }
+
+    @Override
+    public void setOpacity(double opacity) {
+        this.opacityLevel = opacity;
+        for (Renderable renderable : getRenderables()) {
+            if (renderable instanceof ElevatedSurfaceImage) {
+                ((ElevatedSurfaceImage) renderable).setOpacity(opacityLevel * opac);
+            }
+        }
+    }
+
+    @Override
+    public double getOpacity() {
+        return opacityLevel;
     }
 
     @Override

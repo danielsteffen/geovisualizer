@@ -21,6 +21,7 @@ import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -128,6 +129,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         txtOpacity = new javax.swing.JTextField();
         bCancelWMSHeight = new javax.swing.JButton();
         lMaxEle = new javax.swing.JLabel();
+        bAddWMSHeightList = new javax.swing.JButton();
         bgWMS = new javax.swing.ButtonGroup();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -263,7 +265,12 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
 
-        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?" }));
+        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?", "http://85.24.165.10/cap_SERVICE=WMS.xml" }));
+        cbServerURL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbServerURLActionPerformed(evt);
+            }
+        });
 
         lServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lServerURL.text")); // NOI18N
 
@@ -337,7 +344,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -364,7 +371,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(24, Short.MAX_VALUE)
+                .addContainerGap(59, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(txtRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -416,6 +423,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         lMaxEle.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lMaxEle.text")); // NOI18N
 
+        bAddWMSHeightList.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeightList.text")); // NOI18N
+        bAddWMSHeightList.setEnabled(false);
+        bAddWMSHeightList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAddWMSHeightListActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout dWMSHeightLayout = new javax.swing.GroupLayout(dWMSHeight.getContentPane());
         dWMSHeight.getContentPane().setLayout(dWMSHeightLayout);
         dWMSHeightLayout.setHorizontalGroup(
@@ -427,7 +442,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                         .addComponent(jTabbedPane1))
                     .addGroup(dWMSHeightLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(dWMSHeightLayout.createSequentialGroup()
                                 .addComponent(lHeight)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -436,13 +451,16 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                                 .addComponent(lOpacity)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(dWMSHeightLayout.createSequentialGroup()
-                                .addComponent(bCancelWMSHeight)
-                                .addGap(90, 90, 90)
-                                .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(bAddWMSHeight))
-                            .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, dWMSHeightLayout.createSequentialGroup()
+                                    .addComponent(bCancelWMSHeight)
+                                    .addGap(90, 90, 90)
+                                    .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(bAddWMSHeightList)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(bAddWMSHeight))
+                                .addComponent(cLayerList, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -460,10 +478,12 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bCancelWMSHeight)
-                    .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bAddWMSHeightList, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(bCancelWMSHeight)
+                        .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(72, Short.MAX_VALUE))
         );
 
@@ -879,6 +899,63 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         wwPanel.startStereo(this);
     }//GEN-LAST:event_miSideBySideActionPerformed
 
+    private void cbServerURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbServerURLActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbServerURLActionPerformed
+
+    private void bAddWMSHeightListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddWMSHeightListActionPerformed
+        dWMSHeight.setVisible(false);
+        double wmsHeight;
+        double wmsOpacity;
+        try {
+            wmsHeight = Double.parseDouble(txtHeight.getText());
+        } catch (NumberFormatException nfe) {
+            if (log.isWarnEnabled()) {
+                log.warn("The content of the \"height\" "
+                        + "component must be a double value.");
+            }
+            wmsHeight = 0.0;
+            txtHeight.setText("0.0");
+        }
+        try {
+            wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
+        } catch (NumberFormatException nfe) {
+            if (log.isWarnEnabled()) {
+                log.warn("The content of the \"opacity\" "
+                        + "component must be a double value between."
+                        + "0.0 and 100.0 " + nfe);
+            }
+            wmsOpacity = 0.0;
+            txtOpacity.setText("0.0");
+        }
+        if (cLayerList.getSelectedItem() instanceof LayerInfo) {
+            int index = cLayerList.getSelectedIndex();
+            LayerInfo layerInfo = (LayerInfo) cLayerList.getItemAt(index);
+            String name = layerInfo.getTitle();
+            index++;
+            layerInfo = (LayerInfo) cLayerList.getItemAt(index);
+            String title = layerInfo.getTitle();
+            String[] parts = title.split(" ");
+            String indentifier = parts[0];
+            ArrayList<LayerInfo> layerList = new ArrayList<LayerInfo>();
+            if (parts.length > 1) {
+                String prefix = parts[0];
+                while (prefix.equals(indentifier)) {
+                    layerList.add(layerInfo);
+                    index++;
+                    layerInfo = (LayerInfo) cLayerList.getItemAt(index);
+                    if((LayerInfo) cLayerList.getItemAt(index) == null){
+                        break;
+                    }
+                    title = layerInfo.getTitle();
+                    parts = title.split(" ");
+                    prefix = parts[0];
+                }
+            }
+            wwPanel.addWMSHeightListLayer(name, layerList, wmsHeight, wmsOpacity);
+        }
+    }//GEN-LAST:event_bAddWMSHeightListActionPerformed
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(EventHolder.LAYERINFO_RETREIVAL_COMPLETE)) {
@@ -895,6 +972,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
             cLayerList.setEnabled(true);
             bAddWMSHeight.setEnabled(true);
+            bAddWMSHeightList.setEnabled(true);
             txtHeight.setVisible(true);
             txtOpacity.setVisible(true);
             lHeight.setVisible(true);
@@ -950,7 +1028,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
          * Create and display the form
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 new MainFrame().setVisible(true);
@@ -959,6 +1036,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAddWMSHeight;
+    private javax.swing.JButton bAddWMSHeightList;
     private javax.swing.JButton bCancelWMSHeight;
     private javax.swing.JButton bGoWMSHeight;
     private javax.swing.JButton bGoWMSHeight1;
@@ -1035,6 +1113,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         txtHeight.setVisible(false);
         lHeight.setVisible(false);
         lOpacity.setVisible(false);
+        bAddWMSHeightList.setEnabled(false);
         txtOpacity.setVisible(false);
         bGoWMSHeight.setEnabled(true);
         bAddWMSHeight.setEnabled(false);

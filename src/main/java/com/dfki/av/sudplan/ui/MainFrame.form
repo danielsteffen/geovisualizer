@@ -171,7 +171,7 @@
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="lHeight" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -181,14 +181,18 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="txtOpacity" min="-2" pref="62" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="bCancelWMSHeight" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
-                                  <Component id="lMaxEle" min="-2" pref="391" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="bAddWMSHeight" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="bCancelWMSHeight" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
+                                      <Component id="lMaxEle" min="-2" pref="287" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="bAddWMSHeightList" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Component id="bAddWMSHeight" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="cLayerList" alignment="0" min="-2" pref="666" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="cLayerList" alignment="0" min="-2" pref="666" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -212,10 +216,13 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="cLayerList" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="bAddWMSHeight" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                      <Component id="bCancelWMSHeight" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lMaxEle" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="bAddWMSHeightList" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="bCancelWMSHeight" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lMaxEle" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                          <Component id="bAddWMSHeight" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace pref="72" max="32767" attributes="0"/>
               </Group>
@@ -244,7 +251,7 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="pWMSHeight" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="28" max="32767" attributes="0"/>
+                          <EmptySpace pref="63" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -346,7 +353,7 @@
                     <Component class="javax.swing.JComboBox" name="cbServerURL">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="7">
+                          <StringArray count="8">
                             <StringItem index="0" value="http://geoportal.wuppertal.de:8083/deegree/wms?"/>
                             <StringItem index="1" value="http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&amp;version=1.1.0"/>
                             <StringItem index="2" value="http://www2.demis.nl/worldmap/wms.asp?Service=WMS&amp;Version=1.1.0&amp;Request=GetCapabilities"/>
@@ -354,9 +361,13 @@
                             <StringItem index="4" value="http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&amp;VERSION=1.1.1&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS"/>
                             <StringItem index="5" value="http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/>
                             <StringItem index="6" value="http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"/>
+                            <StringItem index="7" value="http://85.24.165.10/cap_SERVICE=WMS.xml"/>
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbServerURLActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="lServerURL">
                       <Properties>
@@ -401,7 +412,7 @@
             <Container class="javax.swing.JPanel" name="jPanel3">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="WMS Layer">
+                  <JTabbedPaneConstraints tabName="WMS Ebene">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.jPanel3.TabConstraints.tabTitle" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -413,7 +424,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace pref="24" max="32767" attributes="0"/>
+                          <EmptySpace pref="59" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="txtRequest" min="-2" pref="657" max="-2" attributes="0"/>
@@ -534,6 +545,17 @@
               <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.lMaxEle.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="bAddWMSHeightList">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.bAddWMSHeightList.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bAddWMSHeightListActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
