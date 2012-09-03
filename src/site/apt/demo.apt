@@ -27,22 +27,22 @@ Shortcuts
 *----------------------+---------------------------------------+
 | <ALT> + <W>          | Start VizWiz                          |
 *----------------------+---------------------------------------+
-| <STRG> + <G>         | Dialog to enter lat/lon coordinates   |
+| <CTRL> + <G>         | Dialog to enter lat/lon coordinates   |
 *----------------------+---------------------------------------+
-| <STRG> + <S>         | Goto Stockholm                        |
+| <CTRL> + <S>         | Goto Stockholm                        |
 *----------------------+---------------------------------------+
-| <STRG> + <W>         | Goto Wuppertal                        |
+| <CTRL> + <W>         | Goto Wuppertal                        |
 *----------------------+---------------------------------------+
-| <STRG> + <P>         | Goto Praque                           |
+| <CTRL> + <P>         | Goto Praque                           |
 *----------------------+---------------------------------------+
-| <STRG> + <L>         | Goto Linz                             |
+| <CTRL> + <L>         | Goto Linz                             |
 *----------------------+---------------------------------------+
 <<Key / key combinations and what they do>>
 
   In order to use the side-by-side stereoscopic fullscreen mode you can use the following short cuts. 
 
 *----------------------+---------------------------------------+
-| <STRG> + <ALT> + <S> | Switch to side-by-side stereo mode    |
+| <CTRL> + <ALT> + <S> | Switch to side-by-side stereo mode    |
 *----------------------+---------------------------------------+
 | <ESC>                | Leave side-by-side stereo mode        |
 *----------------------+---------------------------------------+
@@ -51,6 +51,8 @@ Shortcuts
 | <SPACE>              | Swap left and right eye               |
 *----------------------+---------------------------------------+
 <<Key / key combinations for side-by-side stereo>>
+
+  Additionally, you can have a look at the performance monitoring panel (WWJ Dashboard). Simply press <CTRL> + <SHIFT> + <ALT> while clicking the left mouse button into the world wind canvas.
 
 
 Test Data Sets
