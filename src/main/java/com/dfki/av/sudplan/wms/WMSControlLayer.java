@@ -29,21 +29,36 @@ import javax.media.opengl.GL;
 public class WMSControlLayer extends RenderableLayer {
 
     /**
-     * File path of the icon used for incrementing iso-value or time step.
+     * File path of the icon used for switching to the layer above.
+     * btn-sqare-top.png 147 x 23
      */
-    private final static String IMAGE_PLUS = "icons/arrow_up-32x32.png";
+    private final static String IMAGE_PLUS = "icons/btn-sqare-top.png";
     /**
-     * File path of the icon used for decrementing iso-value or time step.
+     * File path of the icon used for switching to the layer below.
+     * btn-sqare-down.png 147 x 23
      */
-    private final static String IMAGE_MINUS = "icons/arrow_down-32x32.png";
+    private final static String IMAGE_MINUS = "icons/btn-sqare-down.png";
     /**
      * File path of the icon used for starting the self-played animation.
+     * btn-play.png 22 x 22
      */
-    private final static String IMAGE_PLAY = "icons/play-32x32.png";
+    private final static String IMAGE_PLAY = "icons/btn-play.png";
     /**
      * File path of the icon used for stopping the self-played animation.
+     * btn-pause.png 22 x 22
      */
-    private final static String IMAGE_STOP = "icons/pause-32x32.png";
+    private final static String IMAGE_STOP = "icons/btn-pause.png";
+    /**
+     * Empty string for screen annotations without text
+     */
+    private final static String NOTEXT = "";
+    /**
+     * Origin point
+     */
+    private final static Point ORIGIN = new Point(0, 0);
+    /**
+     * Size of the fonts
+     */
     private final static float FONT_SIZE = 10.f;
     /**
      * List of screen annotations
@@ -54,12 +69,12 @@ public class WMSControlLayer extends RenderableLayer {
      * Screen annotation {@link gov.nasa.worldwind.render.ScreenAnnotation} for
      * the increasing the iso-value of time step.
      */
-    private ScreenAnnotation controlPlus;
+    private ScreenAnnotation controlUp;
     /**
      * Screen annotation {@link gov.nasa.worldwind.render.ScreenAnnotation} for
      * the decreasing the iso-value of time step.
      */
-    private ScreenAnnotation controlMinus;
+    private ScreenAnnotation controlDpwn;
     /**
      * Screen annotation {@link gov.nasa.worldwind.render.ScreenAnnotation} for
      * starting the self-played animation.
@@ -154,6 +169,10 @@ public class WMSControlLayer extends RenderableLayer {
      * can control.
      */
     private final ArrayList<ElevatedSurfaceLayer> layers;
+    /**
+     * Control layer title annotation
+     */
+    private ScreenAnnotation controlTitle;
 
     /**
      * Creates an instance of {@link WMSControlLayer} to switch between a list
@@ -165,7 +184,8 @@ public class WMSControlLayer extends RenderableLayer {
         initAttributes();
         stepsRange = new ArrayList<String>();
         for (ElevatedSurfaceLayer layer : layerList) {
-            stepsRange.add(layer.getName().split(" ")[1]);
+            String suffix = layer.getName().split(" ")[1];
+            stepsRange.add(suffix.split("_")[0]);
         }
         this.layers = layerList;
     }
@@ -175,7 +195,7 @@ public class WMSControlLayer extends RenderableLayer {
      * constructor.
      */
     private void initAttributes() {
-        size = new Dimension(150, 10);
+        size = new Dimension(185, 300);
         color = Color.white;
         position = AVKey.NORTH;
         layout = AVKey.HORIZONTAL;
@@ -183,7 +203,7 @@ public class WMSControlLayer extends RenderableLayer {
         locationOffset = null;
         scale = 1;
         borderWidth = 20;
-        buttonSize = 32;
+        buttonSize = 22;
         initialized = false;
         controlsShow = true;
         orderedImage = new OrderedIcon(this);
@@ -280,6 +300,12 @@ public class WMSControlLayer extends RenderableLayer {
         return this.currentControl;
     }
 
+    public void highlight() {
+        if(getSteps() != null && getSteps().length > 0){
+            highlight(getSteps()[0]);
+        }
+    }
+
     /**
      * Specifies the control to highlight. Any currently highlighted control is
      * un-highlighted.
@@ -367,16 +393,26 @@ public class WMSControlLayer extends RenderableLayer {
         }
 
         // Setup user interface - common default attributes
+        AnnotationAttributes ca0 = new AnnotationAttributes();
+        ca0.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        ca0.setInsets(new Insets(0, 0, 0, 0));
+        ca0.setBorderWidth(0);
+        ca0.setCornerRadius(0);
+        ca0.setSize(new Dimension(buttonSize, buttonSize));
+        ca0.setBackgroundColor(new Color(0, 0, 0, 0));
+        ca0.setImageOpacity(.5);
+        ca0.setScale(scale);
+
+        // Setup user interface - common default attributes
         AnnotationAttributes ca = new AnnotationAttributes();
         ca.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
         ca.setInsets(new Insets(0, 0, 0, 0));
         ca.setBorderWidth(0);
         ca.setCornerRadius(0);
-        ca.setSize(new Dimension(buttonSize, buttonSize));
+        ca.setSize(new Dimension(147, 23));
         ca.setBackgroundColor(new Color(0, 0, 0, 0));
         ca.setImageOpacity(.5);
         ca.setScale(scale);
-
 
         AnnotationAttributes ca2 = new AnnotationAttributes();
         ca2.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
@@ -387,12 +423,9 @@ public class WMSControlLayer extends RenderableLayer {
         ca2.setBorderWidth(0);
         ca2.setCornerRadius(0);
         ca2.setFont(new Font("Book Antiqua", Font.BOLD, (int) FONT_SIZE));
-        ca2.setSize(new Dimension(buttonSize, 20));
+        ca2.setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.4)));
         ca2.setImageOpacity(.8);
         ca2.setScale(scale);
-
-        final String NOTEXT = "";
-        final Point ORIGIN = new Point(0, 0);
 
         if (getStepsRange() != null) {
             setSteps(new ScreenAnnotation[getStepsRange().size()]);
@@ -410,31 +443,36 @@ public class WMSControlLayer extends RenderableLayer {
 
         }
 
+        controlTitle = new ScreenAnnotation(this.getName(), ORIGIN, ca2);
+        controlTitle.getAttributes().setTextColor(Color.WHITE);
+        controlTitle.getAttributes().setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.7f)));
+        controlTitle.getAttributes().setFont(new Font("Arial", Font.BOLD, (int) (FONT_SIZE * 1.2f)));
+        this.addRenderable(controlTitle);
+
         if (this.isControlsShow()) {
-            controlPlus = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPlus.setValue("ISO_OPERATION", "ISO_PLUS");
-            controlPlus.getAttributes().setImageSource(
+            controlUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
+            controlUp.setValue("ISO_OPERATION", "ISO_PLUS");
+            controlUp.getAttributes().setImageSource(
                     getImageSource("ISO_PLUS"));
-            controlPlus.setScreenPoint(new Point(50, 100));
 
-            this.addRenderable(controlPlus);
+            this.addRenderable(controlUp);
 
-            controlMinus = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlMinus.setValue("ISO_OPERATION", "ISO_MINUS");
-            controlMinus.getAttributes().setImageSource(
+            controlDpwn = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
+            controlDpwn.setValue("ISO_OPERATION", "ISO_MINUS");
+            controlDpwn.getAttributes().setImageSource(
                     getImageSource("ISO_MINUS"));
 
-            this.addRenderable(controlMinus);
+            this.addRenderable(controlDpwn);
 
 
-            animPlay = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
+            animPlay = new ScreenAnnotation(NOTEXT, ORIGIN, ca0);
             animPlay.setValue("ISO_OPERATION", "ANIM_PLAY");
             animPlay.getAttributes().setImageSource(IMAGE_PLAY);
 
             this.addRenderable(animPlay);
 
 
-            animStop = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
+            animStop = new ScreenAnnotation(NOTEXT, ORIGIN, ca0);
             animStop.setValue("ISO_OPERATION", "ANIM_STOP");
             animStop.getAttributes().setImageSource(IMAGE_STOP);
 
@@ -486,8 +524,8 @@ public class WMSControlLayer extends RenderableLayer {
         int height = buttonSize;
         width = (int) (width * scale);
         height = (int) (height * scale);
-        int xOffset = 0;
-        int yOffset = 0;
+        int xOffset = 90;
+        int yOffset = - 150;
 
         if (!horizontalLayout) {
             int temp = height;
@@ -504,40 +542,41 @@ public class WMSControlLayer extends RenderableLayer {
                 controlsRectangle);
 
         // Layout start point
-        int x = locationSW.x;
-        int y = horizontalLayout ? locationSW.y : locationSW.y + height;
+        int xOrigin = locationSW.x;
+        int yOrigin = horizontalLayout ? locationSW.y : locationSW.y + height;
+
+        int x = xOrigin + halfButtonSize + xOffset;
+        int y = yOrigin + yOffset;
+        AnnotationAttributes attributes;
 
         if (this.isControlsShow()) {
-            if (!horizontalLayout) {
-                y -= (int) (buttonSize * scale);
-            }
-            if (this.isControlsShow()) {
-                controlPlus.setScreenPoint(new Point(x + halfButtonSize
-                        + xOffset + 140, y + yOffset - 120));
-            }
-
+            controlTitle.setScreenPoint(new Point(x, y));
+            attributes = controlTitle.getAttributes();
+            y -= (int) (attributes.getSize().height * attributes.getScale());
+            y -= halfButtonSize;
+            animPlay.setScreenPoint(new Point(x + (int) (buttonSize * scale), y));
+            animStop.setScreenPoint(new Point(x - (int) (buttonSize * scale), y));
+            y -= (int) (buttonSize * scale);
+            controlUp.setScreenPoint(new Point(x, y));
             if (horizontalLayout) {
-                x += (int) (buttonSize * scale);
+                xOrigin += (int) (buttonSize * scale);
             }
         } else {
-            title.setScreenPoint(new Point(x + halfButtonSize
-                    + xOffset + 110, y + yOffset - 130));
+            title.setScreenPoint(new Point(xOrigin + halfButtonSize
+                    + xOffset + 110, yOrigin + yOffset));
         }
 
-        int i = 0;
+        y = y - (int) (buttonSize * scale);
         if (getSteps() != null) {
-            for (i = 0; i < getSteps().length; i++) {
-                getSteps()[i].setScreenPoint(new Point(x + halfButtonSize
-                        + xOffset + 100, y - 150 - (int) (FONT_SIZE * 1.1f) * i));
+            for (ScreenAnnotation annotation : getSteps()) {
+                annotation.setScreenPoint(new Point(x, y));
+                attributes = annotation.getAttributes();
+                y -= (int) (attributes.getSize().height * attributes.getScale());
             }
         }
         if (this.isControlsShow()) {
-            controlMinus.setScreenPoint(new Point(x + halfButtonSize
-                    + 105, y - 175 - (int) (FONT_SIZE * 1.1f) * i));
-            animPlay.setScreenPoint(new Point(x + halfButtonSize + 60,
-                    y + - 175 - (int) (FONT_SIZE * 1.1f) * i));
-            animStop.setScreenPoint(new Point(x + halfButtonSize + 150,
-                    y + - 175 - (int) (FONT_SIZE * 1.1f) * i));
+            y -= (int) (FONT_SIZE * 1.2f);
+            controlDpwn.setScreenPoint(new Point(x, y));
         }
         this.referenceViewport = dc.getView().getViewport();
     }
@@ -591,8 +630,8 @@ public class WMSControlLayer extends RenderableLayer {
      */
     protected void clearControls() {
         this.removeAllRenderables();
-        this.controlPlus = null;
-        this.controlMinus = null;
+        this.controlUp = null;
+        this.controlDpwn = null;
         this.animPlay = null;
         this.animStop = null;
         this.initialized = false;

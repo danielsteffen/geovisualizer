@@ -80,6 +80,7 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         this.opac = opac;
         this.opacityLevel = 1.0d;
         this.setPickEnabled(false);
+        super.setOpacity(0.0d);
 
         AVList configParams = params.copy();
         String image_format = "";
@@ -224,9 +225,20 @@ public class ElevatedSurfaceLayer extends SurfaceImageLayer {
         this.opacityLevel = opacity;
         for (Renderable renderable : getRenderables()) {
             if (renderable instanceof ElevatedSurfaceImage) {
-                ((ElevatedSurfaceImage) renderable).setOpacity(opacityLevel * opac);
+                ((ElevatedSurfaceImage) renderable).setOpacity(interplate(opacity) * opac);
             }
         }
+    }
+    
+    public double interplate(double value){
+//        return Math.sqrt(value);
+//        return Math.pow(value, 10);
+//        return Math.exp(value);
+        return value;
+    }
+
+    public double getMaxOpacity() {
+        return opac;
     }
 
     @Override

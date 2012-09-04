@@ -72,13 +72,14 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      */
     private int id = 0;
     /**
-     * Duration of one animation frame in ms
+     * Duration of one animation frame in ms 40 ms -> 25 fps
      */
-    private final static int INTERVALL = 30;
+    private final static int INTERVALL = 40;
     /**
-     * Duration of the fade animation in ms
+     * Duration of the fade animation in ms Animation duration = 2 * FADETIME
+     * (fade in + fade out)
      */
-    private final static int FADETIME = 400;
+    private final static int FADETIME = 200;
     /**
      * Amount of frames per frame animation
      */
@@ -188,7 +189,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
         if (!animFlag) {
             if (getLayers().get(id) != null) {
                 if (getLayers().get(id).getOpacity() < 1.0d) {
-                    fade(getLayers().get(id));
+                    change(getLayers().get(id));
                 }
             }
         }
@@ -264,11 +265,32 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                     }
                 } else {
                     layer.setOpacity(layer.getOpacity() + STEP);
+                    double opacity = 1 - layer.getOpacity();
+                    for (ElevatedSurfaceLayer l : layers) {
+                        if (l.getOpacity() > 0.0d && !l.equals(layer)) {
+                            l.setOpacity(opacity);
+                        }
+                    }
                 }
                 firePropertyChange(EventHolder.WWD_REDRAW, null, null);
             }
         });
         animTimer.start();
+    }
+
+    /**
+     * Hides the previous layer and shows the next layer.
+     *
+     * @param layer the next layer which was selected on the {@link WMSControlLayer}
+     */
+    private void change(final ElevatedSurfaceLayer layer) {
+        layer.setOpacity(1.0d);
+        for (ElevatedSurfaceLayer l : layers) {
+            if (l.getOpacity() > 0.0d && !l.equals(layer)) {
+                l.setOpacity(0.0d);
+            }
+        }
+        firePropertyChange(EventHolder.WWD_REDRAW, null, null);
     }
 
     @Override
@@ -430,7 +452,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
 
     private void init() {
         fade(layers.get(0));
-        mark();
+        getViewControlsLayer().highlight();
     }
 
     @Override

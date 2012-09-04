@@ -513,6 +513,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             layers.add(layer);
         }
         WMSControlLayer cl = new WMSControlLayer(layers);
+        name = name.split("\\[")[0];
         cl.setName(name);
         WMSControlListener clistener = new WMSControlListener(cl, layers);
         clistener.setName(name + " Control Listener");
