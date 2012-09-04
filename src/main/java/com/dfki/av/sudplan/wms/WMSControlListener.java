@@ -246,7 +246,6 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 if (layer.getOpacity() + STEP > 1.0d) {
                     layer.setOpacity(1.0d);
                     boolean change = false;
