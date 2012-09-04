@@ -31,8 +31,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compileSource>1.6</compileSource>
         <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+        <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
         <worldwind.version>1.4.0-without-jackson</worldwind.version>
         <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
+        <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
+        <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+        <distribution.server>dfki-artifactory</distribution.server>        
     </properties>
 
     <profiles>
@@ -43,24 +47,6 @@
             </activation>
             <properties>
                 <worldwind.scope>compile</worldwind.scope>                   
-                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
-                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
-                <distribution.server>dfki-artifactory</distribution.server>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>s3D-main-webstart-steffen</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <worldwind.scope>provided</worldwind.scope>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/sudplan</codebase>
-                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
-                <distribution.server>dfki-artifactory</distribution.server>
             </properties>
         </profile>
 
@@ -71,13 +57,8 @@
             </activation>
             <properties>
                 <worldwind.scope>provided</worldwind.scope>                
-                <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
-                <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
-                <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
-                <distribution.server>dfki-artifactory</distribution.server>
             </properties>
         </profile>
-        
     </profiles>  
     
     <dependencies>
