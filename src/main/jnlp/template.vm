@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+" codebase="$codebase" href="$outputFile">
  <information>
-    <title>Sudplan</title>
+    <title>SUDPLAN 3D</title>
     <vendor>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</vendor>
     <homepage href="http://av.dfki.de"/>
-    <description kind="one-line">Sudplan</description>
-    <description kind="tooltip">Sudplan</description>
-    <description kind="short">Sudplan</description>
+    <description kind="one-line">SUDPLAN 3D</description>
+    <description kind="tooltip">SUDPLAN 3D</description>
+    <description kind="short">SUDPLAN 3D</description>
     <icon kind="default" href="button.png"/>
     <shortcut online="true">
       <desktop/>
-      <menu submenu="sudplan"/>
+      <menu submenu="SUDPLAN 3D"/>
     </shortcut>
     <offline-allowed/>
  </information>
