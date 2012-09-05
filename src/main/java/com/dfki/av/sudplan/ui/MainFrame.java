@@ -313,10 +313,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                                 .addComponent(pbWMS, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(bGoWMSHeight)))
-                        .addContainerGap())
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pWMSHeightLayout.createSequentialGroup()
                         .addComponent(lServerURL)
-                        .addContainerGap())))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         pWMSHeightLayout.setVerticalGroup(
             pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -456,7 +456,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                                     .addComponent(bCancelWMSHeight)
                                     .addGap(90, 90, 90)
                                     .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGap(18, 18, 18)
                                     .addComponent(bAddWMSHeightList)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(bAddWMSHeight))
@@ -478,12 +478,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bAddWMSHeightList, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(bCancelWMSHeight)
-                        .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bCancelWMSHeight)
+                    .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bAddWMSHeightList, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(72, Short.MAX_VALUE))
         );
 
@@ -951,6 +950,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                     parts = title.split(" ");
                     prefix = parts[0];
                 }
+                if(layerList.isEmpty()){
+                    return;
+                }
+            }else{
+                return;
             }
             wwPanel.addWMSHeightListLayer(name, layerList, wmsHeight, wmsOpacity);
         }

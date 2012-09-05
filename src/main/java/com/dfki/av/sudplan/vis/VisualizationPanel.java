@@ -87,7 +87,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Constructs a visualization panel of the defined
      * <code>Dimension</code>.
      *
-     * @param canvasSize size of the <code>WorldWindowGLCanvas</code>.
+     * @param canvasSize size of the
+     * <code>WorldWindowGLCanvas</code>.
      */
     public VisualizationPanel(Dimension canvasSize) {
         super(new BorderLayout());
@@ -153,6 +154,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         try {
             final URI serverURI = new URI(uri.trim());
             Thread loadingThread = new Thread(new Runnable() {
+
                 @Override
                 public void run() {
                     WMSCapabilities caps;
@@ -192,6 +194,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
                     // Add the layers to the world window
                     EventQueue.invokeLater(new Runnable() {
+
                         @Override
                         public void run() {
                             for (LayerInfo layerInfo : layerInfos) {
@@ -398,15 +401,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             progressChange.firePropertyChange(evt);
         }
         if (evt.getPropertyName().equals(EventHolder.WWD_REDRAW)) {
-            wwd.redraw();
-        }
-        if (evt.getPropertyName().equals(EventHolder.WMS_DOWNLOAD_ACTIVE)) {
-            progressBar.setVisible(true);
-            progressBar.setIndeterminate(true);
-        }
-        if (evt.getPropertyName().equals(EventHolder.WMS_DOWNLAOD_COMPLETE)) {
-            progressBar.setVisible(false);
-            progressBar.setIndeterminate(false);
+            wwd.redrawNow();
         }
     }
 
@@ -451,12 +446,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public ElevatedSurfaceLayer addWMSHeightLayer(WMSCapabilities caps
-            , WMSLayerCapabilities lcaps, AVList params, double elevation
-            , double opacity) {
-        ElevatedSurfaceLayer sul = new ElevatedSurfaceLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
-        sul.addPropertyChangeListener(this);
+    public ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+        ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
+        sul.addPropertyChangeListener(this);
         ApplicationTemplate.insertBeforePlacenames(wwd, sul);
         ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
         return sul;
@@ -481,7 +474,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     public void addWMSHeightListLayer(List<String> requestList, String name, double elevation, double opacity) {
         List<LayerInfo> layerList = new ArrayList<LayerInfo>();
-        for(String request : requestList){
+        for (String request : requestList) {
             try {
                 layerList.add(WMSUtils.parseWMSRequest(request));
             } catch (Exception ex) {
@@ -490,7 +483,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
         addWMSHeightListLayer(name, layerList, elevation, opacity);
     }
-    
+
     /**
      *
      * @param layerInfo
@@ -504,9 +497,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     + "0.0 and 100.0");
             opacity = 0.0;
         }
-        ArrayList<ElevatedSurfaceLayer> layers = new ArrayList<ElevatedSurfaceLayer>();
+        ArrayList<ElevatedRenderableLayer> layers = new ArrayList<ElevatedRenderableLayer>();
         for (LayerInfo layerInfo : layerList) {
-            ElevatedSurfaceLayer layer = addWMSHeightLayer(layerInfo.caps, 
+            ElevatedRenderableLayer layer = addWMSHeightLayer(layerInfo.caps,
                     layerInfo.layerCaps, layerInfo.params, elevation, opacity);
             layer.setSlave(true);
             layer.setOpacity(0.0d);
@@ -522,8 +515,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         wwd.addSelectListener(clistener);
         clistener.addPropertyChangeListener(this);
         ApplicationTemplate.insertBeforePlacenames(wwd, cl);
-        cl.setValSelected(valSelected);
-        clistener.mark();
     }
 
     /**

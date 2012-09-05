@@ -165,10 +165,10 @@ public class WMSControlLayer extends RenderableLayer {
      */
     private OrderedIcon orderedImage;
     /**
-     * List of {@link ElevatedSurfaceLayer} which the {@link WMSControlLayer}
+     * List of {@link ElevatedRenderableLayer} which the {@link WMSControlLayer}
      * can control.
      */
-    private final ArrayList<ElevatedSurfaceLayer> layers;
+    private final ArrayList<ElevatedRenderableLayer> layers;
     /**
      * Control layer title annotation
      */
@@ -176,18 +176,43 @@ public class WMSControlLayer extends RenderableLayer {
 
     /**
      * Creates an instance of {@link WMSControlLayer} to switch between a list
-     * of {@link ElevatedSurfaceLayer}.
+     * of {@link ElevatedRenderableLayer}.
      *
      * @param layerList
      */
-    public WMSControlLayer(ArrayList<ElevatedSurfaceLayer> layerList) {
-        initAttributes();
+    public WMSControlLayer(ArrayList<ElevatedRenderableLayer> layerList) { 
+        initAttributes();    
         stepsRange = new ArrayList<String>();
-        for (ElevatedSurfaceLayer layer : layerList) {
+        for (ElevatedRenderableLayer layer : layerList) {
             String suffix = layer.getName().split(" ")[1];
             stepsRange.add(suffix.split("_")[0]);
         }
         this.layers = layerList;
+        this.steps = new ScreenAnnotation[stepsRange.size()];
+        this.valSelected = new boolean[stepsRange.size()];
+
+        AnnotationAttributes ca = new AnnotationAttributes();
+        ca.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        ca.setBackgroundColor(new Color(0, 0, 0, 0));
+        ca.setTextColor(Color.LIGHT_GRAY);
+        ca.setHighlightScale(2d);
+        ca.setInsets(new Insets(0, 0, 0, 0));
+        ca.setBorderWidth(0);
+        ca.setCornerRadius(0);
+        ca.setFont(new Font("Book Antiqua", Font.BOLD, (int) FONT_SIZE));
+        ca.setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.4)));
+        ca.setImageOpacity(.8);
+        ca.setScale(scale);
+
+        for (int i = 0; i < steps.length; i++) {
+            steps[i] = new ScreenAnnotation(stepsRange.get(i),
+                    ORIGIN, ca);
+            steps[i].setValue("ISO_OPERATION", stepsRange.get(i));
+            if (!this.controlsShow) {
+                steps[i].getAttributes().setTextColor(Color.WHITE);
+            }
+            this.addRenderable(steps[i]);
+        }
     }
 
     /**
@@ -210,12 +235,12 @@ public class WMSControlLayer extends RenderableLayer {
     }
 
     /**
-     * Returns the list of {@link ElevatedSurfaceLayer} which can be controlled
-     * by the {@link WMSControlLayer}.
+     * Returns the list of {@link ElevatedRenderableLayer} which can be
+     * controlled by the {@link WMSControlLayer}.
      *
-     * @return list of {@link ElevatedSurfaceLayer}s
+     * @return list of {@link ElevatedRenderableLayer}s
      */
-    public ArrayList<ElevatedSurfaceLayer> getLayers() {
+    public ArrayList<ElevatedRenderableLayer> getLayers() {
         return layers;
     }
 
@@ -300,8 +325,8 @@ public class WMSControlLayer extends RenderableLayer {
         return this.currentControl;
     }
 
-    public void highlight() {
-        if(getSteps() != null && getSteps().length > 0){
+    private final void highlight() {
+        if (getSteps() != null && getSteps().length > 0) {
             highlight(getSteps()[0]);
         }
     }
@@ -427,21 +452,7 @@ public class WMSControlLayer extends RenderableLayer {
         ca2.setImageOpacity(.8);
         ca2.setScale(scale);
 
-        if (getStepsRange() != null) {
-            setSteps(new ScreenAnnotation[getStepsRange().size()]);
-            setValSelected(new boolean[getStepsRange().size()]);
 
-            for (int i = 0; i < getSteps().length; i++) {
-                getSteps()[i] = new ScreenAnnotation(getStepsRange().get(i),
-                        ORIGIN, ca2);
-                getSteps()[i].setValue("ISO_OPERATION", getStepsRange().get(i));
-                if (!this.isControlsShow()) {
-                    getSteps()[i].getAttributes().setTextColor(Color.WHITE);
-                }
-                this.addRenderable(getSteps()[i]);
-            }
-
-        }
 
         controlTitle = new ScreenAnnotation(this.getName(), ORIGIN, ca2);
         controlTitle.getAttributes().setTextColor(Color.WHITE);
@@ -750,7 +761,7 @@ public class WMSControlLayer extends RenderableLayer {
     @Override
     public void setEnabled(boolean bln) {
         super.setEnabled(bln);
-        for (ElevatedSurfaceLayer l : getLayers()) {
+        for (ElevatedRenderableLayer l : getLayers()) {
             l.setEnabled(bln);
         }
     }

@@ -7,8 +7,8 @@
  */
 package com.dfki.av.sudplan.vis;
 
-import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
-import com.dfki.av.sudplan.wms.ElevatedSurfaceSupportLayer;
+import com.dfki.av.sudplan.wms.ElevatedRenderableLayer;
+import com.dfki.av.sudplan.wms.ElevatedRenderableSupportLayer;
 import com.dfki.av.sudplan.wms.WMSControlLayer;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -222,8 +222,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
 
         int index;
         
-        if (layer instanceof ElevatedSurfaceLayer) {
-            index = layerList.indexOf(((ElevatedSurfaceLayer) layer).getSupportLayer());
+        if (layer instanceof ElevatedRenderableLayer) {
+            index = layerList.indexOf(((ElevatedRenderableLayer) layer).getSupportLayer());
             if (index < 0) {
                 log.debug("Could not remove layer.");
             } else {
@@ -231,7 +231,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             }
         }
         if (layer instanceof WMSControlLayer) {
-            for (ElevatedSurfaceLayer l : ((WMSControlLayer) layer).getLayers()) {
+            for (ElevatedRenderableLayer l : ((WMSControlLayer) layer).getLayers()) {
                 index = layerList.indexOf(l.getSupportLayer());
                 if (index < 0) {
                     log.debug("Could not remove layer.");
@@ -275,11 +275,11 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             LayerList layerlist = worldWindow.getModel().getLayers();
             for (int id = layerlist.size() - 1; id >= 0; id--) {
                 Layer layer = layerlist.get(id);
-                if (layer instanceof ElevatedSurfaceSupportLayer) {
+                if (layer instanceof ElevatedRenderableSupportLayer) {
                     continue;
                 }
-                if (layer instanceof ElevatedSurfaceLayer) {
-                    ElevatedSurfaceLayer l = (ElevatedSurfaceLayer) layer;
+                if (layer instanceof ElevatedRenderableLayer) {
+                    ElevatedRenderableLayer l = (ElevatedRenderableLayer) layer;
                     if (l.isSlave()) {
                         continue;
                     }

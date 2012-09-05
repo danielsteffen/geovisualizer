@@ -186,7 +186,7 @@
                                       <Component id="bCancelWMSHeight" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
                                       <Component id="lMaxEle" min="-2" pref="287" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="bAddWMSHeightList" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
                                       <Component id="bAddWMSHeight" min="-2" max="-2" attributes="0"/>
@@ -216,13 +216,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="cLayerList" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="bAddWMSHeightList" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="bCancelWMSHeight" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lMaxEle" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                          <Component id="bAddWMSHeight" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="bCancelWMSHeight" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lMaxEle" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                      <Component id="bAddWMSHeight" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                      <Component id="bAddWMSHeightList" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="72" max="32767" attributes="0"/>
               </Group>
@@ -412,7 +410,7 @@
             <Container class="javax.swing.JPanel" name="jPanel3">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="WMS Ebene">
+                  <JTabbedPaneConstraints tabName="WMS Layer">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.jPanel3.TabConstraints.tabTitle" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>

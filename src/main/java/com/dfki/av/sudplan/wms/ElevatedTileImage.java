@@ -1,5 +1,5 @@
 /*
- *  ElevatedSurfaceImage.java 
+ *  ElevatedTileImage.java 
  *
  *  Created by DFKI AV on 15.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -9,15 +9,14 @@ package com.dfki.av.sudplan.wms;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.TileKey;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import javax.media.opengl.GL;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRenderable {
+public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable {
 
     /**
      * Determined each frame
@@ -41,13 +40,13 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      */
     private double eyeDistance;
     /**
-     * Extend which encloses all points of the {@link ElevatedSurfaceImage}
+     * Extend which encloses all points of the {@link ElevatedTileImage}
      */
     private Extent extent;
     /**
      * Display quality of the surface (Amount of supporting points) which
      * determines how much polygons will be rendered to display the surface of
-     * the {@link ElevatedSurfaceImage}.
+     * the {@link ElevatedTileImage}.
      */
     private int quality;
     /**
@@ -84,42 +83,41 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      */
     private IntBuffer indices;
     /**
-     * Flag for force update
-     */
-    private boolean needsUpdate;
-    /**
      * Flag for enable floating Note: Must be enabled for elevation != 0
      */
     private boolean floating;
     /**
-     * ID of the {@link ElevatedSurfaceImage} Note: Needed to determine the if a
+     * Maximum quality of the image (support points)
+     */
+    private static int MAXQUALITY = 64;
+    /**
+     * ID of the {@link ElevatedTileImage} Note: Needed to determine the if a
      * newer version is available for a given sector
      *
      * Note: the id is set by the {@link ElevatedSurfaceLayer}, the default
      * value after creation is -1 and will be set to an value >= 0.
      */
-    private int id;
+    private final long updateTime;
 
     /**
-     * Creates a {@link ElevatedSurfaceImage}, which is an extended version of a {@link SurfaceImage}
+     * Creates a {@link ElevatedTileImage}, which is an extended version of a {@link SurfaceImage}
      * with the possibility to chenge the elevation.
      *
-     * @param imageSource
-     * @param sector
+     * @param tileKey {@link TileKey} for Texture retreival
+     * @param sector {@link Sector} of the image
      */
-    public ElevatedSurfaceImage(Object imageSource, Sector sector) {
-        super(imageSource, sector);
-        needsUpdate = true;
-        floating = true;
-        elevation = 0;
-        quality = 4;
-        id = -1;
-        frameTimestamp = -1L;
+    public ElevatedTileImage(TileKey tileKey, Sector sector, double elevation) {
+        super(tileKey, sector);
+        this.floating = true;
+        this.elevation = elevation;
+        this.quality = 1;
+        this.updateTime = System.currentTimeMillis();
+        this.frameTimestamp = -1L;
         initialization(sector);
     }
 
     /**
-     * Initialize the {@link ElevatedSurfaceImage} parameters
+     * Initialize the {@link ElevatedTileImage} parameters
      *
      * @param sector {@link Sector} for the initialize calculation
      */
@@ -131,15 +129,15 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
                 Math.min(v[2], v[3]));
         // increase amount of support points if area of sector is high
         if (WMSUtils.area(sector) > 5000000) {
-            quality = 256;
+            quality = MAXQUALITY;
         } else if (WMSUtils.area(sector) > 1000000) {
-            quality = 128;
+            quality = MAXQUALITY / 2;
         } else if (WMSUtils.area(sector) > 60000) {
-            quality = 64;
+            quality = MAXQUALITY / 4;
         } else if (WMSUtils.area(sector) > 30000) {
-            quality = 32;
+            quality = MAXQUALITY / 8;
         } else if (WMSUtils.area(sector) > 15000) {
-            quality = 16;
+            quality = MAXQUALITY / 16;
         } else if (WMSUtils.area(sector) == 0) {
             quality = 0;
         }
@@ -147,51 +145,46 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
         // Check if Sector is on noth/southpole
         if (min == 0) {
             if (max > 2000) {
-                quality = 128;
+                quality = MAXQUALITY / 2;
             } else if (max > 800) {
-                quality = 64;
+                quality = MAXQUALITY / 4;
             } else if (max > 400) {
-                quality = 36;
+                quality = MAXQUALITY / 6;
             } else if (max > 200) {
-                quality = 16;
+                quality = MAXQUALITY / 8;
+            } else if (max > 100) {
+                quality = MAXQUALITY / 16;
+            } else {
+                quality = MAXQUALITY / 32;
             }
         }
     }
 
     /**
-     * Return the id Note: Through the id the version of the {@link ElevatedSurfaceImage}
+     * Return the id Note: Through the id the version of the {@link ElevatedTileImage}
      * is determined.
      *
-     * @return the id of the {@link ElevatedSurfaceImage}
+     * @return the id of the {@link ElevatedTileImage}
      */
-    public int getId() {
-        return id;
+    public long getUpdateTime() {
+        return updateTime;
     }
 
     /**
      * Return the quality value Note: Display quality of the surface (Amount of
      * supporting points), which determines how much polygons will be rendered
-     * to display the surface of the {@link ElevatedSurfaceImage}.
+     * to display the surface of the {@link ElevatedTileImage}.
      *
-     * @return the quality value of the {@link ElevatedSurfaceImage}
+     * @return the quality value of the {@link ElevatedTileImage}
      */
     public int getQuality() {
         return quality;
     }
 
     /**
-     * Sets the id
-     *
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * Return the elevation
      *
-     * @return the elevation of the {@link ElevatedSurfaceImage}
+     * @return the elevation of the {@link ElevatedTileImage}
      */
     public double getElevation() {
         return this.elevation;
@@ -200,7 +193,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     /**
      * Sets the elevation
      *
-     * @param elevation the elevation to set for the {@link ElevatedSurfaceImage}
+     * @param elevation the elevation to set for the {@link ElevatedTileImage}
      */
     public void setElevation(double elevation) {
         this.elevation = elevation;
@@ -211,7 +204,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
      * Return the floating (true if enabled / false if disabled)
      *
      * @return true if floating (elevation) is enable for the
-     * {@link ElevatedSurfaceImage}
+     * {@link ElevatedTileImage}
      */
     public boolean isFloating() {
         return floating;
@@ -265,7 +258,7 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     }
 
     /**
-     * Renders the surface of the {@link ElevatedSurfaceImage}
+     * Renders the surface of the {@link ElevatedTileImage}
      *
      * @param dc the binded {@link DrawContext}
      */
@@ -342,16 +335,8 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     }
 
     /**
-     * Forces the {@link ElevatedSurfaceImage} to refresh on the next opengl
-     * update
-     */
-    public void refresh() {
-        needsUpdate = true;
-    }
-
-    /**
      * Generates the texture coordinates fpr the
-     * <code>ElevatedSurfaceImage</code>
+     * <code>ElevatedTileImage</code>
      *
      * @param quality Amount of supporting points
      * @return Texture coordinates as {@link DoubleBuffer}
@@ -422,34 +407,11 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
     @Override
     public boolean bind(DrawContext dc) {
         boolean returnValue = super.bind(dc);
-
-        if (needsUpdate) {
-            GL gl = dc.getGL();
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                    GL.GL_NEAREST_MIPMAP_NEAREST);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                    GL.GL_NEAREST);
-            TextureData texdata;
-
-            if (getImageSource() instanceof TextureData) {
-                texdata = (TextureData) getImageSource();
-            } else {
-                BufferedImage src = (BufferedImage) this.getImageSource();
-                texdata = new TextureData(0, 0, false, src);
-            }
-
-
-            gl.glTexImage2D(GL.GL_TEXTURE_2D,
-                    0,
-                    texdata.getInternalFormat(),
-                    texdata.getWidth(),
-                    texdata.getHeight(),
-                    0,
-                    texdata.getPixelFormat(),
-                    texdata.getPixelType(),
-                    texdata.getBuffer());
-            needsUpdate = false;
-        }
+        GL gl = dc.getGL();
+        gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+                GL.GL_NEAREST);
+        gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+                GL.GL_NEAREST);
         return returnValue;
     }
 
@@ -603,8 +565,6 @@ public class ElevatedSurfaceImage extends SurfaceImage implements OrderedRendera
 
 
                 gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
-                gl.glEnable(GL.GL_CULL_FACE);
-                gl.glCullFace(GL.GL_BACK);
 
                 gl.glEnable(GL.GL_DEPTH_TEST);
                 gl.glDepthFunc(GL.GL_LEQUAL);

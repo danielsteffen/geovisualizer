@@ -20,7 +20,10 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Listens to the changes in the controlLayer
@@ -33,10 +36,14 @@ import javax.swing.Timer;
  */
 public class WMSControlListener extends AbstractLayer implements SelectListener {
 
+    /*
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(WMSControlListener.class);
     /**
      * Default timer delay.
      */
-    private static final int DEFAULT_TIMER_DELAY = 90;
+    private static final int DEFAULT_TIMER_DELAY = 50;
     /**
      * ControlLayer {@link com.dfki.av.sudplan.vis.mc.ControlLayer} instance
      * which this listener listens to.
@@ -45,7 +52,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     /**
      * List of triangle grids {@link com.dfki.av.sudplan.vis.mc.TriangleGrid generated.
      */
-    private ArrayList<ElevatedSurfaceLayer> layers;
+    private ArrayList<ElevatedRenderableLayer> layers;
     /**
      * Screen annotation {@link gov.nasa.worldwind.render.ScreenAnnotation}
      * currently pressed.
@@ -74,20 +81,19 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     /**
      * Duration of one animation frame in ms 40 ms -> 25 fps
      */
-    private final static int INTERVALL = 40;
+    private final static int INTERVALL = 500;
     /**
-     * Duration of the fade animation in ms Animation duration = 2 * FADETIME
-     * (fade in + fade out)
+     * Duration of the fade animation in ms.
      */
-    private final static int FADETIME = 200;
+    private int animationDuration = 400;
     /**
      * Amount of frames per frame animation
      */
-    private final static int STEPS = FADETIME / INTERVALL;
+    private int STEPS = (animationDuration / INTERVALL) / 2;
     /**
      * Procentual change of the opacity per frame
      */
-    private final static double STEP = 1.0d / (double) STEPS;
+    private double STEP = 1.0d / (double) STEPS;
     /**
      * Font size
      */
@@ -98,30 +104,41 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * from the {@link WMSControlLayer}.
      *
      * @param layer the corresponding {@link WMSControlLayer}
-     * @param layers the list of {@link ElevatedSurfaceLayer} which are
+     * @param layers the list of {@link ElevatedRenderableLayer} which are
      * controlled by the {@link WMSControlLayer}
      */
-    public WMSControlListener(WMSControlLayer layer, ArrayList<ElevatedSurfaceLayer> layers) {
+    public WMSControlListener(WMSControlLayer layer, ArrayList<ElevatedRenderableLayer> layers) {
         if (layer == null) {
             String msg = Logging.getMessage("nullValue.LayerIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-
         this.viewControlsLayer = layer;
         this.layers = layers;
+        initialize();
+    }
 
-        this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, new ActionListener() {
+    /**
+     * Creates an instance of {@link WMSControlListener} which handles the input
+     * from the {@link WMSControlLayer}.
+     *
+     * @param layer the corresponding {@link WMSControlLayer}
+     * @param layers the list of {@link ElevatedRenderableLayer} which are
+     * controlled by the {@link WMSControlLayer}
+     * @param duration Duration of the fade animation in ms.
+     */
+    public WMSControlListener(WMSControlLayer layer, ArrayList<ElevatedRenderableLayer> layers, int duration) {
+        this(layer, layers);
+        this.animationDuration = duration;
+    }
 
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (pressedControl != null) {
-                    updateView(pressedControl, pressedControlType);
-                }
-            }
-        });
-        this.repeatTimer.start();
-        init();
+    /**
+     * Sets the animation durion.
+     *
+     * @param duration Duration of the fade animation in ms.
+     */
+    public void setAnimationDuration(int duration) {
+        this.animationDuration = duration;
     }
 
     /**
@@ -142,9 +159,9 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                             i < this.getViewControlsLayer().getStepsRange().size();
                             i++) {
                         if (x.equals(this.getViewControlsLayer().getStepsRange().get(i))) {
-                            id = i;
-                            animFlag = false;
                             checkAnimationTimer();
+                            animFlag = false;
+                            id = i;
                             break;
                         }
                     }
@@ -152,16 +169,17 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                 }
             }
         }
-
         if (controlType.equals("ISO_PLUS")) {
+            checkAnimationTimer();
+            animFlag = false;
             if (getViewControlsLayer().getSteps() != null) {
                 if (id != 0) {
                     id--;
                 }
             }
-            animFlag = false;
-            checkAnimationTimer();
         } else if (controlType.equals("ISO_MINUS")) {
+            checkAnimationTimer();
+            animFlag = false;
             if (getViewControlsLayer().getSteps() != null) {
                 if (id != this.getViewControlsLayer().getStepsRange().size() - 1) {
                     id++;
@@ -171,22 +189,19 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                     id--;
                 }
             }
-            animFlag = false;
-            checkAnimationTimer();
         } else if (controlType.equals("ANIM_PLAY")) {
             if (!animFlag) {
                 animFlag = true;
                 animate(getLayers());
             }
         } else if (controlType.equals("ANIM_STOP")) {
+            checkAnimationTimer();
             if (animFlag) {
                 animFlag = false;
-                checkAnimationTimer();
             }
         }
-
-        mark();
         if (!animFlag) {
+            mark();
             if (getLayers().get(id) != null) {
                 if (getLayers().get(id).getOpacity() < 1.0d) {
                     change(getLayers().get(id));
@@ -238,58 +253,22 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     }
 
     /**
-     * Fades the previous layer out and the next layer in.
-     *
-     * @param layer the next layer which was selected on the {@link WMSControlLayer}
-     */
-    private void fade(final ElevatedSurfaceLayer layer) {
-        animTimer = new Timer(INTERVALL, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (layer.getOpacity() + STEP > 1.0d) {
-                    layer.setOpacity(1.0d);
-                    boolean change = false;
-                    for (ElevatedSurfaceLayer l : layers) {
-                        if (l.getOpacity() > 0.0d && !l.equals(layer)) {
-                            if (l.getOpacity() - STEP > 0.0d) {
-                                l.setOpacity(l.getOpacity() - STEP);
-                                change = true;
-                            } else {
-                                l.setOpacity(0.0d);
-                            }
-                        }
-                    }
-                    if (!change) {
-                        animTimer.stop();
-                    }
-                } else {
-                    layer.setOpacity(layer.getOpacity() + STEP);
-                    double opacity = 1 - layer.getOpacity();
-                    for (ElevatedSurfaceLayer l : layers) {
-                        if (l.getOpacity() > 0.0d && !l.equals(layer)) {
-                            l.setOpacity(opacity);
-                        }
-                    }
-                }
-                firePropertyChange(EventHolder.WWD_REDRAW, null, null);
-            }
-        });
-        animTimer.start();
-    }
-
-    /**
      * Hides the previous layer and shows the next layer.
      *
      * @param layer the next layer which was selected on the {@link WMSControlLayer}
      */
-    private void change(final ElevatedSurfaceLayer layer) {
-        layer.setOpacity(1.0d);
-        for (ElevatedSurfaceLayer l : layers) {
+    private void change(final ElevatedRenderableLayer layer) {
+        List<ElevatedRenderableLayer> oldLayers = new ArrayList<ElevatedRenderableLayer>();
+        for (ElevatedRenderableLayer l : layers) {
             if (l.getOpacity() > 0.0d && !l.equals(layer)) {
-                l.setOpacity(0.0d);
+                oldLayers.add(l);
             }
         }
+        layer.setOpacity(1.0d);
+        for (ElevatedRenderableLayer l : oldLayers) {
+            l.setOpacity(0.0d);
+        }
+
         firePropertyChange(EventHolder.WWD_REDRAW, null, null);
     }
 
@@ -342,50 +321,31 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     }
 
     /**
-     * Animates the volumes automatically with a play and stop buttons.
+     * Animates the volumes automatically with a play and stop buttons. TODO:
+     * Fade animation
      *
      * @param layer renderable layer containing all the triangle grid to be
      * displayed, a nullPointerException is thrown if null.
      * @param layers all the triangle grids generated from the marching cubes
      * algorithm, a nullPointerException is thrown if null.
      */
-    private void animate(final ArrayList<ElevatedSurfaceLayer> layers) {
+    private void animate(final ArrayList<ElevatedRenderableLayer> layers) {
+        checkAnimationTimer();
         animTimer = new Timer(INTERVALL, new ActionListener() {
 
             boolean forward = true;
+            boolean fadein = true;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (layers.get(id) != null) {
-                    ElevatedSurfaceLayer layer = layers.get(id);
-                    if (layer.getOpacity() + STEP > 1.0d) {
-                        layer.setOpacity(1.0d);
-                        boolean change = false;
-                        for (ElevatedSurfaceLayer l : layers) {
-                            if (l.getOpacity() > 0.0d && !l.equals(layer)) {
-                                if (l.getOpacity() - STEP > 0.0d) {
-                                    l.setOpacity(l.getOpacity() - STEP);
-                                    change = true;
-                                } else {
-                                    l.setOpacity(0.0d);
-                                }
-                            }
-                        }
-                        if (!change) {
-                            next();
-                        }
-                    } else {
-                        layer.setOpacity(layer.getOpacity() + STEP);
-                    }
-                    firePropertyChange(EventHolder.WWD_REDRAW, null, null);
-                }
-
+                change(layers.get(id));
+                next();
             }
 
             private void next() {
+                fadein = true;
                 mark();
                 if (forward) {
-
                     if (id == layers.size() - 1) {
                         id--;
                         forward = false;
@@ -402,6 +362,37 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                 }
                 if (!animFlag) {
                     animTimer.stop();
+                }
+            }
+
+            private void fadein() {
+                if (layers.get(id) != null) {
+                    ElevatedRenderableLayer layer = layers.get(id);
+                    if (layer.getOpacity() + STEP > 1.0d) {
+                        layer.setOpacity(1.0d);
+                        fadein = false;
+                    } else {
+                        layer.setOpacity(layer.getOpacity() + STEP);
+                    }
+                } else {
+                    next();
+                }
+            }
+
+            private void fadeout() {
+                boolean change = false;
+                for (ElevatedRenderableLayer l : layers) {
+                    if (l.getOpacity() > 0.0 && !l.equals(layers.get(id))) {
+                        if (l.getOpacity() - STEP < 0.0d) {
+                            l.setOpacity(0.0d);
+                        } else {
+                            l.setOpacity(l.getOpacity() - STEP);
+                            change = true;
+                        }
+                    }
+                }
+                if (!change) {
+                    next();
                 }
             }
         });
@@ -426,7 +417,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      *
      * @return ArrayList of the generated triangle grids.
      */
-    public ArrayList<ElevatedSurfaceLayer> getLayers() {
+    public ArrayList<ElevatedRenderableLayer> getLayers() {
         return layers;
     }
 
@@ -450,12 +441,21 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
         this.repeatTimer = repeatTimer;
     }
 
-    private void init() {
-        fade(layers.get(0));
-        getViewControlsLayer().highlight();
-    }
-
     @Override
     protected void doRender(DrawContext dc) {
+    }
+
+    private void initialize() {
+        this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                if (pressedControl != null) {
+                    updateView(pressedControl, pressedControlType);
+                }
+            }
+        });
+        this.repeatTimer.start();
+        updateView(viewControlsLayer.getSteps()[0], "");
     }
 }
