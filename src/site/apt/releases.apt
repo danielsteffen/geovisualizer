@@ -10,6 +10,12 @@ Releases
 
   This section list the releases of the SUDPLAN 3D components: sudplan3D-main, sudplan3D-core, etc. 
 
+* 2012-09-10, sudplan3D 1.5.4
+
+  * Added possibility to add WMS layer group (marked with '[]' at the end). Can be used by timeseries animation.
+
+  * Added support for manual sliding as well as animation of timeseries group.
+
 * 2012-09-10, sudplan3D 1.5.3
 
   * Added possibility to start VisWiz directly with data source. Thus skipping fist step.  
@@ -74,6 +80,8 @@ Releases
   
 *----------------*---------------------*-------------------------------*
 | sudplan3D      | sudplan3D-core      | WorldWind SDK                 |
+*----------------*---------------------*-------------------------------*
+| 1.5.4          |  1.7.0              |  1.4.0-without-jackson        | 
 *----------------*---------------------*-------------------------------*
 | 1.5.3          |  1.7.0              |  1.4.0-without-jackson        | 
 *----------------*---------------------*-------------------------------*
