@@ -29,6 +29,14 @@ import javax.media.opengl.GL;
 public class WMSControlLayer extends RenderableLayer {
 
     /**
+     * Size of the fonts
+     */
+    public final static float FONT_SIZE = 12.f;
+    /**
+     * The {@link Font} used by the {@link WMSControlLayer}.
+     */
+    public final static Font FONT = new Font("Arial", Font.BOLD, (int) FONT_SIZE);
+    /**
      * File path of the icon used for switching to the layer above.
      * btn-sqare-top.png 147 x 23
      */
@@ -56,10 +64,6 @@ public class WMSControlLayer extends RenderableLayer {
      * Origin point
      */
     private final static Point ORIGIN = new Point(0, 0);
-    /**
-     * Size of the fonts
-     */
-    private final static float FONT_SIZE = 10.f;
     /**
      * List of screen annotations
      * {@link gov.nasa.worldwind.render.ScreenAnnotation} for time steps.
@@ -160,8 +164,7 @@ public class WMSControlLayer extends RenderableLayer {
      */
     private boolean controlsShow;
     /**
-     * Ordered icon {@link com.dfki.av.sudplan.vis.mc.OrderedIcon} object for
-     * the side bar.
+     * Ordered icon {@link OrderedIcon} object for the side bar.
      */
     private OrderedIcon orderedImage;
     /**
@@ -180,8 +183,8 @@ public class WMSControlLayer extends RenderableLayer {
      *
      * @param layerList
      */
-    public WMSControlLayer(ArrayList<ElevatedRenderableLayer> layerList) { 
-        initAttributes();    
+    public WMSControlLayer(ArrayList<ElevatedRenderableLayer> layerList) {
+        initAttributes();
         stepsRange = new ArrayList<String>();
         for (ElevatedRenderableLayer layer : layerList) {
             String suffix = layer.getName().split(" ")[1];
@@ -199,8 +202,8 @@ public class WMSControlLayer extends RenderableLayer {
         ca.setInsets(new Insets(0, 0, 0, 0));
         ca.setBorderWidth(0);
         ca.setCornerRadius(0);
-        ca.setFont(new Font("Book Antiqua", Font.BOLD, (int) FONT_SIZE));
-        ca.setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.4)));
+        ca.setFont(WMSControlLayer.FONT);
+        ca.setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.6)));
         ca.setImageOpacity(.8);
         ca.setScale(scale);
 
@@ -447,12 +450,10 @@ public class WMSControlLayer extends RenderableLayer {
         ca2.setInsets(new Insets(0, 0, 0, 0));
         ca2.setBorderWidth(0);
         ca2.setCornerRadius(0);
-        ca2.setFont(new Font("Book Antiqua", Font.BOLD, (int) FONT_SIZE));
-        ca2.setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.4)));
+        ca2.setFont(WMSControlLayer.FONT);
+        ca2.setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.6)));
         ca2.setImageOpacity(.8);
         ca2.setScale(scale);
-
-
 
         controlTitle = new ScreenAnnotation(this.getName(), ORIGIN, ca2);
         controlTitle.getAttributes().setTextColor(Color.WHITE);

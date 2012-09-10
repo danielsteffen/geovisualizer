@@ -12,6 +12,7 @@ import com.dfki.av.sudplan.stereo.SideBySideStereoSetup;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
+import com.dfki.av.sudplan.vis.io.IOUtils;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.vis.utils.AVUtils;
 import com.dfki.av.sudplan.vis.wiz.AttributeSelectionPanel;
@@ -426,11 +427,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     /**
      * Run the {@link VisWiz} and add its result to the {@link WorldWindowGLCanvas}.
      * Starts the wizard with the {@link AttributeSelectionPanel} in case the
-     * {@code data} is a valid data type (see {@link AVUtils#Load(java.lang.Object) 
+     * {@code data} is a valid data type (see {@link IOUtils#Read(java.lang.Object)
      * }) or not {code null}.
      *
      * @param data the pre-selected data source to visualize.
-     * @see AVUtils#Load(java.lang.Object)
+     * @see IOUtils#Read(java.lang.Object)
      */
     public void runVisWiz(Object data) {
         VisWiz.execute(wwd, this, data);
@@ -472,6 +473,21 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                 layerInfo.params, elevation, opacity);
     }
 
+    /**
+     * Add a {@link List} of {@link String} elements representing WMS layer with
+     * given {@code elevation} and {@code opacity}.
+     *
+     * Note that this method uses {@link String} representation of the WMS layer
+     * in contrast to {@link #addWMSHeightListLayer(java.lang.String, java.util.List, double, double)
+     * }.
+     *
+     * @param requestList the {@link List} of {@link String} objects to add
+     * @param name of the wms group to be added
+     * @param elevation the eleveation for the wms layers
+     * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
+     * @see #addWMSHeightListLayer(java.lang.String, java.util.List, double,
+     * double)
+     */
     public void addWMSHeightListLayer(List<String> requestList, String name, double elevation, double opacity) {
         List<LayerInfo> layerList = new ArrayList<LayerInfo>();
         for (String request : requestList) {
@@ -485,18 +501,23 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
+     * Add a {@link List} of {@link LayerInfo} wms elements to be added at the
+     * given {@code elevation} and the given {@code opacity}.
      *
-     * @param layerInfo
-     * @param elevation
-     * @param opacity
+     * @param name of the wms group to be added
+     * @param layerList the {@link List} of {@link LayerInfo} objects to add
+     * @param elevation the eleveation for the wms layers
+     * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
+     * @see #addWMSHeightListLayer(java.util.List, java.lang.String, double,
+     * double)
      */
     public void addWMSHeightListLayer(String name, List<LayerInfo> layerList, double elevation, double opacity) {
         if (opacity > 1.0 || opacity < 0.0) {
-            log.warn("The content of the \"opacity\" "
-                    + "component must be a double value between."
-                    + "0.0 and 100.0");
-            opacity = 0.0;
+            log.warn("The value of the 'opacity' argument must be between 0.0 "
+                    + "and 1.0. Setting value to 1.0.");
+            opacity = 1.0;
         }
+
         ArrayList<ElevatedRenderableLayer> layers = new ArrayList<ElevatedRenderableLayer>();
         for (LayerInfo layerInfo : layerList) {
             ElevatedRenderableLayer layer = addWMSHeightLayer(layerInfo.caps,

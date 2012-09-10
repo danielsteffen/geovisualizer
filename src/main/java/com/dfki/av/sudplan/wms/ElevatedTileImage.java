@@ -94,7 +94,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * ID of the {@link ElevatedTileImage} Note: Needed to determine the if a
      * newer version is available for a given sector
      *
-     * Note: the id is set by the {@link ElevatedSurfaceLayer}, the default
+     * Note: the id is set by the {@link ElevatedRenderableLayer}, the default
      * value after creation is -1 and will be set to an value >= 0.
      */
     private final long updateTime;

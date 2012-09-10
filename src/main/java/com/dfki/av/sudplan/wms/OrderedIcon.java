@@ -22,14 +22,14 @@ import gov.nasa.worldwind.render.OrderedRenderable;
 class OrderedIcon implements OrderedRenderable {
 
     /**
-     * ControlLayer {@link com.dfki.av.sudplan.vis.mc.ControlLayer} to which
+     * ControlLayer {@link com.dfki.av.sudplan.wms.WMSControlLayer} to which
      * this OrderedIcon is associated.
      */
     private WMSControlLayer cl;
 
     /**
      * Constructs a new Instance of the OrderedIcon object that is to be drawn
-     * with the COntrolLayer {@link com.dfki.av.sudplan.vis.mc.ControlLayer}
+     * with the COntrolLayer {@link com.dfki.av.sudplan.wms.WMSControlLayer}
      * instance passed in the input parameter.
      *
      * @param cl ControlLayer which this orderedIcon is associated to.

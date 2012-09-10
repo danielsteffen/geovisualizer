@@ -27,10 +27,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Listens to the changes in the controlLayer
- * {@link com.dfki.av.sudplan.vis.mc.ControlLayer} and takes the corresponding
- * action.
+ * {@link WMSControlLayer} and takes the corresponding action.
  *
- * Based on com.dfki.av.sudplan.vis.mc.ControlListener
+ * Note that this class is based on {@code com.dfki.av.sudplan.vis.mc.ControlListener}.
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
@@ -45,12 +44,16 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      */
     private static final int DEFAULT_TIMER_DELAY = 50;
     /**
-     * ControlLayer {@link com.dfki.av.sudplan.vis.mc.ControlLayer} instance
-     * which this listener listens to.
+     * Duration of one animation frame in ms 40 ms -> 25 fps
+     */
+    private final static int INTERVALL = 500;
+    /**
+     * ControlLayer {@link WMSControlLayer} instance which this listener listens
+     * to.
      */
     private WMSControlLayer viewControlsLayer;
     /**
-     * List of triangle grids {@link com.dfki.av.sudplan.vis.mc.TriangleGrid generated.
+     * List of {@link ElevatedRenderableLayer}
      */
     private ArrayList<ElevatedRenderableLayer> layers;
     /**
@@ -79,10 +82,6 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      */
     private int id = 0;
     /**
-     * Duration of one animation frame in ms 40 ms -> 25 fps
-     */
-    private final static int INTERVALL = 500;
-    /**
      * Duration of the fade animation in ms.
      */
     private int animationDuration = 400;
@@ -94,10 +93,6 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * Procentual change of the opacity per frame
      */
     private double STEP = 1.0d / (double) STEPS;
-    /**
-     * Font size
-     */
-    private final static float FONT_SIZE = 10.f;
 
     /**
      * Creates an instance of {@link WMSControlListener} which handles the input
@@ -116,6 +111,23 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
         this.viewControlsLayer = layer;
         this.layers = layers;
         initialize();
+    }
+
+    /**
+     * Set up the {@link #repeatTimer}.
+     */
+    private void initialize() {
+        this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                if (pressedControl != null) {
+                    updateView(pressedControl, pressedControlType);
+                }
+            }
+        });
+        this.repeatTimer.start();
+        updateView(viewControlsLayer.getSteps()[0], "");
     }
 
     /**
@@ -146,9 +158,10 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * {@link gov.nasa.worldwind.layers.RenderableLayer}with the triangle grid
      * suitable to what was pressed.
      *
-     * @param control The screen annotation pressed, throws a
-     * nullPointerException if null.
+     * @param control the {@link ScreenAnnotation} pressed, throws a
+     * {@link NullPointerException} if {@code null}.
      * @param controlType The control type of the screen annotation pressed.
+     * @throws NullPointerException if {@code control == null}
      */
     protected void updateView(ScreenAnnotation control, String controlType) {
         if (getViewControlsLayer().getSteps() != null) {
@@ -235,7 +248,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                             getViewControlsLayer().getStepsRange().indexOf(
                             pressed.getText())] = true;
                     Font font = pressed.getAttributes().getFont();
-                    font = font.deriveFont(FONT_SIZE);
+                    font = font.deriveFont(WMSControlLayer.FONT_SIZE);
                     pressed.getAttributes().setFont(font);
                     pressed.getAttributes().setTextColor(Color.WHITE);
                 } else {
@@ -243,7 +256,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                             getViewControlsLayer().getStepsRange().indexOf(
                             pressed.getText())] = false;
                     Font font = pressed.getAttributes().getFont();
-                    font = font.deriveFont(FONT_SIZE);
+                    font = font.deriveFont(WMSControlLayer.FONT_SIZE);
                     pressed.getAttributes().setFont(font);
                     pressed.getAttributes().setTextColor(Color.LIGHT_GRAY);
                 }
@@ -255,7 +268,8 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     /**
      * Hides the previous layer and shows the next layer.
      *
-     * @param layer the next layer which was selected on the {@link WMSControlLayer}
+     * @param layer the next {@link ElevatedRenderableLayer} which was selected
+     * on the {@link WMSControlLayer}
      */
     private void change(final ElevatedRenderableLayer layer) {
         List<ElevatedRenderableLayer> oldLayers = new ArrayList<ElevatedRenderableLayer>();
@@ -312,7 +326,6 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
             event.consume();
         }
 
-
         // Keep pressed control highlighted - overrides rollover non 
         //currently pressed controls
         if (this.pressedControl != null) {
@@ -321,13 +334,11 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     }
 
     /**
-     * Animates the volumes automatically with a play and stop buttons. TODO:
-     * Fade animation
+     * Animates the volumes automatically with a play and stop buttons.
      *
-     * @param layer renderable layer containing all the triangle grid to be
-     * displayed, a nullPointerException is thrown if null.
-     * @param layers all the triangle grids generated from the marching cubes
-     * algorithm, a nullPointerException is thrown if null.
+     * Note that currently no fading between the WMS layers is supported.
+     *
+     * @param layers the {@link ElevatedRenderableLayer} to animate
      */
     private void animate(final ArrayList<ElevatedRenderableLayer> layers) {
         checkAnimationTimer();
@@ -401,21 +412,18 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
     }
 
     /**
-     * Accesses the Control Layer
-     * {@link com.dfki.av.sudplan.vis.mc.ControlLayer} associated with the
-     * listener.
+     * Accesses the {@link WMSControlLayer} associated with the listener.
      *
-     * @return Control Layer this listener is assigned to.
+     * @return the {@link WMSControlLayer} this listener is assigned to.
      */
     public WMSControlLayer getViewControlsLayer() {
         return viewControlsLayer;
     }
 
     /**
-     * Accesses the list of grids
-     * {@link com.dfki.av.sudplan.vis.mc.TriangleGrid} generated.
+     * Accesses the list of grids {@link ElevatedRenderableLayer} generated.
      *
-     * @return ArrayList of the generated triangle grids.
+     * @return {@link ArrayList} of {@link ElevatedRenderableLayer}.
      */
     public ArrayList<ElevatedRenderableLayer> getLayers() {
         return layers;
@@ -425,7 +433,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * Accesses the repeat timer responsible for fetching events and selected
      * annotations.
      *
-     * @return Timer object associated with this listener.
+     * @return {@link Timer} object associated with this listener.
      */
     public Timer getRepeatTimer() {
         return repeatTimer;
@@ -443,19 +451,5 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
 
     @Override
     protected void doRender(DrawContext dc) {
-    }
-
-    private void initialize() {
-        this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (pressedControl != null) {
-                    updateView(pressedControl, pressedControlType);
-                }
-            }
-        });
-        this.repeatTimer.start();
-        updateView(viewControlsLayer.getSteps()[0], "");
     }
 }
