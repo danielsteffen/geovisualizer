@@ -25,6 +25,7 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
+    @Override
     public Component getComponent() {
         if (component == null) {
             component = new AttributeSelectionPanel();
@@ -32,6 +33,7 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
         return component;
     }
 
+    @Override
     public HelpCtx getHelp() {
         // Show no Help button for this panel:
         return HelpCtx.DEFAULT_HELP;
@@ -39,6 +41,7 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
         // return new HelpCtx(SampleWizardPanel1.class);
     }
 
+    @Override
     public boolean isValid() {
         // If it is always OK to press Next or Finish, then:
         return true;
@@ -49,9 +52,11 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
         // and uncomment the complicated stuff below.
     }
 
+    @Override
     public final void addChangeListener(ChangeListener l) {
     }
 
+    @Override
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
@@ -82,12 +87,14 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
     // settings object will be the WizardDescriptor, so you can use
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
+    @Override
     public void readSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor)settings;
         Object o = descriptor.getProperty("SelectedDataSource");
         ((AttributeSelectionPanel)getComponent()).setSelectedDataSource(o);
     }
 
+    @Override
     public void storeSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor)settings;
         List<String[]> l = ((AttributeSelectionPanel)getComponent()).getSelectedAttributes();

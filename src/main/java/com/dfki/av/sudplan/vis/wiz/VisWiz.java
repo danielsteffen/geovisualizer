@@ -19,8 +19,8 @@ import org.openide.WizardDescriptor;
 
 /**
  * This class provides the visualization wizard VisWiz.
- *
- * @author steffen
+ * 
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class VisWiz {
 
@@ -51,31 +51,60 @@ public final class VisWiz {
      * @throws IllegalArgumentException if {@code worldWindow} set to null.
      */
     public static Object execute(WorldWindow worldWindow, PropertyChangeListener listener) {
+        return execute(worldWindow, listener, null);
+    }
+
+    /**
+     * Starts the visualization wizard VisWiz. After finishing the visualization
+     * will be added automatically to the {@link WorldWindow} instance. The
+     * {@link PropertyChangeListener} can be used to montior the progress of the
+     * visualization creation process. The name of the {@link PropertyChangeEvent}
+     * event is {@link IVisAlgorithm#PROGRESS_PROPERTY}.
+     *
+     * @param worldWindow the {@link WorldWindow} where to add the
+     * visualization.
+     * @param listener the {@link PropertyChangeListener} to add.
+     * @param data
+     * @return the configuration to return or {@code null}.
+     * @throws IllegalArgumentException if {@code worldWindow} set to null.
+     */
+    public static Object execute(WorldWindow worldWindow, PropertyChangeListener listener, Object data) {
 
         if (worldWindow == null) {
             throw new IllegalArgumentException("WorldWindow not defined. Set to null.");
         }
 
-        WizardDescriptor.Iterator iterator = new VisWizIterator();
-        WizardDescriptor wizardDescriptor = new WizardDescriptor(iterator);
-        wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
-        wizardDescriptor.setTitle("VisWiz");
+        WizardDescriptor.Iterator iterator;
+        WizardDescriptor wizardDescriptor;
+        if (data == null) {
+            iterator = new VisWizIterator(true);
+            wizardDescriptor = new WizardDescriptor(iterator);
+            wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
+            wizardDescriptor.setTitle("VisWiz");
+        } else {
+            iterator = new VisWizIterator(false);
+            wizardDescriptor = new WizardDescriptor(iterator);
+            wizardDescriptor.setTitleFormat(new MessageFormat("{0} ({1})"));
+            wizardDescriptor.setTitle("VisWiz");
+            wizardDescriptor.putProperty("SelectedDataSource", data);
+        }
 
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
         dialog.setVisible(true);
         dialog.toFront();
 
         if (wizardDescriptor.getValue() == WizardDescriptor.FINISH_OPTION) {
-            Object data = wizardDescriptor.getProperty("SelectedDataSource");
+            Object dataSource = wizardDescriptor.getProperty("SelectedDataSource");
             IVisAlgorithm visAlgo = (IVisAlgorithm) wizardDescriptor.getProperty("SelectedVisualization");
             if (listener != null) {
                 visAlgo.addPropertyChangeListener(listener);
             }
             String[] dataAttributes = (String[]) wizardDescriptor.getProperty("SelectedDataAttributes");
 
-            VisWorker producer = new VisWorker(data, visAlgo, dataAttributes, worldWindow);
+            VisWorker producer = new VisWorker(dataSource, visAlgo, dataAttributes, worldWindow);
             producer.execute();
         }
+
         return null;
     }
 }

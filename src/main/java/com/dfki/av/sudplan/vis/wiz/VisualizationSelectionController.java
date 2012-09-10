@@ -15,15 +15,25 @@ import org.openide.util.HelpCtx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
+ */
 public class VisualizationSelectionController implements WizardDescriptor.Panel {
 
+    /**
+     * The logger.
+     */
+    private static Logger log = LoggerFactory.getLogger(VisualizationSelectionController.class);
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
      */
     private Component component;
-    private static Logger log = LoggerFactory.getLogger(VisualizationSelectionController.class);
 
+    /**
+     *
+     */
     public VisualizationSelectionController() {
         super();
     }
@@ -32,6 +42,7 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
+    @Override
     public Component getComponent() {
         if (component == null) {
             component = new VisualizationSelectionPanel();
@@ -39,6 +50,7 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
         return component;
     }
 
+    @Override
     public HelpCtx getHelp() {
         // Show no Help button for this panel:
         return HelpCtx.DEFAULT_HELP;
@@ -46,6 +58,7 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
         // return new HelpCtx(SampleWizardPanel1.class);
     }
 
+    @Override
     public boolean isValid() {
         // If it is always OK to press Next or Finish, then:
         return true;
@@ -56,9 +69,11 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
         // and uncomment the complicated stuff below.
     }
 
+    @Override
     public final void addChangeListener(ChangeListener l) {
     }
 
+    @Override
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
@@ -77,14 +92,14 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
     // settings object will be the WizardDescriptor, so you can use
     // WizardDescriptor.getProperty & putProperty to store information entered
     // by the user.
+    @Override
     public void readSettings(Object settings) {
-       
     }
 
+    @Override
     public void storeSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
-        IVisAlgorithm algo = ((VisualizationSelectionPanel)getComponent()).getSelectedVisualization();
+        IVisAlgorithm algo = ((VisualizationSelectionPanel) getComponent()).getSelectedVisualization();
         wiz.putProperty("SelectedVisualization", algo);
     }
-    
 }

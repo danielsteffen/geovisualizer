@@ -154,7 +154,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miAddWMS = new javax.swing.JMenuItem();
         miAddWMSHeight = new javax.swing.JMenuItem();
         miRemoveAllLayer = new javax.swing.JMenuItem();
-        mWizard = new javax.swing.JMenu();
+        mTools = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
         mView = new javax.swing.JMenu();
         miSideBySide = new javax.swing.JMenuItem();
@@ -570,6 +570,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mAddLayer.setText(bundle.getString("MainFrame.mAddLayer.text")); // NOI18N
 
         miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
+        miAddGeoTiff.setEnabled(false);
         miAddGeoTiff.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miAddGeoTiffActionPerformed(evt);
@@ -624,7 +625,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mbMain.add(mLayer);
 
-        mWizard.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWizard.text")); // NOI18N
+        mTools.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mTools.text")); // NOI18N
 
         miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
@@ -633,9 +634,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 miWizardActionPerformed(evt);
             }
         });
-        mWizard.add(miWizard);
+        mTools.add(miWizard);
 
-        mbMain.add(mWizard);
+        mbMain.add(mTools);
 
         mView.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mView.text")); // NOI18N
 
@@ -986,8 +987,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mLayer;
+    private javax.swing.JMenu mTools;
     private javax.swing.JMenu mView;
-    private javax.swing.JMenu mWizard;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
     private javax.swing.JMenuItem miAddGeoTiff;

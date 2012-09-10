@@ -13,6 +13,8 @@ import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
+import com.dfki.av.sudplan.vis.utils.AVUtils;
+import com.dfki.av.sudplan.vis.wiz.AttributeSelectionPanel;
 import com.dfki.av.sudplan.vis.wiz.VisWiz;
 import com.dfki.av.sudplan.wms.ElevatedSurfaceLayer;
 import com.dfki.av.sudplan.wms.EventHolder;
@@ -423,10 +425,24 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Run the {@link VisWiz} and add its result to the {@link #wwd}.
+     * Run the {@link VisWiz} and add its result to the {@link #wwd}. Starts the
+     * wizard with data selection panel.
      */
     public void runVisWiz() {
-        VisWiz.execute(wwd, this);
+        runVisWiz(null);
+    }
+
+    /**
+     * Run the {@link VisWiz} and add its result to the {@link WorldWindowGLCanvas}.
+     * Starts the wizard with the {@link AttributeSelectionPanel} in case the
+     * {@code data} is a valid data type (see {@link AVUtils#Load(java.lang.Object) 
+     * }) or not {code null}.
+     *
+     * @param data the pre-selected data source to visualize.
+     * @see AVUtils#Load(java.lang.Object)
+     */
+    public void runVisWiz(Object data) {
+        VisWiz.execute(wwd, this, data);
     }
 
     /**

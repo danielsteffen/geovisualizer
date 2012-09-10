@@ -1,5 +1,5 @@
 /*
- *  DataSourceSelectionPanel.java 
+ *  AttributeSelectionPanel.java 
  *
  *  Created by DFKI AV on 01.01.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -7,13 +7,9 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.Settings;
-import com.dfki.av.sudplan.vis.io.shapefile.Shapefile;
-import com.dfki.av.sudplan.vis.utils.AVUtils;
+import com.dfki.av.sudplan.vis.core.ISource;
+import com.dfki.av.sudplan.vis.io.IOUtils;
 import java.awt.Dimension;
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +23,27 @@ import javax.swing.table.TableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
+ */
 public final class AttributeSelectionPanel extends JPanel {
 
+    /**
+     * 
+     */
     private final static Logger log = LoggerFactory.getLogger(AttributeSelectionPanel.class);
+    /**
+     * 
+     */
     private AttributeTableModel tableModel;
+    /**
+     * 
+     */
     private JTable table;
+    /**
+     * 
+     */
     private JScrollPane spAttributeTable;
 
     /**
@@ -55,7 +67,7 @@ public final class AttributeSelectionPanel extends JPanel {
         col.setMinWidth(60);
         col.setMaxWidth(60);
         col.setPreferredWidth(60);
-        
+
         this.spAttributeTable = new JScrollPane(this.table);
         jPanel2.add(this.spAttributeTable);
     }
@@ -138,17 +150,16 @@ public final class AttributeSelectionPanel extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        for(int i = 0; i  < tableModel.getRowCount(); i++){
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
             tableModel.setValueAt(Boolean.TRUE, i, 0);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        for(int i = 0; i  < tableModel.getRowCount(); i++){
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
             tableModel.setValueAt(Boolean.FALSE, i, 0);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -179,73 +190,49 @@ public final class AttributeSelectionPanel extends JPanel {
         return selectedAttr;
     }
 
-    public void setSelectedDataSource(Object o) {
-        ShapefileLoader shapefileLoader = new ShapefileLoader(o);
-        shapefileLoader.execute();
+    /**
+     * 
+     * @param data 
+     */
+    public void setSelectedDataSource(Object data) {
+        AttributeTableFiller worker = new AttributeTableFiller(data);
+        worker.execute();
     }
 
     /**
      *
      * @author Daniel Steffen <daniel.steffen at dfki.de>
      */
-    public class ShapefileLoader extends SwingWorker<Map<String, Object>, Void> {
+    public class AttributeTableFiller extends SwingWorker<ISource, Void> {
 
         /*
          * Logger.
          */
-        private final Logger log = LoggerFactory.getLogger(ShapefileLoader.class);
+        private final Logger log = LoggerFactory.getLogger(AttributeTableFiller.class);
         /**
          * Data source for the layer to be produced.
          */
         private Object dataSource;
 
-        public ShapefileLoader(Object data) {
+        /**
+         * 
+         * @param data 
+         */
+        public AttributeTableFiller(Object data) {
             this.dataSource = data;
         }
 
         @Override
-        protected Map<String, Object> doInBackground() throws Exception {
-            File tmpFile = null;
-            if (dataSource instanceof File) {
-                tmpFile = (File) dataSource;
-            } else if (dataSource instanceof URL) {
-                URL url = (URL) dataSource;
-                tmpFile = AVUtils.DownloadFileToDirectory(url, Settings.SUDPLAN_3D_USER_HOME);
-            } else if (dataSource instanceof URI) {
-                URI uri = (URI) dataSource;
-                tmpFile = AVUtils.DownloadFileToDirectory(uri.toURL(), Settings.SUDPLAN_3D_USER_HOME);
-            } else {
-                log.error("No valid data source."
-                        + "Must be of type File, URL, or URI.");
-                throw new IllegalArgumentException("No valid data source for LayerWorker. "
-                        + "Must be of type File, URL, or URI.");
-            }
-
-            String fileName = tmpFile.getName();
-            File file = null;
-            String fileExtension = fileName.substring(fileName.length() - 4);
-            if (fileExtension.equalsIgnoreCase(".zip")) {
-                AVUtils.Unzip(tmpFile, Settings.SUDPLAN_3D_USER_HOME);
-                // Here, we assume that the name of the shape file equals
-                // the name of the zip and vice versa.
-                String shpFileName = fileName.replace(fileExtension, ".shp");
-                file = new File(Settings.SUDPLAN_3D_USER_HOME + File.separator + shpFileName);
-                log.debug("Source file: {}", file.getAbsolutePath());
-            } else if (fileExtension.equalsIgnoreCase(".shp")) {
-                file = tmpFile;
-            } else {
-                log.debug("Data type not supported yet.");
-            }
-
-            Shapefile shpFile = new Shapefile(file.getAbsolutePath());
-
-            return shpFile.getAttributes();
+        protected ISource doInBackground() throws Exception {
+            ISource source = IOUtils.Read(dataSource);
+            return source;
         }
 
         @Override
         protected void done() {
             try {
-                Map<String, Object> attributes = get();
+                ISource source = get();
+                Map<String, Object> attributes = source.getAttributes();
                 TableModel tModel = table.getModel();
                 if (tModel instanceof AttributeTableModel) {
                     AttributeTableModel model = (AttributeTableModel) tModel;

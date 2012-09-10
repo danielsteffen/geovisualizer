@@ -9,7 +9,25 @@
 Releases
 
   This section list the releases of the SUDPLAN 3D components: sudplan3D-main, sudplan3D-core, etc. 
+
+* 2012-09-10, sudplan3D 1.5.3
+
+  * Added possibility to start VisWiz directly with data source. Thus skipping fist step.  
+
+  * Added support to start VisWiz with URL, URI, File and InputStream as data source.
+
+  * Using sudplan3D-core version 1.7  
+ 
+  * New desktop button for SUDPLAN 3D application.
+
+  * Added new site for developer information
+
+  * Added shortcut for WWJ Dashboard
+
+* 2012-09-10, sudplan3D-core 1.7
   
+  * Added new ISourceReader plugin framework using Java's SPI technique to support various data sources as input.  
+
 * 2012-08-31, sudplan3D-core 1.6.1
 
   * Added new point cloud visualization with additional settings for height and color.
@@ -56,6 +74,8 @@ Releases
   
 *----------------*---------------------*-------------------------------*
 | sudplan3D      | sudplan3D-core      | WorldWind SDK                 |
+*----------------*---------------------*-------------------------------*
+| 1.5.3          |  1.7.0              |  1.4.0-without-jackson        | 
 *----------------*---------------------*-------------------------------*
 | 1.5.2          |  1.6.1              |  1.4.0-without-jackson        | 
 *----------------*---------------------*-------------------------------*
