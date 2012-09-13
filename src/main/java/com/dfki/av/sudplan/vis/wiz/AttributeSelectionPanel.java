@@ -9,6 +9,7 @@ package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.core.ISource;
 import com.dfki.av.sudplan.vis.io.IOUtils;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,7 @@ public final class AttributeSelectionPanel extends JPanel {
      */
     public void setSelectedDataSource(Object data) {
         AttributeTableFiller worker = new AttributeTableFiller(data);
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
         worker.execute();
     }
 
@@ -230,6 +232,7 @@ public final class AttributeSelectionPanel extends JPanel {
 
         @Override
         protected void done() {
+            AttributeSelectionPanel.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             try {
                 ISource source = get();
                 Map<String, Object> attributes = source.getAttributes();
