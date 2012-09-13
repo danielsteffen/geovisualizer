@@ -4,7 +4,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D</artifactId>
-    <version>1.5.5-SNAPSHOT</version>
+    <version>1.5.5</version>
     <packaging>jar</packaging>
     <name>sudplan3D-main</name>
     <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
