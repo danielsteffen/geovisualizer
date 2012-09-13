@@ -19,10 +19,14 @@ import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
@@ -313,10 +317,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                                 .addComponent(pbWMS, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(bGoWMSHeight)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
                     .addGroup(pWMSHeightLayout.createSequentialGroup()
                         .addComponent(lServerURL)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap())))
         );
         pWMSHeightLayout.setVerticalGroup(
             pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1034,7 +1038,17 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MainFrame().setVisible(true);
+                MainFrame mf = new MainFrame();
+                ClassLoader loader = MainFrame.class.getClassLoader();
+                URL iconURL = loader.getResource("icons/sudplan3D.png");
+                Image icon;
+                try {
+                    icon = ImageIO.read(iconURL);
+                    mf.setIconImage(icon);
+                } catch (IOException ex) {
+                    log.warn(ex.getMessage());
+                }
+                mf.setVisible(true);
             }
         });
     }

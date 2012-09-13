@@ -231,7 +231,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/binaries/x86</outputDirectory>
+                            <outputDirectory>target/bin/x86</outputDirectory>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -266,15 +266,15 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
-                            <headerType>console</headerType>
-                            <outfile>target/binaries/x86/${project.artifactId}.exe</outfile>
-                            <jar>target/binaries/x86/${project.artifactId}-${project.version}-shaded.jar</jar> <!-- 'shaded' is the value set on shadedClassifierName above -->
-                            <errTitle>CoVidA</errTitle>
+                            <headerType>gui</headerType>
+                            <outfile>target/bin/x86/${project.artifactId}.exe</outfile>
+                            <jar>target/bin/x86/${project.artifactId}-${project.version}-shaded.jar</jar> <!-- 'shaded' is the value set on shadedClassifierName above -->
+                            <errTitle>${project.artifactId}</errTitle>
                             <classPath>
                                 <mainClass>${main-class}</mainClass>
                                 <addDependencies>true</addDependencies>
                             </classPath>
-                            <icon>src/main/resources/icon.ico</icon>
+                            <icon>src/main/resources/icons/sudplan3D.ico</icon>
                             <jre>
                                 <minVersion>1.7.0</minVersion>
                             </jre>
@@ -306,7 +306,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/binaries/x86</outputDirectory>
+                            <outputDirectory>${basedir}/target/bin/x86</outputDirectory>
                             <resources>          
                                 <resource>
                                     <directory>natives/x86</directory>
@@ -325,7 +325,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/binaries/x64</outputDirectory>
+                            <outputDirectory>${basedir}/target/bin/x64</outputDirectory>
                             <resources>          
                                 <resource>
                                     <directory>natives/x64</directory>
@@ -344,10 +344,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/binaries/x64</outputDirectory>
+                            <outputDirectory>${basedir}/target/bin/x64</outputDirectory>
                             <resources>          
                                 <resource>
-                                    <directory>target/binaries/x86</directory>
+                                    <directory>target/bin/x86</directory>
                                     <includes>
                                         <include>*.exe</include>
                                         <include>*.jar</include>
