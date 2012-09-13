@@ -226,12 +226,33 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <id>shade</id>
+                        <id>shade-x86</id>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/binaries</outputDirectory>
+                            <outputDirectory>target/binaries/x86</outputDirectory>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName> 
+                        </configuration>  
+                    </execution>
+                    <execution>
+                        <id>shade-x64</id>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/binaries/x64</outputDirectory>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -255,16 +276,35 @@
                 <version>2.5</version>
                 <executions>
                     <execution>
-                        <id>copy-native</id>
+                        <id>copy-x86-natives</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/binaries/</outputDirectory>
+                            <outputDirectory>${basedir}/target/binaries/x86</outputDirectory>
                             <resources>          
                                 <resource>
-                                    <directory>/</directory>
+                                    <directory>natives/x86</directory>
+                                    <includes>
+                                        <include>*.dll</include>
+                                        <include>*.so</include>
+                                    </includes>
+                                </resource>
+                            </resources>              
+                        </configuration>    
+                    </execution>
+                    <execution>
+                        <id>copy-x64-natives</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/binaries/x64</outputDirectory>
+                            <resources>          
+                                <resource>
+                                    <directory>natives/x64</directory>
                                     <includes>
                                         <include>*.dll</include>
                                         <include>*.so</include>
@@ -273,6 +313,7 @@
                             </resources>              
                         </configuration>            
                     </execution>
+                    
                 </executions>
             </plugin>
         </plugins>
