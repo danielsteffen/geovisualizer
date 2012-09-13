@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
+import com.dfki.av.sudplan.vis.core.VisSettings;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,11 +16,27 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * 
+ * @author steffen
+ */
 public final class DataSourceSelectionPanel extends JPanel {
 
+    /**
+     * 
+     */
     private final static Logger log = LoggerFactory.getLogger(DataSourceSelectionController.class);
+    /**
+     * 
+     */
+    private static File WORKING_DIRECTORY = new File(VisSettings.USER_HOME_DIR);
+    /**
+     * 
+     */
     private File file;
+    /**
+     * 
+     */
     private URL url;
 
     /**
@@ -126,6 +143,8 @@ public final class DataSourceSelectionPanel extends JPanel {
         JFileChooser jfc = new JFileChooser();
         jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (.shp)", "shp"));
         jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (.zip)", "zip"));
+        jfc.setCurrentDirectory(WORKING_DIRECTORY);
+
         int retValue = jfc.showOpenDialog(this);
 
         if (retValue == JFileChooser.APPROVE_OPTION) {
@@ -139,8 +158,8 @@ public final class DataSourceSelectionPanel extends JPanel {
                 log.debug("No shp file selected.");
             }
         }
+        DataSourceSelectionPanel.WORKING_DIRECTORY = jfc.getCurrentDirectory();
     }//GEN-LAST:event_jButton1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
@@ -152,9 +171,9 @@ public final class DataSourceSelectionPanel extends JPanel {
     // End of variables declaration//GEN-END:variables
 
     public Object getSelectedDataSource() {
-        if(jRadioButton1.isSelected()){
+        if (jRadioButton1.isSelected()) {
             return this.file;
-        } else if(jRadioButton2.isSelected()){
+        } else if (jRadioButton2.isSelected()) {
             try {
                 this.url = new URL(this.jTextField2.getText());
             } catch (MalformedURLException ex) {
@@ -164,5 +183,4 @@ public final class DataSourceSelectionPanel extends JPanel {
         }
         return null;
     }
-
 }
