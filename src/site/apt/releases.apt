@@ -8,7 +8,19 @@
 		 
 Releases
 
-  This section list the releases of the SUDPLAN 3D components: sudplan3D-main, sudplan3D-core, etc. 
+  This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
+
+* 2012-09-13, sudplan3D-core 1.5.5
+ 
+  * Update to sudplan3D-core 1.7.1
+  
+  * Added feature to remember last used path in VisWiz.
+  
+  * Added new feature to create executables.
+  
+* 2012-09-13, sudplan3D-core 1.7.1
+
+  * Bugfix: Unable to read and unzip shapezip
 
 * 2012-09-10, sudplan3D 1.5.4
 
@@ -22,9 +34,9 @@ Releases
 
   * Added support to start VisWiz with URL, URI, File and InputStream as data source.
 
-  * Using sudplan3D-core version 1.7  
+  * Using sudplan3D-core version 1.7.0
  
-  * New desktop button for SUDPLAN 3D application.
+  * New desktop button for sudplan3D application.
 
   * Added new site for developer information
 
@@ -80,6 +92,8 @@ Releases
   
 *----------------*---------------------*-------------------------------*
 | sudplan3D      | sudplan3D-core      | WorldWind SDK                 |
+*----------------*---------------------*-------------------------------*
+| 1.5.5          |  1.7.1              |  1.4.0-without-jackson        | 
 *----------------*---------------------*-------------------------------*
 | 1.5.4          |  1.7.0              |  1.4.0-without-jackson        | 
 *----------------*---------------------*-------------------------------*

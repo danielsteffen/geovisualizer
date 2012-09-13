@@ -14,7 +14,6 @@ import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.io.IOUtils;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
-import com.dfki.av.sudplan.vis.utils.AVUtils;
 import com.dfki.av.sudplan.vis.wiz.AttributeSelectionPanel;
 import com.dfki.av.sudplan.vis.wiz.VisWiz;
 import com.dfki.av.sudplan.wms.*;
@@ -573,13 +572,13 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Switches to stereoscopic side-by-side mode in fullscreen.
      *
      * @param parent the {@link JFrame} as parent frame.
-     * @throws RuntimeException if parent set to {@code null}
+     * @throws IllegalArgumentException if parent == null
      */
     public void startStereo(JFrame parent) {
         if (parent == null) {
-            String msg = "Illegal arguemtn for JFrame";
+            String msg = "parent == null";
             log.error(msg);
-            throw new RuntimeException(msg);
+            throw new IllegalArgumentException(msg);
 
         }
         SideBySideStereoSetup stereoSetup = new SideBySideStereoSetup(parent, wwd);
