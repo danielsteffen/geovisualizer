@@ -226,7 +226,7 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <id>shade-x86</id>
+                        <id>shade</id>
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -244,28 +244,52 @@
                             </filters>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>shaded</shadedClassifierName> 
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${main-class}</mainClass>
+                                </transformer>
+                            </transformers>
                         </configuration>  
                     </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+                <artifactId>launch4j-plugin</artifactId>
+                <version>1.5.0.0</version>
+                <executions>
                     <execution>
-                        <id>shade-x64</id>
+                        <id>l4j</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>launch4j</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/binaries/x64</outputDirectory>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>shaded</shadedClassifierName> 
-                        </configuration>  
+                            <headerType>console</headerType>
+                            <outfile>target/binaries/x86/${project.artifactId}.exe</outfile>
+                            <jar>target/binaries/x86/${project.artifactId}-${project.version}-shaded.jar</jar> <!-- 'shaded' is the value set on shadedClassifierName above -->
+                            <errTitle>CoVidA</errTitle>
+                            <classPath>
+                                <mainClass>${main-class}</mainClass>
+                                <addDependencies>true</addDependencies>
+                            </classPath>
+                            <icon>src/main/resources/icon.ico</icon>
+                            <jre>
+                                <minVersion>1.7.0</minVersion>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.5.5.0</fileVersion>
+                                <txtFileVersion>1.5.5.0</txtFileVersion>
+                                <fileDescription>Desc</fileDescription>
+                                <copyright>${project.organization.name}</copyright>
+                                <productVersion>1.5.5.0</productVersion>
+                                <txtProductVersion>1.5.5.0</txtProductVersion>
+                                <productName>${project.artifactId}</productName>
+                                <internalName>${project.artifactId}</internalName>
+                                <originalFilename>${project.artifactId}.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -313,7 +337,25 @@
                             </resources>              
                         </configuration>            
                     </execution>
-                    
+                    <execution>
+                        <id>copy-binaries</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/binaries/x64</outputDirectory>
+                            <resources>          
+                                <resource>
+                                    <directory>target/binaries/x86</directory>
+                                    <includes>
+                                        <include>*.exe</include>
+                                        <include>*.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>              
+                        </configuration>            
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
