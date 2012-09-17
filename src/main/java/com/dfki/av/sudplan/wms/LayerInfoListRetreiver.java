@@ -15,15 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SwingWorker for the retreival of the list of {@link LayerInfo} for a given
- * wms url.
+ * SwingWorker for the retrieval of the list of {@link LayerInfo} for a given
+ * WMS url.
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class LayerInfoListRetreiver extends SwingWorker<List<LayerInfo>, Void> {
 
     /**
-     * Wms server url as {@link String}
+     * WMS server url as {@link String}
      */
     private String wmsURL;
     /*
@@ -33,10 +33,10 @@ public class LayerInfoListRetreiver extends SwingWorker<List<LayerInfo>, Void> {
 
     /**
      * Creates an {@link LayerInfoListRetreiver}, a {@link SwingWorker} for the
-     * retreival of the list of {@link LayerInfo} for a given
-     * {@link String} wmsUrl
+     * retrieval of the list of {@link LayerInfo} for a given
+     * {@link String} {@code wmsURL}
      *
-     * @param wmsURL wms server url as {@link String}
+     * @param wmsURL WMS server url as {@link String}
      */
     public LayerInfoListRetreiver(String wmsURL) {
         this.wmsURL = wmsURL;
@@ -44,12 +44,12 @@ public class LayerInfoListRetreiver extends SwingWorker<List<LayerInfo>, Void> {
     }
 
     /**
-     * Retreives a list of {@link LayerInfo} for the defined wms source
+     * Retrieves a list of {@link LayerInfo} for the defined wms source
      * ({@link String} wmsURL)
      *
-     * @param wmsURL wms server url as {@link String}
+     * @param wmsURL WMS server url as {@link String}
      * @return list of {@link LayerInfo} parsed of the data returned from the
-     * wms server
+     * WMS server
      * @throws URISyntaxException if the {@link String} can not be parsed as {@link URI}
      */
     private List<LayerInfo> retreiveLayerInfo(String wmsURL) throws URISyntaxException {

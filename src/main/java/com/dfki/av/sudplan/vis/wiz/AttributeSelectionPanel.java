@@ -250,9 +250,9 @@ public final class AttributeSelectionPanel extends JPanel {
                 }
                 table.updateUI();
             } catch (InterruptedException ex) {
-                log.error(ex.toString());
+                log.error(ex.getMessage());
             } catch (ExecutionException ex) {
-                log.error(ex.toString());
+                log.error(ex.getMessage());
             }
             jPanel2.updateUI();
         }

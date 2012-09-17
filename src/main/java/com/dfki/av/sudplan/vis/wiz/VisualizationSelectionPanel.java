@@ -17,6 +17,10 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
+ */
 public final class VisualizationSelectionPanel extends JPanel {
 
     /*
@@ -24,7 +28,7 @@ public final class VisualizationSelectionPanel extends JPanel {
      */
     private static final Logger log = LoggerFactory.getLogger(VisualizationSelectionPanel.class);
     /**
-     *
+     * The selected {@link IVisAlgorithm}. Initial set to {@code null}.
      */
     private IVisAlgorithm visAlgorithm;
 

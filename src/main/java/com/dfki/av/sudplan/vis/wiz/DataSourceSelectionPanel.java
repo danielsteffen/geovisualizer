@@ -16,26 +16,27 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
- * 
+ *
  * @author steffen
  */
 public final class DataSourceSelectionPanel extends JPanel {
 
     /**
-     * 
+     *
      */
     private final static Logger log = LoggerFactory.getLogger(DataSourceSelectionController.class);
     /**
-     * 
+     *
      */
     private static File WORKING_DIRECTORY = new File(VisSettings.USER_HOME_DIR);
     /**
-     * 
+     *
      */
     private File file;
     /**
-     * 
+     *
      */
     private URL url;
 
@@ -141,8 +142,8 @@ public final class DataSourceSelectionPanel extends JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         JFileChooser jfc = new JFileChooser();
-        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (.shp)", "shp"));
-        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (.zip)", "zip"));
+        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (*.shp)", "shp", "Shp", "SHP"));
+        jfc.addChoosableFileFilter(new FileNameExtensionFilter("Zip file (*.zip)", "zip", "ZIP", "Zip"));
         jfc.setCurrentDirectory(WORKING_DIRECTORY);
 
         int retValue = jfc.showOpenDialog(this);

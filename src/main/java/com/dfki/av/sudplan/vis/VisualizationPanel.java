@@ -133,11 +133,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Contect to the WMS at the given {@link URI}. Adds all available layers to
+     * Connect to the WMS at the given {@link URI}. Adds all available layers to
      * the {@link WorldWindow}. The layers are disabled by default.
      *
      * @param uri the server string to be parsed into a {@link URI}.
-     * @throws IllegalArgumentException if uri is {@code null} or is empty.
+     * @throws IllegalArgumentException if URI is {@code null} or is empty.
      */
     public void addWMS(String uri) {
         if (uri == null) {
@@ -439,9 +439,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     /**
      * Adds a WMS Layer from the given parameters.
      *
-     * @param caps the wms capabilities
-     * @param lcaps the wms layer capabilities
-     * @param params the wms paramters
+     * @param caps the WMS capabilities
+     * @param lcaps the WMS layer capabilities
+     * @param params the WMS parameters
      * @param elevation the elevation (meters above sea level) for the result
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
@@ -481,8 +481,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * }.
      *
      * @param requestList the {@link List} of {@link String} objects to add
-     * @param name of the wms group to be added
-     * @param elevation the eleveation for the wms layers
+     * @param name of the WMS group to be added
+     * @param elevation the elevation for the WMS layers
      * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
      * @see #addWMSHeightListLayer(java.lang.String, java.util.List, double,
      * double)
@@ -500,12 +500,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Add a {@link List} of {@link LayerInfo} wms elements to be added at the
+     * Add a {@link List} of {@link LayerInfo} WMS elements to be added at the
      * given {@code elevation} and the given {@code opacity}.
      *
-     * @param name of the wms group to be added
+     * @param name of the WMS group to be added
      * @param layerList the {@link List} of {@link LayerInfo} objects to add
-     * @param elevation the eleveation for the wms layers
+     * @param elevation the elevation for the WMS layers
      * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
      * @see #addWMSHeightListLayer(java.util.List, java.lang.String, double,
      * double)
@@ -541,7 +541,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Adds a WMS Layer from the given url request (
      * <code>request</code>).
      *
-     * @param request the request url for the wms layer
+     * @param request the request url for the WMS layer
      * @param elevation the elevation (meters above sea level) for the result
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
@@ -569,7 +569,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Switches to stereoscopic side-by-side mode in fullscreen.
+     * Switches to stereoscopic side-by-side mode in full screen.
      *
      * @param parent the {@link JFrame} as parent frame.
      * @throws IllegalArgumentException if parent == null

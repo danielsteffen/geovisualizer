@@ -43,21 +43,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
      */
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
     /**
-     * An array of WMS.
+     * An array of WMS layer.
      */
     private static final String[] servers = new String[]{
-        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"/*
-     * ,
-     * "http://www.wms.nrw.de/geobasis/DOP"
-     *//*
-     * ,
-     * /*"http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?"/*,
-     */
-    /*
-     * "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?"
-     */
-
-
+        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"
     };
     /**
      * The size of the {@link #wwPanel}.
@@ -145,6 +134,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miGotoPraque = new javax.swing.JMenuItem();
         miGoToStockhom = new javax.swing.JMenuItem();
         miGotoWuppertal = new javax.swing.JMenuItem();
+        miGotoKaiserslautern = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         miFullSphere = new javax.swing.JMenuItem();
         miGoto = new javax.swing.JMenuItem();
@@ -269,12 +259,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
 
-        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?", "http://85.24.165.10/cap_SERVICE=WMS.xml" }));
-        cbServerURL.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbServerURLActionPerformed(evt);
-            }
-        });
+        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://aniara.smhi.se/cap_SERVICE=WMS.xml", "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?", "http://85.24.165.10/cap_SERVICE=WMS.xml" }));
 
         lServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lServerURL.text")); // NOI18N
 
@@ -557,6 +542,15 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
         mFile.add(miGotoWuppertal);
+
+        miGotoKaiserslautern.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_MASK));
+        miGotoKaiserslautern.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoKaiserslautern.text")); // NOI18N
+        miGotoKaiserslautern.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoKaiserslauternActionPerformed(evt);
+            }
+        });
+        mFile.add(miGotoKaiserslautern);
         mFile.add(jSeparator5);
 
         miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
@@ -729,10 +723,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_btnGoActionPerformed
 
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
+        ClassLoader loader = MainFrame.class.getClassLoader();
+        URL iconURL = loader.getResource("icons/sudplan3D.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+
         JOptionPane.showMessageDialog(this, "This is the sudplan3D application."
                 + "\nDFKI (c) 2011-2012",
                 "About Sudplan3D",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
 
     private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
@@ -902,10 +900,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         wwPanel.startStereo(this);
     }//GEN-LAST:event_miSideBySideActionPerformed
 
-    private void cbServerURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbServerURLActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbServerURLActionPerformed
-
     private void bAddWMSHeightListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddWMSHeightListActionPerformed
         dWMSHeight.setVisible(false);
         double wmsHeight;
@@ -947,22 +941,26 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                     layerList.add(layerInfo);
                     index++;
                     layerInfo = (LayerInfo) cLayerList.getItemAt(index);
-                    if((LayerInfo) cLayerList.getItemAt(index) == null){
+                    if ((LayerInfo) cLayerList.getItemAt(index) == null) {
                         break;
                     }
                     title = layerInfo.getTitle();
                     parts = title.split(" ");
                     prefix = parts[0];
                 }
-                if(layerList.isEmpty()){
+                if (layerList.isEmpty()) {
                     return;
                 }
-            }else{
+            } else {
                 return;
             }
             wwPanel.addWMSHeightListLayer(name, layerList, wmsHeight, wmsOpacity);
         }
     }//GEN-LAST:event_bAddWMSHeightListActionPerformed
+
+    private void miGotoKaiserslauternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoKaiserslauternActionPerformed
+        wwPanel.setCamera(new AnimatedCamera(49.4447186, 7.7690169, 20000.0));
+    }//GEN-LAST:event_miGotoKaiserslauternActionPerformed
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -1036,6 +1034,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
          * Create and display the form
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             @Override
             public void run() {
                 MainFrame mf = new MainFrame();
@@ -1096,6 +1095,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
     private javax.swing.JMenuItem miGoto;
+    private javax.swing.JMenuItem miGotoKaiserslautern;
     private javax.swing.JMenuItem miGotoLinz;
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;

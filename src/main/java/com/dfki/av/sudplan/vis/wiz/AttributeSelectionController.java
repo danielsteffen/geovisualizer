@@ -13,6 +13,10 @@ import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
+/**
+ *
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
+ */
 public class AttributeSelectionController implements WizardDescriptor.Panel {
 
     /**
@@ -60,27 +64,15 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
     public final void removeChangeListener(ChangeListener l) {
     }
     /*
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
-    public final void addChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.add(l);
-    }
-    }
-    public final void removeChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.remove(l);
-    }
-    }
-    protected final void fireChangeEvent() {
-    Iterator<ChangeListener> it;
-    synchronized (listeners) {
-    it = new HashSet<ChangeListener>(listeners).iterator();
-    }
-    ChangeEvent ev = new ChangeEvent(this);
-    while (it.hasNext()) {
-    it.next().stateChanged(ev);
-    }
-    }
+     * private final Set<ChangeListener> listeners = new
+     * HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0 public
+     * final void addChangeListener(ChangeListener l) { synchronized (listeners)
+     * { listeners.add(l); } } public final void
+     * removeChangeListener(ChangeListener l) { synchronized (listeners) {
+     * listeners.remove(l); } } protected final void fireChangeEvent() {
+     * Iterator<ChangeListener> it; synchronized (listeners) { it = new
+     * HashSet<ChangeListener>(listeners).iterator(); } ChangeEvent ev = new
+     * ChangeEvent(this); while (it.hasNext()) { it.next().stateChanged(ev); } }
      */
 
     // You can use a settings object to keep track of state. Normally the
@@ -89,15 +81,15 @@ public class AttributeSelectionController implements WizardDescriptor.Panel {
     // by the user.
     @Override
     public void readSettings(Object settings) {
-        WizardDescriptor descriptor = (WizardDescriptor)settings;
+        WizardDescriptor descriptor = (WizardDescriptor) settings;
         Object o = descriptor.getProperty("SelectedDataSource");
-        ((AttributeSelectionPanel)getComponent()).setSelectedDataSource(o);
+        ((AttributeSelectionPanel) getComponent()).setSelectedDataSource(o);
     }
 
     @Override
     public void storeSettings(Object settings) {
-        WizardDescriptor descriptor = (WizardDescriptor)settings;
-        List<String[]> l = ((AttributeSelectionPanel)getComponent()).getSelectedAttributes();
+        WizardDescriptor descriptor = (WizardDescriptor) settings;
+        List<String[]> l = ((AttributeSelectionPanel) getComponent()).getSelectedAttributes();
         descriptor.putProperty("DataAttributes", l);
     }
 }
