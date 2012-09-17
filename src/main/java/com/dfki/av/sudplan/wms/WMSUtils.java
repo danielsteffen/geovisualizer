@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,6 +152,76 @@ public class WMSUtils {
     }
 
     /**
+     * Retreives a {@link List} of {@link LayerInfo} which are represented
+     * with the {@link WMSCapabilities}.
+     * 
+     * @param namedLayerCaps {@link List} of {@link WMSLayerCapabilities}
+     * @param caps {@link WMSCapabilities} which represents the WMS data
+     * @return {@link List} of {@link LayerInfo}
+     */
+    private static List<LayerInfo> getLayerInfos(final List<WMSLayerCapabilities> namedLayerCaps, WMSCapabilities caps) {
+        List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
+        for (WMSLayerCapabilities lc : namedLayerCaps) {
+            Set<WMSLayerStyle> styles = lc.getStyles();
+            if (styles == null || styles.isEmpty()) {
+                LayerInfo layerInfo = new LayerInfo(caps, lc, null);
+                layerInfos.add(layerInfo);
+            } else {
+                for (WMSLayerStyle style : styles) {
+                    LayerInfo layerInfo = new LayerInfo(caps, lc, style);
+                    layerInfos.add(layerInfo);
+                }
+            }
+        }
+        return layerInfos;
+    }
+
+    /**
+     * Retreives a {@link List} of {@link LayerInfo} which are represented
+     * with the {@link URI}.
+     * 
+     * @param uri WMS server {@link URI}
+     * @param lf Top layer of the time series.
+     * @return {@link List} of {@link LayerInfo}
+     */
+    private static List<LayerInfo> getTimeSeriesLayerInfos(URI uri, LayerInfo lf) {
+        List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
+        String layerName;
+        String[] parts;
+        boolean isStartPosition = false;
+        for (int i = 0; i < getLayerInfos(uri).size(); i++) {
+            LayerInfo li = getLayerInfos(uri).get(i);
+            if (isStartPosition) {
+                layerInfos.add(li);
+                layerName = li.getTitle();
+                parts = layerName.split(" ");
+                if (parts.length > 1) {
+                    String identifier = parts[0];
+                    for (int j = (i + 1); j < getLayerInfos(uri).size(); j++) {
+                        li = getLayerInfos(uri).get(j);
+                        layerName = li.getTitle();
+                        parts = layerName.split(" ");
+                        if (parts.length > 1) {
+                            String prefix = parts[0];
+                            if (prefix.equals(identifier)) {
+                                layerInfos.add(li);
+                            } else {
+                                return layerInfos;
+                            }
+                        } else {
+                            return layerInfos;
+                        }
+                    }
+                }
+            }
+            if (li.getTitle().equals(lf.getTitle())) {
+                isStartPosition = true;
+            }
+        }
+        return layerInfos;
+    }
+
+    /**
      * Converts radians to decimal degrees
      *
      * @param rad radian value
@@ -174,6 +245,8 @@ public class WMSUtils {
         for (String part : parts) {
             if (part.startsWith("layers=")) {
                 layerName = part.replaceFirst("layers=", "");
+            } else {
+                return null;
             }
         }
         for (LayerInfo li : getLayerInfos(url)) {
@@ -190,14 +263,18 @@ public class WMSUtils {
      * the parameter
      * <code>serverURI</code>.
      *
-     * @param serverURI
+     * Note that the method will return all elements of a time series if a
+     * request {@link URI} is given which contains a layer which ends with '[]'
+     *
+     *
+     * @param uri
      * @return parsed data as list of {@link LayerInfo}
+     *
      */
-    public static List<LayerInfo> getLayerInfos(URI serverURI) {
+    public static List<LayerInfo> getLayerInfos(URI uri) {
         WMSCapabilities caps;
-        final ArrayList<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
         try {
-            caps = WMSCapabilities.retrieve(serverURI);
+            caps = WMSCapabilities.retrieve(uri);
             caps.parse();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -207,27 +284,30 @@ public class WMSUtils {
         // Gather up all the named layers and make a world wind layer for each.
         final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
         if (namedLayerCaps == null) {
-            log.debug("No named layers available for server: {}.", serverURI);
+            log.debug("No named layers available for server: {}.", uri);
             return null;
         }
-
+        LayerInfo lf = null;
+        boolean isTimeSeries = false;
         try {
-            for (WMSLayerCapabilities lc : namedLayerCaps) {
-                Set<WMSLayerStyle> styles = lc.getStyles();
-                if (styles == null || styles.isEmpty()) {
-                    LayerInfo layerInfo = new LayerInfo(caps, lc, null);
-                    layerInfos.add(layerInfo);
-                } else {
-                    for (WMSLayerStyle style : styles) {
-                        LayerInfo layerInfo = new LayerInfo(caps, lc, style);
-                        layerInfos.add(layerInfo);
-                    }
-                }
+            lf = parseWMSRequest(uri.toString());
+            if (lf != null && lf.getTitle().contains("[]")) {
+                isTimeSeries = true;
+            } else {
+                isTimeSeries = false;
+            }
+        } catch (Exception ex) {
+            log.error(ex.toString());
+        }
+        try {
+            if (isTimeSeries) {
+                return getTimeSeriesLayerInfos(uri, lf);
+            } else {
+                return getLayerInfos(namedLayerCaps, caps);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
         }
-        return layerInfos;
     }
 }

@@ -446,57 +446,13 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * layer (0 = mapped to terrain)
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+    private ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
         ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         sul.addPropertyChangeListener(this);
         ApplicationTemplate.insertBeforePlacenames(wwd, sul);
         ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
         return sul;
-    }
-
-    /**
-     *
-     * @param layerInfo
-     * @param elevation
-     * @param opacity
-     */
-    public void addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
-        if (opacity > 1.0 || opacity < 0.0) {
-            log.warn("The content of the \"opacity\" "
-                    + "component must be a double value between."
-                    + "0.0 and 100.0");
-            opacity = 0.0;
-        }
-        addWMSHeightLayer(layerInfo.caps, layerInfo.layerCaps,
-                layerInfo.params, elevation, opacity);
-    }
-
-    /**
-     * Add a {@link List} of {@link String} elements representing WMS layer with
-     * given {@code elevation} and {@code opacity}.
-     *
-     * Note that this method uses {@link String} representation of the WMS layer
-     * in contrast to {@link #addWMSHeightListLayer(java.lang.String, java.util.List, double, double)
-     * }.
-     *
-     * @param requestList the {@link List} of {@link String} objects to add
-     * @param name of the WMS group to be added
-     * @param elevation the elevation for the WMS layers
-     * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
-     * @see #addWMSHeightListLayer(java.lang.String, java.util.List, double,
-     * double)
-     */
-    public void addWMSHeightListLayer(List<String> requestList, String name, double elevation, double opacity) {
-        List<LayerInfo> layerList = new ArrayList<LayerInfo>();
-        for (String request : requestList) {
-            try {
-                layerList.add(WMSUtils.parseWMSRequest(request));
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-        addWMSHeightListLayer(name, layerList, elevation, opacity);
     }
 
     /**
@@ -507,10 +463,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * @param layerList the {@link List} of {@link LayerInfo} objects to add
      * @param elevation the elevation for the WMS layers
      * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
-     * @see #addWMSHeightListLayer(java.util.List, java.lang.String, double,
-     * double)
+     * @param isTimeSeries if enabled a control layer will be added to switch
+     * between the wms layer
      */
-    public void addWMSHeightListLayer(String name, List<LayerInfo> layerList, double elevation, double opacity) {
+    public void addWMSHeightLayers(List<LayerInfo> layerList, String name, double elevation, double opacity, boolean isTimeSeries) {
         if (opacity > 1.0 || opacity < 0.0) {
             log.warn("The value of the 'opacity' argument must be between 0.0 "
                     + "and 1.0. Setting value to 1.0.");
@@ -521,40 +477,46 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         for (LayerInfo layerInfo : layerList) {
             ElevatedRenderableLayer layer = addWMSHeightLayer(layerInfo.caps,
                     layerInfo.layerCaps, layerInfo.params, elevation, opacity);
-            layer.setSlave(true);
-            layer.setOpacity(0.0d);
-            layers.add(layer);
+            if (isTimeSeries) {
+                layer.setSlave(true);
+                layer.setOpacity(0.0d);
+                layers.add(layer);
+            }
         }
-        WMSControlLayer cl = new WMSControlLayer(layers);
-        name = name.split("\\[")[0];
-        cl.setName(name);
-        WMSControlListener clistener = new WMSControlListener(cl, layers);
-        clistener.setName(name + " Control Listener");
-        boolean[] valSelected = new boolean[layers.size()];
-        valSelected[0] = true;
-        wwd.addSelectListener(clistener);
-        clistener.addPropertyChangeListener(this);
-        ApplicationTemplate.insertBeforePlacenames(wwd, cl);
+        if (isTimeSeries) {
+            WMSControlLayer cl = new WMSControlLayer(layers);
+            name = name.split("\\[")[0];
+            cl.setName(name);
+            WMSControlListener clistener = new WMSControlListener(cl, layers);
+            clistener.setName(name + " Control Listener");
+            boolean[] valSelected = new boolean[layers.size()];
+            valSelected[0] = true;
+            wwd.addSelectListener(clistener);
+            clistener.addPropertyChangeListener(this);
+            ApplicationTemplate.insertBeforePlacenames(wwd, cl);
+        }
     }
 
     /**
-     * Adds a WMS Layer from the given url request (
-     * <code>request</code>).
+     * Default method for adding of WMS Height layers. Note that if the {@code layerList}
+     * size is greater 1, the layerList is handled as time series. Thus a {@link WMSControlLayer}
+     * is added.
      *
-     * @param request the request url for the WMS layer
-     * @param elevation the elevation (meters above sea level) for the result
-     * layer (0 = mapped to terrain)
-     * @param opacity the opacity for the result layer (1.0 : full transparent)
+     * @see #addWMSHeightLayers(java.lang.String, java.util.List, double,
+     * double, boolean)
+     *
+     * @param name of the WMS group to be added
+     * @param layerList the {@link List} of {@link LayerInfo} objects to add
+     * @param elevation the elevation for the WMS layers
+     * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
      */
-    public void addWMSHeightLayer(String request, double elevation, double opacity) {
-        LayerInfo li = null;
-        try {
-            li = WMSUtils.parseWMSRequest(request);
-        } catch (Exception ex) {
-            log.warn("" + ex);
-        }
-        if (li != null) {
-            addWMSHeightLayer(li.caps, li.layerCaps, li.params, elevation, opacity);
+    public void addWMSHeightLayers(List<LayerInfo> layerList, String name, double elevation, double opacity) {
+        if (layerList.size() < 1) {
+            log.warn("List<LayerInfo> layerList size < 1 - No layer added");
+        } else if (layerList.size() > 1) {
+            addWMSHeightLayers(layerList, name, elevation, opacity, true);
+        } else {
+            addWMSHeightLayers(layerList, name, elevation, opacity, false);
         }
     }
 

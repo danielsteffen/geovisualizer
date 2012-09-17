@@ -14,10 +14,7 @@ import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
-import com.dfki.av.sudplan.wms.EventHolder;
-import com.dfki.av.sudplan.wms.LayerInfo;
-import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
-import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
+import com.dfki.av.sudplan.wms.*;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
@@ -853,7 +850,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             txtOpacity.setText("0.0");
         }
         if (cLayerList.getSelectedItem() instanceof LayerInfo) {
-            wwPanel.addWMSHeightLayer((LayerInfo) cLayerList.getSelectedItem(), wmsHeight, wmsOpacity);
+            List<LayerInfo> layerList = new ArrayList<LayerInfo>();
+            LayerInfo li = (LayerInfo) cLayerList.getSelectedItem();
+            layerList.add(li);
+            wwPanel.addWMSHeightLayers(layerList, li.getTitle(), wmsHeight, wmsOpacity);
         }
     }//GEN-LAST:event_bAddWMSHeightActionPerformed
 
@@ -954,7 +954,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             } else {
                 return;
             }
-            wwPanel.addWMSHeightListLayer(name, layerList, wmsHeight, wmsOpacity);
+            wwPanel.addWMSHeightLayers(layerList, name, wmsHeight, wmsOpacity);
         }
     }//GEN-LAST:event_bAddWMSHeightListActionPerformed
 
