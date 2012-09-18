@@ -500,8 +500,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * size is greater 1, the layerList is handled as time series. Thus a {@link WMSControlLayer}
      * is added.
      *
-     * @see #addWMSHeightLayers(java.lang.String, java.util.List, double,
-     * double, boolean)
+     * @see #addWMSHeightLayers(java.util.List, java.lang.String, double, double, boolean) 
      *
      * @param name of the WMS group to be added
      * @param layerList the {@link List} of {@link LayerInfo} objects to add

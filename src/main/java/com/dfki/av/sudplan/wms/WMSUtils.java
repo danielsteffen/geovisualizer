@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,10 +122,10 @@ public class WMSUtils {
     }
 
     /**
-     * Calculates the verticies of the {@link Sector}
+     * Calculates the vertices of the {@link Sector}
      *
      * @param s bounding box for which the distance should be calculated
-     * @return verticies as array of {@link Double} (in kilometers)
+     * @return vertices as array of {@link Double} (in kilometers)
      */
     public static Double[] verticies(Sector s) {
         Angle a = s.getMinLatitude();
@@ -152,9 +151,9 @@ public class WMSUtils {
     }
 
     /**
-     * Retreives a {@link List} of {@link LayerInfo} which are represented
-     * with the {@link WMSCapabilities}.
-     * 
+     * Retrieves a {@link List} of {@link LayerInfo} which are represented with
+     * the {@link WMSCapabilities}.
+     *
      * @param namedLayerCaps {@link List} of {@link WMSLayerCapabilities}
      * @param caps {@link WMSCapabilities} which represents the WMS data
      * @return {@link List} of {@link LayerInfo}
@@ -177,14 +176,14 @@ public class WMSUtils {
     }
 
     /**
-     * Retreives a {@link List} of {@link LayerInfo} which are represented
-     * with the {@link URI}.
-     * 
-     * @param uri WMS server {@link URI}
-     * @param lf Top layer of the time series.
-     * @return {@link List} of {@link LayerInfo}
+     * Returns a {@link List} of {@link LayerInfo} elements.
+     *
+     * @param namedLayerCaps the {@link List} of {@link WMSLayerCapabilities}
+     * @param caps the {@link WMSCapabilities}
+     * @param info the {@link LayerInfo}
+     * @return a {@link List} of {@link LayerInfo} elements
      */
-    private static List<LayerInfo> getTimeSeriesLayerInfos(List<WMSLayerCapabilities> namedLayerCaps, WMSCapabilities caps, LayerInfo lf) {
+    private static List<LayerInfo> getTimeSeriesLayerInfos(List<WMSLayerCapabilities> namedLayerCaps, WMSCapabilities caps, LayerInfo info) {
         List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
         String layerName;
         String[] parts;
@@ -215,7 +214,7 @@ public class WMSUtils {
                     }
                 }
             }
-            if (li.getTitle().equals(lf.getTitle())) {
+            if (li.getTitle().equals(info.getTitle())) {
                 isStartPosition = true;
             }
         }
@@ -233,9 +232,9 @@ public class WMSUtils {
     }
 
     /**
-     * Parses the data reveived from the wms server to {@link LayerInfo}
+     * Parses the data retrieved from the WMS server to {@link LayerInfo}
      *
-     * @param request request url
+     * @param request request URL
      * @return parsed data as {@link LayerInfo}
      * @throws Exception
      */
@@ -260,7 +259,7 @@ public class WMSUtils {
 
     /**
      * Retrieve a list with
-     * <code>LayerInfo</code> for each layer from the wms server specified with
+     * <code>LayerInfo</code> for each layer from the WMS server specified with
      * the parameter
      * <code>serverURI</code>.
      *

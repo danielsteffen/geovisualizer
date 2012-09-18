@@ -105,8 +105,13 @@
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-core</artifactId>
-            <version>1.7.1</version>            
+            <version>1.7.2</version>            
         </dependency>
+        <dependency>
+            <groupId>com.dfki.av.sudplan</groupId>
+            <artifactId>sudplan3D-geocpm</artifactId>
+            <version>1.0</version>            
+        </dependency>        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -160,7 +160,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      * @param control the {@link ScreenAnnotation} pressed, throws a
      * {@link NullPointerException} if {@code null}.
      * @param controlType The control type of the screen annotation pressed.
-     * @see {@link WMSControlType}
+     * @see WMSControlType
      * @throws NullPointerException if {@code control == null}
      */
     protected void updateView(ScreenAnnotation control, String controlType) {
