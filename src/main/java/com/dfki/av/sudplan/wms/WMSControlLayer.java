@@ -1,5 +1,5 @@
 /*
- *  ControlLayer.java
+ *  WMSControlLayer.java
  *
  *  Created by DFKI AV on 22.08.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -40,12 +40,12 @@ public class WMSControlLayer extends RenderableLayer {
      * File path of the icon used for switching to the layer above.
      * btn-sqare-top.png 147 x 23
      */
-    private final static String IMAGE_PLUS = "icons/btn-sqare-top.png";
+    private final static String IMAGE_UP = "icons/btn-sqare-top.png";
     /**
      * File path of the icon used for switching to the layer below.
      * btn-sqare-down.png 147 x 23
      */
-    private final static String IMAGE_MINUS = "icons/btn-sqare-down.png";
+    private final static String IMAGE_DOWN = "icons/btn-sqare-down.png";
     /**
      * File path of the icon used for starting the self-played animation.
      * btn-play.png 22 x 22
@@ -55,7 +55,7 @@ public class WMSControlLayer extends RenderableLayer {
      * File path of the icon used for stopping the self-played animation.
      * btn-pause.png 22 x 22
      */
-    private final static String IMAGE_STOP = "icons/btn-pause.png";
+    private final static String IMAGE_PAUSE = "icons/btn-pause.png";
     /**
      * Empty string for screen annotations without text
      */
@@ -94,11 +94,6 @@ public class WMSControlLayer extends RenderableLayer {
      * currently in use.
      */
     private ScreenAnnotation currentControl;
-    /**
-     * Screen annotation {@link gov.nasa.worldwind.render.ScreenAnnotation} of
-     * the title.
-     */
-    private ScreenAnnotation title;
     /**
      * Boolean array indicating which screen annotation
      * {@link gov.nasa.worldwind.render.ScreenAnnotation} of iso-values or time
@@ -176,6 +171,10 @@ public class WMSControlLayer extends RenderableLayer {
      * Control layer title annotation
      */
     private ScreenAnnotation controlTitle;
+    /**
+     * Id to handle multiple instances of {@link WMSControlLayer}
+     */
+    private final String id;
 
     /**
      * Creates an instance of {@link WMSControlLayer} to switch between a list
@@ -185,6 +184,7 @@ public class WMSControlLayer extends RenderableLayer {
      */
     public WMSControlLayer(ArrayList<ElevatedRenderableLayer> layerList) {
         initAttributes();
+        id = String.valueOf(System.currentTimeMillis());
         stepsRange = new ArrayList<String>();
         for (ElevatedRenderableLayer layer : layerList) {
             String suffix = layer.getName().split(" ")[1];
@@ -210,12 +210,21 @@ public class WMSControlLayer extends RenderableLayer {
         for (int i = 0; i < steps.length; i++) {
             steps[i] = new ScreenAnnotation(stepsRange.get(i),
                     ORIGIN, ca);
-            steps[i].setValue("ISO_OPERATION", stepsRange.get(i));
+            steps[i].setValue(id + WMSControlType.CONTROL_ACTION, stepsRange.get(i));
             if (!this.controlsShow) {
                 steps[i].getAttributes().setTextColor(Color.WHITE);
             }
             this.addRenderable(steps[i]);
         }
+    }
+
+    /**
+     * Returns the id of the control layer.
+     * 
+     * @return the id of the control layer
+     */
+    public String getId() {
+        return id;
     }
 
     /**
@@ -255,17 +264,6 @@ public class WMSControlLayer extends RenderableLayer {
      */
     public ScreenAnnotation[] getSteps() {
         return steps;
-    }
-
-    /**
-     * Sets the time steps list of screen annotations
-     * {@link gov.nasa.worldwind.render.ScreenAnnotation} to the input
-     * parameter.
-     *
-     * @param steps List of screen annotations
-     */
-    private void setSteps(ScreenAnnotation[] steps) {
-        this.steps = steps;
     }
 
     /**
@@ -326,12 +324,6 @@ public class WMSControlLayer extends RenderableLayer {
      */
     public Object getHighlightedObject() {
         return this.currentControl;
-    }
-
-    private final void highlight() {
-        if (getSteps() != null && getSteps().length > 0) {
-            highlight(getSteps()[0]);
-        }
     }
 
     /**
@@ -458,70 +450,40 @@ public class WMSControlLayer extends RenderableLayer {
         controlTitle = new ScreenAnnotation(this.getName(), ORIGIN, ca2);
         controlTitle.getAttributes().setTextColor(Color.WHITE);
         controlTitle.getAttributes().setSize(new Dimension(size.width, (int) (FONT_SIZE * 1.7f)));
-        controlTitle.getAttributes().setFont(new Font("Arial", Font.BOLD, (int) (FONT_SIZE * 1.2f)));
+        controlTitle.getAttributes().setFont(FONT);
         this.addRenderable(controlTitle);
 
         if (this.isControlsShow()) {
             controlUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlUp.setValue("ISO_OPERATION", "ISO_PLUS");
-            controlUp.getAttributes().setImageSource(
-                    getImageSource("ISO_PLUS"));
+            controlUp.setValue(id + WMSControlType.CONTROL_ACTION, WMSControlType.CONTROL_UP);
+            controlUp.getAttributes().setImageSource(IMAGE_UP);
 
             this.addRenderable(controlUp);
 
             controlDpwn = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlDpwn.setValue("ISO_OPERATION", "ISO_MINUS");
-            controlDpwn.getAttributes().setImageSource(
-                    getImageSource("ISO_MINUS"));
+            controlDpwn.setValue(id + WMSControlType.CONTROL_ACTION, WMSControlType.CONTROL_DOWN);
+            controlDpwn.getAttributes().setImageSource(IMAGE_DOWN);
 
             this.addRenderable(controlDpwn);
 
 
             animPlay = new ScreenAnnotation(NOTEXT, ORIGIN, ca0);
-            animPlay.setValue("ISO_OPERATION", "ANIM_PLAY");
+            animPlay.setValue(id + WMSControlType.CONTROL_ACTION, WMSControlType.CONTROL_PLAY);
             animPlay.getAttributes().setImageSource(IMAGE_PLAY);
 
             this.addRenderable(animPlay);
 
 
             animStop = new ScreenAnnotation(NOTEXT, ORIGIN, ca0);
-            animStop.setValue("ISO_OPERATION", "ANIM_STOP");
-            animStop.getAttributes().setImageSource(IMAGE_STOP);
+            animStop.setValue(id + WMSControlType.CONTROL_ACTION, WMSControlType.CONTROL_PAUSE);
+            animStop.getAttributes().setImageSource(IMAGE_PAUSE);
 
             this.addRenderable(animStop);
-        }
-
-
-
-        if (!this.isControlsShow()) {
-            title = new ScreenAnnotation("IsoValue ", ORIGIN, ca2);
-            title.getAttributes().setTextColor(Color.WHITE);
-            title.getAttributes().setFont(new Font(
-                    "Book Antiqua", Font.BOLD, 4));
-            this.addRenderable(title);
         }
         // Place controls according to layout and viewport dimension
         updatePositions(dc);
 
         this.initialized = true;
-    }
-
-    /**
-     * Get a control image source and returns null if the parameter is not
-     * recognized.
-     *
-     * @param control the control type. Can be one of {"ISO_PLUS"} or
-     * {"ISO_MINUS"}.
-     *
-     * @return the image source associated with the given control type.
-     */
-    protected Object getImageSource(String control) {
-        if (control.equals("ISO_PLUS")) {
-            return IMAGE_PLUS;
-        } else if (control.equals("ISO_MINUS")) {
-            return IMAGE_MINUS;
-        }
-        return null;
     }
 
     /**
@@ -573,9 +535,6 @@ public class WMSControlLayer extends RenderableLayer {
             if (horizontalLayout) {
                 xOrigin += (int) (buttonSize * scale);
             }
-        } else {
-            title.setScreenPoint(new Point(xOrigin + halfButtonSize
-                    + xOffset + 110, yOrigin + yOffset));
         }
 
         y = y - (int) (buttonSize * scale);

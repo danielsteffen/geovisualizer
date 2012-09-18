@@ -47,7 +47,6 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import org.openide.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -488,7 +487,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             name = name.split("\\[")[0];
             cl.setName(name);
             WMSControlListener clistener = new WMSControlListener(cl, layers);
-            clistener.setName(name + " Control Listener");
             boolean[] valSelected = new boolean[layers.size()];
             valSelected[0] = true;
             wwd.addSelectListener(clistener);

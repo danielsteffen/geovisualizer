@@ -184,21 +184,22 @@ public class WMSUtils {
      * @param lf Top layer of the time series.
      * @return {@link List} of {@link LayerInfo}
      */
-    private static List<LayerInfo> getTimeSeriesLayerInfos(URI uri, LayerInfo lf) {
+    private static List<LayerInfo> getTimeSeriesLayerInfos(List<WMSLayerCapabilities> namedLayerCaps, WMSCapabilities caps, LayerInfo lf) {
         List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
         String layerName;
         String[] parts;
         boolean isStartPosition = false;
-        for (int i = 0; i < getLayerInfos(uri).size(); i++) {
-            LayerInfo li = getLayerInfos(uri).get(i);
+        List<LayerInfo> layers = getLayerInfos(namedLayerCaps, caps);
+        for (int i = 0; i < layers.size(); i++) {
+            LayerInfo li = layers.get(i);
             if (isStartPosition) {
                 layerInfos.add(li);
                 layerName = li.getTitle();
                 parts = layerName.split(" ");
                 if (parts.length > 1) {
                     String identifier = parts[0];
-                    for (int j = (i + 1); j < getLayerInfos(uri).size(); j++) {
-                        li = getLayerInfos(uri).get(j);
+                    for (int j = (i + 1); j < layers.size(); j++) {
+                        li = layers.get(j);
                         layerName = li.getTitle();
                         parts = layerName.split(" ");
                         if (parts.length > 1) {
@@ -301,7 +302,7 @@ public class WMSUtils {
         }
         try {
             if (isTimeSeries) {
-                return getTimeSeriesLayerInfos(uri, lf);
+                return getTimeSeriesLayerInfos(namedLayerCaps, caps, lf);
             } else {
                 return getLayerInfos(namedLayerCaps, caps);
             }

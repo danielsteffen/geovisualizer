@@ -7,12 +7,11 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
-import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.ScreenAnnotation;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Color;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class WMSControlListener extends AbstractLayer implements SelectListener {
+public class WMSControlListener extends WWObjectImpl implements SelectListener {
 
     /*
      * Logger.
@@ -51,7 +50,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * ControlLayer {@link WMSControlLayer} instance which this listener listens
      * to.
      */
-    private WMSControlLayer viewControlsLayer;
+    private WMSControlLayer wmsControlLayer;
     /**
      * List of {@link ElevatedRenderableLayer}
      */
@@ -108,9 +107,32 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.viewControlsLayer = layer;
+        this.wmsControlLayer = layer;
         this.layers = layers;
         initialize();
+    }
+    
+    /**
+     * Creates an instance of {@link WMSControlListener} which handles the input
+     * from the {@link WMSControlLayer}.
+     *
+     * @param layer the corresponding {@link WMSControlLayer}
+     * @param layers the list of {@link ElevatedRenderableLayer} which are
+     * controlled by the {@link WMSControlLayer}
+     * @param duration Duration of the fade animation in ms.
+     */
+    public WMSControlListener(WMSControlLayer layer, ArrayList<ElevatedRenderableLayer> layers, int duration) {
+        this(layer, layers);
+        this.animationDuration = duration;
+    }
+    
+    /**
+     * Sets the aniamtion duration for the time series animation.
+     * 
+     * @param duration animation duration in ms
+     */
+    public void setAnimationDuration(int duration){
+        this.animationDuration = duration;
     }
 
     /**
@@ -127,30 +149,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
             }
         });
         this.repeatTimer.start();
-        updateView(viewControlsLayer.getSteps()[0], "");
-    }
-
-    /**
-     * Creates an instance of {@link WMSControlListener} which handles the input
-     * from the {@link WMSControlLayer}.
-     *
-     * @param layer the corresponding {@link WMSControlLayer}
-     * @param layers the list of {@link ElevatedRenderableLayer} which are
-     * controlled by the {@link WMSControlLayer}
-     * @param duration Duration of the fade animation in ms.
-     */
-    public WMSControlListener(WMSControlLayer layer, ArrayList<ElevatedRenderableLayer> layers, int duration) {
-        this(layer, layers);
-        this.animationDuration = duration;
-    }
-
-    /**
-     * Sets the animation durion.
-     *
-     * @param duration Duration of the fade animation in ms.
-     */
-    public void setAnimationDuration(int duration) {
-        this.animationDuration = duration;
+        updateView(wmsControlLayer.getSteps()[0], "");
     }
 
     /**
@@ -161,17 +160,18 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * @param control the {@link ScreenAnnotation} pressed, throws a
      * {@link NullPointerException} if {@code null}.
      * @param controlType The control type of the screen annotation pressed.
+     * @see {@link WMSControlType}
      * @throws NullPointerException if {@code control == null}
      */
     protected void updateView(ScreenAnnotation control, String controlType) {
-        if (getViewControlsLayer().getSteps() != null) {
-            for (ScreenAnnotation pressed : getViewControlsLayer().getSteps()) {
+        if (getWMSControlLayer().getSteps() != null) {
+            for (ScreenAnnotation pressed : getWMSControlLayer().getSteps()) {
                 if (control.equals(pressed)) {
                     String x = pressed.getText();
                     for (int i = 0;
-                            i < this.getViewControlsLayer().getStepsRange().size();
+                            i < this.getWMSControlLayer().getStepsRange().size();
                             i++) {
-                        if (x.equals(this.getViewControlsLayer().getStepsRange().get(i))) {
+                        if (x.equals(this.getWMSControlLayer().getStepsRange().get(i))) {
                             checkAnimationTimer();
                             animFlag = false;
                             id = i;
@@ -182,19 +182,19 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                 }
             }
         }
-        if (controlType.equals("ISO_PLUS")) {
+        if (controlType.equals(WMSControlType.CONTROL_UP)) {
             checkAnimationTimer();
             animFlag = false;
-            if (getViewControlsLayer().getSteps() != null) {
+            if (getWMSControlLayer().getSteps() != null) {
                 if (id != 0) {
                     id--;
                 }
             }
-        } else if (controlType.equals("ISO_MINUS")) {
+        } else if (controlType.equals(WMSControlType.CONTROL_DOWN)) {
             checkAnimationTimer();
             animFlag = false;
-            if (getViewControlsLayer().getSteps() != null) {
-                if (id != this.getViewControlsLayer().getStepsRange().size() - 1) {
+            if (getWMSControlLayer().getSteps() != null) {
+                if (id != this.getWMSControlLayer().getStepsRange().size() - 1) {
                     id++;
                 }
             } else {
@@ -202,12 +202,12 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
                     id--;
                 }
             }
-        } else if (controlType.equals("ANIM_PLAY")) {
+        } else if (controlType.equals(WMSControlType.CONTROL_PLAY)) {
             if (!animFlag) {
                 animFlag = true;
                 animate(getLayers());
             }
-        } else if (controlType.equals("ANIM_STOP")) {
+        } else if (controlType.equals(WMSControlType.CONTROL_PAUSE)) {
             checkAnimationTimer();
             if (animFlag) {
                 animFlag = false;
@@ -240,20 +240,20 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      * Highlights the currently selected annotation when pressed and retains it.
      */
     public void mark() {
-        if (getViewControlsLayer().getSteps() != null) {
-            for (ScreenAnnotation pressed : getViewControlsLayer().getSteps()) {
-                if (this.getViewControlsLayer().getStepsRange().get(
+        if (getWMSControlLayer().getSteps() != null) {
+            for (ScreenAnnotation pressed : getWMSControlLayer().getSteps()) {
+                if (this.getWMSControlLayer().getStepsRange().get(
                         id).equals(pressed.getText())) {
-                    viewControlsLayer.getValSelected()[
-                            getViewControlsLayer().getStepsRange().indexOf(
+                    wmsControlLayer.getValSelected()[
+                            getWMSControlLayer().getStepsRange().indexOf(
                             pressed.getText())] = true;
                     Font font = pressed.getAttributes().getFont();
                     font = font.deriveFont(WMSControlLayer.FONT_SIZE);
                     pressed.getAttributes().setFont(font);
                     pressed.getAttributes().setTextColor(Color.WHITE);
                 } else {
-                    viewControlsLayer.getValSelected()[
-                            getViewControlsLayer().getStepsRange().indexOf(
+                    wmsControlLayer.getValSelected()[
+                            getWMSControlLayer().getStepsRange().indexOf(
                             pressed.getText())] = false;
                     Font font = pressed.getAttributes().getFont();
                     font = font.deriveFont(WMSControlLayer.FONT_SIZE);
@@ -288,8 +288,8 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
 
     @Override
     public void selected(SelectEvent event) {
-        if (this.getViewControlsLayer().getHighlightedObject() != null) {
-            this.getViewControlsLayer().highlight(null);
+        if (this.getWMSControlLayer().getHighlightedObject() != null) {
+            this.getWMSControlLayer().highlight(null);
         }
 
         if (event.getMouseEvent() != null && event.getMouseEvent().isConsumed()) {
@@ -299,7 +299,8 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
             return;
         }
         AVList av = ((AVList) event.getTopObject());
-        String controlType = av.getStringValue("ISO_OPERATION");
+        String controlType = av.getStringValue(getWMSControlLayer().getId() 
+                + WMSControlType.CONTROL_ACTION);
         if (controlType == null) {
             return;
         }
@@ -308,10 +309,10 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
 
         if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
             // Highlight on rollover
-            this.getViewControlsLayer().highlight(selectedObject);
+            this.getWMSControlLayer().highlight(selectedObject);
         } else if (event.getEventAction().equals(SelectEvent.HOVER)) {
             // Highlight on hover
-            this.getViewControlsLayer().highlight(selectedObject);
+            this.getWMSControlLayer().highlight(selectedObject);
         } else if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)
                 || event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
             // Release pressed control
@@ -329,7 +330,7 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
         // Keep pressed control highlighted - overrides rollover non 
         //currently pressed controls
         if (this.pressedControl != null) {
-            this.getViewControlsLayer().highlight(this.pressedControl);
+            this.getWMSControlLayer().highlight(this.pressedControl);
         }
     }
 
@@ -416,8 +417,8 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      *
      * @return the {@link WMSControlLayer} this listener is assigned to.
      */
-    public WMSControlLayer getViewControlsLayer() {
-        return viewControlsLayer;
+    public WMSControlLayer getWMSControlLayer() {
+        return wmsControlLayer;
     }
 
     /**
@@ -427,29 +428,5 @@ public class WMSControlListener extends AbstractLayer implements SelectListener 
      */
     public ArrayList<ElevatedRenderableLayer> getLayers() {
         return layers;
-    }
-
-    /**
-     * Accesses the repeat timer responsible for fetching events and selected
-     * annotations.
-     *
-     * @return {@link Timer} object associated with this listener.
-     */
-    public Timer getRepeatTimer() {
-        return repeatTimer;
-    }
-
-    /**
-     * Sets the repeat timer responsible for fetching events and selected
-     * annotations.
-     *
-     * @param repeatTimer Timer object to be set as the repeat timer.
-     */
-    public void setRepeatTimer(Timer repeatTimer) {
-        this.repeatTimer = repeatTimer;
-    }
-
-    @Override
-    protected void doRender(DrawContext dc) {
     }
 }
