@@ -151,14 +151,29 @@ public class WMSUtils {
     }
 
     /**
-     * Retrieves a {@link List} of {@link LayerInfo} which are represented with
-     * the {@link WMSCapabilities}.
-     *
-     * @param namedLayerCaps {@link List} of {@link WMSLayerCapabilities}
-     * @param caps {@link WMSCapabilities} which represents the WMS data
+     * Retreives a {@link List} of {@link LayerInfo} which are represented
+     * with the {@link WMSCapabilities}.
+     * 
+     * @param uri wms server {@link URI}
      * @return {@link List} of {@link LayerInfo}
+     * @return {@code null} if the request failed or had no result.
      */
-    private static List<LayerInfo> getLayerInfos(final List<WMSLayerCapabilities> namedLayerCaps, WMSCapabilities caps) {
+    public static List<LayerInfo> getLayerInfos(URI uri) {
+        WMSCapabilities caps;
+        try {
+            caps = WMSCapabilities.retrieve(uri);
+            caps.parse();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        // Gather up all the named layers and make a world wind layer for each.
+        final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
+        if (namedLayerCaps == null) {
+            log.debug("No named layers available for server: {}.", uri);
+            return null;
+        }
         List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
         for (WMSLayerCapabilities lc : namedLayerCaps) {
             Set<WMSLayerStyle> styles = lc.getStyles();
@@ -170,52 +185,6 @@ public class WMSUtils {
                     LayerInfo layerInfo = new LayerInfo(caps, lc, style);
                     layerInfos.add(layerInfo);
                 }
-            }
-        }
-        return layerInfos;
-    }
-
-    /**
-     * Returns a {@link List} of {@link LayerInfo} elements.
-     *
-     * @param namedLayerCaps the {@link List} of {@link WMSLayerCapabilities}
-     * @param caps the {@link WMSCapabilities}
-     * @param info the {@link LayerInfo}
-     * @return a {@link List} of {@link LayerInfo} elements
-     */
-    private static List<LayerInfo> getTimeSeriesLayerInfos(List<WMSLayerCapabilities> namedLayerCaps, WMSCapabilities caps, LayerInfo info) {
-        List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
-        String layerName;
-        String[] parts;
-        boolean isStartPosition = false;
-        List<LayerInfo> layers = getLayerInfos(namedLayerCaps, caps);
-        for (int i = 0; i < layers.size(); i++) {
-            LayerInfo li = layers.get(i);
-            if (isStartPosition) {
-                layerInfos.add(li);
-                layerName = li.getTitle();
-                parts = layerName.split(" ");
-                if (parts.length > 1) {
-                    String identifier = parts[0];
-                    for (int j = (i + 1); j < layers.size(); j++) {
-                        li = layers.get(j);
-                        layerName = li.getTitle();
-                        parts = layerName.split(" ");
-                        if (parts.length > 1) {
-                            String prefix = parts[0];
-                            if (prefix.equals(identifier)) {
-                                layerInfos.add(li);
-                            } else {
-                                return layerInfos;
-                            }
-                        } else {
-                            return layerInfos;
-                        }
-                    }
-                }
-            }
-            if (li.getTitle().equals(info.getTitle())) {
-                isStartPosition = true;
             }
         }
         return layerInfos;
@@ -234,12 +203,16 @@ public class WMSUtils {
     /**
      * Parses the data retrieved from the WMS server to {@link LayerInfo}
      *
-     * @param request request URL
+     * @param request request url as {@link String}
      * @return parsed data as {@link LayerInfo}
+     * @return {@code null} if no {@link LayerInfo} for the request could be retreived
+     * 
+     * Note that the request url must contain 'layer='
+     * 
      * @throws Exception
      */
     public static LayerInfo parseWMSRequest(String request) throws Exception {
-        URI url = new URI(request.trim());
+        URI uri = new URI(request.trim());
         String[] parts = request.split("&");
         String layerName = "";
         for (String part : parts) {
@@ -249,29 +222,23 @@ public class WMSUtils {
                 return null;
             }
         }
-        for (LayerInfo li : getLayerInfos(url)) {
-            if (li.getTitle().equals(layerName)) {
-                return li;
-            }
-        }
-        return null;
+        return getLayerInfo(uri, layerName);
     }
-
+    
     /**
-     * Retrieve a list with
-     * <code>LayerInfo</code> for each layer from the WMS server specified with
-     * the parameter
+     * Retrieve the <code>LayerInfo</code> for the layer with layer name
+     * <code>layerName</code> from the wms server specified with the parameter
      * <code>serverURI</code>.
      *
-     * Note that the method will return all elements of a time series if a
-     * request {@link URI} is given which contains a layer which ends with '[]'
-     *
-     *
-     * @param uri
-     * @return parsed data as list of {@link LayerInfo}
+     * @param uri {@link URI} from the wms server
+     * @param layerName Name of the layer for which the {@link LayerInfo} should
+     * be retreived.
+     * @return parsed data as {@link LayerInfo}
+     * @return null if no layer could be reteived with the layer name 
+     * <code>layerName<code>
      *
      */
-    public static List<LayerInfo> getLayerInfos(URI uri) {
+    public static LayerInfo getLayerInfo(URI uri, String layerName) {
         WMSCapabilities caps;
         try {
             caps = WMSCapabilities.retrieve(uri);
@@ -287,27 +254,14 @@ public class WMSUtils {
             log.debug("No named layers available for server: {}.", uri);
             return null;
         }
-        LayerInfo lf = null;
-        boolean isTimeSeries = false;
-        try {
-            lf = parseWMSRequest(uri.toString());
-            if (lf != null && lf.getTitle().contains("[]")) {
-                isTimeSeries = true;
-            } else {
-                isTimeSeries = false;
+        List<LayerInfo> layerInfos = getLayerInfos(uri);
+        for (LayerInfo layerInfo : layerInfos){
+            if(layerInfo.getTitle().equals(layerName)){
+                return layerInfo;
             }
-        } catch (Exception ex) {
-            log.error(ex.toString());
         }
-        try {
-            if (isTimeSeries) {
-                return getTimeSeriesLayerInfos(namedLayerCaps, caps, lf);
-            } else {
-                return getLayerInfos(namedLayerCaps, caps);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
+        log.debug("No layers with layer name '{}' available for server: {}."
+                , layerName, uri);
+        return null;
     }
 }

@@ -17,6 +17,7 @@ import gov.nasa.worldwind.render.ScreenAnnotation;
 import gov.nasa.worldwind.util.OGLStackHandler;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import javax.media.opengl.GL;
 
 /**
@@ -111,7 +112,7 @@ public class WMSControlLayer extends RenderableLayer {
     /**
      * List time steps names.
      */
-    private ArrayList<String> stepsRange;
+    private List<String> stepsRange;
     /**
      * North AVKey value.
      */
@@ -166,7 +167,7 @@ public class WMSControlLayer extends RenderableLayer {
      * List of {@link ElevatedRenderableLayer} which the {@link WMSControlLayer}
      * can control.
      */
-    private final ArrayList<ElevatedRenderableLayer> layers;
+    private final List<ElevatedRenderableLayer> layers;
     /**
      * Control layer title annotation
      */
@@ -182,13 +183,21 @@ public class WMSControlLayer extends RenderableLayer {
      *
      * @param layerList
      */
-    public WMSControlLayer(ArrayList<ElevatedRenderableLayer> layerList) {
+    public WMSControlLayer(List<ElevatedRenderableLayer> layerList) {
         initAttributes();
         id = String.valueOf(System.currentTimeMillis());
         stepsRange = new ArrayList<String>();
         for (ElevatedRenderableLayer layer : layerList) {
-            String suffix = layer.getName().split(" ")[1];
-            stepsRange.add(suffix.split("_")[0]);
+            String[] parts = layer.getName().split(" ");
+            if (parts.length > 1) {
+                String suffix = parts[1];
+                String[] suffixParts = suffix.split("_");
+                if (suffixParts.length > 0) {
+                    stepsRange.add(suffix.split("_")[0]);
+                }
+            }else{
+                stepsRange.add("");
+            }
         }
         this.layers = layerList;
         this.steps = new ScreenAnnotation[stepsRange.size()];
@@ -220,7 +229,7 @@ public class WMSControlLayer extends RenderableLayer {
 
     /**
      * Returns the id of the control layer.
-     * 
+     *
      * @return the id of the control layer
      */
     public String getId() {
@@ -252,7 +261,7 @@ public class WMSControlLayer extends RenderableLayer {
      *
      * @return list of {@link ElevatedRenderableLayer}s
      */
-    public ArrayList<ElevatedRenderableLayer> getLayers() {
+    public List<ElevatedRenderableLayer> getLayers() {
         return layers;
     }
 
@@ -271,7 +280,7 @@ public class WMSControlLayer extends RenderableLayer {
      *
      * @return ArrayList of Strings of the time steps names.
      */
-    public ArrayList<String> getStepsRange() {
+    public List<String> getStepsRange() {
         return stepsRange;
     }
 

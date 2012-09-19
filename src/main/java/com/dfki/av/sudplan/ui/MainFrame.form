@@ -190,8 +190,6 @@
                                       <Component id="bCancelWMSHeight" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
                                       <Component id="lMaxEle" min="-2" pref="287" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="bAddWMSHeightList" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
                                       <Component id="bAddWMSHeight" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -224,7 +222,6 @@
                       <Component id="bCancelWMSHeight" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lMaxEle" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                       <Component id="bAddWMSHeight" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                      <Component id="bAddWMSHeightList" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="72" max="32767" attributes="0"/>
               </Group>
@@ -545,17 +542,6 @@
               <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.lMaxEle.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="bAddWMSHeightList">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/dfki/av/sudplan/ui/Bundle.properties" key="MainFrame.bAddWMSHeightList.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-            </Property>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bAddWMSHeightListActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

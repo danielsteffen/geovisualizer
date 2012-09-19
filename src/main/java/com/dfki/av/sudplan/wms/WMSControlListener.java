@@ -54,7 +54,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
     /**
      * List of {@link ElevatedRenderableLayer}
      */
-    private ArrayList<ElevatedRenderableLayer> layers;
+    private List<ElevatedRenderableLayer> layers;
     /**
      * Screen annotation {@link gov.nasa.worldwind.render.ScreenAnnotation}
      * currently pressed.
@@ -101,7 +101,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      * @param layers the list of {@link ElevatedRenderableLayer} which are
      * controlled by the {@link WMSControlLayer}
      */
-    public WMSControlListener(WMSControlLayer layer, ArrayList<ElevatedRenderableLayer> layers) {
+    public WMSControlListener(WMSControlLayer layer, List<ElevatedRenderableLayer> layers) {
         if (layer == null) {
             String msg = Logging.getMessage("nullValue.LayerIsNull");
             Logging.logger().severe(msg);
@@ -341,7 +341,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      *
      * @param layers the {@link ElevatedRenderableLayer} to animate
      */
-    private void animate(final ArrayList<ElevatedRenderableLayer> layers) {
+    private void animate(final List<ElevatedRenderableLayer> layers) {
         checkAnimationTimer();
         animTimer = new Timer(INTERVALL, new ActionListener() {
 
@@ -426,7 +426,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      *
      * @return {@link ArrayList} of {@link ElevatedRenderableLayer}.
      */
-    public ArrayList<ElevatedRenderableLayer> getLayers() {
+    public List<ElevatedRenderableLayer> getLayers() {
         return layers;
     }
 }

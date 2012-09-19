@@ -442,10 +442,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * @param lcaps the WMS layer capabilities
      * @param params the WMS parameters
      * @param elevation the elevation (meters above sea level) for the result
-     * layer (0 = mapped to terrain)
+     * layer
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    private ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+    public ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
         ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         sul.addPropertyChangeListener(this);
@@ -455,65 +455,63 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Add a {@link List} of {@link LayerInfo} WMS elements to be added at the
-     * given {@code elevation} and the given {@code opacity}.
+     * Adds a WMS Layer from the given parameters.
      *
-     * @param name of the WMS group to be added
-     * @param layerList the {@link List} of {@link LayerInfo} objects to add
-     * @param elevation the elevation for the WMS layers
-     * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
-     * @param isTimeSeries if enabled a control layer will be added to switch
-     * between the wms layer
+     * Note that if the layerName contains '[]' a time series of wms layer will
+     * be added, including a {@link WMSControlLayer}.
+     *
+     * @param uri {@link URI} from the wms server
+     * @param layerName name of the requested layer or name of the top layer of
+     * a time series which must contain a '[]' in the layer name
+     * @param elevation the elevation (meters above sea level) for the result
+     * layer
+     * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    public void addWMSHeightLayers(List<LayerInfo> layerList, String name, double elevation, double opacity, boolean isTimeSeries) {
-        if (opacity > 1.0 || opacity < 0.0) {
-            log.warn("The value of the 'opacity' argument must be between 0.0 "
-                    + "and 1.0. Setting value to 1.0.");
-            opacity = 1.0;
-        }
-
-        ArrayList<ElevatedRenderableLayer> layers = new ArrayList<ElevatedRenderableLayer>();
-        for (LayerInfo layerInfo : layerList) {
-            ElevatedRenderableLayer layer = addWMSHeightLayer(layerInfo.caps,
-                    layerInfo.layerCaps, layerInfo.params, elevation, opacity);
-            if (isTimeSeries) {
-                layer.setSlave(true);
-                layer.setOpacity(0.0d);
-                layers.add(layer);
+    public void addWMSHeightLayer(URI uri, String layerName, double elevation, double opacity) {
+        if (layerName.contains("[]")) {
+            List<LayerInfo> layerInfos = WMSUtils.getLayerInfos(uri);
+            List<ElevatedRenderableLayer> layers = new ArrayList<ElevatedRenderableLayer>();
+            boolean start = false;
+            String prefix = null;
+            for (LayerInfo layerInfo : layerInfos) {
+                if (start) {
+                    String[] parts = layerInfo.getTitle().split(" ");
+                    if (prefix == null) {
+                        prefix = parts[0];
+                    }
+                    if (parts.length > 1) {
+                        if (parts[0].equals(prefix)) {
+                            ElevatedRenderableLayer layer = addWMSHeightLayer(layerInfo.caps,
+                                    layerInfo.layerCaps, layerInfo.params, elevation, opacity);
+                            layer.setSlave(true);
+                            layer.setOpacity(0.0d);
+                            layers.add(layer);
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (layerInfo.getTitle().equals(layerName)) {
+                    start = true;
+                }
             }
-        }
-        if (isTimeSeries) {
-            WMSControlLayer cl = new WMSControlLayer(layers);
-            name = name.split("\\[")[0];
-            cl.setName(name);
-            WMSControlListener clistener = new WMSControlListener(cl, layers);
-            boolean[] valSelected = new boolean[layers.size()];
-            valSelected[0] = true;
-            wwd.addSelectListener(clistener);
-            clistener.addPropertyChangeListener(this);
-            ApplicationTemplate.insertBeforePlacenames(wwd, cl);
-        }
-    }
-
-    /**
-     * Default method for adding of WMS Height layers. Note that if the {@code layerList}
-     * size is greater 1, the layerList is handled as time series. Thus a {@link WMSControlLayer}
-     * is added.
-     *
-     * @see #addWMSHeightLayers(java.util.List, java.lang.String, double, double, boolean) 
-     *
-     * @param name of the WMS group to be added
-     * @param layerList the {@link List} of {@link LayerInfo} objects to add
-     * @param elevation the elevation for the WMS layers
-     * @param opacity the opacity to set. Value has to be between 0.0 and 1.0
-     */
-    public void addWMSHeightLayers(List<LayerInfo> layerList, String name, double elevation, double opacity) {
-        if (layerList.size() < 1) {
-            log.warn("List<LayerInfo> layerList size < 1 - No layer added");
-        } else if (layerList.size() > 1) {
-            addWMSHeightLayers(layerList, name, elevation, opacity, true);
+            if (!layers.isEmpty()) {
+                WMSControlLayer cl = new WMSControlLayer(layers);
+                cl.setName(layerName);
+                WMSControlListener clistener = new WMSControlListener(cl, layers);
+                boolean[] valSelected = new boolean[layers.size()];
+                valSelected[0] = true;
+                wwd.addSelectListener(clistener);
+                clistener.addPropertyChangeListener(this);
+                ApplicationTemplate.insertBeforePlacenames(wwd, cl);
+            }
+            log.debug("No layer found for the time series");
         } else {
-            addWMSHeightLayers(layerList, name, elevation, opacity, false);
+            LayerInfo layerInfo = WMSUtils.getLayerInfo(uri, layerName);
+            addWMSHeightLayer(layerInfo.caps,
+                    layerInfo.layerCaps, layerInfo.params, elevation, opacity);
         }
     }
 
