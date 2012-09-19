@@ -11,7 +11,7 @@ import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
-import com.dfki.av.sudplan.vis.basic.VisPointCloud;
+import com.dfki.av.sudplan.vis.basic.VisPointCloudNew;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
@@ -25,7 +25,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -756,11 +755,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             return;
         }
 
-        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloudNew.class.getName());
         if (algo != null) {
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
-            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+            log.error("VisAlgorithm {} not supported.", VisPointCloudNew.class.getName());
         }
     }//GEN-LAST:event_miAddShapeActionPerformed
 
@@ -801,11 +800,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             return;
         }
 
-        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloudNew.class.getName());
         if (algo != null) {
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
-            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+            log.error("VisAlgorithm {} not supported.", VisPointCloudNew.class.getName());
         }
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
