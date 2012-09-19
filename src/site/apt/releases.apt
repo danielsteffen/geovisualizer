@@ -10,6 +10,12 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
   
+* 2012-09-18, sudplan3D 1.5.7
+
+  * Fix for old VisPointCloud.
+  
+  * Enhanced method to add WMS layers at height above msl into 3-D canvas.
+  
 * 2012-09-18, sudplan3D 1.5.6
 
   * Added new interface method to add WMS timeseries layers.
@@ -111,6 +117,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.7          |  1.7.2              |  sudplan3D-geocpm 1.0 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.6          |  1.7.2              |  sudplan3D-geocpm 1.0 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.5          |  1.7.1              |      -       |  1.4.0-without-jackson        | 
