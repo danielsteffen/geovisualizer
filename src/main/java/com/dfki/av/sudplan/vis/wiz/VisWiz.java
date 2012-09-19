@@ -7,20 +7,18 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
+import com.dfki.av.sudplan.ui.MainFrame;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.io.IOUtils;
 import gov.nasa.worldwind.WorldWindow;
 import java.awt.Dialog;
-import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.MessageFormat;
-import javax.imageio.ImageIO;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.slf4j.Logger;
@@ -141,15 +139,7 @@ public final class VisWiz {
         }
 
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
-        ClassLoader loader = VisWiz.class.getClassLoader();
-        URL iconURL = loader.getResource("icons/sudplan3D.png");
-        Image icon;
-        try {
-            icon = ImageIO.read(iconURL);
-            dialog.setIconImage(icon);
-        } catch (IOException ex) {
-            log.warn(ex.getMessage());
-        }
+        dialog.setIconImage(MainFrame.SUDPLAN_3D_IMAGE);
         dialog.setVisible(true);
         dialog.toFront();
 
