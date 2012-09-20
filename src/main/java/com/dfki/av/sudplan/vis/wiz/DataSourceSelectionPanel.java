@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.core.VisSettings;
+import com.dfki.av.sudplan.Configuration;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author steffen
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class DataSourceSelectionPanel extends JPanel {
 
@@ -27,10 +27,6 @@ public final class DataSourceSelectionPanel extends JPanel {
      *
      */
     private final static Logger log = LoggerFactory.getLogger(DataSourceSelectionController.class);
-    /**
-     *
-     */
-    private static File WORKING_DIRECTORY = new File(VisSettings.USER_HOME_DIR);
     /**
      *
      */
@@ -144,8 +140,14 @@ public final class DataSourceSelectionPanel extends JPanel {
         JFileChooser jfc = new JFileChooser();
         jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (*.shp)", "shp", "Shp", "SHP"));
         jfc.addChoosableFileFilter(new FileNameExtensionFilter("Zip file (*.zip)", "zip", "ZIP", "Zip"));
-        jfc.setCurrentDirectory(WORKING_DIRECTORY);
-
+        String path = Configuration.getString("sudplan3D.working.dir");
+        File dir;
+        if (path != null) {
+            dir = new File(path);
+            if (dir.exists()) {
+                jfc.setCurrentDirectory(dir);
+            }
+        }
         int retValue = jfc.showOpenDialog(this);
 
         if (retValue == JFileChooser.APPROVE_OPTION) {
@@ -159,7 +161,9 @@ public final class DataSourceSelectionPanel extends JPanel {
                 log.debug("No shp file selected.");
             }
         }
-        DataSourceSelectionPanel.WORKING_DIRECTORY = jfc.getCurrentDirectory();
+        dir = jfc.getCurrentDirectory();
+        path = dir.getAbsolutePath();
+        Configuration.setProperty("sudplan3D.working.dir", path);
     }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

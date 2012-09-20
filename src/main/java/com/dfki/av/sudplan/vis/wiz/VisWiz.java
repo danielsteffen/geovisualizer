@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.ui.MainFrame;
+import com.dfki.av.sudplan.Configuration;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.io.IOUtils;
@@ -52,7 +52,7 @@ public final class VisWiz {
     /**
      * Starts the visualization wizard VisWiz. After finishing the visualization
      * will be added automatically to the {@link WorldWindow} instance. The
-     * {@link PropertyChangeListener} can be used to montior the progress of the
+     * {@link PropertyChangeListener} can be used to monitor the progress of the
      * visualization creation process. The name of the {@link PropertyChangeEvent}
      * event is {@link IVisAlgorithm#PROGRESS_PROPERTY}.
      *
@@ -139,7 +139,7 @@ public final class VisWiz {
         }
 
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
-        dialog.setIconImage(MainFrame.SUDPLAN_3D_IMAGE);
+        dialog.setIconImage(Configuration.SUDPLAN_3D_IMAGE);
         dialog.setVisible(true);
         dialog.toFront();
 

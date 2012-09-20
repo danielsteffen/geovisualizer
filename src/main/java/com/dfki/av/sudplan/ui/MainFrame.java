@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.ui;
 
+import com.dfki.av.sudplan.Configuration;
 import com.dfki.av.sudplan.camera.AnimatedCamera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
@@ -19,14 +20,10 @@ import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
@@ -48,20 +45,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private static final String[] servers = new String[]{
         "http://serv-2118.kl.dfki.de:8888/geoserver/wms"
     };
-    /**
-     *
-     */
-    public static Image SUDPLAN_3D_IMAGE = null;
-
-    static {
-        try {
-            ClassLoader loader = MainFrame.class.getClassLoader();
-            URL iconURL = loader.getResource("icons/sudplan3D.png");
-            SUDPLAN_3D_IMAGE = ImageIO.read(iconURL);
-        } catch (IOException ex) {
-            log.error(ex.toString());
-        }
-    }
     /**
      * The size of the {@link #wwPanel}.
      */
@@ -258,7 +241,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         );
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
-        dWMSHeight.setIconImage(MainFrame.SUDPLAN_3D_IMAGE);
+        dWMSHeight.setIconImage(Configuration.SUDPLAN_3D_IMAGE);
         dWMSHeight.setLocationByPlatform(true);
         dWMSHeight.setMinimumSize(new java.awt.Dimension(760, 380));
         dWMSHeight.setResizable(false);
@@ -727,7 +710,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_btnGoActionPerformed
 
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
-        ImageIcon icon = new ImageIcon(MainFrame.SUDPLAN_3D_IMAGE);
+        ImageIcon icon = new ImageIcon(Configuration.SUDPLAN_3D_IMAGE);
         JOptionPane.showMessageDialog(this, "This is the sudplan3D application."
                 + "\nDFKI (c) 2011-2012",
                 "About Sudplan3D",
@@ -988,7 +971,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             @Override
             public void run() {
                 MainFrame mf = new MainFrame();
-                mf.setIconImage(MainFrame.SUDPLAN_3D_IMAGE);
+                mf.setIconImage(Configuration.SUDPLAN_3D_IMAGE);
                 mf.setVisible(true);
             }
         });

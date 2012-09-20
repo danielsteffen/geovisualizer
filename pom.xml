@@ -11,7 +11,7 @@
     <url>http://sudplan.kl.dfki.de</url>
     
     <organization>
-        <name>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -41,6 +41,7 @@
         <compileSource>1.6</compileSource>
         <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
         <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
+        <!--codebase>http://www.dfki.uni-kl.de/~steffen/sudplan/</codebase-->
         <worldwind.version>1.4.0-without-jackson</worldwind.version>
         <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
         <repository.id>dfki-artifactory</repository.id>
@@ -143,6 +144,11 @@
             <artifactId>beansbinding</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.9</version>
+        </dependency>
     </dependencies>
     
     <build>
@@ -186,7 +192,7 @@
                         <storepass>sudplan</storepass>
                         <alias>sudplan</alias>
                         <validity>3650</validity>
-                        <dnameCn>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
                         <dnameOu>AV</dnameOu>
                         <dnameO>DFKI</dnameO>
                         <dnameL>KL</dnameL>
