@@ -26,6 +26,10 @@ import java.net.URI;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +40,10 @@ import org.slf4j.LoggerFactory;
 public class MainFrame extends javax.swing.JFrame implements PropertyChangeListener {
 
     /**
+     *
+     */
+    private static org.apache.log4j.Logger rootLog = org.apache.log4j.Logger.getRootLogger();
+    /**
      * The logger.
      */
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
@@ -45,6 +53,26 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private static final String[] servers = new String[]{
         "http://serv-2118.kl.dfki.de:8888/geoserver/wms"
     };
+
+    /**
+     * Init logging to logs/sudplan3D.log.
+     */
+    private static void initLogging() {
+        try {
+            String pattern = "%5p %d{ISO8601} %c{1} - %m%n";
+            PatternLayout layout = new PatternLayout(pattern);
+            String path = Configuration.getString("sudplan3D.user.dir");
+            String logFile = path + "/logs/sudplan3D.log";
+            RollingFileAppender appender = new RollingFileAppender(layout, logFile, false);
+            appender.setMaxBackupIndex(2);
+            appender.setMaxFileSize("1MB");
+            rootLog.addAppender(appender);
+            rootLog.setLevel(Level.ALL);
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+    }
+    
     /**
      * The size of the {@link #wwPanel}.
      */
@@ -931,6 +959,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        initLogging();
 
         /*
          * Set the Nimbus look and feel
