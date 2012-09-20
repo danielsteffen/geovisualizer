@@ -9,8 +9,26 @@
 Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
+
+* 2012-09-20, sudplan3D 1.5.8
+
+  * Update to sudplan3D-core 1.7.3
   
-* 2012-09-18, sudplan3D 1.5.7
+  * Update to sudplan3D-geocpm 1.1
+  
+  * Added dependency to commons-configuration version 1.9 to configure the application. The configuration file can be found in the user's directory .sudplan3D/config/sudplan3D.xml.
+  
+  * Added file logging. File can be found in the user's directory .sudplan3D/logs/sudplan3D.log.
+  
+* 2012-09-20, sudplan3D-core 1.7.3
+
+  * Using new VisConfiguration class as data container in order to change a visualization.
+  
+* 2012-09-20, sudplan3D-geocpm 1.1
+
+  * Update to sudplan3D-core 1.7.3
+  
+* 2012-09-19, sudplan3D 1.5.7
 
   * Fix for old VisPointCloud.
   
@@ -117,6 +135,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.8          |  1.7.3              |  sudplan3D-geocpm 1.1 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.7          |  1.7.2              |  sudplan3D-geocpm 1.0 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.6          |  1.7.2              |  sudplan3D-geocpm 1.0 | 1.4.0-without-jackson        | 
