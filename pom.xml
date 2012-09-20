@@ -18,8 +18,9 @@
     <developers>
         <developer>
             <name>Daniel Steffen</name>
-            <email>daniel.steffen::at::dfki.de</email>
+            <email>daniel.steffen@dfki.de</email>
             <roles>
+                <role>Architect</role>
                 <role>Developer</role>
             </roles>            
             <organization>DFKI GmbH</organization>
@@ -27,7 +28,7 @@
         </developer>
                 <developer>
             <name>Tobias Zimmermann</name>
-            <email>tobias.zimmermann::at::dfki.de</email>
+            <email>tobias.zimmermann@dfki.de</email>
             <roles>
                 <role>Developer</role>
             </roles>            
@@ -41,7 +42,6 @@
         <compileSource>1.6</compileSource>
         <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
         <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
-        <!--codebase>http://www.dfki.uni-kl.de/~steffen/sudplan/</codebase-->
         <worldwind.version>1.4.0-without-jackson</worldwind.version>
         <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
         <repository.id>dfki-artifactory</repository.id>
@@ -106,12 +106,12 @@
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-core</artifactId>
-            <version>1.7.2</version>            
+            <version>1.7.3</version>            
         </dependency>
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-geocpm</artifactId>
-            <version>1.0</version>            
+            <version>1.1</version>            
         </dependency>        
         <dependency>
             <groupId>junit</groupId>

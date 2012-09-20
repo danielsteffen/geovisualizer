@@ -11,6 +11,7 @@ import com.dfki.av.sudplan.camera.*;
 import com.dfki.av.sudplan.stereo.SideBySideStereoSetup;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.VisConfiguration;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.io.IOUtils;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
@@ -239,7 +240,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     public void addLayer(Object data, IVisAlgorithm vis, Object[] attributes) {
         vis.addPropertyChangeListener(this);
-        VisWorker producer = new VisWorker(data, vis, attributes, wwd);
+        VisConfiguration config = new VisConfiguration(vis, data, attributes);
+        VisWorker producer = new VisWorker(config, wwd);
         producer.execute();
     }
 

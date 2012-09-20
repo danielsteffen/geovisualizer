@@ -9,6 +9,7 @@ package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.Configuration;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.VisConfiguration;
 import com.dfki.av.sudplan.vis.core.VisWorker;
 import com.dfki.av.sudplan.vis.io.IOUtils;
 import gov.nasa.worldwind.WorldWindow;
@@ -38,14 +39,15 @@ public final class VisWiz {
 
     /**
      * Starts the visualization wizard VisWiz. After finishing the visualization
-     * will be added automatically to the {@link WorldWindow} instance.
+     * will be added automatically to the {@link WorldWindow} instance and the
+     * {@link VisConfiguration} will be returned.
      *
      * @param worldWindow the {@link WorldWindow} where to add the
      * visualization.
-     * @return the configuration to return or {@code null}
-     * @throws IllegalArgumentException if {@code worldWindow} set to null.
+     * @return the {@link VisConfiguration} to return or {@code null}
+     * @throws IllegalArgumentException if worldWindow == null.
      */
-    public static Object execute(WorldWindow worldWindow) {
+    public static VisConfiguration execute(WorldWindow worldWindow) {
         return VisWiz.execute(worldWindow, null);
     }
 
@@ -59,10 +61,10 @@ public final class VisWiz {
      * @param worldWindow the {@link WorldWindow} where to add the
      * visualization.
      * @param listener the {@link PropertyChangeListener} to add.
-     * @return the configuration or {@code null}.
-     * @throws IllegalArgumentException if {@code worldWindow} set to null.
+     * @return the {@link VisConfiguration} or {@code null}.
+     * @throws IllegalArgumentException if worldWindow == null.
      */
-    public static Object execute(WorldWindow worldWindow, PropertyChangeListener listener) {
+    public static VisConfiguration execute(WorldWindow worldWindow, PropertyChangeListener listener) {
         return VisWiz.execute(worldWindow, listener, null);
     }
 
@@ -82,17 +84,21 @@ public final class VisWiz {
      * visualization.
      * @param listener the {@link PropertyChangeListener} to add.
      * @param data the data to use.
-     * @return the configuration or {@code null}.
-     * @throws IllegalArgumentException if {@code worldWindow} set to null.
+     * @return the {@link VisConfiguration} or {@code null}.
+     * @throws IllegalArgumentException if worldWindow == null.
      */
-    public static Object execute(WorldWindow worldWindow, PropertyChangeListener listener, Object data) {
+    public static VisConfiguration execute(WorldWindow worldWindow, PropertyChangeListener listener, Object data) {
 
         if (worldWindow == null) {
-            throw new IllegalArgumentException("WorldWindow == null");
+            String msg = "WorldWindow == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
 
+        VisConfiguration visConfig = null;
         WizardDescriptor.Iterator iterator;
         WizardDescriptor wizardDescriptor;
+
         if (data == null) {
             iterator = new VisWizIterator(true);
             wizardDescriptor = new WizardDescriptor(iterator);
@@ -125,9 +131,9 @@ public final class VisWiz {
                 source = data;
             }
             // Check whether the download was successful.
-            if(source == null){
+            if (source == null) {
                 log.error("source == null");
-                return null;
+                return visConfig;
             }
             // ...ends here the fake.
 
@@ -150,11 +156,11 @@ public final class VisWiz {
                 visAlgo.addPropertyChangeListener(listener);
             }
             String[] dataAttributes = (String[]) wizardDescriptor.getProperty("SelectedDataAttributes");
-
-            VisWorker producer = new VisWorker(dataSource, visAlgo, dataAttributes, worldWindow);
+            visConfig = new VisConfiguration(visAlgo, dataSource, dataAttributes);
+            VisWorker producer = new VisWorker(visConfig, worldWindow);
             producer.execute();
         }
 
-        return null;
+        return visConfig;
     }
 }
