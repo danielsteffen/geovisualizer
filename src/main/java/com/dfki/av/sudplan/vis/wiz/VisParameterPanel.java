@@ -8,7 +8,7 @@
 package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.ITransferFunctionPanel;
+import com.dfki.av.sudplan.vis.core.AbstractTransferFunctionPanel;
 import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.spi.TransferFunctionFactory;
 import java.awt.event.ActionEvent;
@@ -53,7 +53,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
         for (String functionName : list) {
             ITransferFunction function = TransferFunctionFactory.newInstance(functionName);
             if (function != null) {
-                ITransferFunctionPanel tfpanel = function.getPanel();
+                AbstractTransferFunctionPanel tfpanel = function.getPanel();
                 if (tfpanel != null) {
                     boolean attributesAdded = tfpanel.setAttributes(dataAttributes);
                     if (attributesAdded) {
@@ -74,7 +74,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
                         jComboBox1.addItem(function.getName());
                     }
                 } else {
-                    log.warn("No {} available for {}", ITransferFunctionPanel.class.getSimpleName(),
+                    log.warn("No {} available for {}", AbstractTransferFunctionPanel.class.getSimpleName(),
                             function.getClass().getSimpleName());
                 }
             } else {

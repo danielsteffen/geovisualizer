@@ -11,7 +11,7 @@
     <url>http://sudplan.kl.dfki.de</url>
     
     <organization>
-        <name>Deutsches Forschungszentrum f�r K�nstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -20,6 +20,7 @@
             <name>Daniel Steffen</name>
             <email>daniel.steffen@dfki.de</email>
             <roles>
+                <role>Project leader</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>            
@@ -106,12 +107,12 @@
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-core</artifactId>
-            <version>1.7.3</version>            
+            <version>1.7.4</version>            
         </dependency>
         <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-geocpm</artifactId>
-            <version>1.1</version>            
+            <version>1.2</version>            
         </dependency>        
         <dependency>
             <groupId>junit</groupId>
@@ -192,7 +193,7 @@
                         <storepass>sudplan</storepass>
                         <alias>sudplan</alias>
                         <validity>3650</validity>
-                        <dnameCn>Deutsches Forschungszentrum f�r K�nstliche Intelligenz (DFKI) GmbH</dnameCn>
+                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
                         <dnameOu>AV</dnameOu>
                         <dnameO>DFKI</dnameO>
                         <dnameL>KL</dnameL>
