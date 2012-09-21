@@ -10,6 +10,10 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
   
+* 2012-09-21, sudplan3D 1.5.10
+  
+  * Fix: Added removed addWMSLayer and addAllWMSLayer again.
+  
 * 2012-09-21, sudplan3D 1.5.9
 
   * Update to sudplan3D-core 1.7.4.
@@ -159,6 +163,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.10          |  1.7.4              |  sudplan3D-geocpm 1.2 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.9          |  1.7.4              |  sudplan3D-geocpm 1.2 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.8          |  1.7.3              |  sudplan3D-geocpm 1.1 | 1.4.0-without-jackson        | 

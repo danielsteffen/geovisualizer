@@ -26,7 +26,6 @@ import java.net.URI;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
@@ -40,39 +39,13 @@ import org.slf4j.LoggerFactory;
 public class MainFrame extends javax.swing.JFrame implements PropertyChangeListener {
 
     /**
-     *
+     * The root logger.
      */
     private static org.apache.log4j.Logger rootLog = org.apache.log4j.Logger.getRootLogger();
     /**
      * The logger.
      */
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
-    /**
-     * An array of WMS layer.
-     */
-    private static final String[] servers = new String[]{
-        "http://serv-2118.kl.dfki.de:8888/geoserver/wms"
-    };
-
-    /**
-     * Init logging to logs/sudplan3D.log.
-     */
-    private static void initLogging() {
-        try {
-            String pattern = "%5p %d{ISO8601} %c{1} - %m%n";
-            PatternLayout layout = new PatternLayout(pattern);
-            String path = Configuration.getString("sudplan3D.user.dir");
-            String logFile = path + "/logs/sudplan3D.log";
-            RollingFileAppender appender = new RollingFileAppender(layout, logFile, false);
-            appender.setMaxBackupIndex(2);
-            appender.setMaxFileSize("1MB");
-            rootLog.addAppender(appender);
-            rootLog.setLevel(Level.ALL);
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }
-    }
-    
     /**
      * The size of the {@link #wwPanel}.
      */
@@ -93,10 +66,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         this.wwPanel.setPreferredSize(canvasSize);
 
         initComponents();
-
-        for (String server : servers) {
-            wwPanel.addWMS(server);
-        }
 
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
@@ -269,7 +238,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         );
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
-        dWMSHeight.setIconImage(Configuration.SUDPLAN_3D_IMAGE);
+        dWMSHeight.setIconImage(com.dfki.av.sudplan.Configuration.SUDPLAN_3D_IMAGE);
         dWMSHeight.setLocationByPlatform(true);
         dWMSHeight.setMinimumSize(new java.awt.Dimension(760, 380));
         dWMSHeight.setResizable(false);
@@ -759,7 +728,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
     private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp"));
+        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp", "SHP"));
 
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
@@ -804,7 +773,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
     private void miAddShapeZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeZipActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip"));
+        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip", "ZIP"));
 
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION) {
@@ -820,8 +789,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
-        String s = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE);
-        wwPanel.addWMS(s);
+        String server = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE);
+        try {
+            final URI serverURI = new URI(server.trim());
+            wwPanel.addAllWMSLayer(serverURI);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_miAddWMSActionPerformed
 
     private void bGoWMSHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeightActionPerformed
@@ -952,6 +927,25 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                     "Could not retreive WMS data from server.",
                     "WMS-Server Error",
                     JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    /**
+     * Init logging to logs/sudplan3D.log.
+     */
+    private static void initLogging() {
+        try {
+            String pattern = "%5p %d{ISO8601} %c{1} - %m%n";
+            PatternLayout layout = new PatternLayout(pattern);
+            String path = Configuration.getString("sudplan3D.user.dir");
+            String logFile = path + "/logs/sudplan3D.log";
+            RollingFileAppender appender = new RollingFileAppender(layout, logFile, false);
+            appender.setMaxBackupIndex(2);
+            appender.setMaxFileSize("1MB");
+            rootLog.addAppender(appender);
+            rootLog.setLevel(Level.ALL);
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
         }
     }
 

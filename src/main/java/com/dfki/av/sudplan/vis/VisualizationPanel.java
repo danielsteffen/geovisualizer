@@ -29,23 +29,20 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
-import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
@@ -130,93 +127,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     public WorldWindowGLCanvas getWwd() {
         return this.wwd;
-    }
-
-    /**
-     * Connect to the WMS at the given {@link URI}. Adds all available layers to
-     * the {@link WorldWindow}. The layers are disabled by default.
-     *
-     * @param uri the server string to be parsed into a {@link URI}.
-     * @throws IllegalArgumentException if URI is {@code null} or is empty.
-     */
-    public void addWMS(String uri) {
-        if (uri == null) {
-            String msg = "URI is null. No valid URI for WMS.";
-            log.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if (uri.isEmpty()) {
-            String msg = "URI is empty. No valid URI for WMS.";
-            log.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        try {
-            final URI serverURI = new URI(uri.trim());
-            Thread loadingThread = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    WMSCapabilities caps;
-                    final ArrayList<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
-                    try {
-                        caps = WMSCapabilities.retrieve(serverURI);
-                        caps.parse();
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return;
-                    }
-
-                    // Gather up all the named layers and make a world wind layer for each.
-                    final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
-                    if (namedLayerCaps == null) {
-                        log.debug("No named layers available for server: {}.", serverURI);
-                        return;
-                    }
-
-                    try {
-                        for (WMSLayerCapabilities lc : namedLayerCaps) {
-                            Set<WMSLayerStyle> styles = lc.getStyles();
-                            if (styles == null || styles.isEmpty()) {
-                                LayerInfo layerInfo = new LayerInfo(caps, lc, null);
-                                layerInfos.add(layerInfo);
-                            } else {
-                                for (WMSLayerStyle style : styles) {
-                                    LayerInfo layerInfo = new LayerInfo(caps, lc, style);
-                                    layerInfos.add(layerInfo);
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return;
-                    }
-
-                    // Add the layers to the world window
-                    EventQueue.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (LayerInfo layerInfo : layerInfos) {
-                                Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
-                                if (component instanceof Layer) {
-                                    Layer layer = (Layer) component;
-                                    LayerList layers = wwd.getModel().getLayers();
-                                    layer.setEnabled(false);
-                                    if (!layers.contains(layer)) {
-                                        ApplicationTemplate.insertBeforePlacenames(wwd, layer);
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-            loadingThread.setPriority(Thread.MIN_PRIORITY);
-            loadingThread.start();
-        } catch (URISyntaxException ex) {
-            log.error(ex.getMessage());
-        }
     }
 
     @Override
@@ -312,7 +222,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public void setCamera(Camera c) {
         if (c == null) {
-            throw new IllegalArgumentException("Parameter Camera is null.");
+            String msg = "camera == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
 
         View view = this.wwd.getView();
@@ -351,7 +263,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public synchronized void addCameraListener(CameraListener cl) {
         if (cl == null) {
-            throw new IllegalArgumentException("Parameter CameraListener is null.");
+            String msg = "CameraListener == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         this.wwd.getView().addPropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
     }
@@ -359,7 +273,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public synchronized void removeCameraListener(CameraListener cl) {
         if (cl == null) {
-            throw new IllegalArgumentException("Parameter CameraListener is null.");
+            String msg = "CameraListener == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         this.wwd.getView().removePropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
     }
@@ -367,7 +283,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     @Override
     public void setBoundingVolume(BoundingVolume bv) {
         if (bv == null) {
-            throw new IllegalArgumentException("Parameter BoundingVolume is null.");
+            String msg = "BoundingVolume == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
         }
 
         Sector sector = bv.getSector();
@@ -438,29 +356,90 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Adds a WMS Layer from the given parameters.
+     * Adds all available layers of the WMS at {@link URI} to the 
+     * {@link WorldWindow}. The layers are disabled by default.
      *
-     * @param caps the WMS capabilities
-     * @param lcaps the WMS layer capabilities
-     * @param params the WMS parameters
-     * @param elevation the elevation (meters above sea level) for the result
-     * layer
-     * @param opacity the opacity for the result layer (1.0 : full transparent)
+     * @param uri the server {@link URI}.
+     * @throws IllegalArgumentException if uri == null
      */
-    public ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
-        ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
-        sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
-        sul.addPropertyChangeListener(this);
-        ApplicationTemplate.insertBeforePlacenames(wwd, sul);
-        ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
-        return sul;
+    public void addAllWMSLayer(URI uri) {
+        if (uri == null) {
+            String msg = "URI == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        try {
+            List<LayerInfo> layerInfos = WMSUtils.getLayerInfos(uri);
+            if (layerInfos != null) {
+                for (LayerInfo layerInfo : layerInfos) {
+                    Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
+                    if (component instanceof Layer) {
+                        Layer layer = (Layer) component;
+                        LayerList layers = wwd.getModel().getLayers();
+                        layer.setEnabled(false);
+                        if (!layers.contains(layer)) {
+                            ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+                        }
+                    }
+                }
+            } else {
+                String msg = "No valid URI: " + uri;
+                log.error(msg);
+                throw new Exception(msg);
+            }
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Add the {@code layerName} layer of the WMS server at {@link URI} with the
+     * opacity {@code opacity} to the {@link WorldWindowGLCanvas}. The layer
+     * is enabled per default.
+     *
+     * @param uri the {@link URI} to the WMS
+     * @param layerName the name of the Layer to add
+     * @param opacity the opacity to set
+     * @throws IllegalArgumentException if uri == null or layerName == null or
+     * {@code opacity < 0} or {@code opacity > 1.0}.
+     */
+    public void addWMSLayer(URI uri, String layerName, double opacity) {
+        if (uri == null) {
+            String msg = "uri == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (layerName == null) {
+            String msg = "layerName == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (opacity < 0.0 || opacity > 1.0) {
+            String msg = "opacity out of range";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        LayerInfo layerInfo = WMSUtils.getLayerInfo(uri, layerName);
+        Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
+        if (component instanceof Layer) {
+            Layer layer = (Layer) component;
+            layer.setEnabled(true);
+            layer.setOpacity(opacity);
+            LayerList layers = wwd.getModel().getLayers();
+            if (!layers.contains(layer)) {
+                ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+            }
+        }
     }
 
     /**
      * Adds a WMS Layer from the given parameters.
      *
      * Note that if the layerName contains '[]' a time series of wms layer will
-     * be added, including a {@link WMSControlLayer}.
+     * be added, including a {@link WMSControlLayer}. 
      *
      * @param uri {@link URI} from the wms server
      * @param layerName name of the requested layer or name of the top layer of
@@ -515,6 +494,25 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             addWMSHeightLayer(layerInfo.caps,
                     layerInfo.layerCaps, layerInfo.params, elevation, opacity);
         }
+    }
+
+    /**
+     * Adds a WMS Layer from the given parameters.
+     *
+     * @param caps the WMS capabilities
+     * @param lcaps the WMS layer capabilities
+     * @param params the WMS parameters
+     * @param elevation the elevation (meters above sea level) for the result
+     * layer
+     * @param opacity the opacity for the result layer (1.0 : full transparent)
+     */
+    private ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+        ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
+        sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
+        sul.addPropertyChangeListener(this);
+        ApplicationTemplate.insertBeforePlacenames(wwd, sul);
+        ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
+        return sul;
     }
 
     /**
