@@ -9,7 +9,31 @@
 Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
+  
+* 2012-09-21, sudplan3D 1.5.9
 
+  * Update to sudplan3D-core 1.7.4.
+  
+  * Update to sudplan3D-geocpm 1.2.
+
+* 2012-09-21, sudplan3D-geocpm 1.2
+
+  * Update to sudplan3D-core 1.7.4.
+  
+  * Added new transferfunction GeoCPMTrafficLights that can be used by GeoCPM visualization.
+  
+  * Added new transferfunction GeoCPMWaterMetaphor that can be used by GeoCPM visualization.
+  
+* 2012-09-21, sudplan3D-core 1.7.4
+
+  * Added customized transferfunction for NO2 visualization.
+
+  * Added UUID to VisConfiguration.
+
+  * Added detailed description to basic visualization algorithms.
+  
+  * Added title to color legend.
+  
 * 2012-09-20, sudplan3D 1.5.8
 
   * Update to sudplan3D-core 1.7.3
@@ -135,6 +159,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.9          |  1.7.4              |  sudplan3D-geocpm 1.2 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.8          |  1.7.3              |  sudplan3D-geocpm 1.1 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.7          |  1.7.2              |  sudplan3D-geocpm 1.0 | 1.4.0-without-jackson        | 

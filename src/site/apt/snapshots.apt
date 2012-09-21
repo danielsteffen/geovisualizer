@@ -1,0 +1,29 @@
+         ----
+		 Snapshots
+		 ----
+		 Daniel Steffen
+		 ----
+		 2012-09-21
+		 ----
+		 
+Snapshots
+
+  This section contains some snapshots of the sudplan3D component. It is based on NASA's {{{http://goworldwind.org}World Wind SDK}}. Currently, we are using a customized version of version 1.4.0 of the World Wind SDK.
+
+[images/Sudplan3D-v0704-1.jpg] The stand-alone user interface of the sudplan3D component showing air quality measurements for the city of Stockholm.  
+
+  The following image illustrates the the user interface of the visualization wizard VizWiz of the sudplan3D component. Here, the user is able to choose the desired visualization technique.
+  
+[images/sudplan3D-v159-viswiz.jpg] The VizWiz user interface of the sudplan3D component to choose the desired visualization.
+
+  An example of the customized geocpm visualization for the Wuppertal pilot using the water metaphor, i.e. dark blue means high values, is presented in the next figure. 
+
+[images/sudplan3D-v159-geocpm-water.jpg] An example of the customized geocpm visualization for the Wuppertal pilot using the water metaphor, i.e. dark blue means high values.
+
+  An example of the customized geocpm visualization for the Wuppertal pilot using the traffic lights visualization, i.e. red-yellow-green.
+
+[images/sudplan3D-v159-geocpm-traffic.jpg] An example of the customized geocpm visualization for the Wuppertal pilot using the traffic lights visualization, i.e. red-yellow-green.
+
+  
+
+  
