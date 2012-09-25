@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <configuration>
+  <version>1.0</version>
   <sudplan3D>
     <icon>
       <path>icons/sudplan3D.png</path>
     </icon>
+	<wuppertal>
+		<localElevationModel>
+			<enabled>true</enabled>
+			<path>elevations/DGM1_WGS84_LAT_LON_ELL_HEIGHT.tif</path>
+		</localElevationModel>
+	</wuppertal>	
   </sudplan3D>
 </configuration>

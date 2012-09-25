@@ -7,6 +7,7 @@
  */
 package com.dfki.av.sudplan.vis;
 
+import com.dfki.av.sudplan.Configuration;
 import com.dfki.av.sudplan.camera.*;
 import com.dfki.av.sudplan.stereo.SideBySideStereoSetup;
 import com.dfki.av.sudplan.vis.basic.VisPointCloud;
@@ -26,6 +27,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
@@ -45,6 +47,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +120,36 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
         this.layerPanel = new LayerPanel(this.wwd);
         this.wwd.getModel().addPropertyChangeListener(layerPanel);
+
+        initCustomElevationModels();
+    }
+
+    /**
+     * Initialize custom elevation models. Currently, only the Wuppertal
+     * elevation model for the area of Lüntenbeck.
+     */
+    private void initCustomElevationModels() {
+        XMLConfiguration xmlConfig = Configuration.getXMLConfiguration();
+        String key = "sudplan3D.wuppertal.localElevationModel.enabled";
+        if (xmlConfig.containsKey(key)) {
+            String value = xmlConfig.getString(key);
+            if (Boolean.valueOf(value)) {
+                log.info("Wuppertal elevation model enabled.");
+                Globe globe = this.wwd.getModel().getGlobe();
+                String pathKey = "sudplan3D.wuppertal.localElevationModel.path";
+                if (xmlConfig.containsKey(pathKey)) {
+                    String path = xmlConfig.getString(pathKey);
+                    ElevationsLoader loader = new ElevationsLoader(globe, path);
+                    loader.execute();
+                } else {
+                    log.debug("No <path> tag. Wuppertal elevation model disabled.");
+                }
+            } else {
+                log.debug("Wuppertal elevation model disabled.");
+            }
+        } else {
+            log.debug("No <enabled> tag. Wuppertal elevation model disabled.");
+        }
     }
 
     /**
@@ -356,7 +389,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Adds all available layers of the WMS at {@link URI} to the 
+     * Adds all available layers of the WMS at {@link URI} to the
      * {@link WorldWindow}. The layers are disabled by default.
      *
      * @param uri the server {@link URI}.
@@ -396,8 +429,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
     /**
      * Add the {@code layerName} layer of the WMS server at {@link URI} with the
-     * opacity {@code opacity} to the {@link WorldWindowGLCanvas}. The layer
-     * is enabled per default.
+     * opacity {@code opacity} to the {@link WorldWindowGLCanvas}. The layer is
+     * enabled per default.
      *
      * @param uri the {@link URI} to the WMS
      * @param layerName the name of the Layer to add
@@ -439,7 +472,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Adds a WMS Layer from the given parameters.
      *
      * Note that if the layerName contains '[]' a time series of wms layer will
-     * be added, including a {@link WMSControlLayer}. 
+     * be added, including a {@link WMSControlLayer}.
      *
      * @param uri {@link URI} from the wms server
      * @param layerName name of the requested layer or name of the top layer of
