@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for the generation of elevated WMS data handeling
+ * Utility class for the generation of elevated WMS data handling
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
@@ -57,10 +57,10 @@ public class WMSUtils {
     }
 
     /**
-     * Returns maximum elevation of the given sector on the given globe
+     * Returns maximum elevation of the given {@link Sector} on the given {@link Globe}.
      *
-     * @param sector
-     * @param globe
+     * @param sector the {@link Sector} to check
+     * @param globe the {@link Globe} to use.
      * @return maximum elevation
      */
     public static double getMaxElevationOfSector(Sector sector, Globe globe) {
@@ -122,7 +122,7 @@ public class WMSUtils {
     }
 
     /**
-     * Calculates the vertices of the {@link Sector}
+     * Calculates the vertices of the {@link Sector}.
      *
      * @param s bounding box for which the distance should be calculated
      * @return vertices as array of {@link Double} (in kilometers)
@@ -151,12 +151,92 @@ public class WMSUtils {
     }
 
     /**
-     * Retreives a {@link List} of {@link LayerInfo} which are represented
-     * with the {@link WMSCapabilities}.
-     * 
-     * @param uri wms server {@link URI}
-     * @return {@link List} of {@link LayerInfo}
-     * @return {@code null} if the request failed or had no result.
+     * Converts radians to decimal degrees
+     *
+     * @param rad radian value
+     * @return degree value
+     */
+    private static double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+
+    /**
+     * Parses the data retrieved from the WMS server to {@link LayerInfo}
+     *
+     * @param request request URL as {@link String}
+     * @return parsed data as {@link LayerInfo}
+     * @return {@code null} if no {@link LayerInfo} for the request could be
+     * retrieved
+     *
+     * Note that the request URL must contain 'layer='
+     *
+     * @throws Exception
+     */
+    public static LayerInfo parseWMSRequest(String request) throws Exception {
+        URI uri = new URI(request.trim());
+        String[] parts = request.split("&");
+        String layerName = "";
+        for (String part : parts) {
+            if (part.startsWith("layers=")) {
+                layerName = part.replaceFirst("layers=", "");
+            } else {
+                return null;
+            }
+        }
+        return getLayerInfo(uri, layerName);
+    }
+
+    /**
+     * Retrieve the {@link LayerInfo} for the layer with name
+     * {@code layerName} from the WMS server specified with the parameter
+     * {@code uri}.
+     *
+     * @param uri {@link URI} from the WMS server
+     * @param layerName name of the layer
+     * @return parsed data as {@link LayerInfo} or {@code null} if no layer
+     * could be retrieved with the layer name {@code layerName}
+     *
+     */
+    public static LayerInfo getLayerInfo(URI uri, String layerName) {
+        WMSCapabilities caps;
+        try {
+            caps = WMSCapabilities.retrieve(uri);
+            if(caps != null){
+                caps.parse();
+            } else{
+                String msg = "WMSCapabilities == null";
+                log.error(msg);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        // Gather up all the named layers and make a world wind layer for each.
+        final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
+        if (namedLayerCaps == null || namedLayerCaps.isEmpty()) {
+            log.debug("No named layers available for server: {}.", uri);
+            return null;
+        }
+        List<LayerInfo> layerInfos = getLayerInfos(uri);
+        for (LayerInfo layerInfo : layerInfos) {
+            String name = layerInfo.getName();
+            if (name.equals(layerName)) {
+                return layerInfo;
+            }
+        }
+        log.debug("No layers with layer name '{}' available for server: {}.", layerName, uri);
+        return null;
+    }
+    
+    /**
+     * Retrieves a {@link List} of {@link LayerInfo} which are represented with
+     * the {@link WMSCapabilities}.
+     *
+     * @param uri WMS server {@link URI}
+     * @return {@link List} of {@link LayerInfo} or {@code null} if the request
+     * failed or had no result.
      */
     public static List<LayerInfo> getLayerInfos(URI uri) {
         WMSCapabilities caps;
@@ -188,80 +268,5 @@ public class WMSUtils {
             }
         }
         return layerInfos;
-    }
-
-    /**
-     * Converts radians to decimal degrees
-     *
-     * @param rad radian value
-     * @return degree value
-     */
-    private static double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
-
-    /**
-     * Parses the data retrieved from the WMS server to {@link LayerInfo}
-     *
-     * @param request request url as {@link String}
-     * @return parsed data as {@link LayerInfo}
-     * @return {@code null} if no {@link LayerInfo} for the request could be retreived
-     * 
-     * Note that the request url must contain 'layer='
-     * 
-     * @throws Exception
-     */
-    public static LayerInfo parseWMSRequest(String request) throws Exception {
-        URI uri = new URI(request.trim());
-        String[] parts = request.split("&");
-        String layerName = "";
-        for (String part : parts) {
-            if (part.startsWith("layers=")) {
-                layerName = part.replaceFirst("layers=", "");
-            } else {
-                return null;
-            }
-        }
-        return getLayerInfo(uri, layerName);
-    }
-    
-    /**
-     * Retrieve the <code>LayerInfo</code> for the layer with layer name
-     * <code>layerName</code> from the wms server specified with the parameter
-     * <code>serverURI</code>.
-     *
-     * @param uri {@link URI} from the wms server
-     * @param layerName Name of the layer for which the {@link LayerInfo} should
-     * be retreived.
-     * @return parsed data as {@link LayerInfo}
-     * @return null if no layer could be reteived with the layer name 
-     * <code>layerName<code>
-     *
-     */
-    public static LayerInfo getLayerInfo(URI uri, String layerName) {
-        WMSCapabilities caps;
-        try {
-            caps = WMSCapabilities.retrieve(uri);
-            caps.parse();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
-
-        // Gather up all the named layers and make a world wind layer for each.
-        final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
-        if (namedLayerCaps == null) {
-            log.debug("No named layers available for server: {}.", uri);
-            return null;
-        }
-        List<LayerInfo> layerInfos = getLayerInfos(uri);
-        for (LayerInfo layerInfo : layerInfos){
-            if(layerInfo.getTitle().equals(layerName)){
-                return layerInfo;
-            }
-        }
-        log.debug("No layers with layer name '{}' available for server: {}."
-                , layerName, uri);
-        return null;
     }
 }
