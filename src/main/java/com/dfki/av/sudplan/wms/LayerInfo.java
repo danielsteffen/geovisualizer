@@ -16,34 +16,40 @@ import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwindx.applications.worldwindow.core.WMSLayerInfo;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class for handeling the LayerInfo for the ElevatedSurfaceLayer
+ * Class for handling the LayerInfo for the ElevatedSurfaceLayer
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class LayerInfo extends WMSLayerInfo {
 
     /**
-     * The {@link WMSLayerCapabilities} for the corresponding wms layer
+     * The logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(LayerInfo.class);    
+    /**
+     * The {@link WMSLayerCapabilities} for the corresponding WMS layer
      */
     public WMSLayerCapabilities layerCaps;
     /**
-     * The {@link WMSCapabilities} for the corresponding wms data
+     * The {@link WMSCapabilities} for the corresponding WMS data
      */
     public WMSCapabilities caps;
     /**
-     * The parameters as {@link AVList} for the creation of an wms layer
+     * The parameters as {@link AVList} for the creation of an WMS layer
      */
     public AVList params;
 
     /**
      * Constructs a layer info of the defined capabilities and parameters
      *
-     * @param caps {@link WMSCapabilities} for the corresponding wms data
-     * @param layerCaps {@link WMSLayerCapabilities} for the corresponding wms
+     * @param caps {@link WMSCapabilities} for the corresponding WMS data
+     * @param layerCaps {@link WMSLayerCapabilities} for the corresponding WMS
      * layer
-     * @param style {@link WMSLayerStyle} for the corresponding wms layer
+     * @param style {@link WMSLayerStyle} for the corresponding WMS layer
      */
     public LayerInfo(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
         super(caps, layerCaps, style);
@@ -53,13 +59,32 @@ public class LayerInfo extends WMSLayerInfo {
     }
 
     /**
-     * Creates an wms layer defined through the {@link WMSCapabilities} caps and
-     * the parameters params ({@link AVList}).
+     * Return the name of the layer.
      *
-     * @param caps {@link WMSCapabilities} for the corresponding wms data
-     * @param params parameters as {@link AVList} for the creation of an wms
+     * @return the name of the layer.
+     */
+    public String getName() {
+        return this.layerCaps.getName();
+    }
+
+    /**
+     * Returns the layer name of the corresponding WMS layer
+     *
+     * @return layer name as {@link String}
+     */
+    @Override
+    public String toString() {
+        return params.getStringValue(AVKey.DISPLAY_NAME);
+    }
+
+    /**
+     * Creates an WMS layer defined through the {@link WMSCapabilities} caps and
+     * the parameters {@link #params} ({@link AVList}).
+     *
+     * @param caps {@link WMSCapabilities} for the corresponding WMS data
+     * @param params parameters as {@link AVList} for the creation of an WMS
      * layer
-     * @return wms layer
+     * @return a WMS layer or {@code null}
      */
     public static Object createComponent(WMSCapabilities caps, AVList params) {
         AVList configParams = params.copy(); // Copy to insulate changes from the caller.
@@ -74,16 +99,16 @@ public class LayerInfo extends WMSLayerInfo {
             Factory factory = (Factory) WorldWind.createConfigurationComponent(factoryKey);
             return factory.createFromConfigSource(caps, configParams);
         } catch (Exception e) {
-            // Ignore the exception, and just return null.
+            log.error(e.toString());
         }
 
         return null;
     }
 
     /**
-     * Retreives the factory key for the wms layer creation.
+     * Retrieves the factory key for the WMS layer creation.
      *
-     * @param caps {@link WMSCapabilities} for the corresponding wms data
+     * @param caps {@link WMSCapabilities} for the corresponding WMS data
      * @return factory key as {@link String} for the layer creation
      */
     protected static String getFactoryKeyForCapabilities(WMSCapabilities caps) {
@@ -98,15 +123,5 @@ public class LayerInfo extends WMSLayerInfo {
         }
 
         return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
-    }
-
-    /**
-     * Returns the layer name of the corresponding wms layer
-     *
-     * @return layer name as {@link String}
-     */
-    @Override
-    public String toString() {
-        return params.getStringValue(AVKey.DISPLAY_NAME);
     }
 }
