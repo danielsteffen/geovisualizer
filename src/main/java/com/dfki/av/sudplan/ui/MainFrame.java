@@ -854,7 +854,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         }
         if (cLayerList.getSelectedItem() instanceof LayerInfo) {
             LayerInfo li = (LayerInfo) cLayerList.getSelectedItem();
-            wwPanel.addWMSHeightLayer(uri, li.getTitle(), wmsHeight, wmsOpacity);
+            wwPanel.addWMSHeightLayer(uri, li.getName(), wmsHeight, wmsOpacity);
         }
     }//GEN-LAST:event_bAddWMSHeightActionPerformed
 
