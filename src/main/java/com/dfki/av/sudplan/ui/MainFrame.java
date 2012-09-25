@@ -26,6 +26,7 @@ import java.net.URI;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
@@ -828,21 +829,16 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         try {
             wmsHeight = Double.parseDouble(txtHeight.getText());
         } catch (NumberFormatException nfe) {
-            if (log.isWarnEnabled()) {
-                log.warn("The content of the \"height\" "
-                        + "component must be a double value.");
-            }
+            log.warn("The content of the \"height\" component must be a double value.");
             wmsHeight = 0.0;
             txtHeight.setText("0.0");
         }
         try {
             wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
         } catch (NumberFormatException nfe) {
-            if (log.isWarnEnabled()) {
-                log.warn("The content of the \"opacity\" "
-                        + "component must be a double value between."
-                        + "0.0 and 100.0 " + nfe);
-            }
+            log.warn("The content of the \"opacity\" "
+                    + "component must be a double value between."
+                    + "0.0 and 100.0 {}", nfe);
             wmsOpacity = 0.0;
             txtOpacity.setText("0.0");
         }
@@ -937,7 +933,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         try {
             String pattern = "%5p %d{ISO8601} %c{1} - %m%n";
             PatternLayout layout = new PatternLayout(pattern);
-            String path = Configuration.getString("sudplan3D.user.dir");
+            XMLConfiguration xmlConfig = Configuration.getXMLConfiguration();
+            String path = xmlConfig.getString("sudplan3D.user.dir");
             String logFile = path + "/logs/sudplan3D.log";
             RollingFileAppender appender = new RollingFileAppender(layout, logFile, false);
             appender.setMaxBackupIndex(2);
@@ -945,7 +942,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             rootLog.addAppender(appender);
             rootLog.setLevel(Level.ALL);
         } catch (Exception ex) {
-            System.out.println(ex.toString());
+            log.error(ex.toString());
         }
     }
 

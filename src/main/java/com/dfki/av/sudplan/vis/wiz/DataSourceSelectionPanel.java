@@ -14,6 +14,7 @@ import java.net.URL;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +141,8 @@ public final class DataSourceSelectionPanel extends JPanel {
         JFileChooser jfc = new JFileChooser();
         jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (*.shp)", "shp", "Shp", "SHP"));
         jfc.addChoosableFileFilter(new FileNameExtensionFilter("Zip file (*.zip)", "zip", "ZIP", "Zip"));
-        String path = Configuration.getString("sudplan3D.working.dir");
+        XMLConfiguration xmlConfig = Configuration.getXMLConfiguration();
+        String path = xmlConfig.getString("sudplan3D.working.dir");
         File dir;
         if (path != null) {
             dir = new File(path);
@@ -163,7 +165,7 @@ public final class DataSourceSelectionPanel extends JPanel {
         }
         dir = jfc.getCurrentDirectory();
         path = dir.getAbsolutePath();
-        Configuration.setProperty("sudplan3D.working.dir", path);
+        xmlConfig.setProperty("sudplan3D.working.dir", path);
     }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

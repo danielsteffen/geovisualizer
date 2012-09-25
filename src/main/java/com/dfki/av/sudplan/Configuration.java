@@ -100,29 +100,11 @@ public final class Configuration {
     }
 
     /**
+     * Return the {@link XMLConfiguration}.
      *
-     * @param key
-     * @param value
+     * @return the {@link XMLConfiguration} to return.
      */
-    public static void setProperty(String key, Object value) {
-        if(XML_CONFIG != null){
-            XML_CONFIG.setProperty(key, value);
-        } else {
-            log.error("XML_CONFIG == null");
-        }
-        
-    }
-
-    /**
-     *
-     * @param key
-     * @return
-     */
-    public static String getString(String key) {
-        if (XML_CONFIG == null) {
-            log.error("XML_CONFIG == null");
-            return null;
-        }
-        return XML_CONFIG.getString(key);
+    public static XMLConfiguration getXMLConfiguration() {
+        return XML_CONFIG;
     }
 }
