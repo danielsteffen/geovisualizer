@@ -10,6 +10,20 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
   
+* 2012-09-25, sudplan3D 1.5.11
+
+  * Fix for layer name in method addWMSHeightLayer() and addWMSLayer()
+  
+  * Added local elevation model for Wuppertal. See also config file.
+
+  * Added local elevation file as GeoTiff to resources.
+  
+  * Update to sudplan3D-geocpm version 1.3
+
+* 2012-09-25, sudplan3D-geocpm 1.3
+
+  * Added new classifications according to Cismet.
+  
 * 2012-09-21, sudplan3D 1.5.10
   
   * Fix: Added removed addWMSLayer and addAllWMSLayer again.
@@ -163,6 +177,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.11          |  1.7.4              |  sudplan3D-geocpm 1.3 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.10          |  1.7.4              |  sudplan3D-geocpm 1.2 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.9          |  1.7.4              |  sudplan3D-geocpm 1.2 | 1.4.0-without-jackson        | 
