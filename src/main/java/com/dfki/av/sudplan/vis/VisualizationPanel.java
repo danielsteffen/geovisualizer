@@ -31,6 +31,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -42,7 +43,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -449,6 +452,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
+        if (layerName.isEmpty()) {
+            String msg = "layerName is empty";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
         if (opacity < 0.0 || opacity > 1.0) {
             String msg = "opacity out of range";
             log.error(msg);
@@ -464,7 +472,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             LayerList layers = wwd.getModel().getLayers();
             if (!layers.contains(layer)) {
                 ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+            } else {
+                log.debug("Layer {} already added.", layer.getName());
             }
+        } else {
+            log.warn("Component no instance of class Layer.");
         }
     }
 
@@ -483,63 +495,78 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      */
     public void addWMSHeightLayer(URI uri, String layerName, double elevation, double opacity) {
         if (layerName.contains("[]")) {
+            log.debug("Layer is instance of a time series.");
             List<LayerInfo> layerInfos = WMSUtils.getLayerInfos(uri);
             List<ElevatedRenderableLayer> layers = new ArrayList<ElevatedRenderableLayer>();
-            boolean start = false;
-            String prefix = null;
+
             for (LayerInfo layerInfo : layerInfos) {
-                if (start) {
-                    String[] parts = layerInfo.getTitle().split(" ");
-                    if (prefix == null) {
-                        prefix = parts[0];
-                    }
-                    if (parts.length > 1) {
-                        if (parts[0].equals(prefix)) {
-                            ElevatedRenderableLayer layer = addWMSHeightLayer(layerInfo.caps,
-                                    layerInfo.layerCaps, layerInfo.params, elevation, opacity);
-                            layer.setSlave(true);
-                            layer.setOpacity(0.0d);
-                            layers.add(layer);
-                        } else {
-                            break;
-                        }
-                    } else {
+                String name = layerInfo.getName();
+                if (name.equals(layerName)) {
+                    log.debug("Found WMS layer {}.", layerName);
+
+                    WMSCapabilities parentWMSCaps = layerInfo.caps;
+                    WMSLayerCapabilities parentWMSLayerCaps = layerInfo.layerCaps;
+                    final List<WMSLayerCapabilities> childNamedLayerCaps = parentWMSLayerCaps.getNamedLayers();
+                    if (childNamedLayerCaps == null) {
+                        log.debug("No child named layers available for parent layer {}.", name);
                         break;
                     }
-                }
-                if (layerInfo.getTitle().equals(layerName)) {
-                    start = true;
+
+                    List<LayerInfo> childLayerInfos = new ArrayList<LayerInfo>();
+                    for (WMSLayerCapabilities lc : childNamedLayerCaps) {
+                        if (lc.isLeaf()) {
+                            Set<WMSLayerStyle> styles = lc.getStyles();
+                            if (styles == null || styles.isEmpty()) {
+                                LayerInfo tmp = new LayerInfo(parentWMSCaps, lc, null);
+                                childLayerInfos.add(tmp);
+                            } else {
+                                for (WMSLayerStyle style : styles) {
+                                    LayerInfo tmp = new LayerInfo(parentWMSCaps, lc, style);
+                                    childLayerInfos.add(tmp);
+                                }
+                            }
+                        }
+                    }
+
+                    for (Iterator<LayerInfo> it = childLayerInfos.iterator(); it.hasNext();) {
+                        LayerInfo info = it.next();
+                        ElevatedRenderableLayer layer = addWMSHeightLayer(info, elevation, opacity);
+                        layer.setSlave(true);
+                        layer.setOpacity(0.0d);
+                        log.debug("Adding layer {}", info.getName());
+                        layers.add(layer);
+                    }
                 }
             }
+
             if (!layers.isEmpty()) {
                 WMSControlLayer cl = new WMSControlLayer(layers);
                 cl.setName(layerName);
                 WMSControlListener clistener = new WMSControlListener(cl, layers);
-                boolean[] valSelected = new boolean[layers.size()];
-                valSelected[0] = true;
                 wwd.addSelectListener(clistener);
                 clistener.addPropertyChangeListener(this);
                 ApplicationTemplate.insertBeforePlacenames(wwd, cl);
+            } else {
+                log.debug("No layer found for the time series");
             }
-            log.debug("No layer found for the time series");
         } else {
             LayerInfo layerInfo = WMSUtils.getLayerInfo(uri, layerName);
-            addWMSHeightLayer(layerInfo.caps,
-                    layerInfo.layerCaps, layerInfo.params, elevation, opacity);
+            addWMSHeightLayer(layerInfo, elevation, opacity);
         }
     }
 
     /**
      * Adds a WMS Layer from the given parameters.
      *
-     * @param caps the WMS capabilities
-     * @param lcaps the WMS layer capabilities
-     * @param params the WMS parameters
+     * @param layerInfo the {@link LayerInfo}
      * @param elevation the elevation (meters above sea level) for the result
      * layer
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
-    private ElevatedRenderableLayer addWMSHeightLayer(WMSCapabilities caps, WMSLayerCapabilities lcaps, AVList params, double elevation, double opacity) {
+    private ElevatedRenderableLayer addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
+        WMSCapabilities caps = layerInfo.caps;
+        WMSLayerCapabilities lcaps = layerInfo.layerCaps;
+        AVList params = layerInfo.params;
         ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
         sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
         sul.addPropertyChangeListener(this);
