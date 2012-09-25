@@ -790,8 +790,18 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
-        String server = JOptionPane.showInputDialog(this, "Add WMS", "Add WMS", JOptionPane.PLAIN_MESSAGE);
+        String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.wms.nrw.de/geobasis/DOP");
         try {
+            if(server == null){
+                String msg = "server == null";
+                log.error(msg);
+                throw new IllegalArgumentException(msg);
+            } 
+            if(server.isEmpty()){
+                String msg = "Server URL is empty";
+                log.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
             final URI serverURI = new URI(server.trim());
             wwPanel.addAllWMSLayer(serverURI);
         } catch (Exception ex) {
