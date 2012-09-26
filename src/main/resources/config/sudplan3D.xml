@@ -9,7 +9,7 @@
 	<wuppertal>
 		<localElevationModel>
 			<enabled>true</enabled>
-			<path>elevations/DGM1_WGS84_LAT_LON_ELL_HEIGHT.tif</path>
+			<path>elevations/SUDPLAN_HIGHT_CLIP.tif</path>
 		</localElevationModel>
 	</wuppertal>	
   </sudplan3D>
