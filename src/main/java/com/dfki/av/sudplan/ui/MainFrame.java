@@ -761,7 +761,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miGotoLinzActionPerformed
 
     private void miGotoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoWuppertalActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(51.249, 7.0832, 1510.0));
+        wwPanel.setCamera(new AnimatedCamera(51.249, 7.0832, 14000.0));
     }//GEN-LAST:event_miGotoWuppertalActionPerformed
 
     private void miFullSphereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFullSphereActionPerformed
