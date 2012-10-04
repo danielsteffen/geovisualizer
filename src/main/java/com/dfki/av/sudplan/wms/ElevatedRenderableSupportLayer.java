@@ -9,7 +9,6 @@ package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
@@ -51,10 +50,7 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
     public ElevatedRenderableSupportLayer(WMSCapabilities caps, AVList params,
             ElevatedRenderableLayer layer) {
         super(wmsGetParamsFromCapsDoc(caps, params));
-        this.setOpacity(0.d);
         this.layer = layer;
-        super.setMinActiveAltitude(Double.MIN_VALUE);
-        super.setMaxActiveAltitude(Double.MAX_VALUE);
     }
 
     @Override
@@ -66,9 +62,6 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
             if (this.getScreenCredit() != null) {
                 dc.addScreenCredit(this.getScreenCredit());
             }
-            TextureTile[] sortedTiles = new TextureTile[this.currentTiles.size()];
-            sortedTiles = this.currentTiles.toArray(sortedTiles);
-            Arrays.sort(sortedTiles, levelComparer);
             GL gl = dc.getGL();
             if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
                 gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT | GL.GL_CURRENT_BIT);
@@ -81,11 +74,7 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
             gl.glCullFace(GL.GL_BACK);
             dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, this.tileCountName,
                     this.currentTiles.size());
-            dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.currentTiles);
             gl.glPopAttrib();
-            if (this.drawBoundingVolumes) {
-                this.drawBoundingVolumes(dc, this.currentTiles);
-            }
             // Check texture expiration. Memory-cached textures are checked for expiration only when an explicit,
             // non-zero expiry time has been set for the layer. If none has been set, the expiry times of the layer's
             // individual levels are used, but only for images in the local file cache, not textures in memory. This is
@@ -94,24 +83,17 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
                 this.checkTextureExpiration(dc, this.currentTiles);
             }
             boolean rdy = false;
-            for (TextureTile tile : sortedTiles) {
+            for (TextureTile tile : currentTiles) {
                 if (tile.isTextureInMemory(dc.getGpuResourceCache())
                         && tile.isTextureInMemory(dc.getTextureCache())) {
                     rdy = true;
                 }
             }
-            if (System.currentTimeMillis() - updateTime > 1000 && rdy) {
+            if (System.currentTimeMillis() - updateTime > 250 && rdy) {
                 updateTime = System.currentTimeMillis();
                 layer.removeAllRenderables();
-                for (TextureTile tile : sortedTiles) {
-                    if (tile.isTextureInMemory(dc.getGpuResourceCache())
-                            || tile.isTextureInMemory(dc.getTextureCache())) {
-                        layer.addImage(new ElevatedTileImage(tile.getTileKey(),
-                                tile.getSector(), layer.getElevation()));
-                    }else{
-                        this.requestTexture(dc, tile);
-                        this.addTileToCache(tile);
-                    }
+                for (TextureTile tile : currentTiles) {
+                    layer.addImage(new ElevatedTileImage(tile, layer.getElevation()));
                 }
             }
             this.currentTiles.clear();

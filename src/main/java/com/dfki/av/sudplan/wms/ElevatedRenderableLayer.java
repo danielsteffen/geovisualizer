@@ -15,10 +15,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.util.TileKey;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,10 +72,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         this.setPickEnabled(false);
         super.setOpacity(0.0d);
         AVList configParams = params.copy();
-        int timeout = 1000;
-        configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, timeout);
-        configParams.setValue(AVKey.URL_READ_TIMEOUT, timeout);
-        configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, timeout);
         supportLayer = new ElevatedRenderableSupportLayer(caps, configParams, this);
         initialize();
     }
@@ -121,22 +114,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     }
 
     /**
-     * Removes all {@link ElevatedTileImage}s from the type
-     * {@link ElevatedRenderableLayer}
-     *
-     * @param renderables list of {@link Renderable}s to remove
-     */
-    public void removeRenderables(List<Renderable> renderables) {
-        for (Renderable renderable : renderables) {
-            if (renderable instanceof ElevatedTileImage) {
-                ElevatedTileImage image = (ElevatedTileImage) renderable;
-                removeRenderable(renderable);
-                image.dispose();
-            }
-        }
-    }
-
-    /**
      * Adds a {@link ElevatedTileImage}
      *
      * @param image {@link ElevatedTileImage} to add
@@ -145,30 +122,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         image.setElevation(elevation);
         image.setOpacity(opacityLevel * opac);
         addRenderable(image);
-    }
-
-    /**
-     * Adds a list of {@link ElevatedTileImage}s
-     *
-     * @param images List of images which should be added
-     */
-    public void addImages(List<ElevatedTileImage> images) {
-        for (ElevatedTileImage image : images) {
-            image.setElevation(elevation);
-            image.setOpacity(opacityLevel * opac);
-            addRenderable(image);
-        }
-    }
-
-    /**
-     * Adds a {@link ElevatedTileImage}
-     *
-     * @param tileKey {@link TileKey} for retreival of the texture
-     * @param sector sector of the image
-     */
-    public void addImage(TileKey tileKey, Sector sector) {
-        ElevatedTileImage image = new ElevatedTileImage(tileKey, sector, elevation);
-        addImage(image);
     }
 
     /**

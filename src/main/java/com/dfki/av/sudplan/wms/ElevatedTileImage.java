@@ -9,8 +9,10 @@ package com.dfki.av.sudplan.wms;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureIO;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.LazilyLoadedTexture;
 import gov.nasa.worldwind.render.OrderedRenderable;
@@ -105,6 +107,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * value after creation is -1 and will be set to an value >= 0.
      */
     private final long updateTime;
+    private final TextureTile tile;
 
     /**
      * Creates a {@link ElevatedTileImage}, which is an extended version of a
@@ -113,14 +116,15 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * @param tileKey {@link TileKey} for Texture retreival
      * @param sector {@link Sector} of the image
      */
-    public ElevatedTileImage(TileKey tileKey, Sector sector, double elevation) {
-        super(tileKey, sector);
+    public ElevatedTileImage(TextureTile tile, double elevation) {
+        super(tile.getTileKey(), tile.getSector());
+        this.tile = tile;
         this.floating = true;
         this.elevation = elevation;
         this.quality = MAXQUALITY;
         this.updateTime = System.currentTimeMillis();
         this.frameTimestamp = -1L;
-        initialization(sector);
+        initialization(tile.getSector());
     }
 
     /**
@@ -579,15 +583,41 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
                     Logging.logger().severe(message);
                     throw new IllegalStateException(message);
                 }
-                Texture texture = dc.getTextureCache().getTexture(this.getImageSource());
-                if(texture == null){
-                    texture = dc.getGpuResourceCache().getTexture(this.getImageSource());
-                }
-                if (texture != null) {
-                    texture.bind();
-                    returnValue = true;
+                if (tile.bind(dc)) {
+                    Texture texture = null;
+                    if (tile.getTextureData() != null) {
+                        texture = TextureIO.newTexture(tile.getTextureData());
+                    }
+                    if (texture == null) {
+                        texture = tile.getTexture(dc.getGpuResourceCache());
+                    }
+                    if (texture == null) {
+                        texture = tile.getTexture(dc.getTextureCache());
+                    }
+                    if (texture == null) {
+                        texture = dc.getGpuResourceCache().getTexture(tile.getTileKey());
+                    }
+                    if (texture == null) {
+                        dc.getTextureCache().getTexture(tile.getTileKey());
+                    }
+                    if (texture == null && tile.getFallbackTile().getTextureData() != null) {
+                        TextureIO.newTexture(tile.getFallbackTile().getTextureData());
+                    }
+                    if (texture == null) {
+                        tile.getFallbackTile().getTexture(dc.getGpuResourceCache());
+                    }
+                    if (texture == null) {
+                        tile.getFallbackTile().getTexture(dc.getTextureCache());
+                    }
+                    if (texture != null) {
+                        texture.bind();
+                        returnValue = true;
+                    } else {
+                        returnValue = false;
+                    }
                 } else {
-                    returnValue = false;
+
+                    return false;
                 }
             } else {
                 returnValue = generatedTexture.bind(dc);
