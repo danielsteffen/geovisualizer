@@ -10,6 +10,30 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
 
+* 2012-10-04, sudplan3D 1.5.13
+
+  * Update to sudplan3D-core 1.7.7
+  
+  * Update to sudplan3D-geocpm 1.6
+  
+* 2012-10-04, sudplan3D-geocpm 1.6
+
+  * Update to sudplan3D-core 1.7.7.
+
+* 2012-10-04, sudplan3D-core 1.7.7
+
+  * Free native memory for VisPointCloudNew to imporve performance.
+
+* 2012-10-04, sudplan3D-geocpm 1.5
+
+  * Update to sudplan3D-core 1.7.6.
+
+* 2012-10-04, sudplan3D-core 1.7.6
+
+  * Bug fix for classification (Quantile, etc.) functions not handling integer data.
+  
+  * Usage of delete() method of ogr package to free native memory to improve performance.
+
 * 2012-09-26, sudplan3D 1.5.12
 
   * Enhanced configuration file to validate version conflicts.
@@ -199,6 +223,10 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.13          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
+| 1.5.12          |  1.7.6              |  sudplan3D-geocpm 1.5 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.12          |  1.7.5              |  sudplan3D-geocpm 1.4 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.11          |  1.7.4              |  sudplan3D-geocpm 1.3 | 1.4.0-without-jackson        | 
