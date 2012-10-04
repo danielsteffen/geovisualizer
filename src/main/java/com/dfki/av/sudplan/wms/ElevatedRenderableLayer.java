@@ -8,7 +8,6 @@
 package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -16,6 +15,8 @@ import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.Renderable;
 import java.beans.PropertyChangeEvent;
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
      * If true the layer corresponse to a {@link WMSControlLayer}.
      */
     private boolean slave;
+    private Collection<Renderable> toCleanup;
 
     /**
      * Constructs a elevated surface layer with the definied capabilities,
@@ -67,6 +69,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     public ElevatedRenderableLayer(WMSCapabilities caps, AVList params, Double elevation, Double opac, Sector sector) {
         super();
         this.elevation = elevation;
+        this.toCleanup = new ConcurrentLinkedQueue<Renderable>();
         this.opac = opac;
         this.opacityLevel = 1.0d;
         this.setPickEnabled(false);
@@ -144,6 +147,21 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         return elevation;
     }
 
+    /**
+     * Cleans up unneeded {@link ElevatedTileImage}s
+     */
+    public void cleanUp() {
+        if (toCleanup != null) {
+            for (Renderable renderable : toCleanup) {
+                if (renderable instanceof ElevatedTileImage) {
+                    ElevatedTileImage image = (ElevatedTileImage) renderable;
+                    image.clear();
+                }
+            }
+        }
+        toCleanup.clear();
+    }
+
     @Override
     public void setEnabled(boolean bln) {
         super.setEnabled(bln);
@@ -164,5 +182,11 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     @Override
     public double getOpacity() {
         return opacityLevel;
+    }
+
+    @Override
+    public void removeAllRenderables() {
+        toCleanup = new ConcurrentLinkedQueue<Renderable>(renderables);
+        super.removeAllRenderables();
     }
 }

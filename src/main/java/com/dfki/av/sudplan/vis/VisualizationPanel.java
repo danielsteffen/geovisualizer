@@ -356,7 +356,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             progressChange.firePropertyChange(evt);
         }
         if (evt.getPropertyName().equals(EventHolder.WWD_REDRAW)) {
-            wwd.redrawNow();
+            wwd.redraw();
         }
     }
 
@@ -536,6 +536,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                             layer.setOpacity(0.0d);
                             log.debug("Adding layer {}", info.getName());
                             layers.add(layer);
+                            layer.getSupportLayer().addPropertyChangeListener(this);
                         }
                     }
                 }

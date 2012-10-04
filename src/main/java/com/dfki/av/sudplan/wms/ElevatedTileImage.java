@@ -550,6 +550,24 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     }
 
     /**
+     * Clears all variables
+     */
+    public void clear() {
+        if (vertices != null) {
+            vertices.clear();
+        }
+        if (corners != null) {
+            corners.clear();
+        }
+        if (indices != null) {
+            indices.clear();
+        }
+        if (texCoords != null) {
+            texCoords.clear();
+        }
+    }
+
+    /**
      * Sets the image offset
      *
      * @param offset the offset to set as {@link Point}
@@ -568,13 +586,13 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     public Point getImageOffset() {
         return this.imageOffset;
     }
-    
+
     /**
      * Returns the {@link TextureTile}
-     * 
+     *
      * @return the {@link TextureTile}
      */
-    public TextureTile getTile(){
+    public TextureTile getTile() {
         return tile;
     }
 
@@ -672,16 +690,5 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     public void pick(DrawContext dc, Point point) {
         // Use same code for rendering and picking.
         this.render(dc);
-    }
-
-    void clear() {
-        if (vertices != null) {
-            vertices.clear();
-        }
-        generatedTexture = null;
-        imageSource = null;
-        previousGeneratedTexture = null;
-        previousSourceTexture = null;
-        sourceTexture = null;
     }
 }

@@ -9,14 +9,11 @@ package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.util.PerformanceStatistic;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
-import java.util.Arrays;
 import javax.media.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,32 +100,12 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
                     allrdyFlag = true;
                 }
                 lastUpdate = System.currentTimeMillis();
-                boolean update = true;
-                if (!allrdy) {
-                    for (Renderable renderable : layer.getRenderables()) {
-                        update = false;
-                        boolean change = true;
-                        if (renderable instanceof ElevatedTileImage) {
-                            ElevatedTileImage image = (ElevatedTileImage) renderable;
-                            for (TextureTile tile : currentTiles) {
-                                if (tile.equals(image.getTile())) {
-                                    change = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (change) {
-                            update = true;
-                            break;
-                        }
-                    }
+                layer.removeAllRenderables();
+                for (TextureTile tile : currentTiles) {
+                    layer.addImage(new ElevatedTileImage(tile, layer.getElevation()));
                 }
-                if (update) {
-                    layer.removeAllRenderables();
-                    for (TextureTile tile : currentTiles) {
-                        layer.addImage(new ElevatedTileImage(tile, layer.getElevation()));
-                    }
-                }
+                firePropertyChange(EventHolder.WWD_REDRAW, null, null);
+                layer.cleanUp();
             }
             this.currentTiles.clear();
         }
