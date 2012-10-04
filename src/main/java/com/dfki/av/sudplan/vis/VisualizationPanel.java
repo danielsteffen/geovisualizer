@@ -531,10 +531,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     for (Iterator<LayerInfo> it = childLayerInfos.iterator(); it.hasNext();) {
                         LayerInfo info = it.next();
                         ElevatedRenderableLayer layer = addWMSHeightLayer(info, elevation, opacity);
-                        layer.setSlave(true);
-                        layer.setOpacity(0.0d);
-                        log.debug("Adding layer {}", info.getName());
-                        layers.add(layer);
+                        if (layer != null) {
+                            layer.setSlave(true);
+                            layer.setOpacity(0.0d);
+                            log.debug("Adding layer {}", info.getName());
+                            layers.add(layer);
+                        }
                     }
                 }
             }
@@ -564,15 +566,18 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * @param opacity the opacity for the result layer (1.0 : full transparent)
      */
     private ElevatedRenderableLayer addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
-        WMSCapabilities caps = layerInfo.caps;
-        WMSLayerCapabilities lcaps = layerInfo.layerCaps;
-        AVList params = layerInfo.params;
-        ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
-        sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
-        sul.addPropertyChangeListener(this);
-        ApplicationTemplate.insertBeforePlacenames(wwd, sul);
-        ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
-        return sul;
+        if (layerInfo != null) {
+            WMSCapabilities caps = layerInfo.caps;
+            WMSLayerCapabilities lcaps = layerInfo.layerCaps;
+            AVList params = layerInfo.params;
+            ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
+            sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
+            sul.addPropertyChangeListener(this);
+            ApplicationTemplate.insertBeforePlacenames(wwd, sul);
+            ApplicationTemplate.insertBeforePlacenames(wwd, sul.getSupportLayer());
+            return sul;
+        }
+        return null;
     }
 
     /**

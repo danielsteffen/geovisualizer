@@ -107,7 +107,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * value after creation is -1 and will be set to an value >= 0.
      */
     private final long updateTime;
-    private final TextureTile tile;
+    private TextureTile tile;
 
     /**
      * Creates a {@link ElevatedTileImage}, which is an extended version of a
@@ -567,6 +567,15 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      */
     public Point getImageOffset() {
         return this.imageOffset;
+    }
+    
+    /**
+     * Returns the {@link TextureTile}
+     * 
+     * @return the {@link TextureTile}
+     */
+    public TextureTile getTile(){
+        return tile;
     }
 
     @Override

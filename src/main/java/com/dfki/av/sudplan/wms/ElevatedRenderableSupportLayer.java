@@ -9,9 +9,11 @@ package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.util.PerformanceStatistic;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import java.util.Arrays;
@@ -38,7 +40,8 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
     /**
      * Keeps track of the update time
      */
-    private long updateTime;
+    private long lastUpdate;
+    private boolean allrdyFlag;
 
     /**
      * Creates a {@link ElevatedRenderableSupportLayer} with the defined
@@ -83,17 +86,48 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
                 this.checkTextureExpiration(dc, this.currentTiles);
             }
             boolean rdy = false;
+            boolean allrdy = true;
             for (TextureTile tile : currentTiles) {
                 if (tile.isTextureInMemory(dc.getGpuResourceCache())
-                        && tile.isTextureInMemory(dc.getTextureCache())) {
+                        || tile.isTextureInMemory(dc.getTextureCache())
+                        || tile.getTextureData() != null) {
                     rdy = true;
+                } else {
+                    allrdyFlag = false;
+                    allrdy = false;
                 }
             }
-            if (System.currentTimeMillis() - updateTime > 250 && rdy) {
-                updateTime = System.currentTimeMillis();
-                layer.removeAllRenderables();
-                for (TextureTile tile : currentTiles) {
-                    layer.addImage(new ElevatedTileImage(tile, layer.getElevation()));
+            if ((System.currentTimeMillis() - lastUpdate > 2000 && rdy)
+                    || (allrdy && !allrdyFlag)) {
+                if (allrdy) {
+                    allrdyFlag = true;
+                }
+                lastUpdate = System.currentTimeMillis();
+                boolean update = true;
+                if (!allrdy) {
+                    for (Renderable renderable : layer.getRenderables()) {
+                        update = false;
+                        boolean change = true;
+                        if (renderable instanceof ElevatedTileImage) {
+                            ElevatedTileImage image = (ElevatedTileImage) renderable;
+                            for (TextureTile tile : currentTiles) {
+                                if (tile.equals(image.getTile())) {
+                                    change = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (change) {
+                            update = true;
+                            break;
+                        }
+                    }
+                }
+                if (update) {
+                    layer.removeAllRenderables();
+                    for (TextureTile tile : currentTiles) {
+                        layer.addImage(new ElevatedTileImage(tile, layer.getElevation()));
+                    }
                 }
             }
             this.currentTiles.clear();
