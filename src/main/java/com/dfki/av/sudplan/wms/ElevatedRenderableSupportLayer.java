@@ -9,6 +9,7 @@ package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
@@ -35,6 +36,10 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      * Bounding box for the modified (changed elevation) geometry
      */
     private final ElevatedRenderableLayer layer;
+    /**
+     * Keeps track of the update time
+     */
+    private long updateTime;
 
     /**
      * Creates a {@link ElevatedRenderableSupportLayer} with the defined
@@ -88,10 +93,26 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
             if (this.getExpiryTime() > 0 && this.getExpiryTime() <= System.currentTimeMillis()) {
                 this.checkTextureExpiration(dc, this.currentTiles);
             }
-            layer.removeAllRenderables();
+            boolean rdy = false;
             for (TextureTile tile : sortedTiles) {
-                layer.addImage(new ElevatedTileImage(tile.getTileKey(),
-                        tile.getSector(), layer.getElevation()));
+                if (tile.isTextureInMemory(dc.getGpuResourceCache())
+                        && tile.isTextureInMemory(dc.getTextureCache())) {
+                    rdy = true;
+                }
+            }
+            if (System.currentTimeMillis() - updateTime > 1000 && rdy) {
+                updateTime = System.currentTimeMillis();
+                layer.removeAllRenderables();
+                for (TextureTile tile : sortedTiles) {
+                    if (tile.isTextureInMemory(dc.getGpuResourceCache())
+                            || tile.isTextureInMemory(dc.getTextureCache())) {
+                        layer.addImage(new ElevatedTileImage(tile.getTileKey(),
+                                tile.getSector(), layer.getElevation()));
+                    }else{
+                        this.requestTexture(dc, tile);
+                        this.addTileToCache(tile);
+                    }
+                }
             }
             this.currentTiles.clear();
         }

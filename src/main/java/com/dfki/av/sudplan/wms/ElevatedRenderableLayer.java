@@ -17,6 +17,7 @@ import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.util.TileKey;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         this.setPickEnabled(false);
         super.setOpacity(0.0d);
         AVList configParams = params.copy();
-        int timeout = 2000;
+        int timeout = 1000;
         configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, timeout);
         configParams.setValue(AVKey.URL_READ_TIMEOUT, timeout);
         configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, timeout);

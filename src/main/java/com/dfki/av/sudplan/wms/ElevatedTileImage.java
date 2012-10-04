@@ -96,7 +96,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     /**
      * Maximum quality of the image (support points)
      */
-    private static int MAXQUALITY = 64;
+    private static int MAXQUALITY = 32;
     /**
      * ID of the {@link ElevatedTileImage} Note: Needed to determine the if a
      * newer version is available for a given sector
@@ -138,13 +138,13 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         if (WMSUtils.area(sector) > 5000000) {
             quality = MAXQUALITY;
         } else if (WMSUtils.area(sector) > 1000000) {
-            quality = MAXQUALITY / 2;
+            quality = MAXQUALITY / 1;
         } else if (WMSUtils.area(sector) > 60000) {
-            quality = MAXQUALITY / 4;
+            quality = MAXQUALITY / 2;
         } else if (WMSUtils.area(sector) > 30000) {
-            quality = MAXQUALITY / 8;
+            quality = MAXQUALITY / 4;
         } else if (WMSUtils.area(sector) > 15000) {
-            quality = MAXQUALITY / 16;
+            quality = MAXQUALITY / 8;
         } else if (WMSUtils.area(sector) == 0) {
             quality = 0;
         }
@@ -298,7 +298,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         }
         return buffer;
     }
-    
+
     /**
      * Set up drawing state, and draw the cube. This method is called when the
      * cube is rendered in ordered rendering mode.
@@ -404,7 +404,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         // that point we will actually draw the cube.
         dc.addOrderedRenderable(this);
     }
-    
+
     /**
      * Computes the minimum distance between this shape and the eye point.
      *
@@ -450,7 +450,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         // model coordinates in order to indicate its model-coordinate extent.
         return boundingBox;
     }
-    
+
     /**
      * Determines whether the cube intersects the view frustum.
      *
@@ -580,6 +580,9 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
                     throw new IllegalStateException(message);
                 }
                 Texture texture = dc.getTextureCache().getTexture(this.getImageSource());
+                if(texture == null){
+                    texture = dc.getGpuResourceCache().getTexture(this.getImageSource());
+                }
                 if (texture != null) {
                     texture.bind();
                     returnValue = true;
@@ -620,7 +623,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
             this.makeOrderedRenderable(dc);
         }
     }
-    
+
     @Override
     public double getDistanceFromEye() {
         return this.eyeDistance;
@@ -630,5 +633,16 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     public void pick(DrawContext dc, Point point) {
         // Use same code for rendering and picking.
         this.render(dc);
-    } 
+    }
+
+    void clear() {
+        if (vertices != null) {
+            vertices.clear();
+        }
+        generatedTexture = null;
+        imageSource = null;
+        previousGeneratedTexture = null;
+        previousSourceTexture = null;
+        sourceTexture = null;
+    }
 }
