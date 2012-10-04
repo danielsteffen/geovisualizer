@@ -36,37 +36,15 @@ public class WMSUtils {
     private static final Logger log = LoggerFactory.getLogger(WMSUtils.class);
 
     /**
-     * Retrieves the reference location of an
-     * <code>ExtrudedPolygon</code> with is created on the
-     * <code>Sector</code>
-     * <code>sector</code>
+     * Converts decimal degrees to radians
      *
-     * @param sector
-     * <code>Sector</code> in which the reference location for the
-     * <code>ExtrudedPolygon</code> should be calculated.
-     * @return reference location of the given sector
+     * @param deg degree value
+     * @return radian value
      */
-    public static LatLon getReferenceLocation(Sector sector) {
-        ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
-        Iterator<LatLon> iterator = sector.iterator();
-        while (iterator.hasNext()) {
-            pathLocations.add(iterator.next());
-        }
-        ExtrudedPolygon pgon = new ExtrudedPolygon(pathLocations, 1.0);
-        return pgon.getReferenceLocation();
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
     }
-
-    /**
-     * Returns maximum elevation of the given {@link Sector} on the given {@link Globe}.
-     *
-     * @param sector the {@link Sector} to check
-     * @param globe the {@link Globe} to use.
-     * @return maximum elevation
-     */
-    public static double getMaxElevationOfSector(Sector sector, Globe globe) {
-        return globe.getMinAndMaxElevations(sector)[1];
-    }
-
+        
     /**
      * lat1, lon1 = Latitude and Longitude of point 1 (in decimal degrees) lat2,
      * lon2 = Latitude and Longitude of point 2 (in decimal degrees) unit = the
@@ -93,6 +71,48 @@ public class WMSUtils {
             dist = dist * 0.8684;
         }
         return (dist);
+    }
+
+    /**
+     * Converts radians to decimal degrees
+     *
+     * @param rad radian value
+     * @return degree value
+     */
+    private static double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+
+    /**
+     * Retrieves the reference location of an
+     * <code>ExtrudedPolygon</code> with is created on the
+     * <code>Sector</code>
+     * <code>sector</code>
+     *
+     * @param sector <code>Sector</code> in which the reference location for the
+     * <code>ExtrudedPolygon</code> should be calculated.
+     * @return reference location of the given sector
+     */
+    public static LatLon getReferenceLocation(Sector sector) {
+        ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
+        Iterator<LatLon> iterator = sector.iterator();
+        while (iterator.hasNext()) {
+            pathLocations.add(iterator.next());
+        }
+        ExtrudedPolygon pgon = new ExtrudedPolygon(pathLocations, 1.0);
+        return pgon.getReferenceLocation();
+    }
+
+    /**
+     * Returns maximum elevation of the given {@link Sector} on the given
+     * {@link Globe}.
+     *
+     * @param sector the {@link Sector} to check
+     * @param globe the {@link Globe} to use.
+     * @return maximum elevation
+     */
+    public static double getMaxElevationOfSector(Sector sector, Globe globe) {
+        return globe.getMinAndMaxElevations(sector)[1];
     }
 
     /**
@@ -141,26 +161,6 @@ public class WMSUtils {
     }
 
     /**
-     * Converts decimal degrees to radians
-     *
-     * @param deg degree value
-     * @return radian value
-     */
-    private static double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    /**
-     * Converts radians to decimal degrees
-     *
-     * @param rad radian value
-     * @return degree value
-     */
-    private static double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
-
-    /**
      * Parses the data retrieved from the WMS server to {@link LayerInfo}
      *
      * @param request request URL as {@link String}
@@ -187,9 +187,8 @@ public class WMSUtils {
     }
 
     /**
-     * Retrieve the {@link LayerInfo} for the layer with name
-     * {@code layerName} from the WMS server specified with the parameter
-     * {@code uri}.
+     * Retrieve the {@link LayerInfo} for the layer with name {@code layerName}
+     * from the WMS server specified with the parameter {@code uri}.
      *
      * @param uri {@link URI} from the WMS server
      * @param layerName name of the layer
@@ -201,9 +200,9 @@ public class WMSUtils {
         WMSCapabilities caps;
         try {
             caps = WMSCapabilities.retrieve(uri);
-            if(caps != null){
+            if (caps != null) {
                 caps.parse();
-            } else{
+            } else {
                 String msg = "WMSCapabilities == null";
                 log.error(msg);
                 return null;
@@ -229,7 +228,7 @@ public class WMSUtils {
         log.debug("No layers with layer name '{}' available for server: {}.", layerName, uri);
         return null;
     }
-    
+
     /**
      * Retrieves a {@link List} of {@link LayerInfo} which are represented with
      * the {@link WMSCapabilities}.

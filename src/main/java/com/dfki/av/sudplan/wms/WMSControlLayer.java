@@ -30,6 +30,10 @@ import javax.media.opengl.GL;
 public class WMSControlLayer extends RenderableLayer {
 
     /**
+     * Array to store color transformation data
+     */
+    private final float[] compArray = new float[4];
+    /**
      * Size of the fonts
      */
     public final static float FONT_SIZE = 12.f;
@@ -160,10 +164,6 @@ public class WMSControlLayer extends RenderableLayer {
      */
     private boolean controlsShow;
     /**
-     * Ordered icon {@link OrderedIcon} object for the side bar.
-     */
-    private OrderedIcon orderedImage;
-    /**
      * List of {@link ElevatedRenderableLayer} which the {@link WMSControlLayer}
      * can control.
      */
@@ -226,181 +226,7 @@ public class WMSControlLayer extends RenderableLayer {
             this.addRenderable(steps[i]);
         }
     }
-
-    /**
-     * Returns the id of the control layer.
-     *
-     * @return the id of the control layer
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Initialize attributes to default values and is alway called by the
-     * constructor.
-     */
-    private void initAttributes() {
-        size = new Dimension(185, 300);
-        color = Color.white;
-        position = AVKey.NORTH;
-        layout = AVKey.HORIZONTAL;
-        locationCenter = null;
-        locationOffset = null;
-        scale = 1;
-        borderWidth = 20;
-        buttonSize = 22;
-        initialized = false;
-        controlsShow = true;
-        orderedImage = new OrderedIcon(this);
-    }
-
-    /**
-     * Returns the list of {@link ElevatedRenderableLayer} which can be
-     * controlled by the {@link WMSControlLayer}.
-     *
-     * @return list of {@link ElevatedRenderableLayer}s
-     */
-    public List<ElevatedRenderableLayer> getLayers() {
-        return layers;
-    }
-
-    /**
-     * Accesses the time steps screen annotations
-     * {@link gov.nasa.worldwind.render.ScreenAnnotation}.
-     *
-     * @return List of time steps screen annotations
-     */
-    public ScreenAnnotation[] getSteps() {
-        return steps;
-    }
-
-    /**
-     * Accesses the arrayList of the time steps.
-     *
-     * @return ArrayList of Strings of the time steps names.
-     */
-    public List<String> getStepsRange() {
-        return stepsRange;
-    }
-
-    /**
-     * Gets the boolean array in which the true indexes the selected screen
-     * annotation.
-     *
-     * @return Array of booleans.
-     */
-    public boolean[] getValSelected() {
-        return valSelected;
-    }
-
-    /**
-     * Sets the ValSelected attribute to the input parameter. (The valSelected
-     * is a boolean array in which the true indexes the selected screen
-     * annotation.)
-     *
-     * @param valSelected Array of boolean must have the same size as the
-     * annotations list (iso-values or time steps).
-     */
-    public void setValSelected(boolean[] valSelected) {
-        this.valSelected = valSelected;
-    }
-
-    /**
-     * Gets the flag indicating whether to display controls or not.
-     *
-     * @return True if the controls are to be shown and false if not.
-     */
-    public boolean isControlsShow() {
-        return controlsShow;
-    }
-
-    /**
-     * Sets the flag indicating whether to display controls or not.
-     *
-     * @param controlsShow If true controls are shown if not controls are not
-     * shown.
-     */
-    public void setControlsShow(boolean controlsShow) {
-        this.controlsShow = controlsShow;
-    }
-
-    /**
-     * Indicates the currently highlighted control, if any.
-     *
-     * @return the currently highlighted control, or null if no control is
-     * highlighted.
-     */
-    public Object getHighlightedObject() {
-        return this.currentControl;
-    }
-
-    /**
-     * Specifies the control to highlight. Any currently highlighted control is
-     * un-highlighted.
-     *
-     * @param control The control to highlight.
-     */
-    public void highlight(Object control) {
-        // Manage highlighting of controls.
-        if (this.currentControl == control) {
-            return; // same thing selected
-        }
-        // Turn off highlight if on.
-        if (this.currentControl != null) {
-            int index = -1;
-            if (getSteps() != null) {
-                for (int i = 0; i < getSteps().length; i++) {
-                    if (currentControl.getText().equals(getSteps()[i].getText())) {
-                        index = i;
-                    }
-                }
-            }
-            this.currentControl.getAttributes().setImageOpacity(-1); // use default opacity     
-            if (index != -1 && !getValSelected()[index]) {
-                Font font = currentControl.getAttributes().getFont();
-                font = font.deriveFont(FONT_SIZE);
-                currentControl.getAttributes().setFont(font);
-                currentControl.getAttributes().setTextColor(Color.LIGHT_GRAY);
-            }
-            this.currentControl = null;
-
-        }
-
-        // Turn on highlight if object selected.
-        if (control != null && control instanceof ScreenAnnotation) {
-            this.currentControl = (ScreenAnnotation) control;
-            this.currentControl.getAttributes().setImageOpacity(1);
-            if (currentControl.getText() != null) {
-                Font font = currentControl.getAttributes().getFont();
-                if (getSteps() == null) {
-                    font = font.deriveFont(FONT_SIZE);
-                } else {
-                    font = font.deriveFont(FONT_SIZE);
-                }
-                currentControl.getAttributes().setFont(font);
-                currentControl.getAttributes().setTextColor(Color.WHITE);
-            }
-        }
-        if (this.currentControl == null) {
-
-            if (getSteps() != null) {
-                for (ScreenAnnotation current : getSteps()) {
-                    if (current.getText() != null
-                            && !getValSelected()[stepsRange.indexOf(
-                            current.getText())]) {
-                        Font font = current.getAttributes().getFont();
-                        font = font.deriveFont(FONT_SIZE);
-                        current.getAttributes().setFont(font);
-                        current.getAttributes().setTextColor(Color.LIGHT_GRAY);
-                    }
-
-                    current = null;
-                }
-            }
-        }
-    }
-
+    
     /**
      * Checks whether current ContorlLayer is initialized or not.
      *
@@ -618,6 +444,226 @@ public class WMSControlLayer extends RenderableLayer {
     }
 
     /**
+     * Returns the id of the control layer.
+     *
+     * @return the id of the control layer
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Initialize attributes to default values and is alway called by the
+     * constructor.
+     */
+    private void initAttributes() {
+        size = new Dimension(185, 300);
+        color = Color.white;
+        position = AVKey.NORTH;
+        layout = AVKey.HORIZONTAL;
+        locationCenter = null;
+        locationOffset = null;
+        scale = 1;
+        borderWidth = 20;
+        buttonSize = 22;
+        initialized = false;
+        controlsShow = true;
+    }
+    
+    
+    /**
+     * Renders or draws the side bar in white color.
+     *
+     * @param dc Draw context used.
+     */
+    private void drawScale(DrawContext dc) {
+        if (intervalCnt == 0) {
+            return;
+        }
+        java.awt.Rectangle rect = dc.getView().getViewport();
+        GL gl = dc.getGL();
+        gl.glBegin(GL.GL_LINE_STRIP);
+        gl.glVertex3d(rect.width - 30, rect.height - 190, 0);
+        gl.glVertex3d(rect.width - 20, rect.height - 190, 0);
+        gl.glVertex3d(rect.width - 20, rect.height - 190 - 40 * (intervalCnt - 1),
+                0);
+        gl.glVertex3d(rect.width - 30, rect.height - 190 - 40 * (intervalCnt - 1),
+                0);
+        gl.glEnd();
+        double intervalHeight = 40;
+        for (int i = 1; i <= intervalCnt - 2; i++) {
+            gl.glBegin(GL.GL_LINE_STRIP);
+            gl.glVertex3d(rect.width - 30, rect.height - 190 - i * intervalHeight,
+                    0);
+            gl.glVertex3d(rect.width - 20, rect.height - 190 - i * intervalHeight,
+                    0);
+            gl.glEnd();
+        }
+    }
+
+    /**
+     * Compute background color for best contrast.
+     *
+     * @param color input color
+     * @return color that gives the best contrast with the input color
+     */
+    private Color getBackgroundColor(Color color) {
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(),
+                compArray);
+        if (compArray[2] > 0.5) {
+            return new Color(0, 0, 0, 0.7f);
+        } else {
+            return new Color(1, 1, 1, 0.7f);
+        }
+    }
+
+    /**
+     * Returns the list of {@link ElevatedRenderableLayer} which can be
+     * controlled by the {@link WMSControlLayer}.
+     *
+     * @return list of {@link ElevatedRenderableLayer}s
+     */
+    public List<ElevatedRenderableLayer> getLayers() {
+        return layers;
+    }
+
+    /**
+     * Accesses the time steps screen annotations
+     * {@link gov.nasa.worldwind.render.ScreenAnnotation}.
+     *
+     * @return List of time steps screen annotations
+     */
+    public ScreenAnnotation[] getSteps() {
+        return steps;
+    }
+
+    /**
+     * Accesses the arrayList of the time steps.
+     *
+     * @return ArrayList of Strings of the time steps names.
+     */
+    public List<String> getStepsRange() {
+        return stepsRange;
+    }
+
+    /**
+     * Gets the boolean array in which the true indexes the selected screen
+     * annotation.
+     *
+     * @return Array of booleans.
+     */
+    public boolean[] getValSelected() {
+        return valSelected;
+    }
+
+    /**
+     * Sets the ValSelected attribute to the input parameter. (The valSelected
+     * is a boolean array in which the true indexes the selected screen
+     * annotation.)
+     *
+     * @param valSelected Array of boolean must have the same size as the
+     * annotations list (iso-values or time steps).
+     */
+    public void setValSelected(boolean[] valSelected) {
+        this.valSelected = valSelected;
+    }
+
+    /**
+     * Gets the flag indicating whether to display controls or not.
+     *
+     * @return True if the controls are to be shown and false if not.
+     */
+    public boolean isControlsShow() {
+        return controlsShow;
+    }
+
+    /**
+     * Sets the flag indicating whether to display controls or not.
+     *
+     * @param controlsShow If true controls are shown if not controls are not
+     * shown.
+     */
+    public void setControlsShow(boolean controlsShow) {
+        this.controlsShow = controlsShow;
+    }
+
+    /**
+     * Indicates the currently highlighted control, if any.
+     *
+     * @return the currently highlighted control, or null if no control is
+     * highlighted.
+     */
+    public Object getHighlightedObject() {
+        return this.currentControl;
+    }
+
+    /**
+     * Specifies the control to highlight. Any currently highlighted control is
+     * un-highlighted.
+     *
+     * @param control The control to highlight.
+     */
+    public void highlight(Object control) {
+        // Manage highlighting of controls.
+        if (this.currentControl == control) {
+            return; // same thing selected
+        }
+        // Turn off highlight if on.
+        if (this.currentControl != null) {
+            int index = -1;
+            if (getSteps() != null) {
+                for (int i = 0; i < getSteps().length; i++) {
+                    if (currentControl.getText().equals(getSteps()[i].getText())) {
+                        index = i;
+                    }
+                }
+            }
+            this.currentControl.getAttributes().setImageOpacity(-1); // use default opacity     
+            if (index != -1 && !getValSelected()[index]) {
+                Font font = currentControl.getAttributes().getFont();
+                font = font.deriveFont(FONT_SIZE);
+                currentControl.getAttributes().setFont(font);
+                currentControl.getAttributes().setTextColor(Color.LIGHT_GRAY);
+            }
+            this.currentControl = null;
+
+        }
+
+        // Turn on highlight if object selected.
+        if (control != null && control instanceof ScreenAnnotation) {
+            this.currentControl = (ScreenAnnotation) control;
+            this.currentControl.getAttributes().setImageOpacity(1);
+            if (currentControl.getText() != null) {
+                Font font = currentControl.getAttributes().getFont();
+                if (getSteps() == null) {
+                    font = font.deriveFont(FONT_SIZE);
+                } else {
+                    font = font.deriveFont(FONT_SIZE);
+                }
+                currentControl.getAttributes().setFont(font);
+                currentControl.getAttributes().setTextColor(Color.WHITE);
+            }
+        }
+        if (this.currentControl == null) {
+
+            if (getSteps() != null) {
+                for (ScreenAnnotation current : getSteps()) {
+                    if (current.getText() != null
+                            && !getValSelected()[stepsRange.indexOf(
+                            current.getText())]) {
+                        Font font = current.getAttributes().getFont();
+                        font = font.deriveFont(FONT_SIZE);
+                        current.getAttributes().setFont(font);
+                        current.getAttributes().setTextColor(Color.LIGHT_GRAY);
+                    }
+
+                    current = null;
+                }
+            }
+        }
+    }
+
+    /**
      * Renders or draw the layer.
      *
      * @param dc Draw context used.
@@ -680,53 +726,6 @@ public class WMSControlLayer extends RenderableLayer {
         }
     }
 
-    /**
-     * Renders or draws the side bar in white color.
-     *
-     * @param dc Draw context used.
-     */
-    private void drawScale(DrawContext dc) {
-        if (intervalCnt == 0) {
-            return;
-        }
-        java.awt.Rectangle rect = dc.getView().getViewport();
-        GL gl = dc.getGL();
-        gl.glBegin(GL.GL_LINE_STRIP);
-        gl.glVertex3d(rect.width - 30, rect.height - 190, 0);
-        gl.glVertex3d(rect.width - 20, rect.height - 190, 0);
-        gl.glVertex3d(rect.width - 20, rect.height - 190 - 40 * (intervalCnt - 1),
-                0);
-        gl.glVertex3d(rect.width - 30, rect.height - 190 - 40 * (intervalCnt - 1),
-                0);
-        gl.glEnd();
-        double intervalHeight = 40;
-        for (int i = 1; i <= intervalCnt - 2; i++) {
-            gl.glBegin(GL.GL_LINE_STRIP);
-            gl.glVertex3d(rect.width - 30, rect.height - 190 - i * intervalHeight,
-                    0);
-            gl.glVertex3d(rect.width - 20, rect.height - 190 - i * intervalHeight,
-                    0);
-            gl.glEnd();
-        }
-    }
-    private final float[] compArray = new float[4];
-
-    /**
-     * Compute background color for best contrast.
-     *
-     * @param color input color
-     * @return color that gives the best contrast with the input color
-     */
-    private Color getBackgroundColor(Color color) {
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(),
-                compArray);
-        if (compArray[2] > 0.5) {
-            return new Color(0, 0, 0, 0.7f);
-        } else {
-            return new Color(1, 1, 1, 0.7f);
-        }
-    }
-
     @Override
     public void setEnabled(boolean bln) {
         super.setEnabled(bln);
@@ -746,17 +745,10 @@ public class WMSControlLayer extends RenderableLayer {
         }
 
         super.doRender(dc);
-        dc.addOrderedRenderable(this.orderedImage);
     }
 
     @Override
     public String toString() {
         return this.getName();
-    }
-
-    @Override
-    public void doPick(DrawContext dc, Point pickPoint) {
-        super.doPick(dc, pickPoint);
-        dc.addOrderedRenderable(this.orderedImage);
     }
 }

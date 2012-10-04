@@ -57,6 +57,26 @@ public class LayerInfo extends WMSLayerInfo {
         this.params = super.getParams();
         this.caps = caps;
     }
+    
+    /**
+     * Retrieves the factory key for the WMS layer creation.
+     *
+     * @param caps {@link WMSCapabilities} for the corresponding WMS data
+     * @return factory key as {@link String} for the layer creation
+     */
+    private static String getFactoryKeyForCapabilities(WMSCapabilities caps) {
+        boolean hasApplicationBilFormat = false;
+
+        Set<String> formats = caps.getImageFormats();
+        for (String s : formats) {
+            if (s.contains("application/bil")) {
+                hasApplicationBilFormat = true;
+                break;
+            }
+        }
+
+        return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
+    }
 
     /**
      * Return the name of the layer.
@@ -103,25 +123,5 @@ public class LayerInfo extends WMSLayerInfo {
         }
 
         return null;
-    }
-
-    /**
-     * Retrieves the factory key for the WMS layer creation.
-     *
-     * @param caps {@link WMSCapabilities} for the corresponding WMS data
-     * @return factory key as {@link String} for the layer creation
-     */
-    protected static String getFactoryKeyForCapabilities(WMSCapabilities caps) {
-        boolean hasApplicationBilFormat = false;
-
-        Set<String> formats = caps.getImageFormats();
-        for (String s : formats) {
-            if (s.contains("application/bil")) {
-                hasApplicationBilFormat = true;
-                break;
-            }
-        }
-
-        return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
     }
 }

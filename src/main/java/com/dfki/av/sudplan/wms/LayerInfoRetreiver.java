@@ -7,7 +7,10 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import org.openide.util.Exceptions;
@@ -18,26 +21,30 @@ import org.openide.util.Exceptions;
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
-public class LayerInfoRetreiver extends SwingWorker<LayerInfo, Void> {
+public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
 
     /**
      * wms request url as {@link String}
      */
     private String wmsURL;
+    private final boolean direktLink;
 
     /**
      * Creates a {@link LayerInfoRetreiver} with the defined wms source {@link
      * String} wmsURL.
      *
      * @param wmsURL wms request url as {@link String}
+     * @param direktLink if true the wmsURL is handled as link to one specific
+     * wms layer
      */
-    public LayerInfoRetreiver(String wmsURL) {
+    public LayerInfoRetreiver(String wmsURL, boolean direktLink) {
         this.wmsURL = wmsURL;
+        this.direktLink = direktLink;
     }
 
     /**
-     * Retreives a {@link LayerInfo} from the defined wms source
-     * ({@link String} wmsURL})
+     * Retreives a {@link LayerInfo} from the defined wms source ({@link String}
+     * wmsURL})
      *
      * @param wmsURL
      * @return parsed {@link LayerInfo} of the data returned from the wms server
@@ -45,18 +52,25 @@ public class LayerInfoRetreiver extends SwingWorker<LayerInfo, Void> {
      * URI failed.
      * @throws Exception if the parsing of the layer info failed
      */
-    private LayerInfo retreiveLayerInfo(String wmsURL) throws URISyntaxException, Exception {
-        return WMSUtils.parseWMSRequest(wmsURL);
+    private List<LayerInfo> retreiveLayerInfo(String wmsURL) throws URISyntaxException, Exception {
+        if (direktLink) {
+            List<LayerInfo> layerInfo = new ArrayList<LayerInfo>();
+            layerInfo.add(WMSUtils.parseWMSRequest(wmsURL));
+            return layerInfo;
+        } else {
+            URI serverURI = new URI(wmsURL.trim());
+            return WMSUtils.getLayerInfos(serverURI);
+        }
     }
 
     @Override
-    protected LayerInfo doInBackground() throws URISyntaxException, Exception {
+    protected List<LayerInfo> doInBackground() throws URISyntaxException, Exception {
         return retreiveLayerInfo(wmsURL);
     }
 
     @Override
     protected void done() {
-        LayerInfo li;
+        List<LayerInfo> li;
         try {
             li = get();
         } catch (InterruptedException ex) {

@@ -35,10 +35,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
      */
     private static final Logger log = LoggerFactory.getLogger(ElevatedRenderableLayer.class);
     /**
-     * Last image_id
-     */
-    private int image_id;
-    /**
      * Support layer for the {@link ElevatedRenderableLayer}
      */
     private final ElevatedRenderableSupportLayer supportLayer;
@@ -78,7 +74,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         this.setPickEnabled(false);
         super.setOpacity(0.0d);
         AVList configParams = params.copy();
-        int timeout = 500;
+        int timeout = 2000;
         configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, timeout);
         configParams.setValue(AVKey.URL_READ_TIMEOUT, timeout);
         configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, timeout);
@@ -90,7 +86,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
      * Initializes the support layer and the image id
      */
     private void initialize() {
-        image_id = 0;
         supportLayer.setName(getName() + "_support");
         supportLayer.addPropertyChangeListener(this);
     }
@@ -148,7 +143,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     public void addImage(ElevatedTileImage image) {
         image.setElevation(elevation);
         image.setOpacity(opacityLevel * opac);
-        image_id++;
         addRenderable(image);
     }
 
@@ -161,7 +155,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         for (ElevatedTileImage image : images) {
             image.setElevation(elevation);
             image.setOpacity(opacityLevel * opac);
-            image_id++;
             addRenderable(image);
         }
     }
@@ -175,6 +168,26 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     public void addImage(TileKey tileKey, Sector sector) {
         ElevatedTileImage image = new ElevatedTileImage(tileKey, sector, elevation);
         addImage(image);
+    }
+
+    /**
+     * Returns the pre-defined maximal opacity for the
+     * {@link ElevatedTileImage}s
+     *
+     * @return the pre-defined maximal opacity for the
+     * {@link ElevatedTileImage}s
+     */
+    public double getMaxOpacity() {
+        return opac;
+    }
+
+    /**
+     * Returns the elevation {@link ElevatedTileImage}s
+     *
+     * @return the elevation for the {@link ElevatedTileImage}s
+     */
+    double getElevation() {
+        return elevation;
     }
 
     @Override
@@ -194,52 +207,8 @@ public class ElevatedRenderableLayer extends RenderableLayer {
         firePropertyChange(EventHolder.WWD_REDRAW, log, log);
     }
 
-    public double getMaxOpacity() {
-        return opac;
-    }
-
     @Override
     public double getOpacity() {
         return opacityLevel;
-    }
-
-    public void cleanUp() {
-        if (getRenderables() == null) {
-            return;
-        }
-        for (Renderable renderable1 : getRenderables()) {
-            if (renderable1 != null) {
-                Sector sector1;
-                long updateTime1;
-                Sector sector2;
-                long updateTime2;
-                if (renderable1 instanceof ElevatedTileImage) {
-                    sector1 = ((ElevatedTileImage) renderable1).getSector();
-                    updateTime1 = ((ElevatedTileImage) renderable1).getUpdateTime();
-                } else {
-                    continue;
-                }
-                for (Renderable renderable2 : getRenderables()) {
-                    if (renderable2 != null) {
-                        if (renderable2 instanceof ElevatedTileImage) {
-                            sector2 = ((ElevatedTileImage) renderable2).getSector();
-                            updateTime2 = ((ElevatedTileImage) renderable2).getUpdateTime();
-                        } else {
-                            continue;
-                        }
-                        if (sector1.contains(sector2)
-                                || sector2.contains(sector1)) {
-                            if (updateTime1 < updateTime2) {
-                                removeRenderable(renderable1);
-                            } else if (updateTime1 > updateTime2) {
-                                removeRenderable(renderable2);
-                            }
-                        }
-                    }
-                }
-            } else {
-                removeRenderable(renderable1);
-            }
-        }
     }
 }

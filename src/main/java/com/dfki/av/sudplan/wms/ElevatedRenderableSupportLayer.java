@@ -7,11 +7,15 @@
  */
 package com.dfki.av.sudplan.wms;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.util.PerformanceStatistic;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
+import java.util.Arrays;
+import javax.media.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +31,9 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(ElevatedRenderableSupportLayer.class);
+    /**
+     * Bounding box for the modified (changed elevation) geometry
+     */
     private final ElevatedRenderableLayer layer;
 
     /**
@@ -36,16 +43,59 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      * @param caps the {@link WMSCapabilities}
      * @param params the parameters as {@link AVList}
      */
-    public ElevatedRenderableSupportLayer(WMSCapabilities caps, AVList params, ElevatedRenderableLayer layer) {
+    public ElevatedRenderableSupportLayer(WMSCapabilities caps, AVList params,
+            ElevatedRenderableLayer layer) {
         super(wmsGetParamsFromCapsDoc(caps, params));
-        this.setOpacity(0.0);
+        this.setOpacity(0.d);
         this.layer = layer;
+        super.setMinActiveAltitude(Double.MIN_VALUE);
+        super.setMaxActiveAltitude(Double.MAX_VALUE);
     }
 
     @Override
-    protected void addTile(DrawContext dc, TextureTile tile) {
-        super.addTile(dc, tile);
-        layer.addImage(tile.getTileKey(), tile.getSector());
-        layer.cleanUp();
+    protected void draw(DrawContext dc) {
+        this.assembleTiles(dc); // Determine the tiles to draw.
+        if (this.currentTiles.size() >= 1) {
+            // Indicate that this layer rendered something this frame.
+            this.setValue(AVKey.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
+            if (this.getScreenCredit() != null) {
+                dc.addScreenCredit(this.getScreenCredit());
+            }
+            TextureTile[] sortedTiles = new TextureTile[this.currentTiles.size()];
+            sortedTiles = this.currentTiles.toArray(sortedTiles);
+            Arrays.sort(sortedTiles, levelComparer);
+            GL gl = dc.getGL();
+            if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
+                gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT | GL.GL_CURRENT_BIT);
+                this.setBlendingFunction(dc);
+            } else {
+                gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT);
+            }
+            gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
+            gl.glEnable(GL.GL_CULL_FACE);
+            gl.glCullFace(GL.GL_BACK);
+            dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, this.tileCountName,
+                    this.currentTiles.size());
+            dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.currentTiles);
+            gl.glPopAttrib();
+            if (this.drawBoundingVolumes) {
+                this.drawBoundingVolumes(dc, this.currentTiles);
+            }
+            // Check texture expiration. Memory-cached textures are checked for expiration only when an explicit,
+            // non-zero expiry time has been set for the layer. If none has been set, the expiry times of the layer's
+            // individual levels are used, but only for images in the local file cache, not textures in memory. This is
+            // to avoid incurring the overhead of checking expiration of in-memory textures, a very rarely used feature.
+            if (this.getExpiryTime() > 0 && this.getExpiryTime() <= System.currentTimeMillis()) {
+                this.checkTextureExpiration(dc, this.currentTiles);
+            }
+            layer.removeAllRenderables();
+            for (TextureTile tile : sortedTiles) {
+                layer.addImage(new ElevatedTileImage(tile.getTileKey(),
+                        tile.getSector(), layer.getElevation()));
+            }
+            this.currentTiles.clear();
+        }
+        this.sendRequests();
+        this.requestQ.clear();
     }
 }

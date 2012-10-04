@@ -127,15 +127,6 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
     }
     
     /**
-     * Sets the aniamtion duration for the time series animation.
-     * 
-     * @param duration animation duration in ms
-     */
-    public void setAnimationDuration(int duration){
-        this.animationDuration = duration;
-    }
-
-    /**
      * Set up the {@link #repeatTimer}.
      */
     private void initialize() {
@@ -151,79 +142,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         this.repeatTimer.start();
         updateView(wmsControlLayer.getSteps()[0], "");
     }
-
-    /**
-     * Updates the renderable layer
-     * {@link gov.nasa.worldwind.layers.RenderableLayer}with the triangle grid
-     * suitable to what was pressed.
-     *
-     * @param control the {@link ScreenAnnotation} pressed, throws a
-     * {@link NullPointerException} if {@code null}.
-     * @param controlType The control type of the screen annotation pressed.
-     * @see WMSControlType
-     * @throws NullPointerException if {@code control == null}
-     */
-    protected void updateView(ScreenAnnotation control, String controlType) {
-        if (getWMSControlLayer().getSteps() != null) {
-            for (ScreenAnnotation pressed : getWMSControlLayer().getSteps()) {
-                if (control.equals(pressed)) {
-                    String x = pressed.getText();
-                    for (int i = 0;
-                            i < this.getWMSControlLayer().getStepsRange().size();
-                            i++) {
-                        if (x.equals(this.getWMSControlLayer().getStepsRange().get(i))) {
-                            checkAnimationTimer();
-                            animFlag = false;
-                            id = i;
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        if (controlType.equals(WMSControlType.CONTROL_UP)) {
-            checkAnimationTimer();
-            animFlag = false;
-            if (getWMSControlLayer().getSteps() != null) {
-                if (id != 0) {
-                    id--;
-                }
-            }
-        } else if (controlType.equals(WMSControlType.CONTROL_DOWN)) {
-            checkAnimationTimer();
-            animFlag = false;
-            if (getWMSControlLayer().getSteps() != null) {
-                if (id != this.getWMSControlLayer().getStepsRange().size() - 1) {
-                    id++;
-                }
-            } else {
-                if (id != 0) {
-                    id--;
-                }
-            }
-        } else if (controlType.equals(WMSControlType.CONTROL_PLAY)) {
-            if (!animFlag) {
-                animFlag = true;
-                animate(getLayers());
-            }
-        } else if (controlType.equals(WMSControlType.CONTROL_PAUSE)) {
-            checkAnimationTimer();
-            if (animFlag) {
-                animFlag = false;
-            }
-        }
-        if (!animFlag) {
-            mark();
-            if (getLayers().get(id) != null) {
-                if (getLayers().get(id).getOpacity() < 1.0d) {
-                    change(getLayers().get(id));
-                }
-            }
-        }
-
-    }
-
+    
     /**
      * Checks if a animation timer is running and cancles if any timer is
      * running.
@@ -235,36 +154,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
             animTimer = null;
         }
     }
-
-    /**
-     * Highlights the currently selected annotation when pressed and retains it.
-     */
-    public void mark() {
-        if (getWMSControlLayer().getSteps() != null) {
-            for (ScreenAnnotation pressed : getWMSControlLayer().getSteps()) {
-                if (this.getWMSControlLayer().getStepsRange().get(
-                        id).equals(pressed.getText())) {
-                    wmsControlLayer.getValSelected()[
-                            getWMSControlLayer().getStepsRange().indexOf(
-                            pressed.getText())] = true;
-                    Font font = pressed.getAttributes().getFont();
-                    font = font.deriveFont(WMSControlLayer.FONT_SIZE);
-                    pressed.getAttributes().setFont(font);
-                    pressed.getAttributes().setTextColor(Color.WHITE);
-                } else {
-                    wmsControlLayer.getValSelected()[
-                            getWMSControlLayer().getStepsRange().indexOf(
-                            pressed.getText())] = false;
-                    Font font = pressed.getAttributes().getFont();
-                    font = font.deriveFont(WMSControlLayer.FONT_SIZE);
-                    pressed.getAttributes().setFont(font);
-                    pressed.getAttributes().setTextColor(Color.LIGHT_GRAY);
-                }
-            }
-        }
-        firePropertyChange(EventHolder.WWD_REDRAW, null, null);
-    }
-
+    
     /**
      * Hides the previous layer and shows the next layer.
      *
@@ -285,55 +175,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
 
         firePropertyChange(EventHolder.WWD_REDRAW, null, null);
     }
-
-    @Override
-    public void selected(SelectEvent event) {
-        if (this.getWMSControlLayer().getHighlightedObject() != null) {
-            this.getWMSControlLayer().highlight(null);
-        }
-
-        if (event.getMouseEvent() != null && event.getMouseEvent().isConsumed()) {
-            return;
-        }
-        if (event.getTopObject() == null || !(event.getTopObject() instanceof AVList)) {
-            return;
-        }
-        AVList av = ((AVList) event.getTopObject());
-        String controlType = av.getStringValue(getWMSControlLayer().getId() 
-                + WMSControlType.CONTROL_ACTION);
-        if (controlType == null) {
-            return;
-        }
-
-        ScreenAnnotation selectedObject = (ScreenAnnotation) event.getTopObject();
-
-        if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
-            // Highlight on rollover
-            this.getWMSControlLayer().highlight(selectedObject);
-        } else if (event.getEventAction().equals(SelectEvent.HOVER)) {
-            // Highlight on hover
-            this.getWMSControlLayer().highlight(selectedObject);
-        } else if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)
-                || event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
-            // Release pressed control
-            this.pressedControl = null;
-            this.pressedControlType = null;
-        } // Keep pressed control highlighted - overrides rollover
-        //non currently pressed controls
-        else if (event.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
-            // Handle left press on controls
-            this.pressedControl = selectedObject;
-            this.pressedControlType = controlType;
-            event.consume();
-        }
-
-        // Keep pressed control highlighted - overrides rollover non 
-        //currently pressed controls
-        if (this.pressedControl != null) {
-            this.getWMSControlLayer().highlight(this.pressedControl);
-        }
-    }
-
+    
     /**
      * Animates the volumes automatically with a play and stop buttons.
      *
@@ -409,7 +251,164 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
             }
         });
         animTimer.start();
+    }
+ 
+    /**
+     * Updates the renderable layer
+     * {@link gov.nasa.worldwind.layers.RenderableLayer}with the triangle grid
+     * suitable to what was pressed.
+     *
+     * @param control the {@link ScreenAnnotation} pressed, throws a
+     * {@link NullPointerException} if {@code null}.
+     * @param controlType The control type of the screen annotation pressed.
+     * @see WMSControlType
+     * @throws NullPointerException if {@code control == null}
+     */
+    protected void updateView(ScreenAnnotation control, String controlType) {
+        if (getWMSControlLayer().getSteps() != null) {
+            for (ScreenAnnotation pressed : getWMSControlLayer().getSteps()) {
+                if (control.equals(pressed)) {
+                    String x = pressed.getText();
+                    for (int i = 0;
+                            i < this.getWMSControlLayer().getStepsRange().size();
+                            i++) {
+                        if (x.equals(this.getWMSControlLayer().getStepsRange().get(i))) {
+                            checkAnimationTimer();
+                            animFlag = false;
+                            id = i;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        if (controlType.equals(WMSControlType.CONTROL_UP)) {
+            checkAnimationTimer();
+            animFlag = false;
+            if (getWMSControlLayer().getSteps() != null) {
+                if (id != 0) {
+                    id--;
+                }
+            }
+        } else if (controlType.equals(WMSControlType.CONTROL_DOWN)) {
+            checkAnimationTimer();
+            animFlag = false;
+            if (getWMSControlLayer().getSteps() != null) {
+                if (id != this.getWMSControlLayer().getStepsRange().size() - 1) {
+                    id++;
+                }
+            } else {
+                if (id != 0) {
+                    id--;
+                }
+            }
+        } else if (controlType.equals(WMSControlType.CONTROL_PLAY)) {
+            if (!animFlag) {
+                animFlag = true;
+                animate(getLayers());
+            }
+        } else if (controlType.equals(WMSControlType.CONTROL_PAUSE)) {
+            checkAnimationTimer();
+            if (animFlag) {
+                animFlag = false;
+            }
+        }
+        if (!animFlag) {
+            mark();
+            if (getLayers().get(id) != null) {
+                if (getLayers().get(id).getOpacity() < 1.0d) {
+                    change(getLayers().get(id));
+                }
+            }
+        }
 
+    }
+       
+    /**
+     * Sets the aniamtion duration for the time series animation.
+     * 
+     * @param duration animation duration in ms
+     */
+    public void setAnimationDuration(int duration){
+        this.animationDuration = duration;
+    }
+
+    /**
+     * Highlights the currently selected annotation when pressed and retains it.
+     */
+    public void mark() {
+        if (getWMSControlLayer().getSteps() != null) {
+            for (ScreenAnnotation pressed : getWMSControlLayer().getSteps()) {
+                if (this.getWMSControlLayer().getStepsRange().get(
+                        id).equals(pressed.getText())) {
+                    wmsControlLayer.getValSelected()[
+                            getWMSControlLayer().getStepsRange().indexOf(
+                            pressed.getText())] = true;
+                    Font font = pressed.getAttributes().getFont();
+                    font = font.deriveFont(WMSControlLayer.FONT_SIZE);
+                    pressed.getAttributes().setFont(font);
+                    pressed.getAttributes().setTextColor(Color.WHITE);
+                } else {
+                    wmsControlLayer.getValSelected()[
+                            getWMSControlLayer().getStepsRange().indexOf(
+                            pressed.getText())] = false;
+                    Font font = pressed.getAttributes().getFont();
+                    font = font.deriveFont(WMSControlLayer.FONT_SIZE);
+                    pressed.getAttributes().setFont(font);
+                    pressed.getAttributes().setTextColor(Color.LIGHT_GRAY);
+                }
+            }
+        }
+        firePropertyChange(EventHolder.WWD_REDRAW, null, null);
+    }
+
+    @Override
+    public void selected(SelectEvent event) {
+        if (this.getWMSControlLayer().getHighlightedObject() != null) {
+            this.getWMSControlLayer().highlight(null);
+        }
+
+        if (event.getMouseEvent() != null && event.getMouseEvent().isConsumed()) {
+            return;
+        }
+        if (event.getTopObject() == null || !(event.getTopObject() instanceof AVList)) {
+            return;
+        }
+        AVList av = ((AVList) event.getTopObject());
+        String controlType = av.getStringValue(getWMSControlLayer().getId() 
+                + WMSControlType.CONTROL_ACTION);
+        if (controlType == null) {
+            return;
+        }
+
+        ScreenAnnotation selectedObject = (ScreenAnnotation) event.getTopObject();
+
+        if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
+            // Highlight on rollover
+            this.getWMSControlLayer().highlight(selectedObject);
+        } else if (event.getEventAction().equals(SelectEvent.HOVER)) {
+            // Highlight on hover
+            this.getWMSControlLayer().highlight(selectedObject);
+        } else if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)
+                || event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
+            // Release pressed control
+            this.pressedControl = null;
+            this.pressedControlType = null;
+        } // Keep pressed control highlighted - overrides rollover
+        //non currently pressed controls
+        else if (event.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
+            // Handle left press on controls
+            this.pressedControl = selectedObject;
+            this.pressedControlType = controlType;
+            event.consume();
+        }
+
+        // Keep pressed control highlighted - overrides rollover non 
+        //currently pressed controls
+        if (this.pressedControl != null) {
+            this.getWMSControlLayer().highlight(this.pressedControl);
+        }
     }
 
     /**

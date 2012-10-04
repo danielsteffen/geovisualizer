@@ -17,7 +17,6 @@ import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
-import com.dfki.av.sudplan.wms.LayerInfoListRetreiver;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
@@ -820,7 +819,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         bGoWMSHeight.setEnabled(false);
         pbWMS.setIndeterminate(true);
         pbWMS.setVisible(true);
-        SwingWorker worker = new LayerInfoListRetreiver(urlString);
+        SwingWorker worker = new LayerInfoRetreiver(urlString, false);
         worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeightActionPerformed
@@ -892,7 +891,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         bGoWMSHeight1.setEnabled(false);
         pbWMSLayer.setIndeterminate(true);
         pbWMSLayer.setVisible(true);
-        SwingWorker worker = new LayerInfoRetreiver(txtRequest.getText());
+        SwingWorker worker = new LayerInfoRetreiver(txtRequest.getText(), true);
         worker.addPropertyChangeListener(this);
         worker.execute();
     }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
