@@ -72,7 +72,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         if (layerTreeComponent != null) {
             pLeftPanel.add(layerTreeComponent);
         } else {
-            log.debug("No layer tree component available. Could not add the panel.");
+            log.debug("layerTreeComponent == null");
         }
     }
 
@@ -699,10 +699,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             wwPanel.setCamera(new SimpleCamera(lat, lon, 200000.0));
             dGoTo.setVisible(false);
         } catch (NumberFormatException nfe) {
-            if (log.isWarnEnabled()) {
-                log.warn("The content of the \"latitude\" and \"longitude\" "
-                        + "component must be a double value.");
-            }
+            log.warn("The content of the \"latitude\" and \"longitude\" "
+                    + "component must be a double value.");
         }
     }//GEN-LAST:event_btnGoActionPerformed
 
@@ -791,11 +789,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
         String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.wms.nrw.de/geobasis/DOP");
         try {
-            if(server == null){
+            if (server == null) {
                 log.debug("Cancled JOptionPane.");
                 return;
-            } 
-            if(server.isEmpty()){
+            }
+            if (server.isEmpty()) {
                 String msg = "Server URL is empty";
                 log.error(msg);
                 throw new IllegalArgumentException(msg);
