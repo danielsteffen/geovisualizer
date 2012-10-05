@@ -94,28 +94,23 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         btnCancelGoToDialoag = new javax.swing.JButton();
         btnGo = new javax.swing.JButton();
         dWMSHeight = new javax.swing.JDialog();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
-        pWMSHeight = new javax.swing.JPanel();
-        txtServerURL = new javax.swing.JTextField();
-        bGoWMSHeight = new javax.swing.JButton();
-        cbServerURL = new javax.swing.JComboBox();
-        lServerURL = new javax.swing.JLabel();
-        pbWMS = new javax.swing.JProgressBar();
-        rbTxtServerUrl = new javax.swing.JRadioButton();
-        rbCbServerUrl = new javax.swing.JRadioButton();
-        jPanel3 = new javax.swing.JPanel();
-        txtRequest = new javax.swing.JTextField();
-        pbWMSLayer = new javax.swing.JProgressBar();
-        bGoWMSHeight1 = new javax.swing.JButton();
-        cLayerList = new javax.swing.JComboBox();
-        lOpacity = new javax.swing.JLabel();
-        lHeight = new javax.swing.JLabel();
-        txtHeight = new javax.swing.JTextField();
-        bAddWMSHeight = new javax.swing.JButton();
-        txtOpacity = new javax.swing.JTextField();
-        bCancelWMSHeight = new javax.swing.JButton();
         lMaxEle = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        lServerURL = new javax.swing.JLabel();
+        rbCbServerUrl = new javax.swing.JRadioButton();
+        rbTxtServerUrl = new javax.swing.JRadioButton();
+        txtServerURL = new javax.swing.JTextField();
+        cbServerURL = new javax.swing.JComboBox();
+        bGoWMSHeight = new javax.swing.JButton();
+        pbWMS = new javax.swing.JProgressBar();
+        jPanel4 = new javax.swing.JPanel();
+        bCancelWMSHeight = new javax.swing.JButton();
+        bAddWMSHeight = new javax.swing.JButton();
+        cLayerList = new javax.swing.JComboBox();
+        txtHeight = new javax.swing.JTextField();
+        lHeight = new javax.swing.JLabel();
+        lOpacity = new javax.swing.JLabel();
+        txtOpacity = new javax.swing.JTextField();
         bgWMS = new javax.swing.ButtonGroup();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -240,31 +235,16 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
         dWMSHeight.setIconImage(com.dfki.av.sudplan.Configuration.SUDPLAN_3D_IMAGE);
         dWMSHeight.setLocationByPlatform(true);
-        dWMSHeight.setMinimumSize(new java.awt.Dimension(760, 380));
+        dWMSHeight.setMinimumSize(new java.awt.Dimension(800, 360));
         dWMSHeight.setResizable(false);
 
-        txtServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.text")); // NOI18N
-        txtServerURL.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.toolTipText")); // NOI18N
-        txtServerURL.setEnabled(false);
+        lMaxEle.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lMaxEle.text")); // NOI18N
 
-        bGoWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bGoWMSHeight.text")); // NOI18N
-        bGoWMSHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bGoWMSHeightActionPerformed(evt);
-            }
-        });
-
-        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://aniara.smhi.se/cap_SERVICE=WMS.xml", "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?", "http://85.24.165.10/cap_SERVICE=WMS.xml" }));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel1.border.title"))); // NOI18N
+        jPanel1.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel1.toolTipText")); // NOI18N
+        jPanel1.setName(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel1.name")); // NOI18N
 
         lServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lServerURL.text")); // NOI18N
-
-        bgWMS.add(rbTxtServerUrl);
-        rbTxtServerUrl.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.rbTxtServerUrl.text")); // NOI18N
-        rbTxtServerUrl.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbTxtServerUrlActionPerformed(evt);
-            }
-        });
 
         bgWMS.add(rbCbServerUrl);
         rbCbServerUrl.setSelected(true);
@@ -275,118 +255,78 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
 
-        javax.swing.GroupLayout pWMSHeightLayout = new javax.swing.GroupLayout(pWMSHeight);
-        pWMSHeight.setLayout(pWMSHeightLayout);
-        pWMSHeightLayout.setHorizontalGroup(
-            pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pWMSHeightLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pWMSHeightLayout.createSequentialGroup()
-                        .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pWMSHeightLayout.createSequentialGroup()
-                                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(rbCbServerUrl)
-                                    .addComponent(rbTxtServerUrl))
-                                .addGap(10, 10, 10)
-                                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cbServerURL, 0, 561, Short.MAX_VALUE)
-                                    .addComponent(txtServerURL))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(pWMSHeightLayout.createSequentialGroup()
-                                .addComponent(pbWMS, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(bGoWMSHeight)))
-                        .addContainerGap())
-                    .addGroup(pWMSHeightLayout.createSequentialGroup()
-                        .addComponent(lServerURL)
-                        .addContainerGap())))
-        );
-        pWMSHeightLayout.setVerticalGroup(
-            pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pWMSHeightLayout.createSequentialGroup()
-                .addComponent(lServerURL)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rbCbServerUrl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rbTxtServerUrl))
-                .addGap(13, 13, 13)
-                .addGroup(pWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(bGoWMSHeight, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pbWMS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab(bundle.getString("MainFrame.jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
-
-        txtRequest.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtRequest.text")); // NOI18N
-        txtRequest.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtRequest.toolTipText")); // NOI18N
-
-        bGoWMSHeight1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bGoWMSHeight1.text")); // NOI18N
-        bGoWMSHeight1.addActionListener(new java.awt.event.ActionListener() {
+        bgWMS.add(rbTxtServerUrl);
+        rbTxtServerUrl.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.rbTxtServerUrl.text")); // NOI18N
+        rbTxtServerUrl.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bGoWMSHeight1ActionPerformed(evt);
+                rbTxtServerUrlActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(59, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(txtRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(19, 19, 19))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(pbWMSLayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        txtServerURL.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.text")); // NOI18N
+        txtServerURL.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtServerURL.toolTipText")); // NOI18N
+        txtServerURL.setEnabled(false);
+
+        cbServerURL.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "http://aniara.smhi.se/cap_SERVICE=WMS.xml", "http://geoportal.wuppertal.de:8083/deegree/wms?", "http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0", "http://www2.demis.nl/worldmap/wms.asp?Service=WMS&Version=1.1.0&Request=GetCapabilities", "http://www.wms.nrw.de/geobasis/DOP", "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_ORTOFOTO_2009?", "http://kartor.stockholm.se/bios/wms/app/baggis/web/WMS_STHLM_TATORTSKARTA_RASTER?", "http://85.24.165.10/cap_SERVICE=WMS.xml" }));
+
+        bGoWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bGoWMSHeight.text")); // NOI18N
+        bGoWMSHeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bGoWMSHeightActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lServerURL)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rbCbServerUrl)
+                            .addComponent(rbTxtServerUrl))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtServerURL)
+                            .addComponent(cbServerURL, 0, 1, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(pbWMS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(bGoWMSHeight1)
-                        .addGap(39, 39, 39))))
+                        .addComponent(bGoWMSHeight)))
+                .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(txtRequest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(bGoWMSHeight1)
-                    .addComponent(pbWMSLayer, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(58, Short.MAX_VALUE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(lServerURL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbCbServerUrl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbTxtServerUrl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bGoWMSHeight)
+                    .addComponent(pbWMS, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("MainFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel4.border.title"))); // NOI18N
 
-        cLayerList.setEnabled(false);
-
-        lOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lOpacity.text")); // NOI18N
-
-        lHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lHeight.text")); // NOI18N
-
-        txtHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtHeight.text")); // NOI18N
+        bCancelWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bCancelWMSHeight.text")); // NOI18N
+        bCancelWMSHeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCancelWMSHeightActionPerformed(evt);
+            }
+        });
 
         bAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bAddWMSHeight.text")); // NOI18N
         bAddWMSHeight.setEnabled(false);
@@ -396,67 +336,79 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
 
+        cLayerList.setEnabled(false);
+
+        txtHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtHeight.text")); // NOI18N
+
+        lHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lHeight.text")); // NOI18N
+
+        lOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lOpacity.text")); // NOI18N
+
         txtOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtOpacity.text")); // NOI18N
 
-        bCancelWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.bCancelWMSHeight.text")); // NOI18N
-        bCancelWMSHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCancelWMSHeightActionPerformed(evt);
-            }
-        });
-
-        lMaxEle.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.lMaxEle.text")); // NOI18N
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(lHeight)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lOpacity)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 194, Short.MAX_VALUE)
+                        .addComponent(bAddWMSHeight)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bCancelWMSHeight))
+                    .addComponent(cLayerList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bCancelWMSHeight)
+                    .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lHeight)
+                    .addComponent(lOpacity)
+                    .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout dWMSHeightLayout = new javax.swing.GroupLayout(dWMSHeight.getContentPane());
         dWMSHeight.getContentPane().setLayout(dWMSHeightLayout);
         dWMSHeightLayout.setHorizontalGroup(
             dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dWMSHeightLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(dWMSHeightLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jTabbedPane1))
-                    .addGroup(dWMSHeightLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(dWMSHeightLayout.createSequentialGroup()
-                                .addComponent(lHeight)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(319, 319, 319)
-                                .addComponent(lOpacity)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, dWMSHeightLayout.createSequentialGroup()
-                                    .addComponent(bCancelWMSHeight)
-                                    .addGap(90, 90, 90)
-                                    .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(bAddWMSHeight))
-                                .addComponent(cLayerList, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(732, 732, 732)
+                        .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dWMSHeightLayout.setVerticalGroup(
             dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dWMSHeightLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lHeight)
-                    .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lOpacity)
-                    .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bCancelWMSHeight)
-                    .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(296, 296, 296)
+                .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -884,15 +836,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         }
     }//GEN-LAST:event_rbTxtServerUrlActionPerformed
 
-    private void bGoWMSHeight1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoWMSHeight1ActionPerformed
-        bGoWMSHeight1.setEnabled(false);
-        pbWMSLayer.setIndeterminate(true);
-        pbWMSLayer.setVisible(true);
-        SwingWorker worker = new LayerInfoRetreiver(txtRequest.getText(), true);
-        worker.addPropertyChangeListener(this);
-        worker.execute();
-    }//GEN-LAST:event_bGoWMSHeight1ActionPerformed
-
     private void miSideBySideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSideBySideActionPerformed
         wwPanel.startStereo(this);
     }//GEN-LAST:event_miSideBySideActionPerformed
@@ -905,6 +848,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(EventHolder.LAYERINFO_RETREIVAL_COMPLETE)) {
             pbWMS.setIndeterminate(false);
+            pbWMS.setVisible(false);
             cLayerList.removeAllItems();
             if (evt.getNewValue() instanceof List<?>) {
                 for (LayerInfo layerInfo : (List<LayerInfo>) evt.getNewValue()) {
@@ -917,10 +861,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
             cLayerList.setEnabled(true);
             bAddWMSHeight.setEnabled(true);
-            txtHeight.setVisible(true);
-            txtOpacity.setVisible(true);
-            lHeight.setVisible(true);
-            lOpacity.setVisible(true);
             bGoWMSHeight.setEnabled(true);
         }
         if (evt.getPropertyName().equals(EventHolder.LAYERINFO_RETREIVAL_FAILED)) {
@@ -1006,7 +946,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JButton bAddWMSHeight;
     private javax.swing.JButton bCancelWMSHeight;
     private javax.swing.JButton bGoWMSHeight;
-    private javax.swing.JButton bGoWMSHeight1;
     private javax.swing.ButtonGroup bgWMS;
     private javax.swing.JButton btnCancelGoToDialoag;
     private javax.swing.JButton btnGo;
@@ -1014,14 +953,13 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JComboBox cbServerURL;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWMSHeight;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lHeight;
     private javax.swing.JLabel lLatitude;
     private javax.swing.JLabel lLongitude;
@@ -1056,16 +994,13 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JPanel pLeftPanel;
     private javax.swing.JPanel pMain;
     private javax.swing.JPanel pVisualization;
-    private javax.swing.JPanel pWMSHeight;
     private javax.swing.JProgressBar pbWMS;
-    private javax.swing.JProgressBar pbWMSLayer;
     private javax.swing.JRadioButton rbCbServerUrl;
     private javax.swing.JRadioButton rbTxtServerUrl;
     private javax.swing.JTextField txtHeight;
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;
     private javax.swing.JTextField txtOpacity;
-    private javax.swing.JTextField txtRequest;
     private javax.swing.JTextField txtServerURL;
     // End of variables declaration//GEN-END:variables
 
@@ -1078,10 +1013,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         txtServerURL.setText("http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0");
         txtServerURL.setEnabled(true);
         txtHeight.setText("1500.0");
-        txtHeight.setVisible(false);
-        lHeight.setVisible(false);
-        lOpacity.setVisible(false);
-        txtOpacity.setVisible(false);
         bGoWMSHeight.setEnabled(true);
         bAddWMSHeight.setEnabled(false);
         cLayerList.setEnabled(false);
