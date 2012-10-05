@@ -18,7 +18,6 @@ import gov.nasa.worldwind.render.LazilyLoadedTexture;
 import gov.nasa.worldwind.render.OrderedRenderable;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.Logging;
-import gov.nasa.worldwind.util.TileKey;
 import java.awt.Point;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -107,14 +106,17 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * value after creation is -1 and will be set to an value >= 0.
      */
     private final long updateTime;
+    /**
+     * The {@link TextureTile}
+     */
     private TextureTile tile;
 
     /**
      * Creates a {@link ElevatedTileImage}, which is an extended version of a
-     * {@link SurfaceImage} with the possibility to chenge the elevation.
+     * {@link SurfaceImage} with the possibility to change the elevation.
      *
-     * @param tileKey {@link TileKey} for Texture retreival
-     * @param sector {@link Sector} of the image
+     * @param tile the {@link TextureTile} for retrieval
+     * @param elevation the elevation of the image
      */
     public ElevatedTileImage(TextureTile tile, double elevation) {
         super(tile.getTileKey(), tile.getSector());
@@ -238,7 +240,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     }
 
     /**
-     * Generates the texture coordinates fpr the
+     * Generates the texture coordinates for the
      * <code>ElevatedTileImage</code>
      *
      * @param quality Amount of supporting points
