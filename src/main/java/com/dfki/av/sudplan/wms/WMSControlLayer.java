@@ -21,7 +21,7 @@ import java.util.List;
 import javax.media.opengl.GL;
 
 /**
- * ControlLayer that controls which wms layer should be displayed.
+ * ControlLayer that controls which WMS layer should be displayed.
  *
  * Based on com.dfki.av.sudplan.vis.mc.ControlLayer
  *

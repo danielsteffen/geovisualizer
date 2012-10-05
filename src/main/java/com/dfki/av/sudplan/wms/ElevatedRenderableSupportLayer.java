@@ -15,8 +15,6 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.PerformanceStatistic;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import javax.media.opengl.GL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support layer for a {@link ElevatedRenderableLayer} which provides the wms
@@ -26,10 +24,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
 
-    /*
-     * Logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(ElevatedRenderableSupportLayer.class);
     /**
      * Bounding box for the modified (changed elevation) geometry
      */
@@ -38,6 +32,9 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      * Keeps track of the update time
      */
     private long lastUpdate;
+    /**
+     * 
+     */
     private boolean allrdyFlag;
 
     /**

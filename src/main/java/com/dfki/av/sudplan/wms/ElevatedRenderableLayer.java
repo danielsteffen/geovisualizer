@@ -47,20 +47,23 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     private final Double opac;
     /**
      * Represents the percentage of the maximal opacity. Opacity of the
-     * {@link ElevatedTileImage}s = opacityLevel * opac.
+     * {@link ElevatedTileImage}s = {@link #opacityLevel} * {@link #opac}.
      */
     private double opacityLevel;
     /**
-     * If true the layer corresponse to a {@link WMSControlLayer}.
+     * If true the layer corresponds to a {@link WMSControlLayer}.
      */
     private boolean slave;
+    /**
+     * The {@link Collection} of {@link Renderable} to clean.
+     */
     private Collection<Renderable> toCleanup;
 
     /**
-     * Constructs a elevated surface layer with the definied capabilities,
-     * prameters, elevation and opacity
+     * Constructs a elevated surface layer with the defined capabilities,
+     * parameters, elevation and opacity
      *
-     * @param caps WMS capabilities for the wms support layer
+     * @param caps WMS capabilities for the WMS support layer
      * @param params WMS parameter
      * @param elevation The elevation for the {@link ElevatedTileImage}s
      * @param opac The maximum opacity for the {@link ElevatedTileImage}s
@@ -97,20 +100,20 @@ public class ElevatedRenderableLayer extends RenderableLayer {
     }
 
     /**
-     * Sets the layer slave status. If true the layer corresponse to a
+     * Sets the layer slave status. If true the layer corresponds to a
      * {@link WMSControlLayer}.
      *
-     * @param slave If true the layer corresponse to a {@link WMSControlLayer}.
+     * @param slave If true the layer corresponds to a {@link WMSControlLayer}.
      */
     public void setSlave(boolean slave) {
         this.slave = slave;
     }
 
     /**
-     * Returns the layer slave status. If true the layer corresponse to a
+     * Returns the layer slave status. If true the layer corresponds to a
      * {@link WMSControlLayer}.
      *
-     * @return true if the layer corresponse to a {@link WMSControlLayer}.
+     * @return true if the layer corresponds to a {@link WMSControlLayer}.
      */
     public boolean isSlave() {
         return slave;
