@@ -37,7 +37,7 @@ public class LayerCheckBoxNodeRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer nonLeafRenderer;
 
     /**
-     * The consturctor.
+     * The constructor.
      */
     public LayerCheckBoxNodeRenderer() {
         this.leafRenderer = new JCheckBox();
@@ -69,6 +69,7 @@ public class LayerCheckBoxNodeRenderer implements TreeCellRenderer {
                     log.debug("User Object of type {}.", userObject.getClass());
                 }
             } else {
+                log.debug("value == null or not instance of DefaultMutableTreeNode");
             }
             
             leafRenderer.setEnabled(tree.isEnabled());
