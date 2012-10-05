@@ -12,8 +12,6 @@ import gov.nasa.worldwind.layers.Layer;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,11 +19,26 @@ import org.slf4j.LoggerFactory;
  */
 public class LayerAction extends AbstractAction {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    /**
+     * The {@link WorldWindow}
+     */
     private WorldWindow wwd;
+    /**
+     * The {@link Layer}
+     */
     private Layer layer;
+    /**
+     * Whether the {@link #layer} is selected or not.
+     */
     private boolean selected;
 
+    /**
+     * Creates a action for the layer {@code layer}.
+     *
+     * @param layer the {@link Layer} to handle
+     * @param wwd the {@link WorldWindow}
+     * @param selected {@code true} if selected. Otherwise {@code false}
+     */
     public LayerAction(Layer layer, WorldWindow wwd, boolean selected) {
         super(layer.getName());
         this.wwd = wwd;
@@ -44,6 +57,11 @@ public class LayerAction extends AbstractAction {
         wwd.redraw();
     }
 
+    /**
+     * Returns whether the {@link #layer} is selected or not.
+     *
+     * @return whether the {@link #layer} is selected or not.
+     */
     public boolean isSelected() {
         return this.selected;
     }
