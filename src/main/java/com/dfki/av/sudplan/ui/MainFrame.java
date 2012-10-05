@@ -710,7 +710,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         ImageIcon icon = new ImageIcon(Configuration.SUDPLAN_3D_IMAGE);
         JOptionPane.showMessageDialog(this, "This is the sudplan3D application."
                 + "\nDFKI (c) 2011-2012",
-                "About Sudplan3D",
+                "About sudplan3D",
                 JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
 
