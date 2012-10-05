@@ -82,8 +82,13 @@ public final class Configuration {
             if (!isConfigFileSupported(userConfigFile)) {
                 log.debug("Configuration file not supported.");
                 log.debug("Delete old configuration file.");
-                userConfigFile.delete();
-                installConfigFile(userConfigFile, userHomeDir, userHomeDir);
+                boolean deleted = userConfigFile.delete();
+                if (deleted) {
+                    installConfigFile(userConfigFile, userHomeDir, userHomeDir);
+                } else {
+                    log.error("Could not delete file {}", userConfigFile.getAbsolutePath());
+                    log.warn("Using old configuration file.");
+                }
             } else {
                 log.debug("Configuration file supported.");
             }
