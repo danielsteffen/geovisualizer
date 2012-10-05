@@ -104,14 +104,14 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
     public WMSControlListener(WMSControlLayer layer, List<ElevatedRenderableLayer> layers) {
         if (layer == null) {
             String msg = Logging.getMessage("nullValue.LayerIsNull");
-            Logging.logger().severe(msg);
+            log.error(msg);
             throw new IllegalArgumentException(msg);
         }
         this.wmsControlLayer = layer;
         this.layers = layers;
         initialize();
     }
-    
+
     /**
      * Creates an instance of {@link WMSControlListener} which handles the input
      * from the {@link WMSControlLayer}.
@@ -125,7 +125,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         this(layer, layers);
         this.animationDuration = duration;
     }
-    
+
     /**
      * Set up the {@link #repeatTimer}.
      */
@@ -142,7 +142,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         this.repeatTimer.start();
         updateView(wmsControlLayer.getSteps()[0], "");
     }
-    
+
     /**
      * Checks if a animation timer is running and cancles if any timer is
      * running.
@@ -154,7 +154,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
             animTimer = null;
         }
     }
-    
+
     /**
      * Hides the previous layer and shows the next layer.
      *
@@ -175,7 +175,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
 
         firePropertyChange(EventHolder.WWD_REDRAW, null, null);
     }
-    
+
     /**
      * Animates the volumes automatically with a play and stop buttons.
      *
@@ -252,7 +252,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         });
         animTimer.start();
     }
- 
+
     /**
      * Updates the renderable layer
      * {@link gov.nasa.worldwind.layers.RenderableLayer}with the triangle grid
@@ -286,28 +286,21 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         if (controlType.equals(WMSControlType.CONTROL_UP)) {
             checkAnimationTimer();
             animFlag = false;
-            if (getWMSControlLayer().getSteps() != null) {
-                if (id != 0) {
-                    id--;
-                }
+            if (getWMSControlLayer().getSteps() != null && id != 0) {
+                id--;
             }
         } else if (controlType.equals(WMSControlType.CONTROL_DOWN)) {
             checkAnimationTimer();
             animFlag = false;
-            if (getWMSControlLayer().getSteps() != null) {
-                if (id != this.getWMSControlLayer().getStepsRange().size() - 1) {
-                    id++;
-                }
-            } else {
-                if (id != 0) {
-                    id--;
-                }
+            if (getWMSControlLayer().getSteps() != null
+                    && id != getWMSControlLayer().getStepsRange().size() - 1) {
+                id++;
+            } else if (id != 0) {
+                id--;
             }
-        } else if (controlType.equals(WMSControlType.CONTROL_PLAY)) {
-            if (!animFlag) {
+        } else if (controlType.equals(WMSControlType.CONTROL_PLAY) && !animFlag) {
                 animFlag = true;
                 animate(getLayers());
-            }
         } else if (controlType.equals(WMSControlType.CONTROL_PAUSE)) {
             checkAnimationTimer();
             if (animFlag) {
@@ -324,13 +317,13 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         }
 
     }
-       
+
     /**
      * Sets the aniamtion duration for the time series animation.
-     * 
+     *
      * @param duration animation duration in ms
      */
-    public void setAnimationDuration(int duration){
+    public void setAnimationDuration(int duration) {
         this.animationDuration = duration;
     }
 
@@ -376,7 +369,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
             return;
         }
         AVList av = ((AVList) event.getTopObject());
-        String controlType = av.getStringValue(getWMSControlLayer().getId() 
+        String controlType = av.getStringValue(getWMSControlLayer().getId()
                 + WMSControlType.CONTROL_ACTION);
         if (controlType == null) {
             return;

@@ -35,10 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable {
 
-    /*
-     * Logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(ElevatedTileImage.class);
     /**
      * Determined each frame
      */
@@ -645,7 +641,6 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
                         returnValue = false;
                     }
                 } else {
-
                     return false;
                 }
             } else {
@@ -670,7 +665,6 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
             if (!this.intersectsFrustum(dc)) {
                 return;
             }
-
             // If the shape is less that a pixel in size, don't render it.
             if (dc.isSmall(this.extent, 1)) {
                 return;

@@ -69,7 +69,8 @@ public class ElevatedRenderableLayer extends RenderableLayer {
      * @param opac The maximum opacity for the {@link ElevatedTileImage}s
      * @param sector The sector of the layer
      */
-    public ElevatedRenderableLayer(WMSCapabilities caps, AVList params, Double elevation, Double opac, Sector sector) {
+    public ElevatedRenderableLayer(WMSCapabilities caps, AVList params, 
+            Double elevation, Double opac) {
         super();
         this.elevation = elevation;
         this.toCleanup = new ConcurrentLinkedQueue<Renderable>();
@@ -161,8 +162,8 @@ public class ElevatedRenderableLayer extends RenderableLayer {
                     image.clear();
                 }
             }
+            toCleanup.clear();
         }
-        toCleanup.clear();
     }
 
     @Override

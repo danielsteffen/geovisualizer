@@ -195,7 +195,7 @@ public class WMSControlLayer extends RenderableLayer {
                 if (suffixParts.length > 0) {
                     stepsRange.add(suffix.split("_")[0]);
                 }
-            }else{
+            } else {
                 stepsRange.add("");
             }
         }
@@ -226,7 +226,7 @@ public class WMSControlLayer extends RenderableLayer {
             this.addRenderable(steps[i]);
         }
     }
-    
+
     /**
      * Checks whether current ContorlLayer is initialized or not.
      *
@@ -367,9 +367,6 @@ public class WMSControlLayer extends RenderableLayer {
             animStop.setScreenPoint(new Point(x - (int) (buttonSize * scale), y));
             y -= (int) (buttonSize * scale);
             controlUp.setScreenPoint(new Point(x, y));
-            if (horizontalLayout) {
-                xOrigin += (int) (buttonSize * scale);
-            }
         }
 
         y = y - (int) (buttonSize * scale);
@@ -401,7 +398,6 @@ public class WMSControlLayer extends RenderableLayer {
     protected Point computeLocation(Rectangle viewport, Rectangle controls) {
         double x;
         double y;
-
         if (this.locationCenter != null) {
             x = this.locationCenter.x - controls.width / 2;
             y = this.locationCenter.y - controls.height / 2;
@@ -422,12 +418,10 @@ public class WMSControlLayer extends RenderableLayer {
             x = viewport.getWidth() - controls.width - this.borderWidth;
             y = viewport.getHeight() - controls.height - this.borderWidth;
         }
-
         if (this.locationOffset != null) {
             x += this.locationOffset.x;
             y += this.locationOffset.y;
         }
-
         return new Point((int) x, (int) y);
     }
 
@@ -469,8 +463,7 @@ public class WMSControlLayer extends RenderableLayer {
         initialized = false;
         controlsShow = true;
     }
-    
-    
+
     /**
      * Renders or draws the side bar in white color.
      *
@@ -635,11 +628,7 @@ public class WMSControlLayer extends RenderableLayer {
             this.currentControl.getAttributes().setImageOpacity(1);
             if (currentControl.getText() != null) {
                 Font font = currentControl.getAttributes().getFont();
-                if (getSteps() == null) {
-                    font = font.deriveFont(FONT_SIZE);
-                } else {
-                    font = font.deriveFont(FONT_SIZE);
-                }
+                font = font.deriveFont(FONT_SIZE);
                 currentControl.getAttributes().setFont(font);
                 currentControl.getAttributes().setTextColor(Color.WHITE);
             }

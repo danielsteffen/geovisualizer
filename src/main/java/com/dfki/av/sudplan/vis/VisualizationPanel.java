@@ -571,7 +571,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             WMSCapabilities caps = layerInfo.caps;
             WMSLayerCapabilities lcaps = layerInfo.layerCaps;
             AVList params = layerInfo.params;
-            ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps, params, elevation, opacity, lcaps.getGeographicBoundingBox());
+            ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps,
+                    params, elevation, opacity);
             sul.setName(params.getStringValue(AVKey.DISPLAY_NAME) + "_" + elevation);
             sul.addPropertyChangeListener(this);
             ApplicationTemplate.insertBeforePlacenames(wwd, sul);
