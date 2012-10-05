@@ -792,9 +792,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.wms.nrw.de/geobasis/DOP");
         try {
             if(server == null){
-                String msg = "server == null";
-                log.error(msg);
-                throw new IllegalArgumentException(msg);
+                log.debug("Cancled JOptionPane.");
+                return;
             } 
             if(server.isEmpty()){
                 String msg = "Server URL is empty";
