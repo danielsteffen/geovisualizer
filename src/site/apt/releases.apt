@@ -9,6 +9,12 @@
 Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
+  
+* 2012-10-05, sudplan3D 1.5.14
+
+  * Improved performance for WMS timeseries layers.
+  
+  * Minor changes.
 
 * 2012-10-04, sudplan3D 1.5.13
 
@@ -223,6 +229,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.14          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.13          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.12          |  1.7.6              |  sudplan3D-geocpm 1.5 | 1.4.0-without-jackson        | 
