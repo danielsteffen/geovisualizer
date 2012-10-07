@@ -9,6 +9,12 @@
 Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
+
+* 2012-10-07, sudplan3D 1.5.15
+
+  * Update of AddWMS-dialog.
+
+  * Bug fixes from findbugs report.
   
 * 2012-10-05, sudplan3D 1.5.14
 
@@ -44,7 +50,7 @@ Releases
 
   * Enhanced configuration file to validate version conflicts.
 
-  * Added new elevation model for Wuppertal Lüntenbeck area.
+  * Added new elevation model for Wuppertal Lï¿½ntenbeck area.
 
   * Set new final camera altitude when pressing <CTRL> + <W> to move to Wuppertal.
 
@@ -229,6 +235,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.15          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.14          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.13          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
