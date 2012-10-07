@@ -2,11 +2,11 @@
 <jnlp spec="1.0+" codebase="$codebase" href="$outputFile">
  <information>
     <title>sudplan3D</title>
-    <vendor>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</vendor>
+    <vendor>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</vendor>
     <homepage href="http://av.dfki.de"/>
-    <description kind="one-line">SUDPLAN 3D</description>
-    <description kind="tooltip">SUDPLAN 3D</description>
-    <description kind="short">SUDPLAN 3D</description>
+    <description kind="one-line">sudplan3D</description>
+    <description kind="tooltip">sudplan3D</description>
+    <description kind="short">sudplan3D</description>
     <icon kind="default" href="button.png"/>
     <shortcut online="true">
       <desktop/>
@@ -24,7 +24,7 @@
     <property name="sun.java2d.noddraw" value="true"/>
     $dependencies
 	<extension name="worldwindx" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/worldwindx.jnlp"/>
-	<extension name="gdal" href="http://sudplan.kl.dfki.de/gdal/gdal.jnlp"/>
+	<extension name="gdal" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/gdal.jnlp"/>
  </resources>
  <application-desc main-class="$mainClass">
  </application-desc>
