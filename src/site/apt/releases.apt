@@ -10,6 +10,12 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
 
+* 2012-10-08, sudplan3D 1.5.16
+
+  * Fixed abrupt change of viewing direction for animated flight to pilot cities.
+
+  * Fixed wrong selection in LayerManager.
+
 * 2012-10-07, sudplan3D 1.5.15
 
   * Update of AddWMS-dialog.
@@ -235,6 +241,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.16          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.15          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.14          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
