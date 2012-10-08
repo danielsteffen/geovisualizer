@@ -17,6 +17,8 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This file is updated to implement "correct" stereo, as described at:
@@ -34,6 +36,10 @@ import javax.media.opengl.GL;
 public class AdvancedStereoOptionSceneController
         extends StereoOptionSceneController {
 
+    /**
+     * The logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(AdvancedStereoOptionSceneController.class);
     /**
      * Index of the frame buffer object.
      */
@@ -162,16 +168,17 @@ public class AdvancedStereoOptionSceneController
     }
 
     /**
-     * draws the side by side stereo following the render to texture approach
+     * Render the side by side stereo following the render to texture approach
      * for left and right eyes and then swap buffers with the screen buffers.
      *
-     * @param dc drawing context, nullPointerException exception is thrown if
-     * null.
+     * @param dc the  {@link DrawContext}
+     * @throws NullPointerException if dc == null.
      */
     private void doDrawSideBySide(DrawContext dc) {
         if (dc == null) {
-            throw new NullPointerException("DrawContext is null in "
-                    + "doDrawSideBySide method.");
+            String msg = "DrawContext == null";
+            log.error(msg);
+            throw new NullPointerException(msg);
         }
         GL gl = dc.getGL();
         if (firstTime) {
@@ -324,17 +331,19 @@ public class AdvancedStereoOptionSceneController
      * Renders the actual scene with the asymmetric frustum shift stated in the
      * paper mentioned above.
      *
-     * @param gl GL derived from current draw context, throws a
-     * nullPointerException if null
-     * @param flag Indicates which eye is currently drawn true for left and
-     * false
+     * @param gl {@link GL} context derived from current draw context, 
+     * @param flag Indicates which eye is currently drawn; {@code true} for the 
+     * left eye and{@code false} for the right eye.
+     * @throws NullPointerException if gl == null
      */
-    public void renderScene(GL gl, boolean flag) {
+    private void renderScene(GL gl, boolean flag) {
 
         if (gl == null) {
-            throw new NullPointerException("GL is null in the "
-                    + "renderScene method");
+            String msg = "GL == null";
+            log.error(msg);
+            throw new NullPointerException(msg);
         }
+        
         super.initializeFrame(dc);
         try {
             super.applyView(dc);
