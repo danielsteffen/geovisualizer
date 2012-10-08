@@ -14,7 +14,7 @@ import gov.nasa.worldwind.geom.Position;
  * The <i>AnimatedCamera</i> class is extended from {@link SimpleCamera}. It 
  * provides the same methods and constructors. However, when used in
  * {@link VisualizationComponent#setCamera(com.dfki.av.sudplan.camera.Camera) }
- * the camera is animated to the specified endposition. Using the 
+ * the camera is animated to the specified end position. Using the 
  * {@link #viewingDirection} one can set the Roll-Pitch-Yaw angles in radians 
  * of the camera.
  * <p>
@@ -51,7 +51,7 @@ public class AnimatedCamera extends SimpleCamera{
      * 
      * @param lat the latitude position in degrees to set.
      * @param lon the longitude position in degrees to set.
-     * @param alt the altitude poisition in meter to set.
+     * @param alt the altitude position in meter to set.
      */
     public AnimatedCamera(double lat, double lon, double alt) {
         super(lat, lon, alt, new Vector3D());
@@ -81,7 +81,7 @@ public class AnimatedCamera extends SimpleCamera{
      * 
      * @param lat the latitude position in degrees to set.
      * @param lon the longitude position in degrees to set.
-     * @param alt the altitude poisition in meter to set.
+     * @param alt the altitude position in meter to set.
      * @param vec the viewing direction to set.
      * 
      * @throws IllegalArgumentException If <code>vec</code> is null.

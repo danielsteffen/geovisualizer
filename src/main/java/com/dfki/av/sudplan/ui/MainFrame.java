@@ -9,7 +9,9 @@ package com.dfki.av.sudplan.ui;
 
 import com.dfki.av.sudplan.Configuration;
 import com.dfki.av.sudplan.camera.AnimatedCamera;
+import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
+import com.dfki.av.sudplan.camera.Vector3D;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
 import com.dfki.av.sudplan.vis.basic.VisPointCloudNew;
@@ -702,15 +704,21 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miRemoveAllLayerActionPerformed
 
     private void miGoToStockhomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGoToStockhomActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(59.328, 18.047, 20000.0));
+        Camera camera = wwPanel.getCamera();
+        Vector3D vector = camera.getViewingDirection();
+        wwPanel.setCamera(new AnimatedCamera(59.328, 18.047, 20000.0, vector));
     }//GEN-LAST:event_miGoToStockhomActionPerformed
 
     private void miGotoLinzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoLinzActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(48.2323, 14.3350, 20000.0));
+        Camera camera = wwPanel.getCamera();
+        Vector3D vector = camera.getViewingDirection();
+        wwPanel.setCamera(new AnimatedCamera(48.2323, 14.3350, 20000.0, vector));
     }//GEN-LAST:event_miGotoLinzActionPerformed
 
     private void miGotoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoWuppertalActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(51.249, 7.0832, 14000.0));
+        Camera camera = wwPanel.getCamera();
+        Vector3D vector = camera.getViewingDirection();
+        wwPanel.setCamera(new AnimatedCamera(51.249, 7.0832, 14000.0, vector));
     }//GEN-LAST:event_miGotoWuppertalActionPerformed
 
     private void miFullSphereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFullSphereActionPerformed
@@ -718,7 +726,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miFullSphereActionPerformed
 
     private void miGotoPraqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoPraqueActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(50.08781, 14.42046, 20000.0));
+        Camera camera = wwPanel.getCamera();
+        Vector3D vector = camera.getViewingDirection();
+        wwPanel.setCamera(new AnimatedCamera(50.08781, 14.42046, 20000.0, vector));
     }//GEN-LAST:event_miGotoPraqueActionPerformed
 
     private void miAddShapeZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeZipActionPerformed
@@ -841,7 +851,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miSideBySideActionPerformed
 
     private void miGotoKaiserslauternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoKaiserslauternActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(49.4447186, 7.7690169, 20000.0));
+        Camera camera = wwPanel.getCamera();
+        Vector3D vector = camera.getViewingDirection();
+        wwPanel.setCamera(new AnimatedCamera(49.4447186, 7.7690169, 20000.0, vector));
     }//GEN-LAST:event_miGotoKaiserslauternActionPerformed
 
     @Override
