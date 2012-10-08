@@ -19,6 +19,7 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.text.Position;
 import javax.swing.tree.*;
 import org.slf4j.Logger;
@@ -221,7 +222,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         Layer layer = layerList.getLayerByName(layerName);
 
         int index;
-        
+
         if (layer instanceof ElevatedRenderableLayer) {
             index = layerList.indexOf(((ElevatedRenderableLayer) layer).getSupportLayer());
             if (index < 0) {
@@ -253,8 +254,6 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         } else {
             layerList.remove(index);
         }
-
-
 
     }//GEN-LAST:event_btnDeleteActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -304,29 +303,34 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-        int row = jTree1.getRowForLocation(x, y);
-        TreePath path = jTree1.getPathForRow(row);
-
-        if (path != null) {
-
-            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-            LayerCheckBoxNode node = (LayerCheckBoxNode) treeNode.getUserObject();
-            LayerList layerList = worldWindow.getModel().getLayers();
-
-            Layer layer = layerList.getLayerByName(node.getText());
-            if (layer != null) {
-                layer.setEnabled(!layer.isEnabled());
-                worldWindow.redraw();
-            } else {
-                log.warn("Selected node {} not in layerlist.", node.getText());
-            }
-        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            int x = e.getX();
+            int y = e.getY();
+            int row = jTree1.getRowForLocation(x, y);
+            TreePath path = jTree1.getPathForRow(row);
+
+            if (path != null) {
+
+                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+                LayerCheckBoxNode node = (LayerCheckBoxNode) treeNode.getUserObject();
+                LayerList layerList = worldWindow.getModel().getLayers();
+
+                Layer layer = layerList.getLayerByName(node.getText());
+                if (layer != null) {
+                    layer.setEnabled(!layer.isEnabled());
+                    worldWindow.redraw();
+                } else {
+                    log.warn("Selected node {} not in layerlist.", node.getText());
+                }
+            }
+        }
+        if(e.isPopupTrigger()){
+            
+        }
     }
 
     @Override
