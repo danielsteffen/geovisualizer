@@ -8,4 +8,6 @@
 		 
 SUDPLAN 3D Videos
 
-  This section will contain the latest news around the development of the SUDPLAND 3D visualization component.
+  The following page lists some videos (HTML5) showing the features of the sudplan3D component. Currently, only Firefox (>10.0) has the possibility to switch into <<fullscreen mode>>. We will try to come up with a general solution asap. In between you should be able to download the video and watch it with your favorite media player.
+
+%{snippet|file=src/site/resources/snippets/videos.html|verbatim=false}
