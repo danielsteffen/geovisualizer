@@ -10,6 +10,20 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
 
+* 2012-10-11, sudplan3D 1.5.17
+
+  * Update to sudplan3D 1.7.8
+
+  * Update to sudplan3D-geocpm 1.7
+
+* 2012-10-11, sudplan3D-geocpm 1.7
+
+  * Update to sudplan3D-core 1.7.8
+
+* 2012-10-11, sudplan3D-core 1.7.8
+  
+  * Changed VisPointCloudNew visualization to set points relative to terrain.
+
 * 2012-10-08, sudplan3D 1.5.16
 
   * Fixed abrupt change of viewing direction for animated flight to pilot cities.
@@ -241,6 +255,8 @@ Releases
 *----------------*---------------------*--------------*------------------------------*
 | sudplan3D      | sudplan3D-core      | Plugins      | WorldWind SDK                |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.17          |  1.7.8              |  sudplan3D-geocpm 1.7 | 1.4.0-without-jackson        | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.16          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
 *----------------*---------------------*--------------*-------------------------------*
 | 1.5.15          |  1.7.7              |  sudplan3D-geocpm 1.6 | 1.4.0-without-jackson        | 
