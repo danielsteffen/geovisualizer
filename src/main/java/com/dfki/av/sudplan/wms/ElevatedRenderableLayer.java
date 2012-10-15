@@ -9,7 +9,6 @@ package com.dfki.av.sudplan.wms;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
@@ -67,7 +66,6 @@ public class ElevatedRenderableLayer extends RenderableLayer {
      * @param params WMS parameter
      * @param elevation The elevation for the {@link ElevatedTileImage}s
      * @param opac The maximum opacity for the {@link ElevatedTileImage}s
-     * @param sector The sector of the layer
      */
     public ElevatedRenderableLayer(WMSCapabilities caps, AVList params, 
             Double elevation, Double opac) {
