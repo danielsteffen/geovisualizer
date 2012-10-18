@@ -64,7 +64,7 @@
         </profile>
 
         <profile>
-            <id>s3D-main-webstart-offical</id>
+            <id>s3D-main-webstart-official</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
