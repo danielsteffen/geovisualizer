@@ -58,7 +58,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <worldwind.scope>compile</worldwind.scope>                   
+                <worldwind.scope>compile</worldwind.scope>
+                <webstart.dir>./jnlp</webstart.dir>
             </properties>
         </profile>
 
@@ -68,7 +69,8 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <worldwind.scope>provided</worldwind.scope>                
+                <worldwind.scope>provided</worldwind.scope>
+                <webstart.dir>project/av/etc/www/sudplan.kl.dfki.de/jnlp</webstart.dir>
             </properties>
         </profile>
     </profiles>  
@@ -179,9 +181,18 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo.webstart</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>webstart-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
+                <version>1.0-beta-3</version>
+                <executions>
+                    <execution>
+                        <id>upload-webstart-jars</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jnlp</goal>
+                        </goals>
+                    </execution>
+                </executions>                
                 <configuration>
                     <jnlp>
                         <outputFile>sudplan.jnlp</outputFile>
@@ -434,6 +445,44 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>1.0-beta-4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-ssh</artifactId>
+                        <version>2.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>upload-webstart-jars</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>upload</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <serverId>sudplan3D.website</serverId>
+                    <url>scp://serv-2100/</url>
+                    <fromDir>${project.build.directory}/jnlp</fromDir>
+                    <includes>*</includes>
+                    <toDir>${webstart.dir}</toDir>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <releaseProfiles>s3D-main-webstart-official</releaseProfiles>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     
@@ -474,7 +523,7 @@
             <url>${distribution.url}</url>
         </repository>
         <site>
-            <id>steffen.website</id>
+            <id>sudplan3D.website</id>
             <url>scp://serv-2100/project/av/etc/www/sudplan.kl.dfki.de</url>
         </site>		
     </distributionManagement>    
