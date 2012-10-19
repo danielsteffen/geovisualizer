@@ -13,9 +13,8 @@ import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.camera.Vector3D;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
-import com.dfki.av.sudplan.vis.basic.VisCreateTexture;
-import com.dfki.av.sudplan.vis.basic.VisPointCloudNew;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.VisPointCloud;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
@@ -667,15 +666,15 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miAboutActionPerformed
 
     private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
-        JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff"));
-
-        int ret = fc.showOpenDialog(this);
-        if (ret != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-
-        wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
+//        JFileChooser fc = new JFileChooser();
+//        fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff"));
+//
+//        int ret = fc.showOpenDialog(this);
+//        if (ret != JFileChooser.APPROVE_OPTION) {
+//            return;
+//        }
+//
+//        wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
     }//GEN-LAST:event_miAddGeoTiffActionPerformed
 
     private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
@@ -687,11 +686,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             return;
         }
 
-        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloudNew.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
         if (algo != null) {
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
-            log.error("VisAlgorithm {} not supported.", VisPointCloudNew.class.getName());
+            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
         }
     }//GEN-LAST:event_miAddShapeActionPerformed
 
@@ -740,11 +739,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             return;
         }
 
-        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloudNew.class.getName());
+        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
         if (algo != null) {
             wwPanel.addLayer(fc.getSelectedFile(), algo, null);
         } else {
-            log.error("VisAlgorithm {} not supported.", VisPointCloudNew.class.getName());
+            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
         }
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
