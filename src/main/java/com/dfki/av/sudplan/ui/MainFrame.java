@@ -22,9 +22,11 @@ import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Level;
@@ -119,6 +121,15 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         pVisualization = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
+        miOpenFile = new javax.swing.JMenuItem();
+        miAddGeoTiff = new javax.swing.JMenuItem();
+        miAddShape = new javax.swing.JMenuItem();
+        miAddShapeZip = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        miExit = new javax.swing.JMenuItem();
+        mEdit = new javax.swing.JMenu();
+        miRemoveAllLayer = new javax.swing.JMenuItem();
+        mNavi = new javax.swing.JMenu();
         miGotoLinz = new javax.swing.JMenuItem();
         miGotoPraque = new javax.swing.JMenuItem();
         miGoToStockhom = new javax.swing.JMenuItem();
@@ -127,18 +138,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         miFullSphere = new javax.swing.JMenuItem();
         miGoto = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        miExit = new javax.swing.JMenuItem();
-        mLayer = new javax.swing.JMenu();
-        mAddLayer = new javax.swing.JMenu();
-        miAddGeoTiff = new javax.swing.JMenuItem();
-        jSeparator6 = new javax.swing.JPopupMenu.Separator();
-        miAddShape = new javax.swing.JMenuItem();
-        miAddShapeZip = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        mWMS = new javax.swing.JMenu();
         miAddWMS = new javax.swing.JMenuItem();
         miAddWMSHeight = new javax.swing.JMenuItem();
-        miRemoveAllLayer = new javax.swing.JMenuItem();
         mTools = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
         mView = new javax.swing.JMenu();
@@ -444,68 +446,37 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
 
-        miGotoLinz.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoLinz.setText(bundle.getString("MainFrame.miGotoLinz.text")); // NOI18N
-        miGotoLinz.addActionListener(new java.awt.event.ActionListener() {
+        miOpenFile.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miOpenFile.text")); // NOI18N
+        miOpenFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoLinzActionPerformed(evt);
+                miAddKMLFileActionPerformed(evt);
             }
         });
-        mFile.add(miGotoLinz);
+        mFile.add(miOpenFile);
 
-        miGotoPraque.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoPraque.text")); // NOI18N
-        miGotoPraque.addActionListener(new java.awt.event.ActionListener() {
+        miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
+        miAddGeoTiff.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoPraqueActionPerformed(evt);
+                miAddGeoTiffActionPerformed(evt);
             }
         });
-        mFile.add(miGotoPraque);
+        mFile.add(miAddGeoTiff);
 
-        miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
-        miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
+        miAddShape.setText(bundle.getString("MainFrame.miAddShape.text")); // NOI18N
+        miAddShape.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGoToStockhomActionPerformed(evt);
+                miAddShapeActionPerformed(evt);
             }
         });
-        mFile.add(miGoToStockhom);
+        mFile.add(miAddShape);
 
-        miGotoWuppertal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
-        miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
+        miAddShapeZip.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddShapeZip.text")); // NOI18N
+        miAddShapeZip.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoWuppertalActionPerformed(evt);
+                miAddShapeZipActionPerformed(evt);
             }
         });
-        mFile.add(miGotoWuppertal);
-
-        miGotoKaiserslautern.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoKaiserslautern.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoKaiserslautern.text")); // NOI18N
-        miGotoKaiserslautern.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoKaiserslauternActionPerformed(evt);
-            }
-        });
-        mFile.add(miGotoKaiserslautern);
-        mFile.add(jSeparator5);
-
-        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
-        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miFullSphereActionPerformed(evt);
-            }
-        });
-        mFile.add(miFullSphere);
-
-        miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
-        miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
-        miGoto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoActionPerformed(evt);
-            }
-        });
-        mFile.add(miGoto);
+        mFile.add(miAddShapeZip);
         mFile.add(jSeparator2);
 
         miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_MASK));
@@ -519,54 +490,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mbMain.add(mFile);
 
-        mLayer.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mLayer.text")); // NOI18N
-
-        mAddLayer.setText(bundle.getString("MainFrame.mAddLayer.text")); // NOI18N
-
-        miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
-        miAddGeoTiff.setEnabled(false);
-        miAddGeoTiff.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddGeoTiffActionPerformed(evt);
-            }
-        });
-        mAddLayer.add(miAddGeoTiff);
-        mAddLayer.add(jSeparator6);
-
-        miAddShape.setText(bundle.getString("MainFrame.miAddShape.text")); // NOI18N
-        miAddShape.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddShapeActionPerformed(evt);
-            }
-        });
-        mAddLayer.add(miAddShape);
-
-        miAddShapeZip.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddShapeZip.text")); // NOI18N
-        miAddShapeZip.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddShapeZipActionPerformed(evt);
-            }
-        });
-        mAddLayer.add(miAddShapeZip);
-        mAddLayer.add(jSeparator4);
-
-        miAddWMS.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddWMS.text")); // NOI18N
-        miAddWMS.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddWMSActionPerformed(evt);
-            }
-        });
-        mAddLayer.add(miAddWMS);
-
-        miAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddWMSHeight.text")); // NOI18N
-        miAddWMSHeight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddWMSHeightActionPerformed(evt);
-            }
-        });
-        mAddLayer.add(miAddWMSHeight);
-
-        mLayer.add(mAddLayer);
+        mEdit.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mEdit.text")); // NOI18N
 
         miRemoveAllLayer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
         miRemoveAllLayer.setText(bundle.getString("MainFrame.miRemoveAllLayer.text")); // NOI18N
@@ -575,9 +499,96 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 miRemoveAllLayerActionPerformed(evt);
             }
         });
-        mLayer.add(miRemoveAllLayer);
+        mEdit.add(miRemoveAllLayer);
 
-        mbMain.add(mLayer);
+        mbMain.add(mEdit);
+
+        mNavi.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNavi.text")); // NOI18N
+
+        miGotoLinz.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        miGotoLinz.setText(bundle.getString("MainFrame.miGotoLinz.text")); // NOI18N
+        miGotoLinz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoLinzActionPerformed(evt);
+            }
+        });
+        mNavi.add(miGotoLinz);
+
+        miGotoPraque.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        miGotoPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoPraque.text")); // NOI18N
+        miGotoPraque.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoPraqueActionPerformed(evt);
+            }
+        });
+        mNavi.add(miGotoPraque);
+
+        miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
+        miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGoToStockhomActionPerformed(evt);
+            }
+        });
+        mNavi.add(miGoToStockhom);
+
+        miGotoWuppertal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
+        miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoWuppertalActionPerformed(evt);
+            }
+        });
+        mNavi.add(miGotoWuppertal);
+
+        miGotoKaiserslautern.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_MASK));
+        miGotoKaiserslautern.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoKaiserslautern.text")); // NOI18N
+        miGotoKaiserslautern.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoKaiserslauternActionPerformed(evt);
+            }
+        });
+        mNavi.add(miGotoKaiserslautern);
+        mNavi.add(jSeparator5);
+
+        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
+        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miFullSphereActionPerformed(evt);
+            }
+        });
+        mNavi.add(miFullSphere);
+
+        miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
+        miGoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGotoActionPerformed(evt);
+            }
+        });
+        mNavi.add(miGoto);
+
+        mbMain.add(mNavi);
+
+        mWMS.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWMS.text")); // NOI18N
+
+        miAddWMS.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddWMS.text")); // NOI18N
+        miAddWMS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddWMSActionPerformed(evt);
+            }
+        });
+        mWMS.add(miAddWMS);
+
+        miAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddWMSHeight.text")); // NOI18N
+        miAddWMSHeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddWMSHeightActionPerformed(evt);
+            }
+        });
+        mWMS.add(miAddWMSHeight);
+
+        mbMain.add(mWMS);
 
         mTools.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mTools.text")); // NOI18N
 
@@ -666,31 +677,44 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miAboutActionPerformed
 
     private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
-//        JFileChooser fc = new JFileChooser();
-//        fc.setFileFilter(new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff"));
-//
-//        int ret = fc.showOpenDialog(this);
-//        if (ret != JFileChooser.APPROVE_OPTION) {
-//            return;
-//        }
-//
-//        wwPanel.addLayer(fc.getSelectedFile(), new VisCreateTexture(), null);
+        try {
+            FileFilter fileFilter = new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff");
+            final JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(fileFilter);
+
+            int ret = fc.showOpenDialog(this);
+            if (ret != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            wwPanel.addGeoTiffLayer(fc.getSelectedFile());
+        } catch (IOException ex) {
+            log.error(ex.toString());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_miAddGeoTiffActionPerformed
 
     private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
-        JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp", "SHP"));
+        try {
+            FileFilter fileFilter = new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp", "SHP");
+            final JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(fileFilter);
 
-        int ret = fc.showOpenDialog(this);
-        if (ret != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
+            int ret = fc.showOpenDialog(this);
+            if (ret != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
 
-        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-        if (algo != null) {
-            wwPanel.addLayer(fc.getSelectedFile(), algo, null);
-        } else {
-            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
+            if (algo != null) {
+                wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+            } else {
+                log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+                JOptionPane.showMessageDialog(this, "Algorithm not supported.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_miAddShapeActionPerformed
 
@@ -731,19 +755,26 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miGotoPraqueActionPerformed
 
     private void miAddShapeZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeZipActionPerformed
-        JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip", "ZIP"));
+        try {
+            FileFilter fileFilter = new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip", "ZIP");
+            final JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(fileFilter);
 
-        int ret = fc.showOpenDialog(this);
-        if (ret != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
+            int ret = fc.showOpenDialog(this);
+            if (ret != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
 
-        IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-        if (algo != null) {
-            wwPanel.addLayer(fc.getSelectedFile(), algo, null);
-        } else {
-            log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
+            if (algo != null) {
+                wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+            } else {
+                log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+                JOptionPane.showMessageDialog(this, "Algorithm not supported.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
@@ -855,6 +886,24 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         wwPanel.setCamera(new AnimatedCamera(49.4447186, 7.7690169, 20000.0, vector));
     }//GEN-LAST:event_miGotoKaiserslauternActionPerformed
 
+    private void miAddKMLFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddKMLFileActionPerformed
+        try {
+            FileFilter fileFilter = new FileNameExtensionFilter("KML/KMZ File", "kml", "kmz");
+            final JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(fileFilter);
+
+            int ret = fc.showOpenDialog(this);
+            if (ret != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            wwPanel.addKMLLayer(fc.getSelectedFile());
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_miAddKMLFileActionPerformed
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(EventHolder.LAYERINFO_RETREIVAL_COMPLETE)) {
@@ -874,6 +923,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             bAddWMSHeight.setEnabled(true);
             bGoWMSHeight.setEnabled(true);
         }
+
         if (evt.getPropertyName().equals(EventHolder.LAYERINFO_RETREIVAL_FAILED)) {
             resetWMSHeightDialog();
             JOptionPane.showMessageDialog(dWMSHeight,
@@ -881,6 +931,24 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                     "WMS-Server Error",
                     JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    /**
+     * Reset the {@link #dWMSHeight} dialog.
+     */
+    private void resetWMSHeightDialog() {
+        dWMSHeight.setVisible(false);
+        txtServerURL.setText("http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0");
+        txtServerURL.setEnabled(true);
+        txtHeight.setText("1500.0");
+        bGoWMSHeight.setEnabled(true);
+        bAddWMSHeight.setEnabled(false);
+        cLayerList.setEnabled(false);
+        txtServerURL.setEnabled(false);
+        cbServerURL.setEnabled(true);
+        pbWMS.setVisible(false);
+        pbWMS.setIndeterminate(false);
+        rbCbServerUrl.setSelected(true);
     }
 
     /**
@@ -927,6 +995,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
 
 
+
+
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -967,9 +1037,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
-    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lHeight;
     private javax.swing.JLabel lLatitude;
@@ -977,12 +1045,13 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JLabel lMaxEle;
     private javax.swing.JLabel lOpacity;
     private javax.swing.JLabel lServerURL;
-    private javax.swing.JMenu mAddLayer;
+    private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
-    private javax.swing.JMenu mLayer;
+    private javax.swing.JMenu mNavi;
     private javax.swing.JMenu mTools;
     private javax.swing.JMenu mView;
+    private javax.swing.JMenu mWMS;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
     private javax.swing.JMenuItem miAddGeoTiff;
@@ -998,6 +1067,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miGotoLinz;
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
+    private javax.swing.JMenuItem miOpenFile;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miSideBySide;
     private javax.swing.JMenuItem miWizard;
@@ -1014,23 +1084,4 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JTextField txtOpacity;
     private javax.swing.JTextField txtServerURL;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Resets the
-     * <code>jDialog</code> WMSHeight.
-     */
-    private void resetWMSHeightDialog() {
-        dWMSHeight.setVisible(false);
-        txtServerURL.setText("http://serv-2118.kl.dfki.de:8888/geoserver/wms?service=WMS&version=1.1.0");
-        txtServerURL.setEnabled(true);
-        txtHeight.setText("1500.0");
-        bGoWMSHeight.setEnabled(true);
-        bAddWMSHeight.setEnabled(false);
-        cLayerList.setEnabled(false);
-        txtServerURL.setEnabled(false);
-        cbServerURL.setEnabled(true);
-        pbWMS.setVisible(false);
-        pbWMS.setIndeterminate(false);
-        rbCbServerUrl.setSelected(true);
-    }
 }

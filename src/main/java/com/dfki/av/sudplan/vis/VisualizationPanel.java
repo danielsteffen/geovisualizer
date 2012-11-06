@@ -26,14 +26,19 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.ogc.kml.KMLAbstractFeature;
+import gov.nasa.worldwind.ogc.kml.KMLRoot;
+import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.StatusBar;
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import java.awt.BorderLayout;
@@ -41,15 +46,14 @@ import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+import javax.swing.*;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -483,10 +487,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     /**
      * Adds a WMS Layer from the given parameters.
      *
-     * Note that if the layerName contains '[]' a time series of wms layer will
+     * Note that if the layerName contains '[]' a time series of WMS layer will
      * be added, including a {@link WMSControlLayer}.
      *
-     * @param uri {@link URI} from the wms server
+     * @param uri {@link URI} from the WMS server
      * @param layerName name of the requested layer or name of the top layer of
      * a time series which must contain a '[]' in the layer name
      * @param elevation the elevation (meters above sea level) for the result
@@ -580,6 +584,78 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             return sul;
         }
         return null;
+    }
+
+    /**
+     * Adds a KML file to the world wind model.
+     *
+     * @param file the {@link File}
+     * @throws IllegalArgumentException if file == null
+     * @throws Exception
+     */
+    public void addKMLLayer(File file) throws Exception {
+        if (file == null) {
+            String msg = "file == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        final File kmlFile = file;
+        SwingWorker workerThread = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                KMLRoot kmlRoot = KMLRoot.createAndParse(kmlFile);
+                KMLAbstractFeature rootFeature = kmlRoot.getFeature();
+                String layerName = "KML Layer";
+                if (rootFeature != null && !WWUtil.isEmpty(rootFeature.getName())) {
+                    layerName = rootFeature.getName();
+                } else if (kmlFile instanceof File) {
+                    layerName = kmlFile.getName();
+                }
+                kmlRoot.setField(AVKey.DISPLAY_NAME, layerName);
+
+                KMLController kmlController = new KMLController(kmlRoot);
+                // Adds a new layer containing the KMLRoot to the end of the WorldWindow's layer list. This
+                // retrieves the layer name from the KMLRoot's DISPLAY_NAME field.
+                RenderableLayer layer = new RenderableLayer();
+                layer.setName((String) kmlRoot.getField(AVKey.DISPLAY_NAME));
+                layer.addRenderable(kmlController);
+                ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+                return null;
+            }
+        };
+        workerThread.execute();
+    }
+
+    /**
+     * Adds a GeoTiff file to the world wind model.
+     *
+     * @param file the {@link File} to add.
+     * @throws IllegalArgumentException if file == null
+     * @throws IOException
+     */
+    public void addGeoTiffLayer(File file) throws IOException {
+        if (file == null) {
+            String msg = "file == null";
+            log.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        final File geotiffFile = file;
+        SwingWorker workerThread = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                SurfaceImageLayer layer = new SurfaceImageLayer();
+                layer.setPickEnabled(false);
+                layer.setValue(AVKey.DISPLAY_NAME, geotiffFile.getName());
+                layer.addImage(geotiffFile.getAbsolutePath());
+                ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+                return null;
+            }
+        };
+        workerThread.execute();
     }
 
     /**
