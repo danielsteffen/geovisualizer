@@ -40,6 +40,16 @@
         <p>Currently, we assume that the name of the zip file and the included shapefile to be equal. Simply rename the zip file to the name of the included shapefile.</p>
       </answer>
     </faq>
+    
+    <faq id="shape-not-working">
+      <question>
+        I am trying to load a zipped or local shapefile. The application crashes (progress bar frozen) and nothing is displayed?
+      </question>
+      <answer>
+        <p>Check the names of the attributes in your shapefile. Firstly, we recommend not to use any attribute more than once. Secondly, you should avoid using any special characters.</p>
+      </answer>
+    </faq>
+    
   </part>
 
 </faqs>
