@@ -141,7 +141,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         if (xmlConfig.containsKey(key)) {
             String value = xmlConfig.getString(key);
             if (Boolean.valueOf(value)) {
-                log.info("Wuppertal elevation model enabled.");
+                log.info("Custom elevation models enabled.");
                 Globe globe = this.wwd.getModel().getGlobe();
                 String pathKey = "sudplan3D.wuppertal.localElevationModel.path";
                 if (xmlConfig.containsKey(pathKey)) {
@@ -149,13 +149,13 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     ElevationsLoader loader = new ElevationsLoader(globe, path);
                     loader.execute();
                 } else {
-                    log.debug("No <path> tag. Wuppertal elevation model disabled.");
+                    log.debug("No <path> tag. Custom elevation models disabled.");
                 }
             } else {
-                log.debug("Wuppertal elevation model disabled.");
+                log.debug("Custom elevation models disabled.");
             }
         } else {
-            log.debug("No <enabled> tag. Wuppertal elevation model disabled.");
+            log.debug("No <enabled> tag. Custom elevation models disabled.");
         }
     }
 

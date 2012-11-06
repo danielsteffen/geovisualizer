@@ -37,7 +37,7 @@ public final class Configuration {
     /**
      * The current version of the configuration file.
      */
-    private static final String VERSION = "1.1";
+    private static final String VERSION = "1.2";
     /**
      * The sudplan3D configuration.
      */
