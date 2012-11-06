@@ -14,6 +14,28 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
 
+* 2012-11-06 
+ 
+  * sudplan3D 1.5.21
+
+    * Added support to load KML/KMZ files.
+
+    * Updated configuration file.
+
+    * Added Java Web Start launch button to demo site.
+
+* 2012-10-18
+
+  * sudplan3D 1.5.20
+
+    * Minor fixes.
+
+  * sudplan3D 1.5.19
+    
+    * Added support to deploy webstart jars during release.
+   
+    * Update of maven-site-plugin for Maven 3.
+
 * 2012-10-15
 
   * sudplan3D 1.5.18
@@ -317,6 +339,15 @@ sudplan3D compatibility matrix
 *----------------*---------------------*--------------*------------------------------*
 ||   sudplan3D   ||   sudplan3D-core   ||   Plugins   ||   WorldWind SDK             |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.21          |  1.7.9              |  sudplan3D-vis-basic 1.0\ | 1.4.0-without-jackson        | 
+|                 |                     |  sudplan3D-geocpm 1.8    |         | 
+*----------------*---------------------*--------------*-------------------------------*
+| 1.5.20          |  1.7.9              |  sudplan3D-vis-basic 1.0\ | 1.4.0-without-jackson        | 
+|                 |                     |  sudplan3D-geocpm 1.8    |         | 
+*----------------*---------------------*--------------*-------------------------------*
+| 1.5.19          |  1.7.9              |  sudplan3D-vis-basic 1.0\ | 1.4.0-without-jackson        | 
+|                 |                     |  sudplan3D-geocpm 1.8    |         | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.18          |  1.7.9              |  sudplan3D-vis-basic 1.0\ | 1.4.0-without-jackson        | 
 |                 |                     |  sudplan3D-geocpm 1.8    |         | 
 *----------------*---------------------*--------------*-------------------------------*
