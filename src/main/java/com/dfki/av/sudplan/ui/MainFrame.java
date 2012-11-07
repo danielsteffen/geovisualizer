@@ -146,6 +146,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miWizard = new javax.swing.JMenuItem();
         mView = new javax.swing.JMenu();
         miSideBySide = new javax.swing.JMenuItem();
+        mNDW2012 = new javax.swing.JMenu();
+        miHikingWay = new javax.swing.JMenuItem();
+        miBender = new javax.swing.JMenuItem();
+        miTouristTour = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        mi = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
 
@@ -617,6 +625,35 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mbMain.add(mView);
 
+        mNDW2012.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNDW2012.text")); // NOI18N
+
+        miHikingWay.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miHikingWay.text")); // NOI18N
+        miHikingWay.setEnabled(false);
+        mNDW2012.add(miHikingWay);
+
+        miBender.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miBender.text")); // NOI18N
+        miBender.setEnabled(false);
+        mNDW2012.add(miBender);
+
+        miTouristTour.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTouristTour.text")); // NOI18N
+        miTouristTour.setEnabled(false);
+        mNDW2012.add(miTouristTour);
+        mNDW2012.add(jSeparator1);
+
+        mi.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mi.text")); // NOI18N
+        mi.setEnabled(false);
+        mNDW2012.add(mi);
+
+        jMenuItem1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jMenuItem1.text")); // NOI18N
+        jMenuItem1.setEnabled(false);
+        mNDW2012.add(jMenuItem1);
+
+        jMenuItem2.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jMenuItem2.text")); // NOI18N
+        jMenuItem2.setEnabled(false);
+        mNDW2012.add(jMenuItem2);
+
+        mbMain.add(mNDW2012);
+
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
 
         miAbout.setText(bundle.getString("MainFrame.miAbout.text")); // NOI18N
@@ -1018,8 +1055,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JComboBox cbServerURL;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWMSHeight;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JSplitPane jSplitPane1;
@@ -1032,17 +1072,20 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
+    private javax.swing.JMenu mNDW2012;
     private javax.swing.JMenu mNavi;
     private javax.swing.JMenu mTools;
     private javax.swing.JMenu mView;
     private javax.swing.JMenu mWMS;
     private javax.swing.JMenuBar mbMain;
+    private javax.swing.JMenuItem mi;
     private javax.swing.JMenuItem miAbout;
     private javax.swing.JMenuItem miAddGeoTiff;
     private javax.swing.JMenuItem miAddShape;
     private javax.swing.JMenuItem miAddShapeZip;
     private javax.swing.JMenuItem miAddWMS;
     private javax.swing.JMenuItem miAddWMSHeight;
+    private javax.swing.JMenuItem miBender;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
@@ -1051,9 +1094,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miGotoLinz;
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
+    private javax.swing.JMenuItem miHikingWay;
     private javax.swing.JMenuItem miOpenKMLFile;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miSideBySide;
+    private javax.swing.JMenuItem miTouristTour;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pLeftPanel;
