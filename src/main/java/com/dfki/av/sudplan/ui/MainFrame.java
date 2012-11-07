@@ -22,6 +22,7 @@ import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -121,7 +122,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         pVisualization = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
-        miOpenFile = new javax.swing.JMenuItem();
+        miOpenKMLFile = new javax.swing.JMenuItem();
         miAddGeoTiff = new javax.swing.JMenuItem();
         miAddShape = new javax.swing.JMenuItem();
         miAddShapeZip = new javax.swing.JMenuItem();
@@ -446,18 +447,18 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
 
-        miOpenFile.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miOpenFile.text")); // NOI18N
-        miOpenFile.addActionListener(new java.awt.event.ActionListener() {
+        miOpenKMLFile.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miOpenKMLFile.text")); // NOI18N
+        miOpenKMLFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddKMLFileActionPerformed(evt);
+                miOpenDataActionPerformed(evt);
             }
         });
-        mFile.add(miOpenFile);
+        mFile.add(miOpenKMLFile);
 
         miAddGeoTiff.setText(bundle.getString("MainFrame.miAddGeoTiff.text")); // NOI18N
         miAddGeoTiff.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddGeoTiffActionPerformed(evt);
+                miOpenDataActionPerformed(evt);
             }
         });
         mFile.add(miAddGeoTiff);
@@ -465,7 +466,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miAddShape.setText(bundle.getString("MainFrame.miAddShape.text")); // NOI18N
         miAddShape.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddShapeActionPerformed(evt);
+                miOpenDataActionPerformed(evt);
             }
         });
         mFile.add(miAddShape);
@@ -473,7 +474,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miAddShapeZip.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddShapeZip.text")); // NOI18N
         miAddShapeZip.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddShapeZipActionPerformed(evt);
+                miOpenDataActionPerformed(evt);
             }
         });
         mFile.add(miAddShapeZip);
@@ -676,48 +677,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
 
-    private void miAddGeoTiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddGeoTiffActionPerformed
-        try {
-            FileFilter fileFilter = new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff");
-            final JFileChooser fc = new JFileChooser();
-            fc.setFileFilter(fileFilter);
-
-            int ret = fc.showOpenDialog(this);
-            if (ret != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-
-            wwPanel.addGeoTiffLayer(fc.getSelectedFile());
-        } catch (IOException ex) {
-            log.error(ex.toString());
-            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_miAddGeoTiffActionPerformed
-
-    private void miAddShapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeActionPerformed
-        try {
-            FileFilter fileFilter = new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp", "SHP");
-            final JFileChooser fc = new JFileChooser();
-            fc.setFileFilter(fileFilter);
-
-            int ret = fc.showOpenDialog(this);
-            if (ret != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-
-            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-            if (algo != null) {
-                wwPanel.addLayer(fc.getSelectedFile(), algo, null);
-            } else {
-                log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
-                JOptionPane.showMessageDialog(this, "Algorithm not supported.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
-            log.error(ex.toString());
-            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_miAddShapeActionPerformed
-
     private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
         wwPanel.runVisWiz();
     }//GEN-LAST:event_miWizardActionPerformed
@@ -753,30 +712,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         Vector3D vector = camera.getViewingDirection();
         wwPanel.setCamera(new AnimatedCamera(50.08781, 14.42046, 20000.0, vector));
     }//GEN-LAST:event_miGotoPraqueActionPerformed
-
-    private void miAddShapeZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddShapeZipActionPerformed
-        try {
-            FileFilter fileFilter = new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip", "ZIP");
-            final JFileChooser fc = new JFileChooser();
-            fc.setFileFilter(fileFilter);
-
-            int ret = fc.showOpenDialog(this);
-            if (ret != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-
-            IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
-            if (algo != null) {
-                wwPanel.addLayer(fc.getSelectedFile(), algo, null);
-            } else {
-                log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
-                JOptionPane.showMessageDialog(this, "Algorithm not supported.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
-            log.error(ex.toString());
-            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
         String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.geoportal.rlp.de/mapbender/php/wms.php?layer_id=30694");
@@ -886,23 +821,72 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         wwPanel.setCamera(new AnimatedCamera(49.4447186, 7.7690169, 20000.0, vector));
     }//GEN-LAST:event_miGotoKaiserslauternActionPerformed
 
-    private void miAddKMLFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddKMLFileActionPerformed
+    private void miOpenDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenDataActionPerformed
         try {
-            FileFilter fileFilter = new FileNameExtensionFilter("KML/KMZ File", "kml", "kmz");
+            String cmd = evt.getActionCommand();
             final JFileChooser fc = new JFileChooser();
+
+            FileFilter fileFilter;
+            // Set file filter..
+            if (cmd.equalsIgnoreCase(miOpenKMLFile.getActionCommand())) {
+                fileFilter = new FileNameExtensionFilter("KML/KMZ File", "kml", "kmz");
+            } else if (cmd.equalsIgnoreCase(miAddGeoTiff.getActionCommand())) {
+                fileFilter = new FileNameExtensionFilter("GeoTiff File ( *.tif, *.tiff)", "tif", "tiff");
+            } else if (cmd.equalsIgnoreCase(miAddShape.getActionCommand())) {
+                fileFilter = new FileNameExtensionFilter("ESRI Shapefile (*.shp)", "shp", "SHP");
+            } else if (cmd.equalsIgnoreCase(miAddShapeZip.getActionCommand())) {
+                fileFilter = new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip", "ZIP");
+            } else {
+                log.warn("No valid action command.");
+                fileFilter = null;
+            }
             fc.setFileFilter(fileFilter);
 
+            // Set latest working directory...
+            XMLConfiguration xmlConfig = Configuration.getXMLConfiguration();
+            String path = xmlConfig.getString("sudplan3D.working.dir");
+            File dir;
+            if (path != null) {
+                dir = new File(path);
+                if (dir.exists()) {
+                    fc.setCurrentDirectory(dir);
+                }
+            }
+
+            // Show dialog...
             int ret = fc.showOpenDialog(this);
+
+            // Save currently selected working directory...
+            dir = fc.getCurrentDirectory();
+            path = dir.getAbsolutePath();
+            xmlConfig.setProperty("sudplan3D.working.dir", path);
+
             if (ret != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
-            wwPanel.addKMLLayer(fc.getSelectedFile());
+
+            if (cmd.equalsIgnoreCase(miOpenKMLFile.getActionCommand())) {
+                wwPanel.addKMLLayer(fc.getSelectedFile());
+            } else if (cmd.equalsIgnoreCase(miAddGeoTiff.getActionCommand())) {
+                wwPanel.addGeoTiffLayer(fc.getSelectedFile());
+            } else if (cmd.equalsIgnoreCase(miAddShape.getActionCommand())
+                    || cmd.equalsIgnoreCase(miAddShapeZip.getActionCommand())) {
+                IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
+                if (algo != null) {
+                    wwPanel.addLayer(fc.getSelectedFile(), algo, null);
+                } else {
+                    log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+                    JOptionPane.showMessageDialog(this, "Algorithm not supported.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                log.warn("No valid action command.");
+            }
         } catch (Exception ex) {
             log.error(ex.toString());
             JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_miAddKMLFileActionPerformed
+    }//GEN-LAST:event_miOpenDataActionPerformed
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -1067,7 +1051,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miGotoLinz;
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
-    private javax.swing.JMenuItem miOpenFile;
+    private javax.swing.JMenuItem miOpenKMLFile;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miSideBySide;
     private javax.swing.JMenuItem miWizard;
