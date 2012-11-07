@@ -779,7 +779,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miAddShapeZipActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
-        String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.wms.nrw.de/geobasis/DOP");
+        String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.geoportal.rlp.de/mapbender/php/wms.php?layer_id=30694");
         try {
             if (server == null) {
                 log.debug("Cancled JOptionPane.");
