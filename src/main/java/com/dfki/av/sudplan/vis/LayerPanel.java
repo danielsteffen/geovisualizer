@@ -78,6 +78,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         btnDelete = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(0, 0));
+
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.setAutoscrolls(true);
@@ -86,6 +88,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         jScrollPane1.setViewportView(jTree1);
 
         btnUp.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnUp.text")); // NOI18N
+        btnUp.setMinimumSize(new java.awt.Dimension(0, 0));
         btnUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUpActionPerformed(evt);
@@ -93,6 +96,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         });
 
         btnDown.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDown.text")); // NOI18N
+        btnDown.setMinimumSize(new java.awt.Dimension(0, 0));
         btnDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDownActionPerformed(evt);
@@ -100,6 +104,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         });
 
         btnDelete.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDelete.text")); // NOI18N
+        btnDelete.setMinimumSize(new java.awt.Dimension(0, 0));
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
@@ -122,15 +127,16 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnUp)
+                .addComponent(btnUp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDown)
+                .addComponent(btnDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDelete)
+                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel2.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.jLabel2.text")); // NOI18N
+        jLabel2.setMinimumSize(new java.awt.Dimension(0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -141,16 +147,16 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
