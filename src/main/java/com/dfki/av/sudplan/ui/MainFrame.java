@@ -14,17 +14,22 @@ import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.camera.Vector3D;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.core.VisPointCloud;
+import com.dfki.av.sudplan.vis.functions.ColorrampClassification;
+import com.dfki.av.sudplan.vis.functions.IdentityFunction;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
+import de.dfki.av.sudplan.vis.ndw2012.VisNachtDieWissenSchafft;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -626,17 +631,33 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mbMain.add(mView);
 
         mNDW2012.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNDW2012.text")); // NOI18N
+        mNDW2012.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNDW2012.actionCommand")); // NOI18N
 
         miHikingWay.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miHikingWay.text")); // NOI18N
-        miHikingWay.setEnabled(false);
+        miHikingWay.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miHikingWay.actionCommand")); // NOI18N
+        miHikingWay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCustomVisualizationActionPerformed(evt);
+            }
+        });
         mNDW2012.add(miHikingWay);
 
         miBender.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miBender.text")); // NOI18N
-        miBender.setEnabled(false);
+        miBender.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miBender.actionCommand")); // NOI18N
+        miBender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCustomVisualizationActionPerformed(evt);
+            }
+        });
         mNDW2012.add(miBender);
 
         miTouristTour.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTouristTour.text")); // NOI18N
-        miTouristTour.setEnabled(false);
+        miTouristTour.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTouristTour.actionCommand")); // NOI18N
+        miTouristTour.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCustomVisualizationActionPerformed(evt);
+            }
+        });
         mNDW2012.add(miTouristTour);
         mNDW2012.add(jSeparator1);
 
@@ -924,6 +945,43 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_miOpenDataActionPerformed
+
+    private void miCustomVisualizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCustomVisualizationActionPerformed
+
+        try {
+            String visAlgoName = VisNachtDieWissenSchafft.class.getName();
+            IVisAlgorithm visAlgo = VisAlgorithmFactory.newInstance(visAlgoName);
+            List<IVisParameter> parameters = visAlgo.getVisParameters();
+            if (parameters.size() == 3) {
+                IdentityFunction heightFunc = new IdentityFunction();
+                parameters.get(0).setTransferFunction(heightFunc);
+
+                ColorrampClassification colorFunc = new ColorrampClassification();
+                colorFunc.setStartColor(Color.RED);
+                colorFunc.setEndColor(Color.BLUE);
+                colorFunc.setNumClasses(10);
+                parameters.get(1).setTransferFunction(colorFunc);
+
+                IdentityFunction stressFunc = new IdentityFunction();
+                parameters.get(2).setTransferFunction(stressFunc);
+
+                URL dataURL = new URL("http://sudplan.kl.dfki.de/testdata/"+evt.getActionCommand());
+                String[] attributes = new String[3];
+                attributes[0] = "hlf";
+                attributes[1] = "htemp";
+                attributes[2] = "stresssig";
+                
+                wwPanel.addLayer(dataURL, visAlgo, attributes);
+            } else {
+                String msg = "Missmatch for parameter size.";
+                log.error(msg);
+                JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_miCustomVisualizationActionPerformed
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
