@@ -18,6 +18,7 @@ import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.core.VisPointCloud;
 import com.dfki.av.sudplan.vis.functions.ColorrampClassification;
 import com.dfki.av.sudplan.vis.functions.IdentityFunction;
+import com.dfki.av.sudplan.vis.functions.UnitIntervalMapping;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
@@ -953,7 +954,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             IVisAlgorithm visAlgo = VisAlgorithmFactory.newInstance(visAlgoName);
             List<IVisParameter> parameters = visAlgo.getVisParameters();
             if (parameters.size() == 3) {
-                IdentityFunction heightFunc = new IdentityFunction();
+                UnitIntervalMapping heightFunc = new UnitIntervalMapping();
+                heightFunc.setScaleValue(300.0);
                 parameters.get(0).setTransferFunction(heightFunc);
 
                 ColorrampClassification colorFunc = new ColorrampClassification();
