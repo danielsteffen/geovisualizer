@@ -16,10 +16,7 @@ import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
 import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.core.VisPointCloud;
-import com.dfki.av.sudplan.vis.functions.ColorrampClassification;
-import com.dfki.av.sudplan.vis.functions.ConstantNumber;
-import com.dfki.av.sudplan.vis.functions.IdentityFunction;
-import com.dfki.av.sudplan.vis.functions.UnitIntervalMapping;
+import com.dfki.av.sudplan.vis.functions.*;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
@@ -1109,14 +1106,15 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             IVisAlgorithm visAlgo = VisAlgorithmFactory.newInstance(visAlgoName);
             List<IVisParameter> parameters = visAlgo.getVisParameters();
             if (parameters.size() == 3) {
-                UnitIntervalMapping heightFunc = new UnitIntervalMapping();
-                heightFunc.setScaleValue(250.0);
+                UnitIntervalMappingSpecial heightFunc = new UnitIntervalMappingSpecial();
+                heightFunc.setScaleValue(120.0);
+                heightFunc.setConstantValue(20.0);
                 parameters.get(0).setTransferFunction(heightFunc);
 
                 ColorrampClassification colorFunc = new ColorrampClassification();
                 colorFunc.setStartColor(Color.RED);
                 colorFunc.setEndColor(Color.BLUE);
-                colorFunc.setNumClasses(20);
+                colorFunc.setNumClasses(15);
                 parameters.get(1).setTransferFunction(colorFunc);
 
                 ConstantNumber constantFunc = new ConstantNumber();
