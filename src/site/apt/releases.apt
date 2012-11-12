@@ -14,6 +14,32 @@ Releases
 
   This section list the releases of the sudplan3D components: sudplan3D-main, sudplan3D-core, etc. 
 
+* 2012-11-12
+
+  * sudplan3D 1.5.23
+   
+    * Added feature to save current viewpoints for the current session.
+  
+    * Updated to geocpm version 1.9
+
+ * sudplan3D-geocpm 1.9 
+
+   * Update to sudplan3D-core version 1.7.11
+
+* 2012-11-09
+
+  * sudplan3D-core 1.7.11
+
+    * Added new transfer function for affine transformation.
+
+    * Added new transfer function for unit interval mapping (special).
+
+* 2012-11-08
+
+  * sudplan3D-core 1.7.10
+
+    * Added new transfer function for unit interval mapping.
+
 * 2012-11-06 
  
   * sudplan3D 1.5.21
@@ -339,6 +365,13 @@ sudplan3D compatibility matrix
 *----------------*---------------------*--------------*------------------------------*
 ||   sudplan3D   ||   sudplan3D-core   ||   Plugins   ||   WorldWind SDK             |
 *----------------*---------------------*--------------*------------------------------*
+| 1.5.23          |  1.7.11             |  sudplan3D-vis-basic 1.1\ | 1.4.0-without-jackson        | 
+|                 |                     |  sudplan3D-geocpm 1.9     |                              | 
+*----------------*---------------------*--------------*-------------------------------*
+| 1.5.22-ndw2012  |  1.7.11             |  sudplan3D-vis-basic 1.1\ | 1.4.0-without-jackson        | 
+|                 |                     |  sudplan3D-geocpm 1.9\    |                              | 
+|                 |                     |  sudplan3D-ndw2012 1.0    |                              | 
+*----------------*---------------------*--------------*-------------------------------*
 | 1.5.21          |  1.7.9              |  sudplan3D-vis-basic 1.0\ | 1.4.0-without-jackson        | 
 |                 |                     |  sudplan3D-geocpm 1.8    |         | 
 *----------------*---------------------*--------------*-------------------------------*
