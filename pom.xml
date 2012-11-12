@@ -4,7 +4,7 @@
 
     <groupId>com.dfki.av.sudplan</groupId>
     <artifactId>sudplan3D</artifactId>
-    <version>1.5.23-SNAPSHOT</version>
+    <version>1.5.23</version>
     <packaging>jar</packaging>
     <name>sudplan3D-main</name>
     <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
@@ -555,6 +555,6 @@
     <scm>
         <connection>scm:git:git://serv-2100/sudplan.git</connection>
         <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/sudplan.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>sudplan3D-1.5.23</tag>
   </scm>
 </project>
