@@ -14,28 +14,20 @@ import com.dfki.av.sudplan.camera.SimpleCamera;
 import com.dfki.av.sudplan.camera.Vector3D;
 import com.dfki.av.sudplan.vis.VisualizationPanel;
 import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.core.IVisParameter;
 import com.dfki.av.sudplan.vis.core.VisPointCloud;
-import com.dfki.av.sudplan.vis.functions.*;
 import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
 import com.dfki.av.sudplan.wms.EventHolder;
 import com.dfki.av.sudplan.wms.LayerInfo;
 import com.dfki.av.sudplan.wms.LayerInfoRetreiver;
-import de.dfki.av.sudplan.vis.ndw2012.VisNachtDieWissenSchafft;
-import de.dfki.av.sudplan.vis.ndw2012.VisNachtDieWissenSchafftBars;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -164,22 +156,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miWizard = new javax.swing.JMenuItem();
         mView = new javax.swing.JMenu();
         miSideBySide = new javax.swing.JMenuItem();
-        mNDW2012 = new javax.swing.JMenu();
-        miViewpointHumbergturmWalk = new javax.swing.JMenuItem();
-        miViewpointBetzeWalk = new javax.swing.JMenuItem();
-        miViewpointCityWalk = new javax.swing.JMenuItem();
-        miViewpointBetze = new javax.swing.JMenuItem();
-        miViewpointCityPark = new javax.swing.JMenuItem();
-        miViewpointPublicPark = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        mAddDynamicVis = new javax.swing.JMenu();
-        miHikingWay = new javax.swing.JMenuItem();
-        miBender = new javax.swing.JMenuItem();
-        miTouristTour = new javax.swing.JMenuItem();
-        mAddStaticVis = new javax.swing.JMenu();
-        miFCKGame = new javax.swing.JMenuItem();
-        miCityPark = new javax.swing.JMenuItem();
-        miPublicPark = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
 
@@ -663,134 +639,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         mbMain.add(mView);
 
-        mNDW2012.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNDW2012.text")); // NOI18N
-        mNDW2012.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNDW2012.actionCommand")); // NOI18N
-
-        miViewpointHumbergturmWalk.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
-        miViewpointHumbergturmWalk.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miViewpointHumbergturmWalk.text")); // NOI18N
-        miViewpointHumbergturmWalk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miViewpointHumbergturmWalkActionPerformed(evt);
-            }
-        });
-        mNDW2012.add(miViewpointHumbergturmWalk);
-
-        miViewpointBetzeWalk.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
-        miViewpointBetzeWalk.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miViewpointBetzeWalk.text")); // NOI18N
-        miViewpointBetzeWalk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miViewpointBetzeWalkActionPerformed(evt);
-            }
-        });
-        mNDW2012.add(miViewpointBetzeWalk);
-
-        miViewpointCityWalk.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
-        miViewpointCityWalk.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miViewpointCityWalk.text")); // NOI18N
-        miViewpointCityWalk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miViewpointCityWalkActionPerformed(evt);
-            }
-        });
-        mNDW2012.add(miViewpointCityWalk);
-
-        miViewpointBetze.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
-        miViewpointBetze.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miViewpointBetze.text")); // NOI18N
-        miViewpointBetze.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miViewpointBetzeActionPerformed(evt);
-            }
-        });
-        mNDW2012.add(miViewpointBetze);
-
-        miViewpointCityPark.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
-        miViewpointCityPark.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miViewpointCityPark.text")); // NOI18N
-        miViewpointCityPark.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miViewpointCityParkActionPerformed(evt);
-            }
-        });
-        mNDW2012.add(miViewpointCityPark);
-
-        miViewpointPublicPark.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_MASK));
-        miViewpointPublicPark.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miViewpointPublicPark.text")); // NOI18N
-        miViewpointPublicPark.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miViewpointPublicParkActionPerformed(evt);
-            }
-        });
-        mNDW2012.add(miViewpointPublicPark);
-        mNDW2012.add(jSeparator1);
-
-        mAddDynamicVis.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mAddDynamicVis.text")); // NOI18N
-
-        miHikingWay.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.ALT_MASK));
-        miHikingWay.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miHikingWay.text")); // NOI18N
-        miHikingWay.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miHikingWay.actionCommand")); // NOI18N
-        miHikingWay.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCustomVisualizationActionPerformed(evt);
-            }
-        });
-        mAddDynamicVis.add(miHikingWay);
-
-        miBender.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.ALT_MASK));
-        miBender.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miBender.text")); // NOI18N
-        miBender.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miBender.actionCommand")); // NOI18N
-        miBender.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCustomVisualizationActionPerformed(evt);
-            }
-        });
-        mAddDynamicVis.add(miBender);
-
-        miTouristTour.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
-        miTouristTour.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTouristTour.text")); // NOI18N
-        miTouristTour.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTouristTour.actionCommand")); // NOI18N
-        miTouristTour.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCustomVisualizationActionPerformed(evt);
-            }
-        });
-        mAddDynamicVis.add(miTouristTour);
-
-        mNDW2012.add(mAddDynamicVis);
-
-        mAddStaticVis.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mAddStaticVis.text")); // NOI18N
-
-        miFCKGame.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.ALT_MASK));
-        miFCKGame.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miFCKGame.text")); // NOI18N
-        miFCKGame.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miFCKGame.actionCommand")); // NOI18N
-        miFCKGame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCustomVisualization2ActionPerformed(evt);
-            }
-        });
-        mAddStaticVis.add(miFCKGame);
-
-        miCityPark.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.ALT_MASK));
-        miCityPark.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miCityPark.text")); // NOI18N
-        miCityPark.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miCityPark.actionCommand")); // NOI18N
-        miCityPark.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCustomVisualization2ActionPerformed(evt);
-            }
-        });
-        mAddStaticVis.add(miCityPark);
-
-        miPublicPark.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.ALT_MASK));
-        miPublicPark.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miPublicPark.text")); // NOI18N
-        miPublicPark.setActionCommand(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miPublicPark.actionCommand")); // NOI18N
-        miPublicPark.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCustomVisualization2ActionPerformed(evt);
-            }
-        });
-        mAddStaticVis.add(miPublicPark);
-
-        mNDW2012.add(mAddStaticVis);
-
-        mbMain.add(mNDW2012);
-
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
 
         miAbout.setText(bundle.getString("MainFrame.miAbout.text")); // NOI18N
@@ -888,7 +736,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }//GEN-LAST:event_miGotoPraqueActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
-        String server = JOptionPane.showInputDialog(this, "WMS URL", "http://www.geoportal.rlp.de/mapbender/php/wms.php?layer_id=30694");
+        String server = JOptionPane.showInputDialog(this, "WMS URL", "http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS");
         try {
             if (server == null) {
                 log.debug("Cancled JOptionPane.");
@@ -1062,83 +910,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         }
     }//GEN-LAST:event_miOpenDataActionPerformed
 
-    private void miCustomVisualizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCustomVisualizationActionPerformed
-
-        try {
-            String visAlgoName = VisNachtDieWissenSchafft.class.getName();
-            IVisAlgorithm visAlgo = VisAlgorithmFactory.newInstance(visAlgoName);
-            List<IVisParameter> parameters = visAlgo.getVisParameters();
-            if (parameters.size() == 3) {
-                UnitIntervalMapping heightFunc = new UnitIntervalMapping();
-                heightFunc.setScaleValue(300.0);
-                parameters.get(0).setTransferFunction(heightFunc);
-
-                ColorrampClassification colorFunc = new ColorrampClassification();
-                colorFunc.setStartColor(Color.RED);
-                colorFunc.setEndColor(Color.BLUE);
-                colorFunc.setNumClasses(20);
-                parameters.get(1).setTransferFunction(colorFunc);
-
-                IdentityFunction stressFunc = new IdentityFunction();
-                parameters.get(2).setTransferFunction(stressFunc);
-
-                URL dataURL = new URL("http://sudplan.kl.dfki.de/testdata/" + evt.getActionCommand());
-                String[] attributes = new String[3];
-                attributes[0] = "hlf";
-                attributes[1] = "htemp";
-                attributes[2] = "stresssig";
-
-                wwPanel.addLayer(dataURL, visAlgo, attributes);
-            } else {
-                String msg = "Missmatch for parameter size.";
-                log.error(msg);
-                JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
-            log.error(ex.toString());
-            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_miCustomVisualizationActionPerformed
-
-    private void miCustomVisualization2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCustomVisualization2ActionPerformed
-        try {
-            String visAlgoName = VisNachtDieWissenSchafftBars.class.getName();
-            IVisAlgorithm visAlgo = VisAlgorithmFactory.newInstance(visAlgoName);
-            List<IVisParameter> parameters = visAlgo.getVisParameters();
-            if (parameters.size() == 3) {
-                UnitIntervalMappingSpecial heightFunc = new UnitIntervalMappingSpecial();
-                heightFunc.setScaleValue(120.0);
-                heightFunc.setConstantValue(20.0);
-                parameters.get(0).setTransferFunction(heightFunc);
-
-                ColorrampClassification colorFunc = new ColorrampClassification();
-                colorFunc.setStartColor(Color.RED);
-                colorFunc.setEndColor(Color.BLUE);
-                colorFunc.setNumClasses(15);
-                parameters.get(1).setTransferFunction(colorFunc);
-
-                ConstantNumber constantFunc = new ConstantNumber();
-                constantFunc.setConstant(20.0);
-                parameters.get(2).setTransferFunction(constantFunc);
-
-                URL dataURL = new URL("http://sudplan.kl.dfki.de/testdata/" + evt.getActionCommand());
-                String[] attributes = new String[3];
-                attributes[0] = "hlf";
-                attributes[1] = "htemp";
-                attributes[2] = "<<NO_ATTRIBUTE>>";
-
-                wwPanel.addLayer(dataURL, visAlgo, attributes);
-            } else {
-                String msg = "Missmatch for parameter size.";
-                log.error(msg);
-                JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
-            log.error(ex.toString());
-            JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_miCustomVisualization2ActionPerformed
-
     private void miSaveViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveViewActionPerformed
 
         String defaultName = "View " + viewID;
@@ -1176,72 +947,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mCustomViewPoints.add(menuItem);
         viewID++;
     }//GEN-LAST:event_miSaveViewActionPerformed
-
-    private void miViewpointBetzeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miViewpointBetzeActionPerformed
-        LatLon latlon = new LatLon(Angle.fromDegrees(49.43930264209106), Angle.fromDegrees(7.7729848025121315));
-        Position eyePosition = new Position(latlon, 591.3600662259029);
-        latlon = new LatLon(Angle.fromDegrees(49.43456958805002), Angle.fromDegrees(7.7766337834488155));
-        Position centerPosition = new Position(latlon, 278.80505709504814);
-        WorldWindowGLCanvas canvas = wwPanel.getWwd();
-        View view = canvas.getView();
-        view.setOrientation(eyePosition, centerPosition);
-        canvas.redraw();
-    }//GEN-LAST:event_miViewpointBetzeActionPerformed
-
-    private void miViewpointHumbergturmWalkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miViewpointHumbergturmWalkActionPerformed
-        LatLon latlon = new LatLon(Angle.fromDegrees(49.4127218828644), Angle.fromDegrees(7.780038025384188));
-        Position eyePosition = new Position(latlon, 488.16881899044245);
-        latlon = new LatLon(Angle.fromDegrees(49.428358083815354), Angle.fromDegrees(7.774558497494647));
-        Position centerPosition = new Position(latlon, 266.4154029376156);
-        WorldWindowGLCanvas canvas = wwPanel.getWwd();
-        View view = canvas.getView();
-        view.setOrientation(eyePosition, centerPosition);
-        canvas.redraw();
-    }//GEN-LAST:event_miViewpointHumbergturmWalkActionPerformed
-
-    private void miViewpointBetzeWalkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miViewpointBetzeWalkActionPerformed
-        LatLon latlon = new LatLon(Angle.fromDegrees(49.44694958506792), Angle.fromDegrees(7.781976969792762));
-        Position eyePosition = new Position(latlon, 785.8482894457514);
-        latlon = new LatLon(Angle.fromDegrees(49.43373954000077), Angle.fromDegrees(7.770404917726079));
-        Position centerPosition = new Position(latlon, 257.69426371637985);
-        WorldWindowGLCanvas canvas = wwPanel.getWwd();
-        View view = canvas.getView();
-        view.setOrientation(eyePosition, centerPosition);
-        canvas.redraw();
-    }//GEN-LAST:event_miViewpointBetzeWalkActionPerformed
-
-    private void miViewpointCityWalkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miViewpointCityWalkActionPerformed
-        LatLon latlon = new LatLon(Angle.fromDegrees(49.45703991765163), Angle.fromDegrees(7.775975320113588));
-        Position eyePosition = new Position(latlon, 707.1518992722856);
-        latlon = new LatLon(Angle.fromDegrees(49.44566396884934), Angle.fromDegrees(7.771484216278179));
-        Position centerPosition = new Position(latlon, 241.25509748944927);
-        WorldWindowGLCanvas canvas = wwPanel.getWwd();
-        View view = canvas.getView();
-        view.setOrientation(eyePosition, centerPosition);
-        canvas.redraw();
-    }//GEN-LAST:event_miViewpointCityWalkActionPerformed
-
-    private void miViewpointCityParkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miViewpointCityParkActionPerformed
-        LatLon latlon = new LatLon(Angle.fromDegrees(49.44084554980383), Angle.fromDegrees(7.755618058131806));
-        Position eyePosition = new Position(latlon, 443.8155309827025);
-        latlon = new LatLon(Angle.fromDegrees(49.43614050454227), Angle.fromDegrees(7.7673496256558705));
-        Position centerPosition = new Position(latlon, 250.91936941412004);
-        WorldWindowGLCanvas canvas = wwPanel.getWwd();
-        View view = canvas.getView();
-        view.setOrientation(eyePosition, centerPosition);
-        canvas.redraw();
-    }//GEN-LAST:event_miViewpointCityParkActionPerformed
-
-    private void miViewpointPublicParkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miViewpointPublicParkActionPerformed
-        LatLon latlon = new LatLon(Angle.fromDegrees(49.44109907161221), Angle.fromDegrees(7.807050182701741));
-        Position eyePosition = new Position(latlon, 595.2087704005872);
-        latlon = new LatLon(Angle.fromDegrees(49.44091454533154), Angle.fromDegrees(7.778356853070429));
-        Position centerPosition = new Position(latlon, 245.19442212202517);
-        WorldWindowGLCanvas canvas = wwPanel.getWwd();
-        View view = canvas.getView();
-        view.setOrientation(eyePosition, centerPosition);
-        canvas.redraw();
-    }//GEN-LAST:event_miViewpointPublicParkActionPerformed
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -1375,7 +1080,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JDialog dWMSHeight;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator5;
@@ -1386,13 +1090,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JLabel lMaxEle;
     private javax.swing.JLabel lOpacity;
     private javax.swing.JLabel lServerURL;
-    private javax.swing.JMenu mAddDynamicVis;
-    private javax.swing.JMenu mAddStaticVis;
     private javax.swing.JMenu mCustomViewPoints;
     private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mHelp;
-    private javax.swing.JMenu mNDW2012;
     private javax.swing.JMenu mNavi;
     private javax.swing.JMenu mTools;
     private javax.swing.JMenu mView;
@@ -1404,10 +1105,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miAddShapeZip;
     private javax.swing.JMenuItem miAddWMS;
     private javax.swing.JMenuItem miAddWMSHeight;
-    private javax.swing.JMenuItem miBender;
-    private javax.swing.JMenuItem miCityPark;
     private javax.swing.JMenuItem miExit;
-    private javax.swing.JMenuItem miFCKGame;
     private javax.swing.JMenuItem miFullSphere;
     private javax.swing.JMenuItem miGoToStockhom;
     private javax.swing.JMenuItem miGoto;
@@ -1415,19 +1113,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miGotoLinz;
     private javax.swing.JMenuItem miGotoPraque;
     private javax.swing.JMenuItem miGotoWuppertal;
-    private javax.swing.JMenuItem miHikingWay;
     private javax.swing.JMenuItem miOpenKMLFile;
-    private javax.swing.JMenuItem miPublicPark;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miSaveView;
     private javax.swing.JMenuItem miSideBySide;
-    private javax.swing.JMenuItem miTouristTour;
-    private javax.swing.JMenuItem miViewpointBetze;
-    private javax.swing.JMenuItem miViewpointBetzeWalk;
-    private javax.swing.JMenuItem miViewpointCityPark;
-    private javax.swing.JMenuItem miViewpointCityWalk;
-    private javax.swing.JMenuItem miViewpointHumbergturmWalk;
-    private javax.swing.JMenuItem miViewpointPublicPark;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pLeftPanel;

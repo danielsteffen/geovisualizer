@@ -36,19 +36,13 @@ import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
-import gov.nasa.worldwind.render.AnnotationAttributes;
-import gov.nasa.worldwind.render.ScreenAnnotation;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
-import gov.nasa.worldwindx.examples.util.PowerOfTwoPaddedImage;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -59,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
@@ -136,7 +129,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         this.wwd.getModel().addPropertyChangeListener(layerPanel);
 
         initCustomElevationModels();
-        initLogo4NDW2012();
     }
 
     /**
@@ -164,35 +156,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             }
         } else {
             log.debug("No <enabled> tag. Custom elevation models disabled.");
-        }
-    }
-
-    private void initLogo4NDW2012() {
-        PowerOfTwoPaddedImage logo;
-        try {
-            BufferedImage bufferedImage = ImageIO.read(this.getClass().getClassLoader().getResource("icons/logo4ndw2012.png"));
-            logo = PowerOfTwoPaddedImage.fromBufferedImage(bufferedImage);
-            Point screenPos = new Point(logo.getOriginalHeight() + 180, 1000);
-            ScreenAnnotation logoAnnotation = new ScreenAnnotation("", screenPos);
-            AnnotationAttributes attr = logoAnnotation.getAttributes();
-            BufferedImage image = logo.getPowerOfTwoImage();
-            attr.setImageSource(image);
-            Dimension dim = new Dimension(logo.getOriginalWidth(), logo.getOriginalHeight());
-            attr.setSize(dim);
-            attr.setScale(0.7);
-            Color color = new Color(1f, 1f, 1f, 0.5f);
-            attr.setBackgroundColor(color);
-            attr.setBorderWidth(0);
-            attr.setFrameShape(AVKey.SHAPE_RECTANGLE);
-            attr.setCornerRadius(5);
-
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("Logos");
-            layer.addRenderable(logoAnnotation);
-
-            wwd.getModel().getLayers().add(layer);
-        } catch (Exception ex) {
-            log.error(ex.toString());
         }
     }
 

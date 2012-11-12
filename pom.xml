@@ -126,11 +126,6 @@
             <version>1.7.11</version>            
         </dependency>
         <dependency>
-            <groupId>de.dfki.av.sudplan</groupId>
-            <artifactId>sudplan3D-ndw2012</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.dfki.av.sudplan</groupId>
             <artifactId>sudplan3D-vis-basic</artifactId>
             <version>1.1</version>
