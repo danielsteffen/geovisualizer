@@ -563,8 +563,7 @@
     </ciManagement>
     
     <scm>
-        <connection>scm:git:git://serv-2100/sudplan.git</connection>
-        <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/sudplan.git</developerConnection>
-        <tag>HEAD</tag>
+        <connection>scm:git:git://serv-2100/geovisualizer/geovisualizer-app.git</connection>
+        <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer/geovisualizer-app.git</developerConnection>
     </scm>
 </project>
