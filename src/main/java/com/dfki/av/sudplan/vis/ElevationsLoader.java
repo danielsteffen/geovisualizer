@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis;
 
-import com.dfki.av.sudplan.vis.io.IOUtils;
+import de.dfki.av.geovisualizer.core.io.IOUtils;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;

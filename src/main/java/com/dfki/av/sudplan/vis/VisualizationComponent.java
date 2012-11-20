@@ -10,7 +10,7 @@ package com.dfki.av.sudplan.vis;
 import com.dfki.av.sudplan.camera.BoundingVolume;
 import com.dfki.av.sudplan.camera.Camera;
 import com.dfki.av.sudplan.camera.CameraListener;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import de.dfki.av.geovisualizer.core.IVisAlgorithm;
 import java.beans.PropertyChangeListener;
 
 /**
@@ -21,7 +21,7 @@ import java.beans.PropertyChangeListener;
 public interface VisualizationComponent extends PropertyChangeListener {
 
     /**
-     * Adds a layer to the vizualization component. Depending on the
+     * Adds a layer to the visualization component. Depending on the
      * implementation which object types are being supported to add.
      *
      * @param layer the layer to add.

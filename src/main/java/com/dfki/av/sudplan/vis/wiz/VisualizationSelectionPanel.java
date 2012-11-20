@@ -7,8 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.spi.VisAlgorithmFactory;
+import de.dfki.av.geovisualizer.core.IVisAlgorithm;
+import de.dfki.av.geovisualizer.core.spi.VisAlgorithmFactory;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Iterator;

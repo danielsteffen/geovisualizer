@@ -8,10 +8,10 @@
 package com.dfki.av.sudplan.vis.wiz;
 
 import com.dfki.av.sudplan.Configuration;
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
-import com.dfki.av.sudplan.vis.core.VisConfiguration;
-import com.dfki.av.sudplan.vis.core.VisWorker;
-import com.dfki.av.sudplan.vis.io.IOUtils;
+import de.dfki.av.geovisualizer.core.IVisAlgorithm;
+import de.dfki.av.geovisualizer.core.VisConfiguration;
+import de.dfki.av.geovisualizer.core.VisWorker;
+import de.dfki.av.geovisualizer.core.io.IOUtils;
 import gov.nasa.worldwind.WorldWindow;
 import java.awt.Dialog;
 import java.beans.PropertyChangeEvent;

@@ -121,19 +121,29 @@
             <scope>${worldwind.scope}</scope>
         </dependency>
         <dependency>
-            <groupId>com.dfki.av.sudplan</groupId>
-            <artifactId>sudplan3D-core</artifactId>
-            <version>1.7.11</version>            
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-core</artifactId>
+            <version>1.7.12</version>
         </dependency>
         <dependency>
-            <groupId>com.dfki.av.sudplan</groupId>
-            <artifactId>sudplan3D-vis-basic</artifactId>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-basic</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-geocpm</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-ndw2012</artifactId>
             <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>com.dfki.av.sudplan</groupId>
-            <artifactId>sudplan3D-geocpm</artifactId>
-            <version>1.9</version>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-mc</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -555,6 +565,6 @@
     <scm>
         <connection>scm:git:git://serv-2100/sudplan.git</connection>
         <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/sudplan.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 </project>

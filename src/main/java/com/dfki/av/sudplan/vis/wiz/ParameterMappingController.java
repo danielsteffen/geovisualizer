@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.core.IVisAlgorithm;
+import de.dfki.av.geovisualizer.core.IVisAlgorithm;
 import java.awt.Component;
 import java.util.List;
 import javax.swing.event.ChangeListener;

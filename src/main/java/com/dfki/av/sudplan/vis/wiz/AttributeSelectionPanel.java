@@ -7,8 +7,8 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.core.ISource;
-import com.dfki.av.sudplan.vis.io.IOUtils;
+import de.dfki.av.geovisualizer.core.ISource;
+import de.dfki.av.geovisualizer.core.io.IOUtils;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.util.ArrayList;

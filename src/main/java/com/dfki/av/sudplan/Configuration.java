@@ -7,7 +7,7 @@
  */
 package com.dfki.av.sudplan;
 
-import com.dfki.av.sudplan.vis.core.VisSettings;
+import de.dfki.av.geovisualizer.core.VisSettings;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;

@@ -7,10 +7,10 @@
  */
 package com.dfki.av.sudplan.vis.wiz;
 
-import com.dfki.av.sudplan.vis.core.ITransferFunction;
-import com.dfki.av.sudplan.vis.core.AbstractTransferFunctionPanel;
-import com.dfki.av.sudplan.vis.core.IVisParameter;
-import com.dfki.av.sudplan.vis.spi.TransferFunctionFactory;
+import de.dfki.av.geovisualizer.core.AbstractTransferFunctionPanel;
+import de.dfki.av.geovisualizer.core.ITransferFunction;
+import de.dfki.av.geovisualizer.core.IVisParameter;
+import de.dfki.av.geovisualizer.core.spi.TransferFunctionFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
