@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.dfki.av.sudplan</groupId>
-    <artifactId>sudplan3D</artifactId>
+    <groupId>de.dfki.av.geovisualizer</groupId>
+    <artifactId>geovisualizer-app</artifactId>
     <version>1.5.24-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>sudplan3D-main</name>
-    <description>The SUDPLAN project - Sustainable Urban Development Planner for Climate Change Adaptation - aims at developing a web-based planning, prediction and training tool to support decisions in long term urban planning.</description>
-    <url>http://sudplan.kl.dfki.de</url>
+    <name>geovisualizer-app</name>
+    <description>The geovisualizer app - Former known as sudplan3D (http://sudplan.kl.dfki.de) project.</description>
+    <url>http://av.dfki.de</url>
     
     <organization>
         <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
@@ -52,31 +52,19 @@
 
     <profiles>
         <profile>
-            <id>s3D-main-dev</id>
+            <id>geovisualizer-app-dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
+                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
                 <worldwind.scope>compile</worldwind.scope>
                 <webstart.dir>./jnlp</webstart.dir>
-                <site.url>scp://serv-2100/project/av/etc/www/sudplan.kl.dfki.de</site.url>
+                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
             </properties>
         </profile>
         <profile>
-            <id>s3D-main-webstart-official</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <codebase>http://sudplan.kl.dfki.de/jnlp</codebase>
-                <worldwind.scope>provided</worldwind.scope>
-                <webstart.dir>project/av/etc/www/sudplan.kl.dfki.de/jnlp</webstart.dir>
-                <site.url>scp://serv-2100/project/av/etc/www/sudplan.kl.dfki.de</site.url>
-            </properties>
-        </profile>
-        <profile>
-            <id>geovisualizer-webstart-official</id>
+            <id>geovisualizer-app-webstart</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -224,14 +212,14 @@
                 </executions>                
                 <configuration>
                     <jnlp>
-                        <outputFile>sudplan.jnlp</outputFile>
+                        <outputFile>geovisualizer-app.jnlp</outputFile>
                         <mainClass>${main-class}</mainClass>
                     </jnlp>
                     <sign>
-                        <keystore>/tmp/sudplan.jks</keystore>
-                        <keypass>sudplan</keypass>
-                        <storepass>sudplan</storepass>
-                        <alias>sudplan</alias>
+                        <keystore>/tmp/dfki.jks</keystore>
+                        <keypass>dfki</keypass>
+                        <storepass>dfkin</storepass>
+                        <alias>dfki</alias>
                         <validity>3650</validity>
                         <dnameCn>Deutsches Forschungszentrum fur Künstliche Intelligenz (DFKI) GmbH</dnameCn>
                         <dnameOu>AV</dnameOu>
@@ -496,7 +484,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <serverId>sudplan3D.website</serverId>
+                    <serverId>geovisualizer.website</serverId>
                     <url>scp://serv-2100/</url>
                     <fromDir>${project.build.directory}/jnlp</fromDir>
                     <includes>*</includes>
@@ -509,7 +497,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <releaseProfiles>s3D-main-webstart-official</releaseProfiles>
+                    <releaseProfiles>geovisualizer-app-webstart</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
@@ -552,7 +540,7 @@
             <url>${distribution.url}</url>
         </repository>
         <site>
-            <id>sudplan3D.website</id>
+            <id>geovisualizer.website</id>
             <url>${site.url}</url>
         </site>		
     </distributionManagement>    
