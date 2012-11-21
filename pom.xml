@@ -4,7 +4,7 @@
 
     <groupId>de.dfki.av.geovisualizer</groupId>
     <artifactId>geovisualizer</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>geovisualizer</name>
     <description>The GeoVisualizer was developed within the sudplan3D (http://sudplan.kl.dfki.de) component.</description>
@@ -553,6 +553,6 @@
     <scm>
         <connection>scm:git:git://serv-2100/geovisualizer/geovisualizer-app.git</connection>
         <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer/geovisualizer-app.git</developerConnection>
-      <tag>geovisualizer-2.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
 </project>
