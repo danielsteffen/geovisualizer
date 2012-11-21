@@ -19,7 +19,7 @@
     <Property name="gov.nasa.worldwind.avkey.ViewClassName" value="gov.nasa.worldwind.view.orbit.BasicOrbitView"/>
     <Property name="gov.nasa.worldwind.avkey.ViewInputHandlerClassName"
               value="gov.nasa.worldwind.view.orbit.OrbitViewInputHandler"/>
-    <Property name="gov.nasa.worldwind.avkey.InputHandlerClassName" value="com.dfki.av.sudplan.stereo.StereoAWTInputHandler"/>
+    <Property name="gov.nasa.worldwind.avkey.InputHandlerClassName" value="de.dfki.av.geovisualizer.app.stereo.StereoAWTInputHandler"/>
     <Property name="gov.nasa.worldwind.avkey.LoggerName" value="gov.nasa.worldwind"/>
     <Property name="gov.nasa.worldwind.avkey.WorldWindowClassName"
               value="gov.nasa.worldwind.WorldWindowGLAutoDrawable"/>
@@ -36,7 +36,7 @@
     <Property name="gov.nasa.worldwind.avkey.RetrievalServiceClassName"
               value="gov.nasa.worldwind.retrieve.BasicRetrievalService"/>
     <Property name="gov.nasa.worldwind.avkey.SceneControllerClassName"
-              value="com.dfki.av.sudplan.stereo.AdvancedStereoOptionSceneController"/>
+              value="de.dfki.av.geovisualizer.app.stereo.AdvancedStereoOptionSceneController"/>
     <Property name="gov.nasa.worldwind.avkey.NetworkStatusClassName"
               value="gov.nasa.worldwind.util.BasicNetworkStatus"/>
     <!-- The following lists the sites to test for public network access. Specify an empty string, "", for no sites.-->

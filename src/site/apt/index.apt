@@ -6,14 +6,26 @@
 		 2011-09-19
 		 ----
 		 
-Welcome to the SUDPLAN 3-D Project
+Welcome to GeoVisualizer
 
-  Welcome to the SUDPLAN 3-D Project, we hope you enjoy your time on this project site. The SUDPLAN 3-D software component is one challenging part of the European project {{{http://www.sudplan.eu}SUDPLAN}}. The SUDPLAN 3-D visualization component is integrated into SUDPLAN's Scenario Management System ({{{http://sudplanwp3.cismet.de/sms/}SMS}}) and handles the visualization of SUDPLAN's data and simulation results in a geographical three-dimensional context. The datatypes which will be handled by the SUDPLAN Visualisation Component reach from 1-D data, e.g. georeferenced measurements of precipitation, to temporal 3-D datasets, e.g. 3-D air pollution time series. The SUDPLAN 3-D component is based on NASA's {{{http://goworldwind.org}World Wind SDK}}. Currently, we are using a customized version of version 1.4.0 of the World Wind SDK.
+  Welcome to the GeoVisualizer project. We hope you enjoy your time on this 
+project site. The GeoVisualizer application was one challenging part of the 
+European project {{{http://www.sudplan.eu}SUDPLAN}}. The GeoVisualizer 
+application provides the opportunity to visualizer different kinds of data 
+and simulation results in a geographical three-dimensional context. The 
+datatypes which are handled by the GeoVisualizer reach from 1-D 
+data, e.g. georeferenced measurements of precipitation, to temporal 3-D 
+datasets, e.g. 3-D air pollution time series. The GeoVisualizer
+is based on NASA's {{{http://goworldwind.org}World Wind SDK}}. Currently, we are
+ using a customized version of version 1.4.0 of the World Wind SDK.
 
-[images/Sudplan3D-v0704-1.jpg] The stand-alone user interface of the SUDPLAN 3-D component showing air quality measurements for the city of Stockholm.  
+[images/Sudplan3D-v0704-1.jpg] The user interface of the GeoVisualizer 
+application showing air quality measurements for the city of Stockholm.  
   
-  The SUDPLAN Visualization Component will utilise the capabilities of the SMS for data and scenario management and tightly integrate with the 2-D map component of the SMS. This allows for an easy transition between the 2-D and 3-D views. The 3-D visualization will allow the user to relate spatial data directly to the underlying terrain model.
+  The GeoVisualizer application will, at a later stage, also include different 
+viewing modes, e.g. for large screens, stereoscopic displays, to enable the 
+user to utilise such hardware and reach a higher level of immersion into, 
+and understanding of, the data.
 
-  The SUDPLAN visualization component will, at a later stage, also include different viewing modes, e.g. for large screens, stereoscopic displays, to enable the user to utilise such hardware and reach a higher level of immersion into, and understanding of, the data.
-
-  To have a look at the SUDPLAN Visualization Component head for the Demo section. Here you will find a JNLP webstart application which can be started directly from your browser.
+  To have a look at the GeoVisualizer application head for the Demo section. 
+Here you will find a Java Web Start application.

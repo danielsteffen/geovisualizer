@@ -10,7 +10,8 @@
 
     <faq id="using-mac">
       <question>
-        I am running the SUDPLAN 3D Web Start Application on my Mac. The drop down menu seems to be below the 3D canvas. What can I do?
+        I am running the GeoVisiualizer Web Start Application on my Mac. The 
+        drop down menu seems to be below the 3D canvas. What can I do?
       </question>
       <answer>
         <p>The problem is caused by mixing Heavyweight and Lightweight Components in Java. We are currently using the
@@ -25,10 +26,10 @@
 
     <faq id="where-are-dataset">
       <question>
-        Where can I find some data sets to test the SUDPLAN 3D application?
+        Where can I find some data sets to test the GeoVisualizer application?
       </question>
       <answer>
-        <p>Some data sets for testing the SUDPLAN 3D visualisation component can be found <a href="./demo.html">here</a>.</p>
+        <p>Some data sets for testing the GeoVisualizer application can be found <a href="./demo.html">here</a>.</p>
       </answer>
     </faq>
 	

@@ -8,8 +8,9 @@
       <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
     </layout>
   </appender>
-  <logger name="com.dfki.av.sudplan">
-    <!-- Print only messages of level warn or above in the package com.dfki.av.sudplan.vis.wiz -->
+  <logger name="de.dfki.av.geovisualizer">
+    <!-- Print only messages of level warn or above in the package 
+    de.dfki.av.geovisualizer -->
     <level value="all"/> 
   </logger>
   <root>

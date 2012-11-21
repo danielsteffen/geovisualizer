@@ -6,8 +6,11 @@
 		  2012-02-26
 		 ----
 		 
-SUDPLAN 3D Videos
+GeoVisualizer Videos
 
-  The following page lists some videos (HTML5) showing the features of the sudplan3D component. Currently, only Firefox (>10.0) has the possibility to switch into <<fullscreen mode>>. We will try to come up with a general solution asap. In between you should be able to download the video and watch it with your favorite media player.
+  The following page lists some videos (HTML5) showing the features of the 
+GeoVisualizer application. Currently, only Firefox (>10.0) has the possibility 
+to switch to <<fullscreen mode>>. However, you should be able to download the 
+video and watch it with your favorite media player.
 
 %{snippet|file=src/site/resources/snippets/videos.html|verbatim=false}

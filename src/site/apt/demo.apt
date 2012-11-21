@@ -6,15 +6,14 @@
 		  2011-09-19
 		 ----
 		 
-SUDPLAN 3D Java Web Start Application
+GeoVisualizer Java Web Start Application
 
-[images/Sudplan3D-v0704-2.jpg] The demo application of the SUDPLAN 3D component showing results of Södermalm (Stockholm).  
+[images/Sudplan3D-v0704-2.jpg] The demo of the GeoVisualizer application
+ component showing results of Sï¿½dermalm (Stockholm).  
 
-  The following JNLP Demo shows the SUDPLAN visualization component as a Java Web Start application.
+  The following Java Web Start application demonstrates the GeoVisualizer.
   
 %{snippet|id=launch-button|file=src/site/resources/snippets/snippets.txt|verbatim=false} 
-  
-  The general application called SUDPLAN Scenario Managmenet System can be found {{{http://sudplanwp3.cismet.de/sms/}here}}. A demo video can be found {{{./videos.html}here}}.
 
 Shortcuts
   
@@ -23,7 +22,7 @@ Shortcuts
 *----------------------+---------------------------------------+
 | <ALT> + <R>          | Remove all layers                     |
 *----------------------+---------------------------------------+
-| <ALT> + <Q>          | Quit SUDPLAN 3D                       |
+| <ALT> + <Q>          | Quit GeoVisualizer                    |
 *----------------------+---------------------------------------+
 | <ALT> + <W>          | Start VizWiz                          |
 *----------------------+---------------------------------------+
@@ -38,6 +37,8 @@ Shortcuts
 | <CTRL> + <L>         | Goto Linz                             |
 *----------------------+---------------------------------------+
 | <CTRL> + <K>         | Goto Kaiserslautern                   |
+*----------------------+---------------------------------------+
+| <CTRL> + <SPACE>     | Save viewpoint                        |
 *----------------------+---------------------------------------+
 <<Key / key combinations and what they do>>
 
@@ -59,7 +60,7 @@ Shortcuts
 
 Test Data Sets
 
-  The following lists some data sets for testing the SUDPLAN 3D component:
+  The following lists some data sets for testing the GeoVisualizer component:
   
 --------------------------------------------
 http://sudplan.kl.dfki.de/testdata/AirQualityRooftop.zip

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+" codebase="$codebase" href="$outputFile">
  <information>
-    <title>sudplan3D</title>
+    <title>GeoVisualizer</title>
     <vendor>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</vendor>
     <homepage href="http://av.dfki.de"/>
-    <description kind="one-line">sudplan3D</description>
-    <description kind="tooltip">sudplan3D</description>
-    <description kind="short">sudplan3D</description>
+    <description kind="one-line">GeoVisualizer</description>
+    <description kind="tooltip">GeoVisualizer</description>
+    <description kind="short">GeoVisualizer</description>
     <icon kind="default" href="button.png"/>
     <shortcut online="true">
       <desktop/>
-      <menu submenu="sudplan3D"/>
+      <menu submenu="GeoVisualizer"/>
     </shortcut>
     <offline-allowed/>
  </information>

@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.dfki.av.geovisualizer</groupId>
-    <artifactId>geovisualizer-app</artifactId>
-    <version>1.5.24-SNAPSHOT</version>
+    <artifactId>geovisualizer</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>geovisualizer-app</name>
-    <description>The geovisualizer app - Former known as sudplan3D (http://sudplan.kl.dfki.de) project.</description>
+    <name>geovisualizer</name>
+    <description>The GeoVisualizer was developed within the sudplan3D (http://sudplan.kl.dfki.de) component.</description>
     <url>http://av.dfki.de</url>
     
     <organization>
@@ -41,7 +41,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compileSource>1.6</compileSource>
-        <main-class>com.dfki.av.sudplan.ui.MainFrame</main-class>
+        <main-class>de.dfki.av.geovisualizer.app.ui.MainFrame</main-class>
         <worldwind.version>1.4.0-without-jackson</worldwind.version>
         <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
         <repository.id>dfki-artifactory</repository.id>
@@ -52,7 +52,7 @@
 
     <profiles>
         <profile>
-            <id>geovisualizer-app-dev</id>
+            <id>geovisualizer-dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -64,7 +64,7 @@
             </properties>
         </profile>
         <profile>
-            <id>geovisualizer-app-webstart</id>
+            <id>geovisualizer-webstart</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -212,13 +212,13 @@
                 </executions>                
                 <configuration>
                     <jnlp>
-                        <outputFile>geovisualizer-app.jnlp</outputFile>
+                        <outputFile>geovisualizer.jnlp</outputFile>
                         <mainClass>${main-class}</mainClass>
                     </jnlp>
                     <sign>
                         <keystore>/tmp/dfki.jks</keystore>
-                        <keypass>dfki</keypass>
-                        <storepass>dfkin</storepass>
+                        <keypass>dFki+122</keypass>
+                        <storepass>dFki+122</storepass>
                         <alias>dfki</alias>
                         <validity>3650</validity>
                         <dnameCn>Deutsches Forschungszentrum fur Künstliche Intelligenz (DFKI) GmbH</dnameCn>
@@ -323,7 +323,7 @@
                                 <mainClass>${main-class}</mainClass>
                                 <addDependencies>true</addDependencies>
                             </classPath>
-                            <icon>src/main/resources/icons/sudplan3D.ico</icon>
+                            <icon>src/main/resources/icons/GeoVisualizer.ico</icon>
                             <jre>
                                 <minVersion>1.7.0</minVersion>
                             </jre>
@@ -497,7 +497,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <releaseProfiles>geovisualizer-app-webstart</releaseProfiles>
+                    <releaseProfiles>geovisualizer-webstart</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>

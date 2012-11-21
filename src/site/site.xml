@@ -1,10 +1,10 @@
-<project name="SUDPLAN 3D">
+<project name="GeoVisualizer">
 	<publishDate position="navigation-bottom"/>
 	<version position="left"/>
     <bannerLeft>
-        <name>SUDPLAN 3D</name>
-        <src>images/sudplan3dlogo.png</src>
-        <href>http://sudplan.kl.dfki.de</href>
+        <name>GeoVisualizer</name>
+        <src>images/GeoVisualizer.png</src>
+        <href>http://www.dfki.uni-kl.de/~steffen/geovisualizer</href>
     </bannerLeft>
     <bannerRight>
         <name>Augemented Vision</name>
@@ -12,14 +12,14 @@
         <href>http://av.dfki.de</href>
     </bannerRight>
     <body>
-        <menu name="SUDPLAN 3D">
+        <menu name="GeoVisualizer">
             <item name="About" href="index.html"/>
             <item name="Demo" href="demo.html"/>
-			<item name="Releases" href="releases.html"/>
-	        <item name="Videos" href="videos.html"/>
-			<item name="Snapshots" href="snapshots.html"/>
-			<item name="Developer" href="developer.html"/>
-	        <item name="FAQ" href="faq.html"/>
+            <item name="Releases" href="releases.html"/>
+	    <item name="Videos" href="videos.html"/>
+	    <item name="Snapshots" href="snapshots.html"/>
+	    <item name="Developer" href="developer.html"/>
+	    <item name="FAQ" href="faq.html"/>
     	</menu>
         <menu ref="reports"/>
     </body>	
