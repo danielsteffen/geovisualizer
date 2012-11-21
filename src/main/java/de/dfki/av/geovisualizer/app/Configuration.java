@@ -53,7 +53,7 @@ public final class Configuration {
         Image image = null;
         try {
             ClassLoader loader = Configuration.class.getClassLoader();
-            URL iconURL = loader.getResource("icons/GeoVisualizer.png");
+            URL iconURL = loader.getResource("icons/geovisualizer.png");
             image = ImageIO.read(iconURL);
         } catch (IOException ex) {
             log.error(ex.toString());
