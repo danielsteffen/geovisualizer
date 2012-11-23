@@ -132,6 +132,14 @@ public class SimpleCamera implements Camera {
     }
 
     @Override
+    public void setViewingDirection(Vector3D direction) {
+        if(direction == null){
+            throw new IllegalArgumentException("direction == null");
+        }
+        this.viewingDirection = direction;
+    }
+    
+    @Override
     public BoundingVolume getBoundingVolume() {
         return null;
     }
@@ -144,4 +152,6 @@ public class SimpleCamera implements Camera {
                 + viewingDirection.toString();
         return tmp;
     }
+
+
 }

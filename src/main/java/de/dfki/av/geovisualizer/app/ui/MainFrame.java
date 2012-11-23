@@ -9,9 +9,7 @@ package de.dfki.av.geovisualizer.app.ui;
 
 import de.dfki.av.geovisualizer.app.Configuration;
 import de.dfki.av.geovisualizer.app.camera.AnimatedCamera;
-import de.dfki.av.geovisualizer.app.camera.Camera;
 import de.dfki.av.geovisualizer.app.camera.SimpleCamera;
-import de.dfki.av.geovisualizer.app.camera.Vector3D;
 import de.dfki.av.geovisualizer.app.vis.VisualizationPanel;
 import de.dfki.av.geovisualizer.app.wms.EventHolder;
 import de.dfki.av.geovisualizer.app.wms.LayerInfo;
@@ -22,11 +20,13 @@ import de.dfki.av.geovisualizer.core.spi.VisAlgorithmFactory;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Position;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import javax.swing.*;
@@ -77,6 +77,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         this.wwPanel.setPreferredSize(canvasSize);
 
         initComponents();
+        initActions();
 
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
@@ -85,6 +86,32 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         } else {
             log.debug("layerTreeComponent == null");
         }
+    }
+
+    /**
+     * Init all needed actions.
+     */
+    private void initActions() {
+        SnapshotAction takeSnaphot = new SnapshotAction(wwPanel.getWwd());
+        btnTakeScreenShot.addActionListener(takeSnaphot);
+        miTakeScreenshot.addActionListener(takeSnaphot);
+
+        VisWizAction runVisWiz = new VisWizAction(wwPanel);
+        btnVizWiz.addActionListener(runVisWiz);
+        miWizard.addActionListener(runVisWiz);
+
+        ExitAction exitAction = new ExitAction();
+        btnExit.addActionListener(exitAction);
+        miExit.addActionListener(exitAction);
+        
+        AnimatedCamera fullGlobeCamera = new AnimatedCamera(37.0, 27.0, 19000000.0);
+        CameraAction fullGlobeAction = new CameraAction(wwPanel, fullGlobeCamera);
+        btnGoHome.addActionListener(fullGlobeAction);
+        miFullSphere.addActionListener(fullGlobeAction);
+        
+        AnimatedCamera klCamera = new AnimatedCamera(49.4447186, 7.7690169, 20000.0);
+        CameraAction klCameraAction = new CameraAction(wwPanel, klCamera);
+        miGotoKaiserslautern.addActionListener(klCameraAction);
     }
 
     /**
@@ -123,6 +150,15 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         lOpacity = new javax.swing.JLabel();
         txtOpacity = new javax.swing.JTextField();
         bgWMS = new javax.swing.ButtonGroup();
+        jPanel2 = new javax.swing.JPanel();
+        toolbar = new javax.swing.JToolBar();
+        btnVizWiz = new javax.swing.JButton();
+        btnTakeScreenShot = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        btnGoHome = new javax.swing.JButton();
+        btnJumpTo = new javax.swing.JButton();
+        jSeparator6 = new javax.swing.JToolBar.Separator();
+        btnExit = new javax.swing.JButton();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         pLeftPanel = new javax.swing.JPanel();
@@ -137,15 +173,13 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miExit = new javax.swing.JMenuItem();
         mEdit = new javax.swing.JMenu();
         miRemoveAllLayer = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        miTakeScreenshot = new javax.swing.JMenuItem();
         mNavi = new javax.swing.JMenu();
-        miGotoLinz = new javax.swing.JMenuItem();
-        miGotoPraque = new javax.swing.JMenuItem();
-        miGoToStockhom = new javax.swing.JMenuItem();
-        miGotoWuppertal = new javax.swing.JMenuItem();
         miGotoKaiserslautern = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
-        miFullSphere = new javax.swing.JMenuItem();
         miGoto = new javax.swing.JMenuItem();
+        miFullSphere = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         miSaveView = new javax.swing.JMenuItem();
         mCustomViewPoints = new javax.swing.JMenu();
@@ -155,8 +189,13 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mTools = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
         mView = new javax.swing.JMenu();
+        mToolbars = new javax.swing.JMenu();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        mWindowMode = new javax.swing.JMenu();
         miSideBySide = new javax.swing.JMenuItem();
+        mFullScreen = new javax.swing.JMenuItem();
         mHelp = new javax.swing.JMenu();
+        miGeoVisualizerHelp = new javax.swing.JMenuItem();
         miAbout = new javax.swing.JMenuItem();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/dfki/av/geovisualizer/app/ui/Bundle"); // NOI18N
@@ -177,33 +216,33 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         txtLongitude.setText(bundle.getString("MainFrame.txtLongitude.text")); // NOI18N
 
-        javax.swing.GroupLayout pGoToLayout = new javax.swing.GroupLayout(pGoTo);
+        org.jdesktop.layout.GroupLayout pGoToLayout = new org.jdesktop.layout.GroupLayout(pGoTo);
         pGoTo.setLayout(pGoToLayout);
         pGoToLayout.setHorizontalGroup(
-            pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pGoToLayout.createSequentialGroup()
+            pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(pGoToLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lLongitude)
-                    .addComponent(lLatitude))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addGroup(pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtLatitude, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtLongitude))
+                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(lLongitude)
+                    .add(lLatitude))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 22, Short.MAX_VALUE)
+                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(txtLatitude, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(txtLongitude))
                 .addContainerGap())
         );
         pGoToLayout.setVerticalGroup(
-            pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pGoToLayout.createSequentialGroup()
+            pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(pGoToLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lLatitude)
-                    .addComponent(txtLatitude, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lLongitude)
-                    .addComponent(txtLongitude, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(lLatitude)
+                    .add(txtLatitude, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(lLongitude)
+                    .add(txtLongitude, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnCancelGoToDialoag.setText(bundle.getString("MainFrame.btnCancelGoToDialoag.text")); // NOI18N
@@ -220,30 +259,30 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
 
-        javax.swing.GroupLayout dGoToLayout = new javax.swing.GroupLayout(dGoTo.getContentPane());
+        org.jdesktop.layout.GroupLayout dGoToLayout = new org.jdesktop.layout.GroupLayout(dGoTo.getContentPane());
         dGoTo.getContentPane().setLayout(dGoToLayout);
         dGoToLayout.setHorizontalGroup(
-            dGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dGoToLayout.createSequentialGroup()
+            dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(dGoToLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(dGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dGoToLayout.createSequentialGroup()
-                        .addComponent(btnGo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelGoToDialoag))
-                    .addComponent(pGoTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, dGoToLayout.createSequentialGroup()
+                        .add(btnGo)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(btnCancelGoToDialoag))
+                    .add(pGoTo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dGoToLayout.setVerticalGroup(
-            dGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dGoToLayout.createSequentialGroup()
+            dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(dGoToLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pGoTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(dGoToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancelGoToDialoag)
-                    .addComponent(btnGo))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(pGoTo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnCancelGoToDialoag)
+                    .add(btnGo))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
@@ -290,47 +329,47 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lServerURL)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rbCbServerUrl)
-                            .addComponent(rbTxtServerUrl))
-                        .addGap(10, 10, 10)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtServerURL)
-                            .addComponent(cbServerURL, 0, 1, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(pbWMS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(bGoWMSHeight)))
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(lServerURL)
+                        .add(0, 0, Short.MAX_VALUE))
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(rbCbServerUrl)
+                            .add(rbTxtServerUrl))
+                        .add(10, 10, 10)
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(txtServerURL)
+                            .add(cbServerURL, 0, 1, Short.MAX_VALUE)))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .add(pbWMS, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(18, 18, 18)
+                        .add(bGoWMSHeight)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lServerURL)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rbCbServerUrl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rbTxtServerUrl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bGoWMSHeight)
-                    .addComponent(pbWMS, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(lServerURL)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(cbServerURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(rbCbServerUrl))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(txtServerURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(rbTxtServerUrl))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(bGoWMSHeight)
+                    .add(pbWMS, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jPanel4.border.title"))); // NOI18N
@@ -360,73 +399,137 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         txtOpacity.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.txtOpacity.text")); // NOI18N
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(lHeight)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lOpacity)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 194, Short.MAX_VALUE)
-                        .addComponent(bAddWMSHeight)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCancelWMSHeight))
-                    .addComponent(cLayerList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel4Layout.createSequentialGroup()
+                        .add(lHeight)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(txtHeight, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(lOpacity)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(txtOpacity, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 194, Short.MAX_VALUE)
+                        .add(bAddWMSHeight)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(bCancelWMSHeight))
+                    .add(cLayerList, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(cLayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bCancelWMSHeight)
-                    .addComponent(bAddWMSHeight, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lHeight)
-                    .addComponent(lOpacity)
-                    .addComponent(txtOpacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .add(cLayerList, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 20, Short.MAX_VALUE)
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(bCancelWMSHeight)
+                    .add(bAddWMSHeight, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(txtHeight, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(lHeight)
+                    .add(lOpacity)
+                    .add(txtOpacity, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout dWMSHeightLayout = new javax.swing.GroupLayout(dWMSHeight.getContentPane());
+        org.jdesktop.layout.GroupLayout dWMSHeightLayout = new org.jdesktop.layout.GroupLayout(dWMSHeight.getContentPane());
         dWMSHeight.getContentPane().setLayout(dWMSHeightLayout);
         dWMSHeightLayout.setHorizontalGroup(
-            dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dWMSHeightLayout.createSequentialGroup()
+            dWMSHeightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(dWMSHeightLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(dWMSHeightLayout.createSequentialGroup()
-                        .addGap(732, 732, 732)
-                        .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(dWMSHeightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(dWMSHeightLayout.createSequentialGroup()
+                        .add(732, 732, 732)
+                        .add(lMaxEle, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 287, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(dWMSHeightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dWMSHeightLayout.setVerticalGroup(
-            dWMSHeightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dWMSHeightLayout.createSequentialGroup()
+            dWMSHeightLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(dWMSHeightLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(296, 296, 296)
-                .addComponent(lMaxEle, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(296, 296, 296)
+                .add(lMaxEle, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 100, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 100, Short.MAX_VALUE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
+
+        toolbar.setRollover(true);
+        toolbar.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.toolTipText")); // NOI18N
+        toolbar.setName(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.name")); // NOI18N
+
+        btnVizWiz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/tools-wizard-3.png"))); // NOI18N
+        btnVizWiz.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnVizWiz.text")); // NOI18N
+        btnVizWiz.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnVizWiz.toolTipText")); // NOI18N
+        btnVizWiz.setFocusable(false);
+        btnVizWiz.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnVizWiz.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnVizWiz);
+
+        btnTakeScreenShot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/devices/camera-photo-5.png"))); // NOI18N
+        btnTakeScreenShot.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnTakeScreenShot.text")); // NOI18N
+        btnTakeScreenShot.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnTakeScreenShot.toolTipText")); // NOI18N
+        btnTakeScreenShot.setFocusable(false);
+        btnTakeScreenShot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnTakeScreenShot.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnTakeScreenShot);
+        toolbar.add(jSeparator4);
+
+        btnGoHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/go-home-5.png"))); // NOI18N
+        btnGoHome.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnGoHome.text")); // NOI18N
+        btnGoHome.setFocusable(false);
+        btnGoHome.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGoHome.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnGoHome);
+
+        btnJumpTo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/go-jump-4.png"))); // NOI18N
+        btnJumpTo.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnJumpTo.text")); // NOI18N
+        btnJumpTo.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnJumpTo.toolTipText")); // NOI18N
+        btnJumpTo.setEnabled(false);
+        btnJumpTo.setFocusable(false);
+        btnJumpTo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnJumpTo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnJumpTo);
+        toolbar.add(jSeparator6);
+
+        btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/application-exit-3.png"))); // NOI18N
+        btnExit.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnExit.text")); // NOI18N
+        btnExit.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnExit.toolTipText")); // NOI18N
+        btnExit.setFocusable(false);
+        btnExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExitActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnExit);
+
+        getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
         pMain.setPreferredSize(new java.awt.Dimension(1200, 1024));
 
@@ -443,19 +546,22 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         jSplitPane1.setRightComponent(pVisualization);
 
-        javax.swing.GroupLayout pMainLayout = new javax.swing.GroupLayout(pMain);
+        org.jdesktop.layout.GroupLayout pMainLayout = new org.jdesktop.layout.GroupLayout(pMain);
         pMain.setLayout(pMainLayout);
         pMainLayout.setHorizontalGroup(
-            pMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
+            pMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
         );
         pMainLayout.setVerticalGroup(
-            pMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+            pMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
         );
+
+        getContentPane().add(pMain, java.awt.BorderLayout.CENTER);
 
         mFile.setText(bundle.getString("MainFrame.mFile.text")); // NOI18N
 
+        miOpenKMLFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         miOpenKMLFile.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miOpenKMLFile.text")); // NOI18N
         miOpenKMLFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -489,13 +595,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mFile.add(miAddShapeZip);
         mFile.add(jSeparator2);
 
-        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_MASK));
         miExit.setText(bundle.getString("MainFrame.miExit.text")); // NOI18N
-        miExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miExitActionPerformed(evt);
-            }
-        });
         mFile.add(miExit);
 
         mbMain.add(mFile);
@@ -510,64 +610,19 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
         mEdit.add(miRemoveAllLayer);
+        mEdit.add(jSeparator1);
+
+        miTakeScreenshot.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTakeScreenshot.text")); // NOI18N
+        mEdit.add(miTakeScreenshot);
 
         mbMain.add(mEdit);
 
         mNavi.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mNavi.text")); // NOI18N
 
-        miGotoLinz.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoLinz.setText(bundle.getString("MainFrame.miGotoLinz.text")); // NOI18N
-        miGotoLinz.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoLinzActionPerformed(evt);
-            }
-        });
-        mNavi.add(miGotoLinz);
-
-        miGotoPraque.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoPraque.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoPraque.text")); // NOI18N
-        miGotoPraque.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoPraqueActionPerformed(evt);
-            }
-        });
-        mNavi.add(miGotoPraque);
-
-        miGoToStockhom.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        miGoToStockhom.setText(bundle.getString("MainFrame.miGoToStockhom.text")); // NOI18N
-        miGoToStockhom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGoToStockhomActionPerformed(evt);
-            }
-        });
-        mNavi.add(miGoToStockhom);
-
-        miGotoWuppertal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
-        miGotoWuppertal.setText(bundle.getString("MainFrame.miGotoWuppertal.text")); // NOI18N
-        miGotoWuppertal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoWuppertalActionPerformed(evt);
-            }
-        });
-        mNavi.add(miGotoWuppertal);
-
         miGotoKaiserslautern.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_MASK));
         miGotoKaiserslautern.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGotoKaiserslautern.text")); // NOI18N
-        miGotoKaiserslautern.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoKaiserslauternActionPerformed(evt);
-            }
-        });
         mNavi.add(miGotoKaiserslautern);
         mNavi.add(jSeparator5);
-
-        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
-        miFullSphere.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miFullSphereActionPerformed(evt);
-            }
-        });
-        mNavi.add(miFullSphere);
 
         miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
         miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
@@ -577,6 +632,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             }
         });
         mNavi.add(miGoto);
+
+        miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
+        mNavi.add(miFullSphere);
         mNavi.add(jSeparator3);
 
         miSaveView.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_SPACE, java.awt.event.InputEvent.CTRL_MASK));
@@ -617,29 +675,50 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
-        miWizard.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miWizardActionPerformed(evt);
-            }
-        });
         mTools.add(miWizard);
 
         mbMain.add(mTools);
 
         mView.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mView.text")); // NOI18N
 
-        miSideBySide.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        mToolbars.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mToolbars.text")); // NOI18N
+        mToolbars.setEnabled(false);
+
+        jCheckBoxMenuItem1.setSelected(true);
+        jCheckBoxMenuItem1.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.jCheckBoxMenuItem1.text")); // NOI18N
+        mToolbars.add(jCheckBoxMenuItem1);
+
+        mView.add(mToolbars);
+
+        mWindowMode.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWindowMode.text")); // NOI18N
+
         miSideBySide.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miSideBySide.text")); // NOI18N
         miSideBySide.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miSideBySideActionPerformed(evt);
             }
         });
-        mView.add(miSideBySide);
+        mWindowMode.add(miSideBySide);
+
+        mFullScreen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.SHIFT_MASK));
+        mFullScreen.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mFullScreen.text")); // NOI18N
+        mFullScreen.setEnabled(false);
+        mWindowMode.add(mFullScreen);
+
+        mView.add(mWindowMode);
 
         mbMain.add(mView);
 
         mHelp.setText(bundle.getString("MainFrame.mHelp.text")); // NOI18N
+
+        miGeoVisualizerHelp.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        miGeoVisualizerHelp.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miGeoVisualizerHelp.text")); // NOI18N
+        miGeoVisualizerHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGeoVisualizerHelpActionPerformed(evt);
+            }
+        });
+        mHelp.add(miGeoVisualizerHelp);
 
         miAbout.setText(bundle.getString("MainFrame.miAbout.text")); // NOI18N
         miAbout.addActionListener(new java.awt.event.ActionListener() {
@@ -653,23 +732,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         setJMenuBar(mbMain);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pMain, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pMain, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_miExitActionPerformed
 
     private void miGotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoActionPerformed
         dGoTo.setVisible(true);
@@ -699,41 +763,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
 
-    private void miWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miWizardActionPerformed
-        wwPanel.runVisWiz();
-    }//GEN-LAST:event_miWizardActionPerformed
-
     private void miRemoveAllLayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveAllLayerActionPerformed
         wwPanel.removeAllLayers();
     }//GEN-LAST:event_miRemoveAllLayerActionPerformed
-
-    private void miGoToStockhomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGoToStockhomActionPerformed
-        Camera camera = wwPanel.getCamera();
-        Vector3D vector = camera.getViewingDirection();
-        wwPanel.setCamera(new AnimatedCamera(59.328, 18.047, 20000.0, vector));
-    }//GEN-LAST:event_miGoToStockhomActionPerformed
-
-    private void miGotoLinzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoLinzActionPerformed
-        Camera camera = wwPanel.getCamera();
-        Vector3D vector = camera.getViewingDirection();
-        wwPanel.setCamera(new AnimatedCamera(48.2323, 14.3350, 20000.0, vector));
-    }//GEN-LAST:event_miGotoLinzActionPerformed
-
-    private void miGotoWuppertalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoWuppertalActionPerformed
-        Camera camera = wwPanel.getCamera();
-        Vector3D vector = camera.getViewingDirection();
-        wwPanel.setCamera(new AnimatedCamera(51.249, 7.0832, 14000.0, vector));
-    }//GEN-LAST:event_miGotoWuppertalActionPerformed
-
-    private void miFullSphereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFullSphereActionPerformed
-        wwPanel.setCamera(new AnimatedCamera(37.0, 27.0, 19000000.0));
-    }//GEN-LAST:event_miFullSphereActionPerformed
-
-    private void miGotoPraqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoPraqueActionPerformed
-        Camera camera = wwPanel.getCamera();
-        Vector3D vector = camera.getViewingDirection();
-        wwPanel.setCamera(new AnimatedCamera(50.08781, 14.42046, 20000.0, vector));
-    }//GEN-LAST:event_miGotoPraqueActionPerformed
 
     private void miAddWMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddWMSActionPerformed
         String server = JOptionPane.showInputDialog(this, "WMS URL", "http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS");
@@ -837,12 +869,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         wwPanel.startStereo(this);
     }//GEN-LAST:event_miSideBySideActionPerformed
 
-    private void miGotoKaiserslauternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoKaiserslauternActionPerformed
-        Camera camera = wwPanel.getCamera();
-        Vector3D vector = camera.getViewingDirection();
-        wwPanel.setCamera(new AnimatedCamera(49.4447186, 7.7690169, 20000.0, vector));
-    }//GEN-LAST:event_miGotoKaiserslauternActionPerformed
-
     private void miOpenDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenDataActionPerformed
         try {
             String cmd = evt.getActionCommand();
@@ -886,7 +912,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             if (ret != JFileChooser.APPROVE_OPTION) {
                 return;
             }
-
 
             if (cmd.equalsIgnoreCase(miOpenKMLFile.getActionCommand())) {
                 wwPanel.addKMLLayer(fc.getSelectedFile());
@@ -947,6 +972,22 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mCustomViewPoints.add(menuItem);
         viewID++;
     }//GEN-LAST:event_miSaveViewActionPerformed
+
+    private void miGeoVisualizerHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGeoVisualizerHelpActionPerformed
+        try {
+            Desktop desktop = Desktop.getDesktop();
+            URI uri = URI.create("http://www.dfki.uni-kl.de/~steffen/geovisualizer");
+            desktop.browse(uri);
+        } catch (IOException ex) {
+            String msg = ex.toString();
+            log.error(msg);
+            JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_miGeoVisualizerHelpActionPerformed
+
+    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnExitActionPerformed
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -1031,18 +1072,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-
-
-
-
-
-
-                }
-            }
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -1073,16 +1103,26 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JButton bGoWMSHeight;
     private javax.swing.ButtonGroup bgWMS;
     private javax.swing.JButton btnCancelGoToDialoag;
+    private javax.swing.JButton btnExit;
     private javax.swing.JButton btnGo;
+    private javax.swing.JButton btnGoHome;
+    private javax.swing.JButton btnJumpTo;
+    private javax.swing.JButton btnTakeScreenShot;
+    private javax.swing.JButton btnVizWiz;
     private javax.swing.JComboBox cLayerList;
     private javax.swing.JComboBox cbServerURL;
     private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWMSHeight;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lHeight;
     private javax.swing.JLabel lLatitude;
@@ -1093,11 +1133,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenu mCustomViewPoints;
     private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
+    private javax.swing.JMenuItem mFullScreen;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mNavi;
+    private javax.swing.JMenu mToolbars;
     private javax.swing.JMenu mTools;
     private javax.swing.JMenu mView;
     private javax.swing.JMenu mWMS;
+    private javax.swing.JMenu mWindowMode;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miAbout;
     private javax.swing.JMenuItem miAddGeoTiff;
@@ -1107,16 +1150,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miAddWMSHeight;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miFullSphere;
-    private javax.swing.JMenuItem miGoToStockhom;
+    private javax.swing.JMenuItem miGeoVisualizerHelp;
     private javax.swing.JMenuItem miGoto;
     private javax.swing.JMenuItem miGotoKaiserslautern;
-    private javax.swing.JMenuItem miGotoLinz;
-    private javax.swing.JMenuItem miGotoPraque;
-    private javax.swing.JMenuItem miGotoWuppertal;
     private javax.swing.JMenuItem miOpenKMLFile;
     private javax.swing.JMenuItem miRemoveAllLayer;
     private javax.swing.JMenuItem miSaveView;
     private javax.swing.JMenuItem miSideBySide;
+    private javax.swing.JMenuItem miTakeScreenshot;
     private javax.swing.JMenuItem miWizard;
     private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pLeftPanel;
@@ -1125,6 +1166,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JProgressBar pbWMS;
     private javax.swing.JRadioButton rbCbServerUrl;
     private javax.swing.JRadioButton rbTxtServerUrl;
+    private javax.swing.JToolBar toolbar;
     private javax.swing.JTextField txtHeight;
     private javax.swing.JTextField txtLatitude;
     private javax.swing.JTextField txtLongitude;
