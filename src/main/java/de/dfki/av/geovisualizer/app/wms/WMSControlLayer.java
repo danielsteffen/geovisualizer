@@ -633,21 +633,18 @@ public class WMSControlLayer extends RenderableLayer {
                 currentControl.getAttributes().setTextColor(Color.WHITE);
             }
         }
-        if (this.currentControl == null) {
-
-            if (getSteps() != null) {
-                for (ScreenAnnotation current : getSteps()) {
-                    if (current.getText() != null
-                            && !getValSelected()[stepsRange.indexOf(
-                            current.getText())]) {
-                        Font font = current.getAttributes().getFont();
-                        font = font.deriveFont(FONT_SIZE);
-                        current.getAttributes().setFont(font);
-                        current.getAttributes().setTextColor(Color.LIGHT_GRAY);
-                    }
-
-                    current = null;
+        if (this.currentControl == null && getSteps() != null) {
+            for (ScreenAnnotation current : getSteps()) {
+                if (current.getText() != null
+                        && !getValSelected()[stepsRange.indexOf(
+                        current.getText())]) {
+                    Font font = current.getAttributes().getFont();
+                    font = font.deriveFont(FONT_SIZE);
+                    current.getAttributes().setFont(font);
+                    current.getAttributes().setTextColor(Color.LIGHT_GRAY);
                 }
+
+                current = null;
             }
         }
     }

@@ -574,7 +574,6 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     private ElevatedRenderableLayer addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
         if (layerInfo != null) {
             WMSCapabilities caps = layerInfo.caps;
-            WMSLayerCapabilities lcaps = layerInfo.layerCaps;
             AVList params = layerInfo.params;
             ElevatedRenderableLayer sul = new ElevatedRenderableLayer(caps,
                     params, elevation, opacity);

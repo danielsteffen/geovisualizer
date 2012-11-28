@@ -12,8 +12,6 @@ import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,10 +19,6 @@ import org.slf4j.LoggerFactory;
  */
 public class VisualizationSelectionController implements WizardDescriptor.Panel {
 
-    /**
-     * The logger.
-     */
-    private static Logger log = LoggerFactory.getLogger(VisualizationSelectionController.class);
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().

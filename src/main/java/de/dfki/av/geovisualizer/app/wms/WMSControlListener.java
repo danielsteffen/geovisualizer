@@ -11,7 +11,6 @@ import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
-import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.ScreenAnnotation;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Color;
@@ -255,9 +254,8 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
     }
 
     /**
-     * Updates the renderable layer
-     * {@link gov.nasa.worldwind.layers.RenderableLayer}with the triangle grid
-     * suitable to what was pressed.
+     * Updates the renderable layer with the triangle grid suitable to what was
+     * pressed.
      *
      * @param control the {@link ScreenAnnotation} pressed, throws a
      * {@link NullPointerException} if {@code null}.
@@ -308,19 +306,18 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
                 animFlag = false;
             }
         }
+
         if (!animFlag) {
             mark();
-            if (getLayers().get(id) != null) {
-                if (getLayers().get(id).getOpacity() < 1.0d) {
-                    change(getLayers().get(id));
-                }
+            ElevatedRenderableLayer elevatedRenderableLayer = getLayers().get(id);
+            if (elevatedRenderableLayer != null && elevatedRenderableLayer.getOpacity() < 1.0d) {
+                change(elevatedRenderableLayer);
             }
         }
-
     }
 
     /**
-     * Sets the aniamtion duration for the time series animation.
+     * Sets the animation duration for the time series animation.
      *
      * @param duration animation duration in ms
      */

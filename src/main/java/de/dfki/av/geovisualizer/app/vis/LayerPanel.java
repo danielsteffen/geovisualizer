@@ -345,9 +345,6 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 }
             }
         }
-        if(e.isPopupTrigger()){
-            
-        }
     }
 
     @Override

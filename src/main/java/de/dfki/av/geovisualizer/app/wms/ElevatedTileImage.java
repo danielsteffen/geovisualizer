@@ -24,8 +24,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Extended {@link SurfaceImage} with the possibility to change the elevation of

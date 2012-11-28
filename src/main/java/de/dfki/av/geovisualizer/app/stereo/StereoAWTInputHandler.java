@@ -18,6 +18,8 @@ import gov.nasa.worldwind.event.SelectListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class extends the AWTInputHandler and does the exact same behavior with
@@ -30,6 +32,13 @@ import java.util.ArrayList;
  */
 public class StereoAWTInputHandler extends AWTInputHandler {
 
+    /**
+     * The logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(StereoAWTInputHandler.class);
+    /**
+     * {@link ArrayList} of {@code gov.nasa.worldwind.event.SelectListener}.
+     */
     private ArrayList<SelectListener> selectListeners;
 
     /**
@@ -54,9 +63,9 @@ public class StereoAWTInputHandler extends AWTInputHandler {
                                 SelectEvent.HOVER, mousePoint,
                                 StereoAWTInputHandler.this.hoverObjects));
                         StereoAWTInputHandler.this.hoverTimer.stop();
-
                     }
                 } catch (NullPointerException e) {
+                    log.error(e.toString());
                 }
             }
         });
@@ -75,9 +84,10 @@ public class StereoAWTInputHandler extends AWTInputHandler {
     }
 
     /**
-     * Accesses the list of all assigned selectListeners.
+     * Accesses the list of all assigned
+     * {@code gov.nasa.worldwind.event.SelectListener}.
      *
-     * @return List of assigned selectListeners.
+     * @return List of assigned {@code gov.nasa.worldwind.event.SelectListener}.
      */
     public ArrayList<SelectListener> getSelectListeners() {
         return selectListeners;
