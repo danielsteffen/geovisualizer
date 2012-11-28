@@ -152,12 +152,12 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         bgWMS = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         toolbar = new javax.swing.JToolBar();
-        btnVizWiz = new javax.swing.JButton();
-        btnTakeScreenShot = new javax.swing.JButton();
-        jSeparator4 = new javax.swing.JToolBar.Separator();
         btnGoHome = new javax.swing.JButton();
         btnJumpTo = new javax.swing.JButton();
         jSeparator6 = new javax.swing.JToolBar.Separator();
+        btnVizWiz = new javax.swing.JButton();
+        btnTakeScreenShot = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
         btnExit = new javax.swing.JButton();
         pMain = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -482,23 +482,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         toolbar.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.toolTipText")); // NOI18N
         toolbar.setName(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.name")); // NOI18N
 
-        btnVizWiz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/tools-wizard-3.png"))); // NOI18N
-        btnVizWiz.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnVizWiz.text")); // NOI18N
-        btnVizWiz.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnVizWiz.toolTipText")); // NOI18N
-        btnVizWiz.setFocusable(false);
-        btnVizWiz.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnVizWiz.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        toolbar.add(btnVizWiz);
-
-        btnTakeScreenShot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/devices/camera-photo-5.png"))); // NOI18N
-        btnTakeScreenShot.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnTakeScreenShot.text")); // NOI18N
-        btnTakeScreenShot.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnTakeScreenShot.toolTipText")); // NOI18N
-        btnTakeScreenShot.setFocusable(false);
-        btnTakeScreenShot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnTakeScreenShot.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        toolbar.add(btnTakeScreenShot);
-        toolbar.add(jSeparator4);
-
         btnGoHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/go-home-5.png"))); // NOI18N
         btnGoHome.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnGoHome.text")); // NOI18N
         btnGoHome.setFocusable(false);
@@ -515,6 +498,23 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         btnJumpTo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolbar.add(btnJumpTo);
         toolbar.add(jSeparator6);
+
+        btnVizWiz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/tools-wizard-3.png"))); // NOI18N
+        btnVizWiz.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnVizWiz.text")); // NOI18N
+        btnVizWiz.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnVizWiz.toolTipText")); // NOI18N
+        btnVizWiz.setFocusable(false);
+        btnVizWiz.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnVizWiz.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnVizWiz);
+
+        btnTakeScreenShot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/devices/camera-photo-5.png"))); // NOI18N
+        btnTakeScreenShot.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnTakeScreenShot.text")); // NOI18N
+        btnTakeScreenShot.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnTakeScreenShot.toolTipText")); // NOI18N
+        btnTakeScreenShot.setFocusable(false);
+        btnTakeScreenShot.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnTakeScreenShot.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnTakeScreenShot);
+        toolbar.add(jSeparator4);
 
         btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/application-exit-3.png"))); // NOI18N
         btnExit.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnExit.text")); // NOI18N
