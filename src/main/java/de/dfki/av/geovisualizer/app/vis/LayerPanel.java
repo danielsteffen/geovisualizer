@@ -78,6 +78,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         btnDelete = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
+        setPreferredSize(new java.awt.Dimension(100, 700));
+
         jScrollPane1.setMinimumSize(new java.awt.Dimension(0, 0));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
@@ -90,7 +92,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         btnUp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/layer-raise.png"))); // NOI18N
         btnUp.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnUp.text")); // NOI18N
         btnUp.setToolTipText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnUp.toolTipText")); // NOI18N
-        btnUp.setMinimumSize(new java.awt.Dimension(0, 0));
+        btnUp.setMaximumSize(new java.awt.Dimension(50, 25));
+        btnUp.setMinimumSize(new java.awt.Dimension(50, 25));
+        btnUp.setPreferredSize(new java.awt.Dimension(50, 25));
         btnUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUpActionPerformed(evt);
@@ -100,7 +104,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         btnDown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/layer-lower.png"))); // NOI18N
         btnDown.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDown.text")); // NOI18N
         btnDown.setToolTipText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDown.toolTipText")); // NOI18N
-        btnDown.setMinimumSize(new java.awt.Dimension(0, 0));
+        btnDown.setMaximumSize(new java.awt.Dimension(50, 25));
+        btnDown.setMinimumSize(new java.awt.Dimension(50, 25));
+        btnDown.setPreferredSize(new java.awt.Dimension(50, 25));
         btnDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDownActionPerformed(evt);
@@ -110,7 +116,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/layer-delete.png"))); // NOI18N
         btnDelete.setText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDelete.text")); // NOI18N
         btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(LayerPanel.class, "LayerPanel.btnDelete.toolTipText")); // NOI18N
-        btnDelete.setMinimumSize(new java.awt.Dimension(0, 0));
+        btnDelete.setMaximumSize(new java.awt.Dimension(50, 25));
+        btnDelete.setMinimumSize(new java.awt.Dimension(50, 25));
+        btnDelete.setPreferredSize(new java.awt.Dimension(50, 25));
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
@@ -123,19 +131,19 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnUp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -147,7 +155,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,7 +169,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );

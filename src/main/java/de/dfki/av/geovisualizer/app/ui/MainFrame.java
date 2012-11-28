@@ -72,9 +72,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     public MainFrame() {
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-        this.canvasSize = new Dimension(1500, 800);
+        this.canvasSize = new Dimension(1200, 700);
         this.wwPanel = new VisualizationPanel(canvasSize);
         this.wwPanel.setPreferredSize(canvasSize);
+        this.wwPanel.setMinimumSize(new Dimension(0, 0));
 
         initComponents();
         initActions();
@@ -82,6 +83,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
         if (layerTreeComponent != null) {
+            Dimension minSize = new Dimension(0, 0);
+            layerTreeComponent.setMinimumSize(minSize);
             pLeftPanel.add(layerTreeComponent);
         } else {
             log.debug("layerTreeComponent == null");
@@ -477,6 +480,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
+        setLocationByPlatform(true);
 
         toolbar.setRollover(true);
         toolbar.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.toolTipText")); // NOI18N
@@ -531,11 +535,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
-        pMain.setPreferredSize(new java.awt.Dimension(1200, 1024));
+        pMain.setPreferredSize(new java.awt.Dimension(1280, 720));
 
         jSplitPane1.setContinuousLayout(true);
-        jSplitPane1.setLastDividerLocation(1);
-        jSplitPane1.setPreferredSize(new java.awt.Dimension(1024, 768));
+        jSplitPane1.setMinimumSize(new java.awt.Dimension(0, 0));
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(1280, 720));
 
         pLeftPanel.setLayout(new java.awt.BorderLayout());
         jSplitPane1.setLeftComponent(pLeftPanel);
@@ -550,11 +554,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         pMain.setLayout(pMainLayout);
         pMainLayout.setHorizontalGroup(
             pMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pMainLayout.setVerticalGroup(
             pMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         getContentPane().add(pMain, java.awt.BorderLayout.CENTER);
