@@ -1,5 +1,5 @@
 /*
- *  VisualizationPanel.java 
+ *  ElevationsLoader.java 
  *
  *  Created by DFKI AV on 24.09.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -7,13 +7,11 @@
  */
 package de.dfki.av.geovisualizer.app.vis;
 
-import de.dfki.av.geovisualizer.core.io.IOUtils;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwind.terrain.LocalElevationModel;
 import java.io.File;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import org.slf4j.Logger;
@@ -72,12 +70,9 @@ public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
     @Override
     protected ElevationModel doInBackground() throws Exception {
         log.debug("Loading elevation {}.", this.filename);
-        ClassLoader loader = this.getClass().getClassLoader();
-        URL url = loader.getResource(this.filename);
-        File file = IOUtils.DownloadToTempFile(url);
+        File file = new File(filename);
         final LocalElevationModel elevationModel = new LocalElevationModel();
         elevationModel.addElevations(file);
-
         return elevationModel;
     }
 
@@ -92,7 +87,7 @@ public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
                     CompoundElevationModel cem = (CompoundElevationModel) currentElevationModel;
                     cem.addElevationModel(elevationModel);
                 } else {
-                    log.debug("Current elevation model instance of CompoundElevationModel.");
+                    log.debug("Current elevation model no instance of CompoundElevationModel.");
                     globe.setElevationModel(elevationModel);
                 }
             } else {
