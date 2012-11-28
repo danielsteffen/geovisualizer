@@ -1055,13 +1055,26 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             log.error(ex.toString());
         }
     }
+    /**
+     * Print some system information.
+     */
+    private static void printSystemSettings(){
+        String javaClassPath = System.getProperty("java.class.path");
+        log.info("java.class.path: {}", javaClassPath);
+        String javaExtDirs = System.getProperty("java.ext.dirs");
+        log.info("java.ext.dirs: {}", javaExtDirs);
+        String classpath = System.getenv("CLASSPATH");
+        log.info("CLASSPATH: {}", classpath);
+    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         initLogging();
-
+        printSystemSettings();
+        
         /*
          * Set the Nimbus look and feel
          */
