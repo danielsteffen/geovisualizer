@@ -216,7 +216,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * This implementation keeps the following layers: <ul> <li>Atmosphere</li>
      * <li>NASA Blue Marble Image</li> <li>Blue Marble (WMS) 2004</li>
      * <li>i-cubed Landsat</li> <li>Place Names</li> <li>Scale bar</li>
-     * <li>Compass</li> <li>View Controls</li> </ul>
+     * <li>Compass</li> <li>View Controls</li> <li>Bing Imagery</li></ul>
      */
     @Override
     public void removeAllLayers() {
@@ -231,7 +231,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     || layer.getName().equalsIgnoreCase("Place Names")
                     || layer.getName().equalsIgnoreCase("Scale bar")
                     || layer.getName().equalsIgnoreCase("Compass")
-                    || layer.getName().equalsIgnoreCase("View Controls")) {
+                    || layer.getName().equalsIgnoreCase("View Controls")
+                    || layer.getName().equalsIgnoreCase("Bing Imagery")) {
                 log.debug("Not removing layer: {}", layer.getName());
                 continue;
             } else {

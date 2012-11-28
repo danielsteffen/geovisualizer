@@ -18,4 +18,5 @@
     <Layer className="gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer"/>
     <Layer className="gov.nasa.worldwind.layers.ScalebarLayer"/>
     <Layer className="gov.nasa.worldwind.layers.CompassLayer"/>	
+	<Layer href="config/Earth/BingImagery.xml" actuate="onRequest"/>
 </LayerList>
