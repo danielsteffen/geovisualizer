@@ -103,10 +103,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         btnVizWiz.addActionListener(runVisWiz);
         miWizard.addActionListener(runVisWiz);
 
-        ExitAction exitAction = new ExitAction();
+        ExitAction exitAction = new ExitAction(wwPanel.getWwd());
         btnExit.addActionListener(exitAction);
         miExit.addActionListener(exitAction);
-        
+
         AnimatedCamera fullGlobeCamera = new AnimatedCamera(37.0, 27.0, 19000000.0);
         CameraAction fullGlobeAction = new CameraAction(wwPanel, fullGlobeCamera);
         btnGoHome.addActionListener(fullGlobeAction);

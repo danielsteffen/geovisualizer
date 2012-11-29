@@ -7,21 +7,40 @@
  */
 package de.dfki.av.geovisualizer.app.ui;
 
+import gov.nasa.worldwind.WorldWindow;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 /**
+ * Action to shutdown the GeoVisualizer application.
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class ExitAction extends AbstractAction {
 
-    public ExitAction() {
+    /**
+     * Reference to the {@code WorldWindow}.
+     */
+    private WorldWindow worldWindow;
+
+    /**
+     * Constructor to exit the application and shutdown the
+     * {@code gov.nasa.worldwind.WorldWindow}. If {@code worldWindow == null}
+     * the application will exit without shutting down the
+     * {@code gov.nasa.worldwind.WorldWindow}
+     *
+     * @param worldWindow the {@code gov.nasa.worldwind.WorldWindow}.
+     */
+    public ExitAction(WorldWindow worldWindow) {
         super("Exit GeoVisualizer");
+        this.worldWindow = worldWindow;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (worldWindow != null) {
+            this.worldWindow.shutdown();
+        }
         System.exit(0);
     }
 }
