@@ -63,6 +63,7 @@ public final class VisualizationSelectionPanel extends JPanel {
                 jPanel3.add(label);
             }
         }
+        jScrollPane1.getVerticalScrollBar().setUnitIncrement(20);
     }
 
     @Override
