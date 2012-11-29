@@ -117,7 +117,7 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
                 glad.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
                 Screenshot.writeToFile(snapshotFile, viewport[2] + 10, viewport[3], false);
                 glad.getGL().glViewport(0, 0, glad.getWidth(), glad.getHeight());
-                log.debug("Image saved to file {}\n", snapshotFile.getPath());
+                log.debug("Image saved to file {}", snapshotFile.getPath());
             } catch (IOException e) {
                 log.error(e.toString());
             } finally {
