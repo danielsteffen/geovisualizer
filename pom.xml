@@ -113,13 +113,13 @@
             <artifactId>geovisualizer-core</artifactId>
             <version>1.7.12</version>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>de.dfki.av.geovisualizer</groupId>
             <artifactId>geovisualizer-vis-basic</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.2</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>de.dfki.av.geovisualizer</groupId>
             <artifactId>geovisualizer-vis-geocpm</artifactId>
             <version>1.10</version>
