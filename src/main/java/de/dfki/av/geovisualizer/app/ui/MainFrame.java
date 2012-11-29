@@ -600,6 +600,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mWindowMode.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWindowMode.text")); // NOI18N
 
         miSideBySide.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miSideBySide.text")); // NOI18N
+        miSideBySide.setEnabled(false);
         miSideBySide.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miSideBySideActionPerformed(evt);
