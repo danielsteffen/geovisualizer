@@ -1,0 +1,38 @@
+/*
+ *  GotoAction.java 
+ *
+ *  Created by DFKI AV on 29.11.2012.
+ *  Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ *  Use is subject to license terms.
+ */
+package de.dfki.av.geovisualizer.app.ui;
+
+import de.dfki.av.geovisualizer.app.vis.VisualizationPanel;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+
+/**
+ *
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
+ */
+public class GotoAction extends AbstractAction {
+
+    /**
+     * The {@link GotoDialog}.
+     */
+    private GotoDialog gotoDialog;
+
+    /**
+     * Constructor for the {@link GotoAction}.
+     */
+    public GotoAction(final VisualizationPanel panel) {
+        super("Goto");
+        this.gotoDialog = new GotoDialog(null, panel.getWwd());
+        this.gotoDialog.setLocationRelativeTo(panel);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.gotoDialog.setVisible(true);
+    }
+}

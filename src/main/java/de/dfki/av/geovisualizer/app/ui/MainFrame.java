@@ -115,6 +115,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         AnimatedCamera klCamera = new AnimatedCamera(49.4447186, 7.7690169, 20000.0);
         CameraAction klCameraAction = new CameraAction(wwPanel, klCamera);
         miGotoKaiserslautern.addActionListener(klCameraAction);
+        
+        GotoAction gotoAction = new GotoAction(wwPanel);
+        miGoto.addActionListener(gotoAction);
+        btnJumpTo.addActionListener(gotoAction);
     }
 
     /**
@@ -126,14 +130,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        dGoTo = new javax.swing.JDialog();
-        pGoTo = new javax.swing.JPanel();
-        lLatitude = new javax.swing.JLabel();
-        lLongitude = new javax.swing.JLabel();
-        txtLatitude = new javax.swing.JTextField();
-        txtLongitude = new javax.swing.JTextField();
-        btnCancelGoToDialoag = new javax.swing.JButton();
-        btnGo = new javax.swing.JButton();
         dWMSHeight = new javax.swing.JDialog();
         lMaxEle = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -200,93 +196,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mHelp = new javax.swing.JMenu();
         miGeoVisualizerHelp = new javax.swing.JMenuItem();
         miAbout = new javax.swing.JMenuItem();
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/dfki/av/geovisualizer/app/ui/Bundle"); // NOI18N
-        dGoTo.setTitle(bundle.getString("MainFrame.dGoTo.title")); // NOI18N
-        dGoTo.setAlwaysOnTop(true);
-        dGoTo.setMinimumSize(new java.awt.Dimension(230, 150));
-        dGoTo.setResizable(false);
-
-        pGoTo.setMaximumSize(new java.awt.Dimension(200, 100));
-
-        lLatitude.setLabelFor(txtLatitude);
-        lLatitude.setText(bundle.getString("MainFrame.lLatitude.text")); // NOI18N
-
-        lLongitude.setLabelFor(txtLongitude);
-        lLongitude.setText(bundle.getString("MainFrame.lLongitude.text")); // NOI18N
-
-        txtLatitude.setText(bundle.getString("MainFrame.txtLatitude.text")); // NOI18N
-
-        txtLongitude.setText(bundle.getString("MainFrame.txtLongitude.text")); // NOI18N
-
-        org.jdesktop.layout.GroupLayout pGoToLayout = new org.jdesktop.layout.GroupLayout(pGoTo);
-        pGoTo.setLayout(pGoToLayout);
-        pGoToLayout.setHorizontalGroup(
-            pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(pGoToLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(lLongitude)
-                    .add(lLatitude))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 22, Short.MAX_VALUE)
-                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(txtLatitude, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(txtLongitude))
-                .addContainerGap())
-        );
-        pGoToLayout.setVerticalGroup(
-            pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(pGoToLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(lLatitude)
-                    .add(txtLatitude, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(pGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(lLongitude)
-                    .add(txtLongitude, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        btnCancelGoToDialoag.setText(bundle.getString("MainFrame.btnCancelGoToDialoag.text")); // NOI18N
-        btnCancelGoToDialoag.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelGoToDialoagActionPerformed(evt);
-            }
-        });
-
-        btnGo.setText(bundle.getString("MainFrame.btnGo.text")); // NOI18N
-        btnGo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGoActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout dGoToLayout = new org.jdesktop.layout.GroupLayout(dGoTo.getContentPane());
-        dGoTo.getContentPane().setLayout(dGoToLayout);
-        dGoToLayout.setHorizontalGroup(
-            dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(dGoToLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, dGoToLayout.createSequentialGroup()
-                        .add(btnGo)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnCancelGoToDialoag))
-                    .add(pGoTo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        dGoToLayout.setVerticalGroup(
-            dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(dGoToLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(pGoTo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(dGoToLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(btnCancelGoToDialoag)
-                    .add(btnGo))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         dWMSHeight.setTitle(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.dWMSHeight.title")); // NOI18N
         dWMSHeight.setIconImage(de.dfki.av.geovisualizer.app.Configuration.GEOVISUALIZER_ICON);
@@ -479,6 +388,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/dfki/av/geovisualizer/app/ui/Bundle"); // NOI18N
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
         setLocationByPlatform(true);
 
@@ -496,7 +406,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         btnJumpTo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/go-jump-4.png"))); // NOI18N
         btnJumpTo.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnJumpTo.text")); // NOI18N
         btnJumpTo.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnJumpTo.toolTipText")); // NOI18N
-        btnJumpTo.setEnabled(false);
         btnJumpTo.setFocusable(false);
         btnJumpTo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnJumpTo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -740,24 +649,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }// </editor-fold>//GEN-END:initComponents
 
     private void miGotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoActionPerformed
-        dGoTo.setVisible(true);
     }//GEN-LAST:event_miGotoActionPerformed
-
-    private void btnCancelGoToDialoagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelGoToDialoagActionPerformed
-        dGoTo.setVisible(false);
-    }//GEN-LAST:event_btnCancelGoToDialoagActionPerformed
-
-    private void btnGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoActionPerformed
-        try {
-            double lat = Double.parseDouble(txtLatitude.getText());
-            double lon = Double.parseDouble(txtLongitude.getText());
-            wwPanel.setCamera(new SimpleCamera(lat, lon, 200000.0));
-            dGoTo.setVisible(false);
-        } catch (NumberFormatException nfe) {
-            log.warn("The content of the \"latitude\" and \"longitude\" "
-                    + "component must be a double value.");
-        }
-    }//GEN-LAST:event_btnGoActionPerformed
 
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
         ImageIcon icon = new ImageIcon(Configuration.GEOVISUALIZER_ICON);
@@ -1119,16 +1011,13 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JButton bCancelWMSHeight;
     private javax.swing.JButton bGoWMSHeight;
     private javax.swing.ButtonGroup bgWMS;
-    private javax.swing.JButton btnCancelGoToDialoag;
     private javax.swing.JButton btnExit;
-    private javax.swing.JButton btnGo;
     private javax.swing.JButton btnGoHome;
     private javax.swing.JButton btnJumpTo;
     private javax.swing.JButton btnTakeScreenShot;
     private javax.swing.JButton btnVizWiz;
     private javax.swing.JComboBox cLayerList;
     private javax.swing.JComboBox cbServerURL;
-    private javax.swing.JDialog dGoTo;
     private javax.swing.JDialog dWMSHeight;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JPanel jPanel1;
@@ -1142,8 +1031,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lHeight;
-    private javax.swing.JLabel lLatitude;
-    private javax.swing.JLabel lLongitude;
     private javax.swing.JLabel lMaxEle;
     private javax.swing.JLabel lOpacity;
     private javax.swing.JLabel lServerURL;
@@ -1176,7 +1063,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem miSideBySide;
     private javax.swing.JMenuItem miTakeScreenshot;
     private javax.swing.JMenuItem miWizard;
-    private javax.swing.JPanel pGoTo;
     private javax.swing.JPanel pLeftPanel;
     private javax.swing.JPanel pMain;
     private javax.swing.JPanel pVisualization;
@@ -1185,8 +1071,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JRadioButton rbTxtServerUrl;
     private javax.swing.JToolBar toolbar;
     private javax.swing.JTextField txtHeight;
-    private javax.swing.JTextField txtLatitude;
-    private javax.swing.JTextField txtLongitude;
     private javax.swing.JTextField txtOpacity;
     private javax.swing.JTextField txtServerURL;
     // End of variables declaration//GEN-END:variables

@@ -48,6 +48,10 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
      */
     private JFileChooser fileChooser;
 
+    /**
+     * 
+     * @param wwd 
+     */
     public SnapshotAction(WorldWindow wwd) {
         super("Snap Shot");
         this.wwd = wwd;
@@ -60,6 +64,11 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
         snapshotFile = this.chooseFile(frame);
     }
 
+    /**
+     * 
+     * @param parentFrame
+     * @return 
+     */
     private File chooseFile(Component parentFrame) {
         File outFile = null;
 
