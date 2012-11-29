@@ -9,7 +9,6 @@ package de.dfki.av.geovisualizer.app.ui;
 
 import de.dfki.av.geovisualizer.app.Configuration;
 import de.dfki.av.geovisualizer.app.camera.AnimatedCamera;
-import de.dfki.av.geovisualizer.app.camera.SimpleCamera;
 import de.dfki.av.geovisualizer.app.vis.VisualizationPanel;
 import de.dfki.av.geovisualizer.app.wms.EventHolder;
 import de.dfki.av.geovisualizer.app.wms.LayerInfo;
@@ -539,11 +538,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
         miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
-        miGoto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGotoActionPerformed(evt);
-            }
-        });
         mNavi.add(miGoto);
 
         miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
@@ -647,9 +641,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void miGotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGotoActionPerformed
-    }//GEN-LAST:event_miGotoActionPerformed
 
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
         ImageIcon icon = new ImageIcon(Configuration.GEOVISUALIZER_ICON);
