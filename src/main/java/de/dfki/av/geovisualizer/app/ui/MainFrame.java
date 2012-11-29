@@ -115,7 +115,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         CameraAction klCameraAction = new CameraAction(wwPanel, klCamera);
         miGotoKaiserslautern.addActionListener(klCameraAction);
         
-        GotoAction gotoAction = new GotoAction(wwPanel);
+        GotoAction gotoAction = new GotoAction(this, wwPanel.getWwd());
         miGoto.addActionListener(gotoAction);
         btnJumpTo.addActionListener(gotoAction);
     }

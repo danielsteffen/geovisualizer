@@ -7,9 +7,10 @@
  */
 package de.dfki.av.geovisualizer.app.ui;
 
-import de.dfki.av.geovisualizer.app.vis.VisualizationPanel;
+import gov.nasa.worldwind.WorldWindow;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 
 /**
  *
@@ -25,10 +26,11 @@ public class GotoAction extends AbstractAction {
     /**
      * Constructor for the {@link GotoAction}.
      */
-    public GotoAction(final VisualizationPanel panel) {
+    public GotoAction(final JFrame frame, final WorldWindow worldWindow) {
         super("Goto");
-        this.gotoDialog = new GotoDialog(null, panel.getWwd());
-        this.gotoDialog.setLocationRelativeTo(panel);
+        
+        this.gotoDialog = new GotoDialog(frame, worldWindow);
+        this.gotoDialog.setLocationRelativeTo(frame);
     }
 
     @Override
