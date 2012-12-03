@@ -178,6 +178,73 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <finalName>nsis</finalName>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>nsis-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>launcher</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-project</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
+                            <setupScript>launcher.nsi</setupScript>
+                            <outputFile>${project.build.directory}/launcher/${project.artifactId}.exe</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>installer_x86</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-project</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
+                            <setupScript>setup_x86.nsi</setupScript>
+                            <outputFile>${project.build.directory}/${project.build.finalName}_x86_setup.exe</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>installer_x64</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-project</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
+                            <setupScript>setup_x64.nsi</setupScript>
+                            <outputFile>${project.build.directory}/${project.build.finalName}_x64_setup.exe</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+      
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
@@ -383,6 +450,16 @@
 
     <pluginRepositories>
         <pluginRepository>
+            <id>Codehaus Snapshots</id>
+            <url>http://nexus.codehaus.org/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>  <!-- Workaround for MNG-2974, see note below -->
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
             <id>${repository.id}</id>
             <url>${repository.url}</url>
             <snapshots>
@@ -418,6 +495,6 @@
     <scm>
         <connection>scm:git:git://serv-2100/geovisualizer/geovisualizer-app.git</connection>
         <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer/geovisualizer-app.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 </project>
