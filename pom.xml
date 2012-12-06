@@ -183,13 +183,13 @@
                 <configuration>
                     <finalName>nsis</finalName>
                     <descriptors>
-                        <descriptor>assembly.xml</descriptor>
+                        <descriptor>src/installer/assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -211,7 +211,7 @@
                         </goals>
                         <configuration>
                             <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
-                            <setupScript>launcher.nsi</setupScript>
+                            <setupScript>src/installer/nsis/launcher.nsi</setupScript>
                             <outputFile>${project.build.directory}/launcher/${project.artifactId}.exe</outputFile>
                         </configuration>
                     </execution>
@@ -224,7 +224,7 @@
                         </goals>
                         <configuration>
                             <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
-                            <setupScript>setup_x86.nsi</setupScript>
+                            <setupScript>src/installer/nsis/setup_x86.nsi</setupScript>
                             <outputFile>${project.build.directory}/${project.build.finalName}_x86_setup.exe</outputFile>
                         </configuration>
                     </execution>
@@ -237,7 +237,7 @@
                         </goals>
                         <configuration>
                             <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
-                            <setupScript>setup_x64.nsi</setupScript>
+                            <setupScript>src/installer/nsis/setup_x64.nsi</setupScript>
                             <outputFile>${project.build.directory}/${project.build.finalName}_x64_setup.exe</outputFile>
                         </configuration>
                     </execution>
@@ -456,7 +456,7 @@
                 <enabled>true</enabled>
             </snapshots>
             <releases>
-                <enabled>true</enabled>  <!-- Workaround for MNG-2974, see note below -->
+                <enabled>true</enabled>
             </releases>
         </pluginRepository>
         <pluginRepository>

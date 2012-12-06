@@ -13,22 +13,26 @@
 # will be passed to the Java application.
 # ------------------------------------------------------------------------------
  
-!include target\project.nsh
+!include ..\..\..\target\project.nsh
 
 # You want to change the next four lines
 Name "${PROJECT_ARTIFACT_ID}"
 Caption "${PROJECT_ARTIFACT_ID}"
-Icon "src\main\resources\icons\GeoVisualizer.ico"
+Icon "..\..\..\src\main\resources\icons\GeoVisualizer.ico"
  
 SilentInstall silent
 AutoCloseWindow true
 ShowInstDetails nevershow
  
 # You want to change the next two lines too
-!define CLASSPATH "${PROJECT_FINAL_NAME}.jar"
+!define APP "${PROJECT_FINAL_NAME}.jar"
+!define DETECT_JVM "util/detectJVM-1.0.jar"
  
 !define TRUE "true"
 !define FALSE "false"
+
+!define NATIVEDIR32 "..\..\..\natives\x86"
+!define NATIVEDIR64 "..\..\..\natives\x64"
  
 # defines for console or windowed usage
 !define USE_CONSOLE_ARG "-console"
@@ -44,24 +48,52 @@ Var JavaExe        # the Java exe to use - either java.exe or javaw.exe
  
  
 Section "1"
+	StrCpy $BreakLoop ${FALSE}
  
-  StrCpy $BreakLoop ${FALSE}
+	# set to javaw.exe by default
+	StrCpy $JavaExe ${JAVA_WINDOWED_EXE}
+	 
+	Call ParseArgs
+	Call GetJRE
+	Pop $R0
+	 
+	ClearErrors
+	StrCpy $0 '"$R0" $VmArgs -jar "${DETECT_JVM}" $ProgramArgs'
  
-  # set to javaw.exe by default
-  StrCpy $JavaExe ${JAVA_WINDOWED_EXE}
+	;MessageBox MB_OK|MB_ICONINFORMATION "VmArgs: $VmArgs"
+	;MessageBox MB_OK|MB_ICONINFORMATION "ProgramArgs: $ProgramArgs"
+	;MessageBox MB_OK|MB_ICONINFORMATION "Final cmdline: $0"
+	  
+	ExecWait $0 $0
+	IfErrors DetectExecError
+	IntCmp $0 0 DetectError DetectError DoneDetect
+	DetectExecError:
+		StrCpy $0 "exec error"
+	DetectError:
+		MessageBox MB_OK "Could not determine JVM architecture ($0). Assuming 32-bit."
+		Goto NotX64
+	DoneDetect:
+		
+	IntCmp $0 64 X64 NotX64 NotX64
+	X64:
+		MessageBox MB_OK "Detected ($0 bit) JVM."
+		SetOutPath "$EXEDIR"
+		File "${NATIVEDIR64}\*.dll"	
+		Goto DoneX64
+	NotX64:
+		MessageBox MB_OK "Detected ($0 bit) JVM."
+		SetOutPath "$EXEDIR"
+		File "${NATIVEDIR32}\*.dll"	
+	DoneX64:
+		;
+	
+	StrCpy $0 '"$R0" $VmArgs -jar "${APP}" $ProgramArgs'
  
-  Call ParseArgs
-  Call GetJRE
-  Pop $R0
- 
-  StrCpy $0 '"$R0" $VmArgs -jar "${CLASSPATH}" $ProgramArgs'
- 
-  ;MessageBox MB_OK|MB_ICONINFORMATION "VmArgs: $VmArgs"
-  ;MessageBox MB_OK|MB_ICONINFORMATION "ProgramArgs: $ProgramArgs"
-  ;MessageBox MB_OK|MB_ICONINFORMATION "Final cmdline: $0"
- 
-  SetOutPath $EXEDIR
-  ExecWait $0
+	;MessageBox MB_OK|MB_ICONINFORMATION "VmArgs: $VmArgs"
+	;MessageBox MB_OK|MB_ICONINFORMATION "ProgramArgs: $ProgramArgs"
+	;MessageBox MB_OK|MB_ICONINFORMATION "Final cmdline: $0"
+	  
+	ExecWait $0
 SectionEnd
  
 Function ParseArgs
