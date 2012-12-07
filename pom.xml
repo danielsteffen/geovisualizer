@@ -420,4 +420,9 @@
         <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer/geovisualizer-app.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
+  
+  <issueManagement>
+    <system>Bugzilla</system>
+    <url>https://av.kl.dfke.de/bugzilla</url>
+  </issueManagement>    
 </project>
