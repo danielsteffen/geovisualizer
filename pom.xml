@@ -203,7 +203,7 @@
                 <version>1.0-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <id>launcher</id>
+                        <id>launcher_86</id>
                         <phase>package</phase>
                         <goals>
                             <goal>generate-project</goal>
@@ -211,8 +211,21 @@
                         </goals>
                         <configuration>
                             <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
-                            <setupScript>src/installer/nsis/launcher.nsi</setupScript>
-                            <outputFile>${project.build.directory}/launcher/${project.artifactId}.exe</outputFile>
+                            <setupScript>src/installer/nsis/launcher_x86.nsi</setupScript>
+                            <outputFile>${project.build.directory}/launcher/x86/${project.artifactId}.exe</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>launcher_x64</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-project</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <makensisBin>${env.NSIS_HOME}/makensis</makensisBin>
+                            <setupScript>src/installer/nsis/launcher_x64.nsi</setupScript>
+                            <outputFile>${project.build.directory}/launcher/x64/${project.artifactId}.exe</outputFile>
                         </configuration>
                     </execution>
                     <execution>

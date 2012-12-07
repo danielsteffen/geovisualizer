@@ -1,101 +1,3 @@
-# ------------------------------------------------------------------------------
-# Advanced Java Launcher
-# Author: Jmay
-# Based on: Java Launcher
-# 
-# Thanks to bigmac666 for StrTok and all the other NSIS Java launcher
-# developers, on whose work this is substantially based.
-#
-# Specify '-console' as argument to launch with java.exe, otherwise javaw.exe 
-# will be used.
-#
-# All arguments starting '-X' will be passed to the JVM, all other arguments 
-# will be passed to the Java application.
-# ------------------------------------------------------------------------------
- 
-!include ..\..\..\target\project.nsh
-
-# You want to change the next four lines
-Name "${PROJECT_ARTIFACT_ID}"
-Caption "${PROJECT_ARTIFACT_ID}"
-Icon "..\..\..\src\main\resources\icons\GeoVisualizer.ico"
- 
-SilentInstall silent
-AutoCloseWindow true
-ShowInstDetails nevershow
- 
-# You want to change the next two lines too
-!define APP "${PROJECT_FINAL_NAME}.jar"
-!define DETECT_JVM "util/detectJVM-1.0.jar"
- 
-!define TRUE "true"
-!define FALSE "false"
-
-!define NATIVEDIR32 "..\..\..\natives\x86"
-!define NATIVEDIR64 "..\..\..\natives\x64"
- 
-# defines for console or windowed usage
-!define USE_CONSOLE_ARG "-console"
-!define JAVA_CONSOLE_EXE "java.exe"
-!define JAVA_WINDOWED_EXE "javaw.exe"
- 
-Var VmArgs         # JVM arguments, e.g. -Xdebug -Xnoagent, etc.
-Var ProgramArgs    # your program arguments (if you use them), e.g. -enablefoo, etc.
-Var C0             # temporary variable used in testing for quoted executable path
-Var X0             # temporary variable used in testing for VM arguments
-Var BreakLoop      # essentially a boolean to indicate loop processing should finish
-Var JavaExe        # the Java exe to use - either java.exe or javaw.exe
- 
- 
-Section "1"
-	StrCpy $BreakLoop ${FALSE}
- 
-	# set to javaw.exe by default
-	StrCpy $JavaExe ${JAVA_WINDOWED_EXE}
-	 
-	Call ParseArgs
-	Call GetJRE
-	Pop $R0
-	 
-	ClearErrors
-	StrCpy $0 '"$R0" $VmArgs -jar "${DETECT_JVM}" $ProgramArgs'
- 
-	;MessageBox MB_OK|MB_ICONINFORMATION "VmArgs: $VmArgs"
-	;MessageBox MB_OK|MB_ICONINFORMATION "ProgramArgs: $ProgramArgs"
-	;MessageBox MB_OK|MB_ICONINFORMATION "Final cmdline: $0"
-	  
-	ExecWait $0 $0
-	IfErrors DetectExecError
-	IntCmp $0 0 DetectError DetectError DoneDetect
-	DetectExecError:
-		StrCpy $0 "exec error"
-	DetectError:
-		MessageBox MB_OK "Could not determine JVM architecture ($0). Assuming 32-bit."
-		Goto NotX64
-	DoneDetect:
-		
-	IntCmp $0 64 X64 NotX64 NotX64
-	X64:
-		MessageBox MB_OK "Detected ($0 bit) JVM."
-		SetOutPath "$EXEDIR"
-		File "${NATIVEDIR64}\*.dll"	
-		Goto DoneX64
-	NotX64:
-		MessageBox MB_OK "Detected ($0 bit) JVM."
-		SetOutPath "$EXEDIR"
-		File "${NATIVEDIR32}\*.dll"	
-	DoneX64:
-		;
-	
-	StrCpy $0 '"$R0" $VmArgs -jar "${APP}" $ProgramArgs'
- 
-	;MessageBox MB_OK|MB_ICONINFORMATION "VmArgs: $VmArgs"
-	;MessageBox MB_OK|MB_ICONINFORMATION "ProgramArgs: $ProgramArgs"
-	;MessageBox MB_OK|MB_ICONINFORMATION "Final cmdline: $0"
-	  
-	ExecWait $0
-SectionEnd
- 
 Function ParseArgs
   # first argument is executable name; check for double quote at start, e.g. if
   # path contains spaces
@@ -154,8 +56,7 @@ Function ParseArgs
     StrCmp $R1 "" 0 moretodo
     StrCpy $BreakLoop ${TRUE}
  
-  moretodo:
- 
+  moretodo: 
     ; MessageBox MB_OK|MB_ICONINFORMATION "loop - R0: $R0"
     ; MessageBox MB_OK|MB_ICONINFORMATION "loop - R1: $R1"
  
@@ -285,5 +186,4 @@ Function StrTok
   Exch $R0
   Exch 1
   Exch $R1
- 
 FunctionEnd
