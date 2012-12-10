@@ -5,6 +5,7 @@
 !define PROGRAM_DIR $PROGRAMFILES64
 !define LAUNCHER_DIR "..\..\..\target\launcher\x64"
 
+!include header.nsi
 !include setup_header.nsi
 !include setup_sections.nsi
 !include setup_functions.nsi

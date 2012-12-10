@@ -10,8 +10,16 @@
 # will be passed to the Java application.
 # ------------------------------------------------------------------------------
 
-!include "launcher_config.nsi"
+;======================================================
+; Includes
+!include header.nsi
+!include launcher_header.nsi
+!include launcher_functions.nsi
 
+;======================================================
+; Localisation
+!insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "German"
 LangString error1 ${LANG_GERMAN} "Java Virtual Machine konnte nicht bestimmt werden ($0).$\r$\n"
 LangString error1 ${LANG_ENGLISH} "Could not determine Java Virtual Machine architecture ($0).$\r$\n"
 LangString error2 ${LANG_GERMAN} "Versuche ${PRODUCT_NAME} zu starten.$\r$\n"
@@ -47,7 +55,7 @@ Section "1"
   DetectExecError:
     StrCpy $0 "exec error"
   DetectError:
-	MessageBox MB_OK "$(error1)$(error2)$(error3)"
+	MessageBox MB_OK|MB_ICONEXCLAMATION "$(error1)$(error2)$(error3)"
     Goto X86
   DoneDetect:
     ;
@@ -58,7 +66,7 @@ Section "1"
 	ExecWait $0
     Goto DoneX86
   NotX86:
-	MessageBox MB_OK "$(msg1)$(msg2)"
+	MessageBox MB_OK|MB_ICONEXCLAMATION "$(msg1)$(msg2)"
   DoneX86:
     ;Proram terminated
 	
@@ -66,5 +74,3 @@ Section "1"
   ;MessageBox MB_OK|MB_ICONINFORMATION "ProgramArgs: $ProgramArgs"
   ;MessageBox MB_OK|MB_ICONINFORMATION "Final cmdline: $0" 
 SectionEnd
-
-!include "launcher_functions.nsi"
