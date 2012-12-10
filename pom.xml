@@ -166,6 +166,7 @@
                                     <goal>upload</goal>
                                 </goals>
                                 <configuration>
+                                    <serverId>geovisualizer.website</serverId>
                                     <fromDir>${project.build.directory}</fromDir>
                                     <includes>*.exe</includes>
                                     <excludes>geovisualizer.exe</excludes>
