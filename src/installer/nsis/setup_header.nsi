@@ -9,16 +9,16 @@
 !define ProductDescription "The GeoVisualizer was developed within the sudplan3D (http://sudplan.kl.dfki.de) component."
 
 Name "${PRODUCT_NAME}"
-;OutFile "${PRODUCT_NAME}.exe"
+;roundOutFile "${PRODUCT_NAME}.exe"
 Caption "${PRODUCT_NAME}"
 ;Folder selection page
 InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
-Icon ${ProductIcon}
 SetCompressor /SOLID lzma
 XPStyle on
 CRCCheck on
 AutoCloseWindow false
 ShowInstDetails show
+
 
 ;======================================================
 ; Includes
@@ -26,6 +26,12 @@ ShowInstDetails show
 !include Sections.nsh
 !include FileFunc.nsh
 !include WordFunc.nsh
+
+;======================================================
+; Icon Settings
+Icon ${ProductIcon}
+!define MUI_ICON ${ProductIcon}
+;!define MUI_UNICON ${ProductIcon}
 
 ;======================================================
 ; Version Tab information for Setup.exe properties
