@@ -166,11 +166,11 @@
                                     <goal>upload</goal>
                                 </goals>
                                 <configuration>
-                                    <fromDir>local.dir</fromDir>
+                                    <fromDir>${project.build.directory}</fromDir>
                                     <includes>*.exe</includes>
                                     <excludes>geovisualizer.exe</excludes>
-                                    <url>scp://serv-2100/home/steffen/etc/www/geovisualizer/download/installer</url>
-                                    <toDir>remote.dir</toDir>
+                                    <url>scp://serv-2100</url>
+                                    <toDir>home/steffen/etc/www/geovisualizer/download/installer</toDir>
                                 </configuration>
                             </execution>
                         </executions>
