@@ -12,6 +12,17 @@
 
 !include "launcher_config.nsi"
 
+LangString error1 ${LANG_GERMAN} "Java Virtual Machine konnte nicht bestimmt werden ($0).$\r$\n"
+LangString error1 ${LANG_ENGLISH} "Could not determine Java Virtual Machine architecture ($0).$\r$\n"
+LangString error2 ${LANG_GERMAN} "Versuche ${PRODUCT_NAME} zu starten.$\r$\n"
+LangString error2 ${LANG_ENGLISH} "Trying to start ${PRODUCT_NAME}.$\r$\n"
+LangString error3 ${LANG_GERMAN} "Wenn ${PRODUCT_NAME} nicht startet installieren Sie bitte ${PRODUCT_NAME} erneut, oder kontaktieren Sie Ihren System Administrator."
+LangString error3 ${LANG_ENGLISH} "If nothing happens please reinstall ${PRODUCT_NAME} or contact your System Administrator."
+LangString msg1 ${LANG_GERMAN} "$0 bit Java Virtual Machine erkannt.$\r$\n"
+LangString msg1 ${LANG_ENGLISH} "Detected $0 bit Java Virtual Machine.$\r$\n"
+LangString msg2 ${LANG_GERMAN} "Bitte installieren Sie die x64 Version von ${PRODUCT_NAME}, oder kontaktieren Sie Ihren System Administrator."
+LangString msg2 ${LANG_ENGLISH} "Please install x64 version of ${PRODUCT_NAME}, or contact your System Administrator."
+
 Section "1"
   StrCpy $BreakLoop ${FALSE}
   SetOutPath "$EXEDIR"
@@ -36,8 +47,8 @@ Section "1"
   DetectExecError:
     StrCpy $0 "exec error"
   DetectError:
-    MessageBox MB_OK "Could not determine JVM architecture ($0). Trying to start ${PRODUCT_NAME}. If nothing happens please install Java JRE 64bit."
-    Goto NotX64
+	MessageBox MB_OK "$(error1)$(error2)$(error3)"
+    Goto X64
   DoneDetect:
     ;
   IntCmp $0 64 X64 NotX64 NotX64
@@ -47,7 +58,7 @@ Section "1"
 	ExecWait $0
     Goto DoneX64
   NotX64:
-    MessageBox MB_OK "Detected ($0 bit) JVM. Please install x86 version of ${PRODUCT_NAME} or x64 bit version of Java JRE."
+    MessageBox MB_OK "$(msg1)$(msg2)"
   DoneX64:
     ;Proram terminated
 	
