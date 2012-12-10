@@ -14,10 +14,10 @@ Section ${PRODUCT_NAME} SEC01
   ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
   IntFmt $0 "0x%08X" $0
 ;write uninstall information to the registry
-  WriteRegStr HKLM "${ARP}" "DisplayName" "${PRODUCT_NAME} (remove only)"
+  WriteRegStr HKLM "${ARP}" "DisplayName" "${PRODUCT_NAME} ${UNINST_SUFFIX} (remove only)"
   WriteRegStr HKLM "${ARP}" "UninstallString" "$INSTDIR\Uninstall.exe"
   WriteRegDWORD HKLM "${ARP}" "EstimatedSize" "$0"
-  WriteRegStr HKLM "${ARP}" "DisplayIcon" "${ProductIcon}"
+  WriteRegStr HKLM "${ARP}" "DisplayIcon" "$INSTDIR\Uninstall.exe"
   WriteRegStr HKLM "${ARP}" "DisplayVersion" "${PROJECT_VERSION}"
   WriteRegStr HKLM "${ARP}" "Comments" "${ProductDescription}"
   WriteRegStr HKLM "${ARP}" "Publisher" "${PROJECT_ORGANIZATION_NAME}"
@@ -58,5 +58,5 @@ Section "Uninstall"
   RMDir  "$SMPROGRAMS\${PRODUCT_NAME}"
 ;Delete Uninstaller And Unistall Registry Entries
   DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}"
-  DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
+  DeleteRegKey HKEY_LOCAL_MACHINE ${ARP}
 SectionEnd

@@ -12,7 +12,7 @@ Name "${PRODUCT_NAME}"
 ;roundOutFile "${PRODUCT_NAME}.exe"
 Caption "${PRODUCT_NAME}"
 ;Folder selection page
-InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
+InstallDir "${PROGRAM_DIR}\${PRODUCT_NAME}"
 SetCompressor /SOLID lzma
 XPStyle on
 CRCCheck on
@@ -31,7 +31,7 @@ ShowInstDetails show
 ; Icon Settings
 Icon ${ProductIcon}
 !define MUI_ICON ${ProductIcon}
-;!define MUI_UNICON ${ProductIcon}
+!define MUI_UNICON ${ProductIcon}
 
 ;======================================================
 ; Version Tab information for Setup.exe properties
@@ -56,7 +56,7 @@ RequestExecutionLevel highest
 ; Variables
 !define MUI_FILE "${PROJECT_ARTIFACT_ID}.exe"
 !define JAR_DIR "..\..\..\target\nsis-make-assembly"
-!define ARP "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
+!define ARP "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}${UNINST_SUFFIX}"
 !define JRE_URL "$INSTDIR\${JRE_FILE}"
 !define JAVAEXE "javaw.exe"
 !define JRE_VERSION "7.0"
@@ -94,6 +94,7 @@ LangString StartmenuItems ${LANG_ENGLISH} "Startmenu items"
 ; Modern Interface Configuration
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP ${HeaderImage}
+!define MUI_HEADERIMAGE_RIGHT
 !define MUI_ABORTWARNING
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
