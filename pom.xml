@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <name>geovisualizer</name>
     <description>The GeoVisualizer was developed within the sudplan3D (http://sudplan.kl.dfki.de) component.</description>
-    <url>http://av.dfki.de</url>
+    <url>http://www.geovisualizer.de</url>
     
     <organization>
         <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
@@ -69,10 +69,10 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
+                <codebase>http://www.geovisualizer.de/jnlp</codebase>
                 <worldwind.scope>provided</worldwind.scope>
-                <webstart.dir>home/steffen/etc/www/geovisualizer/jnlp</webstart.dir>
-                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
+                <webstart.dir>project/av/etc/www/geovisualizer.de/jnlp</webstart.dir>
+                <site.url>scp://serv-2100/project/av/etc/www/geovisualizer.de</site.url>
             </properties>
         </profile>
     </profiles>  
