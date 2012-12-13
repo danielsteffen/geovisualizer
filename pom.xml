@@ -73,7 +73,6 @@
                 <worldwind.scope>compile</worldwind.scope>
                 <webstart.dir>project/av/etc/www/geovisualizer.de/jnlp</webstart.dir>
                 <site.url>scp://serv-2100/project/av/etc/www/geovisualizer.de</site.url>
-                <installer.dir>project/av/etc/www/geovisualizer.de/installer</installer.dir>
             </properties>
             <build>
                 <plugins>
@@ -172,7 +171,7 @@
                                     <includes>*.exe</includes>
                                     <excludes>geovisualizer.exe</excludes>
                                     <url>scp://serv-2100</url>
-                                    <toDir>${installer.dir}</toDir>
+                                    <toDir>project/av/etc/www/geovisualizer.de/installer</toDir>
                                 </configuration>
                             </execution>
                         </executions>
