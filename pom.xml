@@ -191,6 +191,77 @@
                 <webstart.dir>project/av/etc/www/geovisualizer.de/jnlp</webstart.dir>
                 <site.url>scp://serv-2100/project/av/etc/www/geovisualizer.de</site.url>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>webstart-maven-plugin</artifactId>
+                        <version>1.0-beta-3</version>
+                        <executions>
+                            <execution>
+                                <id>upload-webstart-jars</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>jnlp</goal>
+                                </goals>
+                            </execution>
+                        </executions>                
+                        <configuration>
+                            <jnlp>
+                                <outputFile>geovisualizer.jnlp</outputFile>
+                                <mainClass>${main-class}</mainClass>
+                            </jnlp>
+                            <sign>
+                                <keystore>/tmp/dfki.jks</keystore>
+                                <keypass>dFki+122</keypass>
+                                <storepass>dFki+122</storepass>
+                                <alias>dfki</alias>
+                                <validity>3650</validity>
+                                <dnameCn>Deutsches Forschungszentrum fur Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                                <dnameOu>AV</dnameOu>
+                                <dnameO>DFKI</dnameO>
+                                <dnameL>KL</dnameL>
+                                <dnameSt>RLP</dnameSt>
+                                <dnameC>DE</dnameC>
+                                <verify>true</verify>
+                                <keystoreConfig>
+                                    <delete>true</delete> <!-- delete the keystore -->
+                                    <gen>true</gen>       <!-- optional shortcut to generate the store. -->
+                                </keystoreConfig>
+                            </sign>
+                            <verbose>true</verbose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>wagon-maven-plugin</artifactId>
+                        <version>1.0-beta-4</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.wagon</groupId>
+                                <artifactId>wagon-ssh</artifactId>
+                                <version>2.2</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>upload-webstart-jars</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <serverId>geovisualizer.website</serverId>
+                            <url>scp://serv-2100/</url>
+                            <fromDir>${project.build.directory}/jnlp</fromDir>
+                            <includes>*</includes>
+                            <toDir>${webstart.dir}</toDir>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>  
     
@@ -284,7 +355,6 @@
                     <target>${compileSource}</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -298,47 +368,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>webstart-maven-plugin</artifactId>
-                <version>1.0-beta-3</version>
-                <executions>
-                    <execution>
-                        <id>upload-webstart-jars</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>jnlp</goal>
-                        </goals>
-                    </execution>
-                </executions>                
-                <configuration>
-                    <jnlp>
-                        <outputFile>geovisualizer.jnlp</outputFile>
-                        <mainClass>${main-class}</mainClass>
-                    </jnlp>
-                    <sign>
-                        <keystore>/tmp/dfki.jks</keystore>
-                        <keypass>dFki+122</keypass>
-                        <storepass>dFki+122</storepass>
-                        <alias>dfki</alias>
-                        <validity>3650</validity>
-                        <dnameCn>Deutsches Forschungszentrum fur Künstliche Intelligenz (DFKI) GmbH</dnameCn>
-                        <dnameOu>AV</dnameOu>
-                        <dnameO>DFKI</dnameO>
-                        <dnameL>KL</dnameL>
-                        <dnameSt>RLP</dnameSt>
-                        <dnameC>DE</dnameC>
-                        <verify>true</verify>
-                        <keystoreConfig>
-                            <delete>true</delete> <!-- delete the keystore -->
-                            <gen>true</gen>       <!-- optional shortcut to generate the store. -->
-                        </keystoreConfig>
-                    </sign>
-                    <verbose>true</verbose>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -352,7 +381,6 @@
                     </execution>
                 </executions>
             </plugin>
-            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -370,7 +398,6 @@
                     </execution>
                 </executions>                
             </plugin>
-            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -425,36 +452,6 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
-            
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>1.0-beta-4</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-ssh</artifactId>
-                        <version>2.2</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>upload-webstart-jars</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>upload</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <serverId>geovisualizer.website</serverId>
-                    <url>scp://serv-2100/</url>
-                    <fromDir>${project.build.directory}/jnlp</fromDir>
-                    <includes>*</includes>
-                    <toDir>${webstart.dir}</toDir>
-                </configuration>
-            </plugin>
-            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -526,11 +523,11 @@
     <scm>
         <connection>scm:git:git://serv-2100/geovisualizer/geovisualizer-app.git</connection>
         <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer/geovisualizer-app.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
   
-  <issueManagement>
-    <system>Bugzilla</system>
-    <url>https://av.kl.dfke.de/bugzilla</url>
-  </issueManagement>    
+    <issueManagement>
+        <system>Bugzilla</system>
+        <url>https://av.kl.dfke.de/bugzilla</url>
+    </issueManagement>    
 </project>
