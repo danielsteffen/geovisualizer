@@ -428,7 +428,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         toolbar.add(btnTakeScreenShot);
         toolbar.add(jSeparator4);
 
-        btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/application-exit-3.png"))); // NOI18N
+        btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/application-exit-5.png"))); // NOI18N
         btnExit.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnExit.text")); // NOI18N
         btnExit.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnExit.toolTipText")); // NOI18N
         btnExit.setFocusable(false);
@@ -466,7 +466,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         );
         pMainLayout.setVerticalGroup(
             pMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 712, Short.MAX_VALUE)
         );
 
         getContentPane().add(pMain, java.awt.BorderLayout.CENTER);
