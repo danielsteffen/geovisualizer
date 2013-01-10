@@ -864,7 +864,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private void miGeoVisualizerHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGeoVisualizerHelpActionPerformed
         try {
             Desktop desktop = Desktop.getDesktop();
-            URI uri = URI.create("http://www.dfki.uni-kl.de/~steffen/geovisualizer");
+            URI uri = URI.create("http://www.geovisualizer.de");
             desktop.browse(uri);
         } catch (IOException ex) {
             String msg = ex.toString();
