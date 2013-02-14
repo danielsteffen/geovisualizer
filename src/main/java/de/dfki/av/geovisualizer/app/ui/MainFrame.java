@@ -507,6 +507,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mFile.add(miAddShapeZip);
         mFile.add(jSeparator2);
 
+        miExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/application-exit-5.png"))); // NOI18N
         miExit.setText(bundle.getString("MainFrame.miExit.text")); // NOI18N
         mFile.add(miExit);
 
