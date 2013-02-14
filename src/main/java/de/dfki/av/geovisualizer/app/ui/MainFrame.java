@@ -631,6 +631,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         });
         mHelp.add(miGeoVisualizerHelp);
 
+        miAbout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/help-about-3.png"))); // NOI18N
         miAbout.setText(bundle.getString("MainFrame.miAbout.text")); // NOI18N
         miAbout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
