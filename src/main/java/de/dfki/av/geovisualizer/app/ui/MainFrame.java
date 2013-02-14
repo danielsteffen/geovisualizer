@@ -539,6 +539,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mNavi.add(jSeparator5);
 
         miGoto.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        miGoto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/go-jump-4.png"))); // NOI18N
         miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
         mNavi.add(miGoto);
 
