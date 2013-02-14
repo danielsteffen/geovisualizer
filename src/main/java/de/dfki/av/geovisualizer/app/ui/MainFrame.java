@@ -525,6 +525,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mEdit.add(miRemoveAllLayer);
         mEdit.add(jSeparator1);
 
+        miTakeScreenshot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/devices/camera-photo-5.png"))); // NOI18N
         miTakeScreenshot.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miTakeScreenshot.text")); // NOI18N
         mEdit.add(miTakeScreenshot);
 
