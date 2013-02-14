@@ -395,7 +395,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         toolbar.setToolTipText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.toolTipText")); // NOI18N
         toolbar.setName(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.toolbar.name")); // NOI18N
 
-        btnGoHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/actions/go-home-5.png"))); // NOI18N
+        btnGoHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/24x24/apps/earth.png"))); // NOI18N
         btnGoHome.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.btnGoHome.text")); // NOI18N
         btnGoHome.setFocusable(false);
         btnGoHome.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
