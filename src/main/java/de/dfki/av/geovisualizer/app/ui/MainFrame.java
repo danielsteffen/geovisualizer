@@ -954,11 +954,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
      */
     private static void printSystemSettings(){
         String javaClassPath = System.getProperty("java.class.path");
-        log.info("java.class.path: {}", javaClassPath);
+        log.debug("java.class.path: {}", javaClassPath);
         String javaExtDirs = System.getProperty("java.ext.dirs");
-        log.info("java.ext.dirs: {}", javaExtDirs);
+        log.debug("java.ext.dirs: {}", javaExtDirs);
         String classpath = System.getenv("CLASSPATH");
-        log.info("CLASSPATH: {}", classpath);
+        log.debug("CLASSPATH: {}", classpath);
     }
 
     /**
