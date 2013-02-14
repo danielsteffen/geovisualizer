@@ -466,7 +466,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         );
         pMainLayout.setVerticalGroup(
             pMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 712, Short.MAX_VALUE)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         getContentPane().add(pMain, java.awt.BorderLayout.CENTER);
@@ -581,6 +581,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mTools.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mTools.text")); // NOI18N
 
         miWizard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK));
+        miWizard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/tools-wizard-3.png"))); // NOI18N
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
         mTools.add(miWizard);
 
