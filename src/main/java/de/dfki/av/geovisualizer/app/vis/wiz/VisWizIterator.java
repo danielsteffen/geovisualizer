@@ -1,9 +1,9 @@
 /*
- *  VisWizIterator.java 
+ * VisWizIterator.java 
  *
- *  Created by DFKI AV on 01.01.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 01.01.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis.wiz;
 
@@ -144,18 +144,4 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
     @Override
     public void removeChangeListener(ChangeListener l) {
     }
-    // If something changes dynamically (besides moving between panels), e.g.
-    // the number of panels changes in response to user input, then uncomment
-    // the following and call when needed: fireChangeEvent();
-    /*
-     * private Set<ChangeListener> listeners = new HashSet<ChangeListener>(1);
-     * // or can use ChangeSupport in NB 6.0 public final void
-     * addChangeListener(ChangeListener l) { synchronized (listeners) {
-     * listeners.add(l); } } public final void
-     * removeChangeListener(ChangeListener l) { synchronized (listeners) {
-     * listeners.remove(l); } } protected final void fireChangeEvent() {
-     * Iterator<ChangeListener> it; synchronized (listeners) { it = new
-     * HashSet<ChangeListener>(listeners).iterator(); } ChangeEvent ev = new
-     * ChangeEvent(this); while (it.hasNext()) { it.next().stateChanged(ev); } }
-     */
 }

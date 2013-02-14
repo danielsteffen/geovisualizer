@@ -1,9 +1,9 @@
 /*
- *  ParameterMappingPanel.java 
+ * ParameterMappingPanel.java 
  *
- *  Created by DFKI AV on 01.01.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 01.01.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis.wiz;
 
@@ -16,18 +16,22 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author Daniel Steffen <daniel.steffen at dfki.de>
+ */
 public final class ParameterMappingPanel extends JPanel {
 
     /*
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(ParameterMappingPanel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterMappingPanel.class);
     /**
      * The {@link IVisAlgorithm} used for the parameter mapping.
      */
     private IVisAlgorithm visAlgorithm;
     /**
-     * The attriubtes set.
+     * The attributes array.
      */
     private String[] attributes;
 
@@ -82,7 +86,7 @@ public final class ParameterMappingPanel extends JPanel {
                 attributes[j] = visParameterPanel.getSelectedAttribute();
                 j++;
             } else {
-                log.debug("Component {} not of type {}.", c.getClass().getSimpleName(),
+                LOG.debug("Component {} not of type {}.", c.getClass().getSimpleName(),
                         VisParameterPanel.class.getSimpleName());
             }
         }

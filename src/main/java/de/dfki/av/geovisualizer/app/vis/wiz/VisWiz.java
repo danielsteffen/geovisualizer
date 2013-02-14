@@ -1,9 +1,9 @@
 /*
- *  VisWiz.java 
+ * VisWiz.java 
  *
- *  Created by DFKI AV on 15.09.2011.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 15.09.2011.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis.wiz;
 
@@ -14,7 +14,6 @@ import de.dfki.av.geovisualizer.core.VisWorker;
 import de.dfki.av.geovisualizer.core.io.IOUtils;
 import gov.nasa.worldwind.WorldWindow;
 import java.awt.Dialog;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +34,7 @@ public final class VisWiz {
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(VisWiz.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VisWiz.class);
 
     /**
      * Starts the visualization wizard VisWiz. After finishing the visualization
@@ -91,7 +90,7 @@ public final class VisWiz {
 
         if (worldWindow == null) {
             String msg = "WorldWindow == null";
-            log.error(msg);
+            LOG.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
@@ -111,7 +110,7 @@ public final class VisWiz {
             // which results in a NullPointerException.
             Object source = null;
             if (data instanceof InputStream) {
-                log.debug("Data instance of InputStream.");
+                LOG.debug("Data instance of InputStream.");
                 InputStream is = null;
                 try {
                     is = (InputStream) data;
@@ -119,12 +118,12 @@ public final class VisWiz {
                     file.deleteOnExit();
                     source = file.toURI();
                 } catch (IOException ex) {
-                    log.error(ex.toString());
+                    LOG.error(ex.toString());
                 } finally {
                     try {
                         is.close();
                     } catch (IOException ex) {
-                        log.error(ex.toString());
+                        LOG.error(ex.toString());
                     }
                 }
             } else {
@@ -132,7 +131,7 @@ public final class VisWiz {
             }
             // Check whether the download was successful.
             if (source == null) {
-                log.error("source == null");
+                LOG.error("source == null");
                 return visConfig;
             }
             // ...ends here the fake.

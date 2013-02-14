@@ -1,9 +1,9 @@
 /*
- *  AttributeSelectionPanel.java 
+ * AttributeSelectionPanel.java 
  *
- *  Created by DFKI AV on 01.01.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 01.01.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis.wiz;
 
@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 public final class AttributeSelectionPanel extends JPanel {
 
     /**
-     * 
+     * The logger.
      */
-    private final static Logger log = LoggerFactory.getLogger(AttributeSelectionPanel.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AttributeSelectionPanel.class);
     /**
      * 
      */
@@ -57,6 +57,8 @@ public final class AttributeSelectionPanel extends JPanel {
         this.table = new JTable(tableModel);
         this.table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         this.table.setFillsViewportHeight(true);
+        this.table.setShowHorizontalLines(true);
+        this.table.setShowVerticalLines(false);
 
         // Set constant size of first column
         TableColumn col = this.table.getColumnModel().getColumn(0);
@@ -65,9 +67,9 @@ public final class AttributeSelectionPanel extends JPanel {
         col.setPreferredWidth(60);
         // Set constant size of last column
         col = this.table.getColumnModel().getColumn(2);
-        col.setMinWidth(60);
-        col.setMaxWidth(60);
-        col.setPreferredWidth(60);
+        col.setMinWidth(90);
+        col.setMaxWidth(90);
+        col.setPreferredWidth(90);
 
         this.spAttributeTable = new JScrollPane(this.table);
         jPanel2.add(this.spAttributeTable);
@@ -184,7 +186,7 @@ public final class AttributeSelectionPanel extends JPanel {
                 attribute[0] = (String) tableModel.getValueAt(rowId, 1);
                 attribute[1] = (String) tableModel.getValueAt(rowId, 2);
                 selectedAttr.add(attribute);
-                log.debug("Selected: {}", attribute);
+                LOG.debug("Selected: {}", attribute);
             }
         }
 

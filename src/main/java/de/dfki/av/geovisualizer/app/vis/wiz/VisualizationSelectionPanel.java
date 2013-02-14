@@ -1,9 +1,9 @@
 /*
- *  VisualizationSelectionPanel.java 
+ * VisualizationSelectionPanel.java 
  *
- *  Created by DFKI AV on 01.01.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 01.01.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis.wiz;
 
@@ -26,7 +26,7 @@ public final class VisualizationSelectionPanel extends JPanel {
     /*
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(VisualizationSelectionPanel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VisualizationSelectionPanel.class);
     /**
      * The selected {@link IVisAlgorithm}. Initial set to {@code null}.
      */
@@ -44,7 +44,7 @@ public final class VisualizationSelectionPanel extends JPanel {
             String name = iter.next();
             final IVisAlgorithm algo = VisAlgorithmFactory.newInstance(name);
             if (algo != null) {
-                log.debug("Adding visualization technique: {}", algo.getName());
+                LOG.debug("Adding visualization technique: {}", algo.getName());
                 JButton label = new JButton(algo.getIcon());
                 label.setFocusable(true);
                 label.addFocusListener(new FocusListener() {

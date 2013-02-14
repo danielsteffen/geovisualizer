@@ -1,9 +1,9 @@
 /*
- *  DataSourceSelectionPanel.java 
+ * DataSourceSelectionPanel.java 
  *
- *  Created by DFKI AV on 01.01.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 01.01.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis.wiz;
 
@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 public final class DataSourceSelectionPanel extends JPanel {
 
     /**
-     *
+     * The logger.
      */
-    private final static Logger log = LoggerFactory.getLogger(DataSourceSelectionController.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DataSourceSelectionController.class);
     /**
      *
      */
@@ -145,8 +145,10 @@ public final class DataSourceSelectionPanel extends JPanel {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         jRadioButton1.setSelected(true);
         JFileChooser jfc = new JFileChooser();
-        jfc.addChoosableFileFilter(new FileNameExtensionFilter("ESRI Shapfile (*.shp)", "shp", "Shp", "SHP"));
-        jfc.addChoosableFileFilter(new FileNameExtensionFilter("Zip file (*.zip)", "zip", "ZIP", "Zip"));
+        FileNameExtensionFilter shp = new FileNameExtensionFilter("ESRI Shapfile (*.shp)", "shp", "Shp", "SHP");
+        FileNameExtensionFilter zip = new FileNameExtensionFilter("Zip file (*.zip)", "zip", "ZIP", "Zip");
+        jfc.addChoosableFileFilter(shp);
+        jfc.addChoosableFileFilter(zip);
         XMLConfiguration xmlConfig = Configuration.getXMLConfiguration();
         String path = xmlConfig.getString("geovisualizer.working.dir");
         File dir;
@@ -165,8 +167,8 @@ public final class DataSourceSelectionPanel extends JPanel {
                 file = f;
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("No shp file selected.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No shp file selected.");
             }
         }
         dir = jfc.getCurrentDirectory();
@@ -195,7 +197,7 @@ public final class DataSourceSelectionPanel extends JPanel {
             try {
                 this.url = new URL(this.jTextField2.getText());
             } catch (MalformedURLException ex) {
-                log.error(ex.toString());
+                LOG.error(ex.toString());
             }
             return this.url;
         }
