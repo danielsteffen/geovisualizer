@@ -543,6 +543,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miGoto.setText(bundle.getString("MainFrame.miGoto.text")); // NOI18N
         mNavi.add(miGoto);
 
+        miFullSphere.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/apps/earth.png"))); // NOI18N
         miFullSphere.setText(bundle.getString("MainFrame.miFullSphere.text")); // NOI18N
         mNavi.add(miFullSphere);
         mNavi.add(jSeparator3);
