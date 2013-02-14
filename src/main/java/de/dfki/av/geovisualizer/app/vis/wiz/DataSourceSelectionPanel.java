@@ -87,7 +87,7 @@ public final class DataSourceSelectionPanel extends JPanel {
 
         jTextField2.setText(org.openide.util.NbBundle.getMessage(DataSourceSelectionPanel.class, "DataSourceSelectionPanel.jTextField2.text")); // NOI18N
         jTextField2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
                 changeRadioButton(evt);
             }
         });
