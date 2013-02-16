@@ -8,24 +8,23 @@
 		 
 Welcome to GeoVisualizer
 
-  Welcome to the GeoVisualizer project. We hope you enjoy your time on this 
-project site. The GeoVisualizer application was one challenging part of the 
-European project {{{http://www.sudplan.eu}SUDPLAN}}. The GeoVisualizer 
-application provides the opportunity to visualizer different kinds of data 
-and simulation results in a geographical three-dimensional context. The 
-datatypes which are handled by the GeoVisualizer reach from 1-D 
-data, e.g. georeferenced measurements of precipitation, to temporal 3-D 
-datasets, e.g. 3-D air pollution time series. The GeoVisualizer
-is based on NASA's {{{http://goworldwind.org}World Wind SDK}}. Currently, we are
- using a customized version of version 1.4.0 of the World Wind SDK.
+  Welcome to the GeoVisualizer project. The GeoVisualizer application provides 
+the opportunity to visualizer different kinds of data and simulation results in 
+a geographical three-dimensional context. The data types which are handled by the 
+GeoVisualizer reach from 1-D data, e.g. georeferenced measurements of 
+precipitation, to temporal 3-D datasets, e.g. 3-D air pollution time series. 
+The GeoVisualizer is based on NASA's {{{http://goworldwind.org}World Wind SDK}}. 
+Currently, we are using a customized version of the World Wind SDK 1.4.0.
 
-[images/Sudplan3D-v0704-1.jpg] The user interface of the GeoVisualizer 
-application showing air quality measurements for the city of Stockholm.  
+  The GeoVisualizer application includes different viewing modes, e.g. for 
+large screens, stereoscopic displays, to enable the user to utilize such 
+hardware and reach a higher level of immersion into, and understanding of, the 
+data. To have a look at the GeoVisualizer application head for the Demo section.
+
+[images/geovisualizer_001.jpg] The user interface of the GeoVisualizer 
+application showing air quality measurements.  
   
-  The GeoVisualizer application will, at a later stage, also include different 
-viewing modes, e.g. for large screens, stereoscopic displays, to enable the 
-user to utilise such hardware and reach a higher level of immersion into, 
-and understanding of, the data.
+Acknowledgment 
 
-  To have a look at the GeoVisualizer application head for the Demo section. 
-Here you will find a Java Web Start application.
+  The GeoVisualizer application was one challenging part of the European project 
+{{{http://www.sudplan.eu}SUDPLAN}}.

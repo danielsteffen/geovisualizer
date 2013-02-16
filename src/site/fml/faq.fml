@@ -24,32 +24,32 @@
       </answer>
     </faq>
 
-    <faq id="where-are-dataset">
+    <!--faq id="where-are-dataset">
       <question>
         Where can I find some data sets to test the GeoVisualizer application?
       </question>
       <answer>
         <p>Some data sets for testing the GeoVisualizer application can be found <a href="./demo.html">here</a>.</p>
       </answer>
-    </faq>
+    </faq-->
 	
-    <faq id="shapezip-not-working">
+    <!--faq id="shapezip-not-working">
       <question>
         I am trying to load a zipped shapefile. However, my zipped shape files can not be processed. What can I do?
       </question>
       <answer>
         <p>Currently, we assume that the name of the zip file and the included shapefile to be equal. Simply rename the zip file to the name of the included shapefile.</p>
       </answer>
-    </faq>
+    </faq-->
     
-    <faq id="shape-not-working">
+    <!--faq id="shape-not-working">
       <question>
         I am trying to load a zipped or local shapefile. The application crashes (progress bar frozen) and nothing is displayed?
       </question>
       <answer>
         <p>Check the names of the attributes in your shapefile. Firstly, we recommend not to use any attribute more than once. Secondly, you should avoid using any special characters.</p>
       </answer>
-    </faq>
+    </faq-->
     
   </part>
 

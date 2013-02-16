@@ -2,9 +2,9 @@
 	<publishDate position="navigation-bottom"/>
 	<version position="left"/>
     <bannerLeft>
-        <name>GeoVisualizer</name>
-        <src>images/GeoVisualizer.png</src>
-        <href>http://www.geovisualizer.de</href>
+        <name> </name>
+        <!--src>images/avdfkilogo.png</src>
+        <href>http://www.geovisualizer.de</href-->
     </bannerLeft>
     <bannerRight>
         <name>Augemented Vision</name>
@@ -15,10 +15,10 @@
         <menu name="GeoVisualizer">
             <item name="About" href="index.html"/>
             <item name="Demo" href="demo.html"/>
-            <item name="Releases" href="releases.html"/>
-	    <item name="Videos" href="videos.html"/>
-	    <item name="Snapshots" href="snapshots.html"/>
-	    <item name="Developer" href="developer.html"/>
+            <!--item name="Releases" href="releases.html"/-->
+	    <!--item name="Videos" href="videos.html"/-->
+	    <!--item name="Snapshots" href="snapshots.html"/-->
+	    <!--item name="Developer" href="developer.html"/-->
 	    <item name="FAQ" href="faq.html"/>
     	</menu>
         <menu ref="reports"/>

@@ -8,8 +8,7 @@
 		 
 GeoVisualizer Java Web Start Application
 
-[images/Sudplan3D-v0704-2.jpg] The demo of the GeoVisualizer application
- component showing results of S�dermalm (Stockholm).  
+[images/geovisualizer_002.jpg] The demo application of GeoVisualizer.  
 
   The following Java Web Start application demonstrates the GeoVisualizer.
   
@@ -20,21 +19,13 @@ Shortcuts
   For the quick interaction with the demo application you can use the following short cuts.
   
 *----------------------+---------------------------------------+
-| <ALT> + <R>          | Remove all layers                     |
-*----------------------+---------------------------------------+
-| <ALT> + <Q>          | Quit GeoVisualizer                    |
+| <F1>                 | Help                                  |
 *----------------------+---------------------------------------+
 | <ALT> + <W>          | Start VizWiz                          |
 *----------------------+---------------------------------------+
 | <CTRL> + <G>         | Dialog to enter lat/lon coordinates   |
 *----------------------+---------------------------------------+
-| <CTRL> + <S>         | Goto Stockholm                        |
-*----------------------+---------------------------------------+
-| <CTRL> + <W>         | Goto Wuppertal                        |
-*----------------------+---------------------------------------+
-| <CTRL> + <P>         | Goto Praque                           |
-*----------------------+---------------------------------------+
-| <CTRL> + <L>         | Goto Linz                             |
+| <CTRL> + <O>         | Open...                               |
 *----------------------+---------------------------------------+
 | <CTRL> + <K>         | Goto Kaiserslautern                   |
 *----------------------+---------------------------------------+
@@ -42,33 +33,7 @@ Shortcuts
 *----------------------+---------------------------------------+
 <<Key / key combinations and what they do>>
 
-  In order to use the side-by-side stereoscopic fullscreen mode you can use the following short cuts. 
-
-*----------------------+---------------------------------------+
-| <CTRL> + <ALT> + <S> | Switch to side-by-side stereo mode    |
-*----------------------+---------------------------------------+
-| <ESC>                | Leave side-by-side stereo mode        |
-*----------------------+---------------------------------------+
-| <e>  / <E>           | In-/Decrease eye separation           |
-*----------------------+---------------------------------------+
-| <SPACE>              | Swap left and right eye               |
-*----------------------+---------------------------------------+
-<<Key / key combinations for side-by-side stereo>>
-
-  Additionally, you can have a look at the performance monitoring panel (WWJ Dashboard). Simply press <CTRL> + <SHIFT> + <ALT> while clicking the left mouse button into the world wind canvas.
-
-
-Test Data Sets
-
-  The following lists some data sets for testing the GeoVisualizer component:
-  
---------------------------------------------
-http://sudplan.kl.dfki.de/testdata/AirQualityRooftop.zip
-http://sudplan.kl.dfki.de/testdata/AirQualityStreetLevel.zip
-http://sudplan.kl.dfki.de/testdata/Buildings.zip
-http://sudplan.kl.dfki.de/testdata/rooftop3.tiff
-http://sudplan.kl.dfki.de/testdata/ts_nox_2m.zip
---------------------------------------------
-
-  You can copy and paste the above listed URLs or download the datasets to your local storage.
-  
+  Additionally, you can have a look at the performance monitoring panel 
+(WWJ Dashboard). Simply press <CTRL> + <SHIFT> + <ALT> while clicking the 
+left mouse button into the world wind canvas.
+ 
