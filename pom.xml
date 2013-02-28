@@ -64,7 +64,7 @@
             </properties>
         </profile>
         <profile>
-            <id>geovisualizer-app</id>
+            <id>geovisualizer-app-windows</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -95,7 +95,6 @@
                                     <useWildcardClassPath>true</useWildcardClassPath>
                                     <platforms>
                                         <platform>windows</platform>
-                                        <platform>unix</platform>
                                     </platforms>
                                     <programs>
                                         <program>
@@ -112,26 +111,26 @@
                         <version>2.4</version>
                         <executions>
                             <execution>
-                                <id>x64</id>
+                                <id>windows-x64</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>src/installer/bin-x64.xml</descriptor>
+                                        <descriptor>src/installer/windows-x64.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>x86</id>
+                                <id>windows-x86</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>src/installer/bin-x86.xml</descriptor>
+                                        <descriptor>src/installer/windows-x86.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
