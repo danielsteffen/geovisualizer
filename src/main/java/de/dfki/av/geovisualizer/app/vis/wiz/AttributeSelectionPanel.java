@@ -228,7 +228,7 @@ public final class AttributeSelectionPanel extends JPanel {
 
         @Override
         protected ISource doInBackground() throws Exception {
-            ISource source = IOUtils.Read(dataSource);
+            ISource source = IOUtils.read(dataSource);
             return source;
         }
 

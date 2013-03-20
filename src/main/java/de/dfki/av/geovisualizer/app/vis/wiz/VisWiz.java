@@ -116,7 +116,7 @@ public final class VisWiz {
                 InputStream is = null;
                 try {
                     is = (InputStream) data;
-                    File file = IOUtils.DownloadToTempFile(is);
+                    File file = IOUtils.downloadToTempFile(is);
                     file.deleteOnExit();
                     source = file.toURI();
                 } catch (IOException ex) {

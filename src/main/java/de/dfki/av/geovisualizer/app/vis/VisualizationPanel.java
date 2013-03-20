@@ -387,11 +387,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Run the {@link VisWiz} and add its result to the
      * {@link WorldWindowGLCanvas}. Starts the wizard with the
      * {@link AttributeSelectionPanel} in case the {@code data} is a valid data
-     * type (see {@link IOUtils#Read(java.lang.Object)
+     * type (see {@link IOUtils#read(java.lang.Object)
      * }) or not {code null}.
      *
      * @param data the pre-selected data source to visualize.
-     * @see IOUtils#Read(java.lang.Object)
+     * @see IOUtils#read(java.lang.Object)
      */
     public void runVisWiz(Object data) {
         VisWiz.execute(wwd, this, data);
