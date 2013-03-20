@@ -179,7 +179,6 @@ public final class DataSourceSelectionPanel extends JPanel {
     private void changeRadioButton(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_changeRadioButton
         jRadioButton2.setSelected(true);
     }//GEN-LAST:event_changeRadioButton
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;

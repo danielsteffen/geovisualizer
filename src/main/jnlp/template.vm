@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+" codebase="$codebase" href="$outputFile">
- <information>
-    <title>GeoVisualizer</title>
-    <vendor>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</vendor>
-    <homepage href="http://www.geovisualizer.de"/>
-    <description kind="one-line">GeoVisualizer</description>
-    <description kind="tooltip">GeoVisualizer</description>
-    <description kind="short">GeoVisualizer</description>
-    <icon kind="default" href="button.png"/>
-    <shortcut online="true">
-      <desktop/>
-      <menu submenu="GeoVisualizer"/>
-    </shortcut>
-    <offline-allowed/>
- </information>
- <security>
- <all-permissions/>
- </security>
- <resources>
-    <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="1024m"
-              max-heap-size="1024m"/>
-    <property name="jnlp.versionEnabled" value="true"/>
-    <property name="sun.java2d.noddraw" value="true"/>
-    $dependencies
-	<extension name="worldwindx" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/worldwindx.jnlp"/>
-	<extension name="gdal" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/gdal.jnlp"/>
- </resources>
- <application-desc main-class="$mainClass">
- </application-desc>
+    <information>
+        <title>GeoVisualizer</title>
+        <vendor>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</vendor>
+        <homepage href="http://www.geovisualizer.de"/>
+        <description kind="one-line">GeoVisualizer</description>
+        <description kind="tooltip">GeoVisualizer</description>
+        <description kind="short">GeoVisualizer</description>
+        <icon kind="default" href="button.png"/>
+        <shortcut online="true">
+            <desktop/>
+            <menu submenu="GeoVisualizer"/>
+        </shortcut>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="1024m"
+          max-heap-size="1024m"/>
+        <property name="jnlp.versionEnabled" value="true"/>
+        <property name="sun.java2d.noddraw" value="true"/>
+        $dependencies
+        <extension name="worldwindx" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/worldwindx.jnlp"/>
+        <extension name="gdal" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/gdal.jnlp"/>
+    </resources>
+    <application-desc main-class="$mainClass">
+    </application-desc>
 </jnlp>

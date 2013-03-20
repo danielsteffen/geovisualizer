@@ -55,16 +55,20 @@ public class ParameterMappingController implements WizardDescriptor.Panel {
 
     @Override
     public void readSettings(Object settings) {
-        WizardDescriptor wiz = (WizardDescriptor) settings;
-        IVisAlgorithm algo = (IVisAlgorithm) wiz.getProperty("SelectedVisualization");
-        List<String[]> attributes = (List<String[]>) wiz.getProperty("DataAttributes");
-        component.setSelectedVisualization(algo, attributes);
+        if (component != null) {
+            WizardDescriptor wiz = (WizardDescriptor) settings;
+            IVisAlgorithm algo = (IVisAlgorithm) wiz.getProperty("SelectedVisualization");
+            List<String[]> attributes = (List<String[]>) wiz.getProperty("DataAttributes");
+            component.setSelectedVisualization(algo, attributes);
+        }
     }
 
     @Override
     public void storeSettings(Object settings) {
-        WizardDescriptor wiz = (WizardDescriptor) settings;
-        String[] attributes = component.getAttributes();
-        wiz.putProperty("SelectedDataAttributes", attributes);
+        if (component != null) {
+            WizardDescriptor wiz = (WizardDescriptor) settings;
+            String[] attributes = component.getAttributes();
+            wiz.putProperty("SelectedDataAttributes", attributes);
+        }
     }
 }

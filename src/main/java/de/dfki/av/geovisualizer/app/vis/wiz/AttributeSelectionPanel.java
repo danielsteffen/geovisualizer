@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class AttributeSelectionPanel extends JPanel {
@@ -35,15 +35,15 @@ public final class AttributeSelectionPanel extends JPanel {
      */
     private final static Logger LOG = LoggerFactory.getLogger(AttributeSelectionPanel.class);
     /**
-     * 
+     *
      */
     private AttributeTableModel tableModel;
     /**
-     * 
+     *
      */
     private JTable table;
     /**
-     * 
+     *
      */
     private JScrollPane spAttributeTable;
 
@@ -178,7 +178,7 @@ public final class AttributeSelectionPanel extends JPanel {
      * @return the selected attributes to return.
      */
     public List<String[]> getSelectedAttributes() {
-        ArrayList<String[]> selectedAttr = new ArrayList<String[]>();
+        ArrayList<String[]> selectedAttr = new ArrayList<>();
         for (int rowId = 0; rowId < tableModel.getRowCount(); rowId++) {
             Boolean isSelected = (Boolean) tableModel.getValueAt(rowId, 0);
             if (isSelected) {
@@ -194,8 +194,8 @@ public final class AttributeSelectionPanel extends JPanel {
     }
 
     /**
-     * 
-     * @param data 
+     *
+     * @param data
      */
     public void setSelectedDataSource(Object data) {
         AttributeTableFiller worker = new AttributeTableFiller(data);
@@ -219,8 +219,8 @@ public final class AttributeSelectionPanel extends JPanel {
         private Object dataSource;
 
         /**
-         * 
-         * @param data 
+         *
+         * @param data
          */
         public AttributeTableFiller(Object data) {
             this.dataSource = data;

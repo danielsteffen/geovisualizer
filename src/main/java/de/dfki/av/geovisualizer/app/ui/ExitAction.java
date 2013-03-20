@@ -10,6 +10,7 @@ package de.dfki.av.geovisualizer.app.ui;
 import gov.nasa.worldwind.WorldWindow;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import org.netbeans.api.annotations.common.SuppressWarnings;
 
 /**
  * Action to shutdown the GeoVisualizer application.
@@ -29,15 +30,16 @@ public class ExitAction extends AbstractAction {
      * the application will exit without shutting down the
      * {@code gov.nasa.worldwind.WorldWindow}
      *
-     * @param worldWindow the {@code gov.nasa.worldwind.WorldWindow}.
+     * @param window the {@code gov.nasa.worldwind.WorldWindow}.
      */
-    public ExitAction(WorldWindow worldWindow) {
+    public ExitAction(final WorldWindow window) {
         super("Exit GeoVisualizer");
-        this.worldWindow = worldWindow;
+        this.worldWindow = window;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    @SuppressWarnings("DM_EXIT")
+    public final void actionPerformed(final ActionEvent e) {
         if (worldWindow != null) {
             this.worldWindow.shutdown();
         }

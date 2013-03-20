@@ -48,7 +48,6 @@ public final class VisualizationSelectionPanel extends JPanel {
                 JButton label = new JButton(algo.getIcon());
                 label.setFocusable(true);
                 label.addFocusListener(new FocusListener() {
-
                     @Override
                     public void focusGained(FocusEvent fe) {
                         jTextField1.setText(algo.getName());

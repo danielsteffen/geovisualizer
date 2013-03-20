@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisParameterPanel extends javax.swing.JPanel implements ActionListener {
@@ -44,7 +44,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     public VisParameterPanel(final IVisParameter param, final List<String[]> dataAttributes) {
         this.visParameter = param;
         this.transferFunctions = new ArrayList<ITransferFunction>();
-        
+
         initComponents();
 
         //Create a panel for each available transfer function.
@@ -57,7 +57,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
                 if (tfpanel != null) {
                     boolean attributesAdded = tfpanel.setAttributes(dataAttributes);
                     if (attributesAdded) {
-                        
+
                         if (isFirst) {
                             visParameter.setTransferFunction(function);
                             jPanel1.removeAll();
@@ -68,8 +68,8 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
                             }
                             this.updateUI();
                             isFirst = false;
-                        } 
-                        
+                        }
+
                         transferFunctions.add(function);
                         jComboBox1.addItem(function.getName());
                     }
@@ -123,7 +123,6 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
                 .addGap(10, 10, 10))
         );
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
@@ -139,7 +138,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
         ITransferFunction f = transferFunctions.get(i);
         return f.getPanel().getSelectedAttribute();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -148,7 +147,7 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
             int i = jComboBox.getSelectedIndex();
             ITransferFunction f = transferFunctions.get(i);
             visParameter.setTransferFunction(f);
-            
+
             jPanel1.removeAll();
 
             if (f.getPanel() != null) {

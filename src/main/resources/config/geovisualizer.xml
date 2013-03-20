@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <configuration>
-  <version>1.3</version>
-  <geovisualizer>
-    <icon>
-      <path>icons/GeoVisualizer.png</path>
-    </icon>
-    <customElevationModels>
-        <!-- comma separated list of local custom elevations as tif-->
-       <path/>
-    </customElevationModels>
-  </geovisualizer>
+    <version>1.3</version>
+    <geovisualizer>
+        <icon>
+            <path>icons/GeoVisualizer.png</path>
+        </icon>
+        <customElevationModels>
+            <!-- comma separated list of local custom elevations as tif-->
+            <path/>
+        </customElevationModels>
+    </geovisualizer>
 </configuration>

@@ -1,6 +1,6 @@
 <project name="GeoVisualizer">
-	<publishDate position="navigation-bottom"/>
-	<version position="left"/>
+    <publishDate position="navigation-bottom"/>
+    <version position="left"/>
     <bannerLeft>
         <name> </name>
         <!--src>images/avdfkilogo.png</src>
@@ -16,11 +16,11 @@
             <item name="About" href="index.html"/>
             <item name="Demo" href="demo.html"/>
             <!--item name="Releases" href="releases.html"/-->
-	    <!--item name="Videos" href="videos.html"/-->
-	    <!--item name="Snapshots" href="snapshots.html"/-->
-	    <!--item name="Developer" href="developer.html"/-->
-	    <item name="FAQ" href="faq.html"/>
-    	</menu>
+            <!--item name="Videos" href="videos.html"/-->
+            <!--item name="Snapshots" href="snapshots.html"/-->
+            <!--item name="Developer" href="developer.html"/-->
+            <item name="FAQ" href="faq.html"/>
+        </menu>
         <menu ref="reports"/>
     </body>	
 </project>

@@ -35,7 +35,8 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(LayerPanel.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(LayerPanel.class);
     /**
      * The {@link WorldWindow} that has all the information about the layers.
      */
@@ -178,7 +179,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
         TreePath treePath1 = jTree1.getSelectionPath();
         if (treePath1 == null) {
-            log.debug("No layer has been selected. Not moving a layer.");
+            LOG.debug("No layer has been selected. Not moving a layer.");
             return;
         }
 
@@ -193,7 +194,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             layerList.remove(index);
             layerList.add(index + 1, layer);
         } else {
-            log.debug("Could not move layer down. Selected layer is last layer.");
+            LOG.debug("Could not move layer down. Selected layer is last layer.");
         }
 
         TreePath treePath2 = jTree1.getNextMatch(layerName, 0, Position.Bias.Forward);
@@ -203,7 +204,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
         TreePath tp = jTree1.getSelectionPath();
         if (tp == null) {
-            log.debug("No layer has been selected. Not moving a layer.");
+            LOG.debug("No layer has been selected. Not moving a layer.");
             return;
         }
 
@@ -215,7 +216,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
 
         int index = layerList.indexOf(layer);
         if (index <= 0) {
-            log.debug("Could not move layer up. Selected layer is first layer.");
+            LOG.debug("Could not move layer up. Selected layer is first layer.");
         } else {
             layerList.remove(index);
             layerList.add(index - 1, layer);
@@ -228,7 +229,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         TreePath tp = jTree1.getSelectionPath();
         if (tp == null) {
-            log.debug("No layer has been selected.");
+            LOG.debug("No layer has been selected.");
             return;
         }
 
@@ -243,7 +244,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
         if (layer instanceof ElevatedRenderableLayer) {
             index = layerList.indexOf(((ElevatedRenderableLayer) layer).getSupportLayer());
             if (index < 0) {
-                log.debug("Could not remove layer.");
+                LOG.debug("Could not remove layer.");
             } else {
                 layerList.remove(index);
             }
@@ -252,13 +253,13 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
             for (ElevatedRenderableLayer l : ((WMSControlLayer) layer).getLayers()) {
                 index = layerList.indexOf(l.getSupportLayer());
                 if (index < 0) {
-                    log.debug("Could not remove layer.");
+                    LOG.debug("Could not remove layer.");
                 } else {
                     layerList.remove(index);
                 }
                 index = layerList.indexOf(l);
                 if (index < 0) {
-                    log.debug("Could not remove layer.");
+                    LOG.debug("Could not remove layer.");
                 } else {
                     layerList.remove(index);
                 }
@@ -267,7 +268,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
 
         index = layerList.indexOf(layer);
         if (index < 0) {
-            log.debug("Could not remove layer.");
+            LOG.debug("Could not remove layer.");
         } else {
             layerList.remove(index);
         }
@@ -305,7 +306,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                 defaultLayerNode.add(dmt);
             }
         } else {
-            log.debug("WorldWindow equals null. Could not create layer tree.");
+            LOG.debug("WorldWindow equals null. Could not create layer tree.");
         }
         jTree1.setModel(tm);
         jTree1.setRootVisible(false);
@@ -341,7 +342,7 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
                     layer.setEnabled(!layer.isEnabled());
                     worldWindow.redraw();
                 } else {
-                    log.warn("Selected node {} not in layerlist.", node.getText());
+                    LOG.warn("Selected node {} not in layerlist.", node.getText());
                 }
             }
         }

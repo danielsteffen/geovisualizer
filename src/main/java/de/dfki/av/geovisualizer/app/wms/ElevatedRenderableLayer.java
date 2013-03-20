@@ -67,7 +67,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
      * @param elevation The elevation for the {@link ElevatedTileImage}s
      * @param opac The maximum opacity for the {@link ElevatedTileImage}s
      */
-    public ElevatedRenderableLayer(WMSCapabilities caps, AVList params, 
+    public ElevatedRenderableLayer(WMSCapabilities caps, AVList params,
             Double elevation, Double opac) {
         super();
         this.elevation = elevation;

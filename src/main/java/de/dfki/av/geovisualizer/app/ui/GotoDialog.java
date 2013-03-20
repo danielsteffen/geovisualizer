@@ -130,13 +130,13 @@ public class GotoDialog extends javax.swing.JDialog {
             double lon = Double.parseDouble(txtLongitude.getText());
             Position pos = Position.fromDegrees(lat, lon);
             View view = worldWindow.getView();
-            view.goTo(pos, 5000.0);            
+            view.goTo(pos, 5000.0);
         } catch (NumberFormatException nfe) {
             String msg = "No valid value for \"latitude\" and \"longitude\".\n "
                     + "Must be a number value.";
             log.error(msg);
-            JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);            
-        }        
+            JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
         resetDialog();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -147,12 +147,11 @@ public class GotoDialog extends javax.swing.JDialog {
     /**
      * Reset the dialog fields.
      */
-    private void resetDialog(){
+    private void resetDialog() {
         this.txtLatitude.setText("");
         this.txtLongitude.setText("");
-        this.setVisible(false);        
+        this.setVisible(false);
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel latitudeLabel;

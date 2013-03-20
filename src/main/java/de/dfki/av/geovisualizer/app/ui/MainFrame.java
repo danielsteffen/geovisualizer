@@ -51,7 +51,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
     /**
      * The size of the {@link #wwPanel}.
      */
@@ -63,7 +63,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     /**
      * The counter of saved views.
      */
-    private static int viewID = 0;
+    private int viewID = 0;
 
     /**
      * Creates new form MainFrame
@@ -86,7 +86,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             layerTreeComponent.setMinimumSize(minSize);
             pLeftPanel.add(layerTreeComponent);
         } else {
-            log.debug("layerTreeComponent == null");
+            LOG.debug("layerTreeComponent == null");
         }
     }
 
@@ -110,11 +110,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         CameraAction fullGlobeAction = new CameraAction(wwPanel, fullGlobeCamera);
         btnGoHome.addActionListener(fullGlobeAction);
         miFullSphere.addActionListener(fullGlobeAction);
-        
+
         AnimatedCamera klCamera = new AnimatedCamera(49.4447186, 7.7690169, 20000.0);
         CameraAction klCameraAction = new CameraAction(wwPanel, klCamera);
         miGotoKaiserslautern.addActionListener(klCameraAction);
-        
+
         GotoAction gotoAction = new GotoAction(this, wwPanel.getWwd());
         miGoto.addActionListener(gotoAction);
         btnJumpTo.addActionListener(gotoAction);
@@ -665,18 +665,18 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         String server = JOptionPane.showInputDialog(this, "WMS URL", "http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/germany/germany.map&&VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS");
         try {
             if (server == null) {
-                log.debug("Cancled JOptionPane.");
+                LOG.debug("Cancled JOptionPane.");
                 return;
             }
             if (server.isEmpty()) {
                 String msg = "Server URL is empty";
-                log.error(msg);
+                LOG.error(msg);
                 throw new IllegalArgumentException(msg);
             }
             final URI serverURI = new URI(server.trim());
             wwPanel.addAllWMSLayer(serverURI);
         } catch (Exception ex) {
-            log.error(ex.getMessage());
+            LOG.error(ex.getMessage());
             JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_miAddWMSActionPerformed
@@ -710,14 +710,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         try {
             wmsHeight = Double.parseDouble(txtHeight.getText());
         } catch (NumberFormatException nfe) {
-            log.warn("The content of the \"height\" component must be a double value.");
+            LOG.warn("The content of the \"height\" component must be a double value.");
             wmsHeight = 0.0;
             txtHeight.setText("0.0");
         }
         try {
             wmsOpacity = 1.0 - (Double.parseDouble(txtOpacity.getText()) / 100.0);
         } catch (NumberFormatException nfe) {
-            log.warn("The content of the \"opacity\" "
+            LOG.warn("The content of the \"opacity\" "
                     + "component must be a double value between."
                     + "0.0 and 100.0 {}", nfe);
             wmsOpacity = 0.0;
@@ -779,7 +779,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             } else if (cmd.equalsIgnoreCase(miAddShapeZip.getActionCommand())) {
                 fileFilter = new FileNameExtensionFilter("ESRI Shapefile ZIP (*.zip)", "zip", "ZIP");
             } else {
-                log.warn("No valid action command.");
+                LOG.warn("No valid action command.");
                 fileFilter = null;
             }
             fc.setFileFilter(fileFilter);
@@ -817,14 +817,14 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 if (algo != null) {
                     wwPanel.addLayer(fc.getSelectedFile(), algo, null);
                 } else {
-                    log.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
+                    LOG.error("VisAlgorithm {} not supported.", VisPointCloud.class.getName());
                     JOptionPane.showMessageDialog(this, "Algorithm not supported.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                log.warn("No valid action command.");
+                LOG.warn("No valid action command.");
             }
         } catch (Exception ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
             JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_miOpenDataActionPerformed
@@ -834,26 +834,25 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         String defaultName = "View " + viewID;
         String name = JOptionPane.showInputDialog(this, "Enter a name for the view", defaultName);
         if (name == null) {
-            log.debug("Cancled JOptionPane.");
+            LOG.debug("Cancled JOptionPane.");
             return;
         }
         if (name.isEmpty()) {
             String msg = "Server URL is empty";
-            log.error(msg);
+            LOG.error(msg);
             name = defaultName;
         }
 
         WorldWindowGLCanvas worldWindow = wwPanel.getWwd();
         View view = worldWindow.getView();
         String xml = view.getRestorableState();
-        log.info(xml);
+        LOG.info(xml);
 
         final Position eyePosition = view.getEyePosition();
         final Position centerPosition = view.getGlobe().computePositionFromPoint(view.getCenterPoint());
-        log.info("Saving view: eye({}), center({})", eyePosition.toString(), centerPosition.toString());
+        LOG.info("Saving view: eye({}), center({})", eyePosition.toString(), centerPosition.toString());
 
         JMenuItem menuItem = new JMenuItem(new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 WorldWindowGLCanvas canvas = wwPanel.getWwd();
@@ -874,7 +873,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             desktop.browse(uri);
         } catch (IOException ex) {
             String msg = ex.toString();
-            log.error(msg);
+            LOG.error(msg);
             JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_miGeoVisualizerHelpActionPerformed
@@ -896,7 +895,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             } else if (evt.getNewValue() instanceof LayerInfo) {
                 cLayerList.addItem((LayerInfo) evt.getNewValue());
             } else {
-                log.error("Wrong event value (not instanceof LayerInfo or List<LayerInfo>)");
+                LOG.error("Wrong event value (not instanceof LayerInfo or List<LayerInfo>)");
             }
             cLayerList.setEnabled(true);
             bAddWMSHeight.setEnabled(true);
@@ -946,29 +945,30 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             rootLog.addAppender(appender);
             rootLog.setLevel(Level.ALL);
         } catch (Exception ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         }
     }
+
     /**
      * Print some system information.
      */
-    private static void printSystemSettings(){
+    private static void printSystemSettings() {
         String javaClassPath = System.getProperty("java.class.path");
-        log.debug("java.class.path: {}", javaClassPath);
+        LOG.debug("java.class.path: {}", javaClassPath);
         String javaExtDirs = System.getProperty("java.ext.dirs");
-        log.debug("java.ext.dirs: {}", javaExtDirs);
+        LOG.debug("java.ext.dirs: {}", javaExtDirs);
         String classpath = System.getenv("CLASSPATH");
-        log.debug("CLASSPATH: {}", classpath);
+        LOG.debug("CLASSPATH: {}", classpath);
     }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
+
         initLogging();
         printSystemSettings();
-        
+
         /*
          * Set the Nimbus look and feel
          */
@@ -995,7 +995,6 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
          * Create and display the form
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 MainFrame mf = new MainFrame();

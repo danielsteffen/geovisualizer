@@ -44,7 +44,7 @@ public class WMSUtils {
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
-        
+
     /**
      * lat1, lon1 = Latitude and Longitude of point 1 (in decimal degrees) lat2,
      * lon2 = Latitude and Longitude of point 2 (in decimal degrees) unit = the
@@ -65,10 +65,15 @@ public class WMSUtils {
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
-        if (unit.equals("K")) {
-            dist = dist * 1.609344;
-        } else if (unit.equals("N")) {
-            dist = dist * 0.8684;
+        switch (unit) {
+            case "K":
+                dist = dist * 1.609344;
+                break;
+            case "N":
+                dist = dist * 0.8684;
+                break;
+            default:
+                break;
         }
         return (dist);
     }

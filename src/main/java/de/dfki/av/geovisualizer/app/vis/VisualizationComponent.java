@@ -25,8 +25,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * implementation which object types are being supported to add.
      *
      * @param layer the layer to add.
-     * @throws IllegalArgumentException If
-     * <code>layer</code> is null.
+     * @throws IllegalArgumentException If <code>layer</code> is null.
      */
     public void addLayer(final Object layer);
 
@@ -36,8 +35,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * implementation is which object types are being supported.
      *
      * @param layer the layer to remove.
-     * @throws IllegalArgumentException If
-     * <code>layer</code> is null.
+     * @throws IllegalArgumentException If <code>layer</code> is null.
      */
     public void removeLayer(final Object layer);
 
@@ -60,8 +58,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * Sets the camera view of the 3-D visualization component.
      *
      * @param c the camera to set.
-     * @throws IllegalArgumentException If
-     * <code>c</code> is null.
+     * @throws IllegalArgumentException If <code>c</code> is null.
      */
     public void setCamera(Camera c);
 
@@ -70,8 +67,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * The listener only gets changes of the camera view.
      *
      * @param cl the {@link CameraListener} to add.
-     * @throws IllegalArgumentException If
-     * <code>cl</code> is null.
+     * @throws IllegalArgumentException If <code>cl</code> is null.
      */
     public void addCameraListener(CameraListener cl);
 
@@ -79,20 +75,21 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * Removes the {@link CameraListener}.
      *
      * @param cl the {@link CameraListener} to remove.
-     * @throws IllegalArgumentException If
-     * <code>cl</code> is null.
+     * @throws IllegalArgumentException If <code>cl</code> is null.
      */
     public void removeCameraListener(CameraListener cl);
 
     /**
-     * Add a listener for changes of type {@link IVisAlgorithm#PROGRESS_PROPERTY}
+     * Add a listener for changes of type
+     * {@link IVisAlgorithm#PROGRESS_PROPERTY}
      *
      * @param listener the {@link PropertyChangeListener} to add.
      */
     public void addProgressListener(PropertyChangeListener listener);
 
     /**
-     * Remove a {@link PropertyChangeListener} for property {@link IVisAlgorithm#PROGRESS_PROPERTY}.
+     * Remove a {@link PropertyChangeListener} for property
+     * {@link IVisAlgorithm#PROGRESS_PROPERTY}.
      *
      * @param listener the {@link PropertyChangeListener} to remove.
      */
@@ -103,8 +100,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * animates the view to the desired area.
      *
      * @param bv the {@link BoundingVolume} to set.
-     * @throws IllegalArgumentException If
-     * <code>bv</code> is null.
+     * @throws IllegalArgumentException If <code>bv</code> is null.
      */
     public void setBoundingVolume(BoundingVolume bv);
 

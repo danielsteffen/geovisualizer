@@ -14,11 +14,9 @@ import gov.nasa.worldwind.render.ExtrudedPolygon;
  *
  * @author steffen
  */
-public class ExtrudedPolygonShader extends ExtrudedPolygon{
+public class ExtrudedPolygonShader extends ExtrudedPolygon {
 
     @Override
     public void render(DrawContext dc) {
     }
-
-    
 }

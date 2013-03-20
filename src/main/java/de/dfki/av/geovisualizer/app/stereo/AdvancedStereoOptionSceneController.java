@@ -39,7 +39,8 @@ public class AdvancedStereoOptionSceneController
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(AdvancedStereoOptionSceneController.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(AdvancedStereoOptionSceneController.class);
     /**
      * Index of the frame buffer object.
      */
@@ -171,13 +172,13 @@ public class AdvancedStereoOptionSceneController
      * Render the side by side stereo following the render to texture approach
      * for left and right eyes and then swap buffers with the screen buffers.
      *
-     * @param dc the  {@link DrawContext}
+     * @param dc the {@link DrawContext}
      * @throws NullPointerException if dc == null.
      */
     private void doDrawSideBySide(DrawContext dc) {
         if (dc == null) {
             String msg = "DrawContext == null";
-            log.error(msg);
+            LOG.error(msg);
             throw new NullPointerException(msg);
         }
         GL gl = dc.getGL();
@@ -331,8 +332,8 @@ public class AdvancedStereoOptionSceneController
      * Renders the actual scene with the asymmetric frustum shift stated in the
      * paper mentioned above.
      *
-     * @param gl {@link GL} context derived from current draw context, 
-     * @param flag Indicates which eye is currently drawn; {@code true} for the 
+     * @param gl {@link GL} context derived from current draw context,
+     * @param flag Indicates which eye is currently drawn; {@code true} for the
      * left eye and{@code false} for the right eye.
      * @throws NullPointerException if gl == null
      */
@@ -340,10 +341,10 @@ public class AdvancedStereoOptionSceneController
 
         if (gl == null) {
             String msg = "GL == null";
-            log.error(msg);
+            LOG.error(msg);
             throw new NullPointerException(msg);
         }
-        
+
         super.initializeFrame(dc);
         try {
             super.applyView(dc);

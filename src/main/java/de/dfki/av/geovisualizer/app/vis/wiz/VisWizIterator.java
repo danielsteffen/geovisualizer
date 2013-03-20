@@ -35,7 +35,7 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
      */
     private boolean enableDataSourceSelection;
     /**
-     * The 
+     * The
      */
     private WizardDescriptor.Panel[] panels;
 
@@ -45,12 +45,12 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
     public VisWizIterator() {
         this(true);
     }
-    
+
     /**
-     * 
-     * @param enable 
+     *
+     * @param enable
      */
-    public VisWizIterator(boolean enable){
+    public VisWizIterator(boolean enable) {
         super();
         this.enableDataSourceSelection = enable;
     }

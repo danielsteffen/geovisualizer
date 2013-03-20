@@ -13,9 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple implementation of {@link CameraListener} using {@link org.slf4j.Logger}
- * for logging the data of the {@link PropertyChangeEvent}.
- * 
+ * Simple implementation of {@link CameraListener} using
+ * {@link org.slf4j.Logger} for logging the data of the
+ * {@link PropertyChangeEvent}.
+ *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class CameraListenerImpl implements CameraListener {
@@ -30,12 +31,12 @@ public class CameraListenerImpl implements CameraListener {
         if (log.isDebugEnabled()) {
             log.debug("Property Name: {}", evt.getPropertyName());
             View view = (View) evt.getNewValue();
-            log.debug("New object: {}", evt.getNewValue());            
+            log.debug("New object: {}", evt.getNewValue());
             log.debug("Position: {}", view.getCurrentEyePosition());
             log.debug("Forward Vector: {}", view.getForwardVector());
             log.debug("Heading: {}", view.getHeading());
             log.debug("Pitch: {}", view.getPitch());
-            log.debug("Old object: {}", evt.getOldValue());            
+            log.debug("Old object: {}", evt.getOldValue());
         }
     }
 }

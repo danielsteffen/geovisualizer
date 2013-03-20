@@ -43,7 +43,8 @@ public class SideBySideStereoSetup {
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(SideBySideStereoSetup.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(SideBySideStereoSetup.class);
     /**
      * JFrame of the root single view window.
      */
@@ -86,13 +87,13 @@ public class SideBySideStereoSetup {
 
         if (root == null) {
             String msg = "Parameter for JFrame set to null.";
-            log.error(msg);
+            LOG.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (worldWindow == null) {
             String msg = "Parameter for worldwindow set to null.";
-            log.error(msg);
+            LOG.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
@@ -119,18 +120,18 @@ public class SideBySideStereoSetup {
         GraphicsDevice[] graphicsDevices = ge.getScreenDevices();
 
         // Check if valid screen configuration
-        log.debug("Number of GraphicsDevices: {}", graphicsDevices.length);
+        LOG.debug("Number of GraphicsDevices: {}", graphicsDevices.length);
         int numScreens = 0;
         for (int i = 0; i < graphicsDevices.length; i++) {
             if (graphicsDevices[i].getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
                 numScreens++;
             }
         }
-        log.debug("Number of screens: {}", numScreens);
+        LOG.debug("Number of screens: {}", numScreens);
         if (numScreens < 2) {
             String msg = "Could not init side-by-side stereo mode. "
                     + "Only" + numScreens + " screens available.";
-            log.error(msg);
+            LOG.error(msg);
             throw new RuntimeException(msg);
         }
 
@@ -145,7 +146,7 @@ public class SideBySideStereoSetup {
         if (width != wDisplay1 || height != hDisplay1) {
             String msg = "No valid configuration for side-by-side stereo mode. "
                     + "Screens have different resolution.";
-            log.warn(msg);
+            LOG.warn(msg);
         }
 
         vp = new VisualizationPanel(new Dimension(width, height));
@@ -184,7 +185,7 @@ public class SideBySideStereoSetup {
             my.setSideBySide(true);
         } else {
             String msg = "SceneController is not instance of AdvancedStereoOptionSceneController";
-            log.error(msg);
+            LOG.error(msg);
             throw new RuntimeException(msg);
         }
     }

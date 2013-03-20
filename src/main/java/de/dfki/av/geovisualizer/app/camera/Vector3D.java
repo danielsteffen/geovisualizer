@@ -43,8 +43,7 @@ public class Vector3D {
      * Constructor.
      *
      * @param vec the {@link Vec4} to set.
-     * @throws IllegalArgumentException if
-     * <code>vec</code> is null.
+     * @throws IllegalArgumentException if <code>vec</code> is null.
      */
     public Vector3D(Vec4 vec) {
         if (vec == null) {
@@ -59,8 +58,7 @@ public class Vector3D {
      * Copy constructor.
      *
      * @param vec the {@link Vector3D} to set.
-     * @throws IllegalArgumentException if
-     * <code>vec</code> is null.
+     * @throws IllegalArgumentException if <code>vec</code> is null.
      */
     public Vector3D(Vector3D vec) {
         if (vec == null) {

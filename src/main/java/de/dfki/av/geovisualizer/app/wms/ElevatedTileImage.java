@@ -23,6 +23,7 @@ import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.media.opengl.GL;
 
 /**
@@ -121,6 +122,28 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         this.updateTime = System.currentTimeMillis();
         this.frameTimestamp = -1L;
         initialization(tile.getSector());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        if (o.hashCode() == this.hashCode()) {
+            return true;
+        }
+        ElevatedTileImage eti = (ElevatedTileImage) o;
+        return this.geometrySector.equals(eti.geometrySector);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.geometrySector);
+        return hash;
     }
 
     /**

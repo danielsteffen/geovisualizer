@@ -34,9 +34,10 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(SnapshotAction.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(SnapshotAction.class);
     /**
-     * The  {@link WorldWindow}.
+     * The {@link WorldWindow}.
      */
     private WorldWindow wwd;
     /**
@@ -49,8 +50,8 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
     private JFileChooser fileChooser;
 
     /**
-     * 
-     * @param wwd 
+     *
+     * @param wwd
      */
     public SnapshotAction(WorldWindow wwd) {
         super("Snap Shot");
@@ -65,9 +66,9 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
     }
 
     /**
-     * 
+     *
      * @param parentFrame
-     * @return 
+     * @return
      */
     private File chooseFile(Component parentFrame) {
         File outFile = null;
@@ -108,7 +109,7 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
                 break;
             }
         } catch (Exception e) {
-            log.error(e.toString());
+            LOG.error(e.toString());
         }
 
         this.wwd.removeRenderingListener(this); // ensure not to add a duplicate
@@ -126,9 +127,9 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
                 glad.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
                 Screenshot.writeToFile(snapshotFile, viewport[2] + 10, viewport[3], false);
                 glad.getGL().glViewport(0, 0, glad.getWidth(), glad.getHeight());
-                log.debug("Image saved to file {}", snapshotFile.getPath());
+                LOG.debug("Image saved to file {}", snapshotFile.getPath());
             } catch (IOException e) {
-                log.error(e.toString());
+                LOG.error(e.toString());
             } finally {
                 this.snapshotFile = null;
                 this.wwd.removeRenderingListener(this);

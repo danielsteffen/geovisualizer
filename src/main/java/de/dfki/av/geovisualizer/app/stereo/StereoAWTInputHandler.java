@@ -51,7 +51,6 @@ public class StereoAWTInputHandler extends AWTInputHandler {
         super();
         selectListeners = new ArrayList<>();
         hoverTimer = new javax.swing.Timer(600, new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {

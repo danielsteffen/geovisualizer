@@ -39,8 +39,8 @@ public class CameraAction extends AbstractAction {
         if (panel == null) {
             throw new IllegalArgumentException("panel == null");
         }
-        
-        if (panel == null) {
+
+        if (camera == null) {
             throw new IllegalArgumentException("camera == null");
         }
 

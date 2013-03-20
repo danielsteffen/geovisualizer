@@ -7,7 +7,7 @@
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-	<dependencySets>
+    <dependencySets>
         <dependencySet>
             <unpack>false</unpack>
             <scope>compile</scope>

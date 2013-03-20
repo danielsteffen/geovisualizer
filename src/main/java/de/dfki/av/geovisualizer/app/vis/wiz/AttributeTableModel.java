@@ -31,7 +31,7 @@ public class AttributeTableModel extends DefaultTableModel {
     }
 
     public void removeAllRows() {
-        final int rowCount = getRowCount(); 
+        final int rowCount = getRowCount();
         dataVector.clear();
         fireTableRowsDeleted(0, rowCount);
     }

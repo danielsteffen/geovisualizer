@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class ParameterMappingPanel extends JPanel {

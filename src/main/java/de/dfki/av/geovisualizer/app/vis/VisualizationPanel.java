@@ -26,8 +26,8 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.ogc.kml.KMLAbstractFeature;
@@ -94,12 +94,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Constructs a visualization panel of the defined
      * <code>Dimension</code>.
      *
-     * @param canvasSize size of the
-     * <code>WorldWindowGLCanvas</code>.
+     * @param canvasSize size of the <code>WorldWindowGLCanvas</code>.
      */
     public VisualizationPanel(Dimension canvasSize) {
         super(new BorderLayout());
-        
+
         this.wwd = new WorldWindowGLCanvas();
         this.wwd.setPreferredSize(canvasSize);
 
@@ -109,30 +108,30 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
 
         // Setup a select listener for the worldmap click-and-go feature
         this.wwd.addSelectListener(new ClickAndGoSelectListener(this.wwd, WorldMapLayer.class));
-        
+
         ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
         this.wwd.getModel().getLayers().add(viewControlsLayer);
         this.wwd.addSelectListener(new ViewControlsSelectListener(this.wwd, viewControlsLayer));
         this.add(this.wwd, BorderLayout.CENTER);
-        
+
         this.progressBar = new JProgressBar(0, 100);
         this.progressBar.setVisible(false);
-        
+
         this.statusBar = new StatusBar();
         this.statusBar.setEventSource(wwd);
         this.statusBar.add(progressBar);
         this.add(statusBar, BorderLayout.SOUTH);
-        
+
         this.progressChange = new PropertyChangeSupport(this);
-        
+
         this.layerPanel = new LayerPanel(this.wwd);
         this.wwd.getModel().addPropertyChangeListener(layerPanel);
-        
+
         initCustomElevationModels();
     }
 
     /**
-     * Initialize custom elevation models defined in the GeoVisualizer.xml 
+     * Initialize custom elevation models defined in the GeoVisualizer.xml
      * configuration file.
      */
     private void initCustomElevationModels() {
@@ -145,7 +144,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                 Object object = it.next();
                 if (object instanceof String) {
                     String path = (String) object;
-                    if (path != null && !path.isEmpty()) {
+                    if (!path.isEmpty()) {
                         ElevationsLoader loader = new ElevationsLoader(globe, path);
                         loader.execute();
                     } else {
@@ -169,7 +168,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     public WorldWindowGLCanvas getWwd() {
         return this.wwd;
     }
-    
+
     @Override
     public void addLayer(Object data) {
         IVisAlgorithm algo = VisAlgorithmFactory.newInstance(VisPointCloud.class.getName());
@@ -195,14 +194,14 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         VisWorker producer = new VisWorker(config, wwd);
         producer.execute();
     }
-    
+
     @Override
     public void removeLayer(Object source) {
         if (source == null) {
             log.warn("Object sourc equals to null.");
             throw new IllegalArgumentException("Parameter 'layer' is null.");
         }
-        
+
         if (source instanceof Layer) {
             Layer layer = (Layer) source;
             this.wwd.getModel().getLayers().remove(layer);
@@ -241,7 +240,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             }
         }
     }
-    
+
     @Override
     public Camera getCamera() {
         Camera camera = null;
@@ -260,7 +259,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
         return camera;
     }
-    
+
     @Override
     public void setCamera(Camera c) {
         if (c == null) {
@@ -268,16 +267,16 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        
+
         View view = this.wwd.getView();
         if (view != null) {
-            
+
             Angle roll;
             Angle pitch;
             Angle heading;
-            
+
             Vector3D vector = c.getViewingDirection();
-            
+
             if (vector != null) {
                 roll = Angle.fromRadians(vector.getX());
                 pitch = Angle.fromRadians(vector.getY());
@@ -286,11 +285,11 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                 log.warn("No vector defined for camera. Using zero vector.");
                 roll = pitch = heading = Angle.ZERO;
             }
-            
+
             view.setRoll(roll);
             view.setPitch(pitch);
             view.setHeading(heading);
-            
+
             if (c instanceof AnimatedCamera) {
                 Position pos = Position.fromDegrees(c.getLatitude(), c.getLongitude());
                 view.goTo(pos, c.getAltitude());
@@ -301,7 +300,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             }
         }
     }
-    
+
     @Override
     public synchronized void addCameraListener(CameraListener cl) {
         if (cl == null) {
@@ -311,7 +310,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
         this.wwd.getView().addPropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
     }
-    
+
     @Override
     public synchronized void removeCameraListener(CameraListener cl) {
         if (cl == null) {
@@ -321,7 +320,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         }
         this.wwd.getView().removePropertyChangeListener("gov.nasa.worldwind.avkey.ViewObject", cl);
     }
-    
+
     @Override
     public void setBoundingVolume(BoundingVolume bv) {
         if (bv == null) {
@@ -329,26 +328,26 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        
+
         Sector sector = bv.getSector();
         Box extent = Sector.computeBoundingBox(wwd.getModel().getGlobe(),
                 wwd.getSceneController().getVerticalExaggeration(), sector);
         Angle fov = wwd.getView().getFieldOfView();
         double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
-        
+
         LatLon latLon = sector.getCentroid();
         AnimatedCamera ac = new AnimatedCamera(latLon.getLatitude().getDegrees(),
                 latLon.getLongitude().getDegrees(), zoom);
         setCamera(ac);
     }
-    
+
     @Override
     public BoundingVolume getBoundingVolume() {
         SectorGeometryList sectorGeometryList = wwd.getSceneController().getTerrain();
         Sector sector = sectorGeometryList.getSector();
         return new BoundingBox(sector);
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equalsIgnoreCase(IVisAlgorithm.PROGRESS_PROPERTY)) {
@@ -365,12 +364,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             wwd.redraw();
         }
     }
-    
+
     @Override
     public void addProgressListener(PropertyChangeListener listener) {
         this.progressChange.addPropertyChangeListener(IVisAlgorithm.PROGRESS_PROPERTY, listener);
     }
-    
+
     @Override
     public void removeProgressListener(PropertyChangeListener listener) {
         this.progressChange.removePropertyChangeListener(IVisAlgorithm.PROGRESS_PROPERTY, listener);
@@ -385,9 +384,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Run the {@link VisWiz} and add its result to the {@link WorldWindowGLCanvas}.
-     * Starts the wizard with the {@link AttributeSelectionPanel} in case the
-     * {@code data} is a valid data type (see {@link IOUtils#Read(java.lang.Object)
+     * Run the {@link VisWiz} and add its result to the
+     * {@link WorldWindowGLCanvas}. Starts the wizard with the
+     * {@link AttributeSelectionPanel} in case the {@code data} is a valid data
+     * type (see {@link IOUtils#Read(java.lang.Object)
      * }) or not {code null}.
      *
      * @param data the pre-selected data source to visualize.
@@ -410,7 +410,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        
+
         try {
             List<LayerInfo> layerInfos = WMSUtils.getLayerInfos(uri);
             if (layerInfos != null) {
@@ -468,7 +468,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        
+
         LayerInfo layerInfo = WMSUtils.getLayerInfo(uri, layerName);
         Object component = LayerInfo.createComponent(layerInfo.caps, layerInfo.params);
         if (component instanceof Layer) {
@@ -504,12 +504,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.debug("Layer is instance of a time series.");
             List<LayerInfo> layerInfos = WMSUtils.getLayerInfos(uri);
             List<ElevatedRenderableLayer> layers = new ArrayList<>();
-            
+
             for (LayerInfo layerInfo : layerInfos) {
                 String name = layerInfo.getName();
                 if (name.equals(layerName)) {
                     log.debug("Found WMS layer {}.", layerName);
-                    
+
                     WMSCapabilities parentWMSCaps = layerInfo.caps;
                     WMSLayerCapabilities parentWMSLayerCaps = layerInfo.layerCaps;
                     final List<WMSLayerCapabilities> childNamedLayerCaps = parentWMSLayerCaps.getNamedLayers();
@@ -517,7 +517,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                         log.debug("No child named layers available for parent layer {}.", name);
                         break;
                     }
-                    
+
                     List<LayerInfo> childLayerInfos = new ArrayList<>();
                     for (WMSLayerCapabilities lc : childNamedLayerCaps) {
                         if (lc.isLeaf()) {
@@ -533,7 +533,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                             }
                         }
                     }
-                    
+
                     for (Iterator<LayerInfo> it = childLayerInfos.iterator(); it.hasNext();) {
                         LayerInfo info = it.next();
                         ElevatedRenderableLayer layer = addWMSHeightLayer(info, elevation, opacity);
@@ -547,7 +547,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                     }
                 }
             }
-            
+
             if (!layers.isEmpty()) {
                 WMSControlLayer cl = new WMSControlLayer(layers);
                 cl.setName(layerName);
@@ -600,22 +600,21 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        
+
         final File kmlFile = file;
         SwingWorker workerThread = new SwingWorker() {
-            
             @Override
             protected Object doInBackground() throws Exception {
                 KMLRoot kmlRoot = KMLRoot.createAndParse(kmlFile);
                 KMLAbstractFeature rootFeature = kmlRoot.getFeature();
-                String layerName = "KML Layer";
+                String layerName;
                 if (rootFeature != null && !WWUtil.isEmpty(rootFeature.getName())) {
                     layerName = rootFeature.getName();
-                } else if (kmlFile instanceof File) {
+                } else {
                     layerName = kmlFile.getName();
                 }
                 kmlRoot.setField(AVKey.DISPLAY_NAME, layerName);
-                
+
                 KMLController kmlController = new KMLController(kmlRoot);
                 // Adds a new layer containing the KMLRoot to the end of the WorldWindow's layer list. This
                 // retrieves the layer name from the KMLRoot's DISPLAY_NAME field.
@@ -642,10 +641,9 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             log.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        
+
         final File geotiffFile = file;
         SwingWorker workerThread = new SwingWorker() {
-            
             @Override
             protected Object doInBackground() throws Exception {
                 SurfaceImageLayer layer = new SurfaceImageLayer();
@@ -680,7 +678,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
             String msg = "parent == null";
             log.error(msg);
             throw new IllegalArgumentException(msg);
-            
+
         }
         SideBySideStereoSetup stereoSetup = new SideBySideStereoSetup(parent, wwd);
         stereoSetup.start();

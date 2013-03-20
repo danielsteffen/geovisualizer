@@ -28,7 +28,7 @@ public class GotoAction extends AbstractAction {
      */
     public GotoAction(final JFrame frame, final WorldWindow worldWindow) {
         super("Goto");
-        
+
         this.gotoDialog = new GotoDialog(frame, worldWindow);
         this.gotoDialog.setLocationRelativeTo(frame);
     }

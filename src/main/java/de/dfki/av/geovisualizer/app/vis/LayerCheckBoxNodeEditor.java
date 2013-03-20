@@ -80,7 +80,6 @@ public class LayerCheckBoxNodeEditor extends AbstractCellEditor implements TreeC
         Component editor = renderer.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, leaf);
 
         ItemListener itemListener = new ItemListener() {
-
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (stopCellEditing()) {

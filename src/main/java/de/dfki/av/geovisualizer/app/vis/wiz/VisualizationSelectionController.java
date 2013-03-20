@@ -67,7 +67,9 @@ public class VisualizationSelectionController implements WizardDescriptor.Panel 
     @Override
     public void storeSettings(Object settings) {
         WizardDescriptor wiz = (WizardDescriptor) settings;
-        IVisAlgorithm algo = component.getSelectedVisualization();
-        wiz.putProperty("SelectedVisualization", algo);
+        if (component != null) {
+            IVisAlgorithm algo = component.getSelectedVisualization();
+            wiz.putProperty("SelectedVisualization", algo);
+        }
     }
 }

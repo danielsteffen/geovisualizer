@@ -9,7 +9,6 @@ package de.dfki.av.geovisualizer.app.wms;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.AnnotationAttributes;
 import gov.nasa.worldwind.render.DrawContext;
@@ -126,16 +125,6 @@ public class WMSControlLayer extends RenderableLayer {
      */
     private String layout;
     /**
-     * Vector {@link gov.nasa.worldwind.geom.Vec4} indicating the center
-     * location.
-     */
-    private Vec4 locationCenter;
-    /**
-     * Vector {@link gov.nasa.worldwind.geom.Vec4} indicating the offset from
-     * the center.
-     */
-    private Vec4 locationOffset;
-    /**
      * Boolean flag to whether show controls or not.
      */
     private boolean[] valSelected;
@@ -151,10 +140,6 @@ public class WMSControlLayer extends RenderableLayer {
      * Size of buttons.
      */
     private int buttonSize;
-    /**
-     * Number of intervals in the side bar.
-     */
-    private int intervalCnt;
     /**
      * Boolean flag indicating initialization.
      */
@@ -398,29 +383,24 @@ public class WMSControlLayer extends RenderableLayer {
     protected Point computeLocation(Rectangle viewport, Rectangle controls) {
         double x;
         double y;
-        if (this.locationCenter != null) {
-            x = this.locationCenter.x - controls.width / 2;
-            y = this.locationCenter.y - controls.height / 2;
-        } else if (this.position.equals(AVKey.NORTHEAST)) {
-            x = viewport.getWidth() - controls.width - this.borderWidth;
-            y = viewport.getHeight() - controls.height - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHEAST)) {
-            x = viewport.getWidth() - controls.width - this.borderWidth;
-            y = 0d + this.borderWidth;
-        } else if (this.position.equals(AVKey.NORTHWEST)) {
-            x = 0d + this.borderWidth;
-            y = viewport.getHeight() - controls.height - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHWEST)) {
-            x = 0d + this.borderWidth;
-            y = 0d + this.borderWidth;
-        } else // use North East as default
-        {
-            x = viewport.getWidth() - controls.width - this.borderWidth;
-            y = viewport.getHeight() - controls.height - this.borderWidth;
-        }
-        if (this.locationOffset != null) {
-            x += this.locationOffset.x;
-            y += this.locationOffset.y;
+        switch (this.position) {
+            case AVKey.NORTHEAST:
+                x = viewport.getWidth() - controls.width - this.borderWidth;
+                y = viewport.getHeight() - controls.height - this.borderWidth;
+                break;
+            case AVKey.SOUTHEAST:
+                x = viewport.getWidth() - controls.width - this.borderWidth;
+                y = 0d + this.borderWidth;
+                break;
+            case AVKey.NORTHWEST:
+                x = 0d + this.borderWidth;
+                y = viewport.getHeight() - controls.height - this.borderWidth;
+                break;
+            case AVKey.SOUTHWEST: 
+            default:
+                x = 0d + this.borderWidth;
+                y = 0d + this.borderWidth;
+                break;
         }
         return new Point((int) x, (int) y);
     }
@@ -455,43 +435,11 @@ public class WMSControlLayer extends RenderableLayer {
         color = Color.white;
         position = AVKey.NORTH;
         layout = AVKey.HORIZONTAL;
-        locationCenter = null;
-        locationOffset = null;
         scale = 1;
         borderWidth = 20;
         buttonSize = 22;
         initialized = false;
         controlsShow = true;
-    }
-
-    /**
-     * Renders or draws the side bar in white color.
-     *
-     * @param dc Draw context used.
-     */
-    private void drawScale(DrawContext dc) {
-        if (intervalCnt == 0) {
-            return;
-        }
-        java.awt.Rectangle rect = dc.getView().getViewport();
-        GL gl = dc.getGL();
-        gl.glBegin(GL.GL_LINE_STRIP);
-        gl.glVertex3d(rect.width - 30, rect.height - 190, 0);
-        gl.glVertex3d(rect.width - 20, rect.height - 190, 0);
-        gl.glVertex3d(rect.width - 20, rect.height - 190 - 40 * (intervalCnt - 1),
-                0);
-        gl.glVertex3d(rect.width - 30, rect.height - 190 - 40 * (intervalCnt - 1),
-                0);
-        gl.glEnd();
-        double intervalHeight = 40;
-        for (int i = 1; i <= intervalCnt - 2; i++) {
-            gl.glBegin(GL.GL_LINE_STRIP);
-            gl.glVertex3d(rect.width - 30, rect.height - 190 - i * intervalHeight,
-                    0);
-            gl.glVertex3d(rect.width - 20, rect.height - 190 - i * intervalHeight,
-                    0);
-            gl.glEnd();
-        }
     }
 
     /**
@@ -527,7 +475,7 @@ public class WMSControlLayer extends RenderableLayer {
      * @return List of time steps screen annotations
      */
     public ScreenAnnotation[] getSteps() {
-        return steps;
+        return steps.clone();
     }
 
     /**
@@ -546,19 +494,7 @@ public class WMSControlLayer extends RenderableLayer {
      * @return Array of booleans.
      */
     public boolean[] getValSelected() {
-        return valSelected;
-    }
-
-    /**
-     * Sets the ValSelected attribute to the input parameter. (The valSelected
-     * is a boolean array in which the true indexes the selected screen
-     * annotation.)
-     *
-     * @param valSelected Array of boolean must have the same size as the
-     * annotations list (iso-values or time steps).
-     */
-    public void setValSelected(boolean[] valSelected) {
-        this.valSelected = valSelected;
+        return valSelected.clone();
     }
 
     /**
@@ -687,19 +623,15 @@ public class WMSControlLayer extends RenderableLayer {
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2],
                         (double) backColor.getAlpha() / 255d
                         * this.getOpacity());
-                this.drawScale(dc);
-
+                
                 colorRGB = this.color.getRGBColorComponents(null);
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2],
                         this.getOpacity());
-                this.drawScale(dc);
 
                 // Draw label
                 gl.glLoadIdentity();
                 gl.glDisable(GL.GL_CULL_FACE);
 
-            } else {
-                this.drawScale(dc);
             }
         } finally {
             gl.glColor4d(1d, 1d, 1d, 1d); // restore the default OpenGL color

@@ -26,7 +26,7 @@ public class LayerCheckBoxNodeRenderer implements TreeCellRenderer {
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(LayerCheckBoxNodeRenderer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LayerCheckBoxNodeRenderer.class);
     /**
      * The {@link JCheckBox} used for rendering the checkbox of leaf nodes.
      */
@@ -66,12 +66,12 @@ public class LayerCheckBoxNodeRenderer implements TreeCellRenderer {
                     leafRenderer.setText(node.getText());
                     leafRenderer.setSelected(node.isSelected());
                 } else {
-                    log.debug("User Object of type {}.", userObject.getClass());
+                    LOG.debug("User Object of type {}.", userObject.getClass());
                 }
             } else {
-                log.debug("value == null or not instance of DefaultMutableTreeNode");
+                LOG.debug("value == null or not instance of DefaultMutableTreeNode");
             }
-            
+
             leafRenderer.setEnabled(tree.isEnabled());
 
             component = leafRenderer;

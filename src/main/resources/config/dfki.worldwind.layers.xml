@@ -6,8 +6,8 @@
 <!--See the javadoc for the Configuration class for details-->
 <LayerList>
     <!--Layer className="gov.nasa.worldwind.layers.StarsLayer"-->
-        <!--Individual properties can be specified within Layer entries, like this:-->
-        <!--Property name="Name" value="Stars"/>
+    <!--Individual properties can be specified within Layer entries, like this:-->
+    <!--Property name="Name" value="Stars"/>
     </Layer-->
     <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer"/>
     <Layer className="gov.nasa.worldwind.layers.Earth.BMNGOneImage">
@@ -18,5 +18,5 @@
     <Layer className="gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer"/>
     <Layer className="gov.nasa.worldwind.layers.ScalebarLayer"/>
     <Layer className="gov.nasa.worldwind.layers.CompassLayer"/>	
-	<Layer href="config/Earth/BingImagery.xml" actuate="onRequest"/>
+    <Layer href="config/Earth/BingImagery.xml" actuate="onRequest"/>
 </LayerList>

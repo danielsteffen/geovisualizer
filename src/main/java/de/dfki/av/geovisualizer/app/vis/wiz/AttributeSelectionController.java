@@ -56,22 +56,28 @@ public class AttributeSelectionController implements WizardDescriptor.Validating
     @Override
     public void readSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor) settings;
-        Object o = descriptor.getProperty("SelectedDataSource");
-        component.setSelectedDataSource(o);
+        if (component != null) {
+            Object o = descriptor.getProperty("SelectedDataSource");
+            component.setSelectedDataSource(o);
+        }
     }
 
     @Override
     public void storeSettings(Object settings) {
         WizardDescriptor descriptor = (WizardDescriptor) settings;
-        List<String[]> l = component.getSelectedAttributes();
-        descriptor.putProperty("DataAttributes", l);
+        if (component != null) {
+            List<String[]> l = component.getSelectedAttributes();
+            descriptor.putProperty("DataAttributes", l);
+        }
     }
 
     @Override
     public void validate() throws WizardValidationException {
-        List<String[]> attributes = component.getSelectedAttributes();
-        if(attributes.isEmpty()){
-            throw new WizardValidationException(null, "No attribute selected.", null);
+        if (component != null) {
+            List<String[]> attributes = component.getSelectedAttributes();
+            if (attributes.isEmpty()) {
+                throw new WizardValidationException(null, "No attribute selected.", null);
+            }
         }
     }
 }

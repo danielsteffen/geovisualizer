@@ -29,7 +29,7 @@ public class LayerInfo extends WMSLayerInfo {
     /**
      * The logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(LayerInfo.class);    
+    private static final Logger LOG = LoggerFactory.getLogger(LayerInfo.class);
     /**
      * The {@link WMSLayerCapabilities} for the corresponding WMS layer
      */
@@ -57,7 +57,7 @@ public class LayerInfo extends WMSLayerInfo {
         this.params = super.getParams();
         this.caps = caps;
     }
-    
+
     /**
      * Retrieves the factory key for the WMS layer creation.
      *
@@ -119,7 +119,7 @@ public class LayerInfo extends WMSLayerInfo {
             Factory factory = (Factory) WorldWind.createConfigurationComponent(factoryKey);
             return factory.createFromConfigSource(caps, configParams);
         } catch (Exception e) {
-            log.error(e.toString());
+            LOG.error(e.toString());
         }
 
         return null;

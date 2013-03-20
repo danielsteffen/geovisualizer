@@ -33,7 +33,7 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      */
     private long lastUpdate;
     /**
-     * 
+     *
      */
     private boolean allrdyFlag;
 

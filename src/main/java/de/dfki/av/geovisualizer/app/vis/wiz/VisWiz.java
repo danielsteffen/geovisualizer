@@ -54,8 +54,9 @@ public final class VisWiz {
      * Starts the visualization wizard VisWiz. After finishing the visualization
      * will be added automatically to the {@link WorldWindow} instance. The
      * {@link PropertyChangeListener} can be used to monitor the progress of the
-     * visualization creation process. The name of the {@link PropertyChangeEvent}
-     * event is {@link IVisAlgorithm#PROGRESS_PROPERTY}.
+     * visualization creation process. The name of the
+     * {@link PropertyChangeEvent} event is
+     * {@link IVisAlgorithm#PROGRESS_PROPERTY}.
      *
      * @param worldWindow the {@link WorldWindow} where to add the
      * visualization.
@@ -71,13 +72,14 @@ public final class VisWiz {
      * Starts the visualization wizard VisWiz. After finishing the visualization
      * will be added automatically to the {@link WorldWindow} instance. The
      * {@link PropertyChangeListener} can be used to monitor the progress of the
-     * visualization creation process. The name of the {@link PropertyChangeEvent}
-     * event is {@link IVisAlgorithm#PROGRESS_PROPERTY}. If {@code data != null}
-     * the visualization wizard {@link VisWiz} starts with the {@link AttributeSelectionPanel}
-     * as first panel. Otherwise with the {@link DataSourceSelectionPanel}. In
-     * case the {@code data} object is of type {@link InputStream} the data is
-     * downloaded to a temporary {@link File} that is then used as source for
-     * the {@link VisWiz}.
+     * visualization creation process. The name of the
+     * {@link PropertyChangeEvent} event is
+     * {@link IVisAlgorithm#PROGRESS_PROPERTY}. If {@code data != null} the
+     * visualization wizard {@link VisWiz} starts with the
+     * {@link AttributeSelectionPanel} as first panel. Otherwise with the
+     * {@link DataSourceSelectionPanel}. In case the {@code data} object is of
+     * type {@link InputStream} the data is downloaded to a temporary
+     * {@link File} that is then used as source for the {@link VisWiz}.
      *
      * @param worldWindow the {@link WorldWindow} where to add the
      * visualization.
@@ -121,7 +123,9 @@ public final class VisWiz {
                     LOG.error(ex.toString());
                 } finally {
                     try {
-                        is.close();
+                        if (is != null) {
+                            is.close();
+                        }
                     } catch (IOException ex) {
                         LOG.error(ex.toString());
                     }

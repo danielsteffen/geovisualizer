@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Listens to the changes in the controlLayer
- * {@link WMSControlLayer} and takes the corresponding action.
+ * Listens to the changes in the controlLayer {@link WMSControlLayer} and takes
+ * the corresponding action.
  *
  * Note that this class is based on
  * {@code de.dfki.av.geovisualizer.vis.mc.ControlListener}.
@@ -131,7 +131,6 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      */
     private void initialize() {
         this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent event) {
                 if (pressedControl != null) {
@@ -186,9 +185,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
     private void animate(final List<ElevatedRenderableLayer> layers) {
         checkAnimationTimer();
         animTimer = new Timer(INTERVALL, new ActionListener() {
-
             boolean forward = true;
-            boolean fadein = true;
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -197,7 +194,6 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
             }
 
             private void next() {
-                fadein = true;
                 mark();
                 if (forward) {
                     if (id == layers.size() - 1) {
@@ -216,37 +212,6 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
                 }
                 if (!animFlag) {
                     animTimer.stop();
-                }
-            }
-
-            private void fadein() {
-                if (layers.get(id) != null) {
-                    ElevatedRenderableLayer layer = layers.get(id);
-                    if (layer.getOpacity() + STEP > 1.0d) {
-                        layer.setOpacity(1.0d);
-                        fadein = false;
-                    } else {
-                        layer.setOpacity(layer.getOpacity() + STEP);
-                    }
-                } else {
-                    next();
-                }
-            }
-
-            private void fadeout() {
-                boolean change = false;
-                for (ElevatedRenderableLayer l : layers) {
-                    if (l.getOpacity() > 0.0 && !l.equals(layers.get(id))) {
-                        if (l.getOpacity() - STEP < 0.0d) {
-                            l.setOpacity(0.0d);
-                        } else {
-                            l.setOpacity(l.getOpacity() - STEP);
-                            change = true;
-                        }
-                    }
-                }
-                if (!change) {
-                    next();
                 }
             }
         });
@@ -374,25 +339,26 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
         }
 
         ScreenAnnotation selectedObject = (ScreenAnnotation) event.getTopObject();
-
-        if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
-            // Highlight on rollover
-            this.getWMSControlLayer().highlight(selectedObject);
-        } else if (event.getEventAction().equals(SelectEvent.HOVER)) {
-            // Highlight on hover
-            this.getWMSControlLayer().highlight(selectedObject);
-        } else if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)
-                || event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
-            // Release pressed control
-            this.pressedControl = null;
-            this.pressedControlType = null;
-        } // Keep pressed control highlighted - overrides rollover
-        //non currently pressed controls
-        else if (event.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
-            // Handle left press on controls
-            this.pressedControl = selectedObject;
-            this.pressedControlType = controlType;
-            event.consume();
+        switch (event.getEventAction()) {
+            case SelectEvent.ROLLOVER:
+            case SelectEvent.HOVER:
+                // Highlight on hover or rollover
+                this.getWMSControlLayer().highlight(selectedObject);
+                break;
+            case SelectEvent.LEFT_CLICK:
+            case SelectEvent.LEFT_DOUBLE_CLICK:
+                // Release pressed control
+                this.pressedControl = null;
+                this.pressedControlType = null;
+                break;
+            case SelectEvent.LEFT_PRESS:
+                // Handle left press on controls
+                this.pressedControl = selectedObject;
+                this.pressedControlType = controlType;
+                event.consume();
+                break;
+            default:
+                break;
         }
 
         // Keep pressed control highlighted - overrides rollover non 

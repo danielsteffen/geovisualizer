@@ -29,7 +29,7 @@ public final class Configuration {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(Configuration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
     /**
      * The geovisualizer image used as window and dialog icons.
      */
@@ -49,14 +49,14 @@ public final class Configuration {
      * @return the {@link Image} to return or null.
      */
     private static Image initImage() {
-        log.info("Init GeoVisualizer icon...");
+        LOG.info("Init GeoVisualizer icon...");
         Image image = null;
         try {
             ClassLoader loader = Configuration.class.getClassLoader();
             URL iconURL = loader.getResource("icons/geovisualizer.png");
             image = ImageIO.read(iconURL);
         } catch (IOException ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         }
 
         return image;
@@ -68,29 +68,29 @@ public final class Configuration {
      * @return the {@link #XML_CONFIG} to return.
      */
     private static XMLConfiguration initConfig() {
-        log.debug("Init GeoVisualizer user home...");
+        LOG.debug("Init GeoVisualizer user home...");
         String userHomeDir = VisSettings.USER_HOME_DIR;
 
-        log.info("Init GeoVisualizer configuration...");
+        LOG.info("Init GeoVisualizer configuration...");
         // Check whether the geovisualizer config file already exists.
         final File userConfigFile = new File(userHomeDir + "/config/GeoVisualizer.xml");
         if (!userConfigFile.exists()) {
-            log.debug("No configuration file existing.");
+            LOG.debug("No configuration file existing.");
             installConfigFile(userConfigFile, userHomeDir, userHomeDir);
         } else {
-            log.debug("Configuration file existing. Checking version ...");
+            LOG.debug("Configuration file existing. Checking version ...");
             if (!isConfigFileSupported(userConfigFile)) {
-                log.debug("Configuration file not supported.");
-                log.debug("Delete old configuration file.");
+                LOG.debug("Configuration file not supported.");
+                LOG.debug("Delete old configuration file.");
                 boolean deleted = userConfigFile.delete();
                 if (deleted) {
                     installConfigFile(userConfigFile, userHomeDir, userHomeDir);
                 } else {
-                    log.error("Could not delete file {}", userConfigFile.getAbsolutePath());
-                    log.warn("Using old configuration file.");
+                    LOG.error("Could not delete file {}", userConfigFile.getAbsolutePath());
+                    LOG.warn("Using old configuration file.");
                 }
             } else {
-                log.debug("Configuration file supported.");
+                LOG.debug("Configuration file supported.");
             }
         }
 
@@ -100,10 +100,10 @@ public final class Configuration {
             xmlConfig.setAutoSave(true);
             for (Iterator<String> it = xmlConfig.getKeys(); it.hasNext();) {
                 String key = it.next();
-                log.debug("{} : {}", key, xmlConfig.getString(key));
+                LOG.debug("{} : {}", key, xmlConfig.getString(key));
             }
         } catch (ConfigurationException ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         }
         return xmlConfig;
     }
@@ -118,7 +118,7 @@ public final class Configuration {
      * @param workingDir the working directory
      */
     private static void installConfigFile(File file, String userHomeDir, String workingDir) {
-        log.debug("Installing configuration to {}...", file.getAbsoluteFile());
+        LOG.debug("Installing configuration to {}...", file.getAbsoluteFile());
         try {
             ClassLoader loader = Configuration.class.getClassLoader();
             URL url = loader.getResource("config/GeoVisualizer.xml");
@@ -127,7 +127,7 @@ public final class Configuration {
             xmlInitialConfig.addProperty("geovisualizer.working.dir", workingDir);
             xmlInitialConfig.save(file);
         } catch (ConfigurationException ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         }
     }
 
@@ -143,7 +143,7 @@ public final class Configuration {
         try {
             XMLConfiguration xmlConfig = new XMLConfiguration(file);
             if (!xmlConfig.containsKey("version")) {
-                log.debug("No version tag.");
+                LOG.debug("No version tag.");
                 return false;
             }
 
@@ -151,11 +151,11 @@ public final class Configuration {
             if (version.equalsIgnoreCase(VERSION)) {
                 return true;
             } else {
-                log.debug("Version {} not supported.", version);
+                LOG.debug("Version {} not supported.", version);
                 return false;
             }
         } catch (ConfigurationException ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         }
         return false;
     }

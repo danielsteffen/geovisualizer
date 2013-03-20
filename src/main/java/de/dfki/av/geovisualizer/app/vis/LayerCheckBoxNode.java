@@ -27,7 +27,7 @@ public class LayerCheckBoxNode {
 
     /**
      * Constructor.
-     * 
+     *
      * @param text the name of the layer.
      * @param selected whether the layer is selected or not.
      */
