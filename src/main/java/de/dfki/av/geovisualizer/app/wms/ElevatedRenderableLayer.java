@@ -71,7 +71,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
             Double elevation, Double opac) {
         super();
         this.elevation = elevation;
-        this.toCleanup = new ConcurrentLinkedQueue<Renderable>();
+        this.toCleanup = new ConcurrentLinkedQueue<>();
         this.opac = opac;
         this.opacityLevel = 1.0d;
         this.setPickEnabled(false);
@@ -188,7 +188,7 @@ public class ElevatedRenderableLayer extends RenderableLayer {
 
     @Override
     public void removeAllRenderables() {
-        toCleanup = new ConcurrentLinkedQueue<Renderable>(renderables);
+        toCleanup = new ConcurrentLinkedQueue<>(renderables);
         super.removeAllRenderables();
     }
 }

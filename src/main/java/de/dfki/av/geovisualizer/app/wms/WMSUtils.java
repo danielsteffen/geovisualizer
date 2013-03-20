@@ -94,7 +94,7 @@ public class WMSUtils {
      * @return reference location of the given sector
      */
     public static LatLon getReferenceLocation(Sector sector) {
-        ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> pathLocations = new ArrayList<>();
         Iterator<LatLon> iterator = sector.iterator();
         while (iterator.hasNext()) {
             pathLocations.add(iterator.next());
@@ -253,7 +253,7 @@ public class WMSUtils {
             log.debug("No named layers available for server: {}.", uri);
             return null;
         }
-        List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
+        List<LayerInfo> layerInfos = new ArrayList<>();
         for (WMSLayerCapabilities lc : namedLayerCaps) {
             Set<WMSLayerStyle> styles = lc.getStyles();
             if (styles == null || styles.isEmpty()) {

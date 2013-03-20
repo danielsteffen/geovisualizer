@@ -503,7 +503,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
         if (layerName.contains("[]")) {
             log.debug("Layer is instance of a time series.");
             List<LayerInfo> layerInfos = WMSUtils.getLayerInfos(uri);
-            List<ElevatedRenderableLayer> layers = new ArrayList<ElevatedRenderableLayer>();
+            List<ElevatedRenderableLayer> layers = new ArrayList<>();
             
             for (LayerInfo layerInfo : layerInfos) {
                 String name = layerInfo.getName();
@@ -518,7 +518,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                         break;
                     }
                     
-                    List<LayerInfo> childLayerInfos = new ArrayList<LayerInfo>();
+                    List<LayerInfo> childLayerInfos = new ArrayList<>();
                     for (WMSLayerCapabilities lc : childNamedLayerCaps) {
                         if (lc.isLeaf()) {
                             Set<WMSLayerStyle> styles = lc.getStyles();

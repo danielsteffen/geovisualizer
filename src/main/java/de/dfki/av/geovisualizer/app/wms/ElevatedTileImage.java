@@ -415,7 +415,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     private double computeEyeDistance(DrawContext dc) {
         double minDistance = Double.MAX_VALUE;
         Vec4 eyePoint = dc.getView().getEyePoint();
-        List<Vec4> points = new ArrayList<Vec4>();
+        List<Vec4> points = new ArrayList<>();
         List<LatLon> cornerList = getCorners();
         for (LatLon c : cornerList) {
             points.add(dc.getGlobe().computePointFromPosition(c, elevation));
@@ -439,7 +439,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * @return the computed extent, or null if the extent cannot be computed.
      */
     private Extent computeExtent(DrawContext dc) {
-        List<Vec4> points = new ArrayList<Vec4>();
+        List<Vec4> points = new ArrayList<>();
         List<LatLon> cornerList = getCorners();
         for (LatLon c : cornerList) {
             points.add(dc.getGlobe().computePointFromPosition(c, elevation));

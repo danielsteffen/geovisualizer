@@ -186,7 +186,7 @@ public class WMSControlLayer extends RenderableLayer {
     public WMSControlLayer(List<ElevatedRenderableLayer> layerList) {
         initAttributes();
         id = String.valueOf(System.currentTimeMillis());
-        stepsRange = new ArrayList<String>();
+        stepsRange = new ArrayList<>();
         for (ElevatedRenderableLayer layer : layerList) {
             String[] parts = layer.getName().split(" ");
             if (parts.length > 1) {

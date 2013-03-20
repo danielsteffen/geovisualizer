@@ -54,7 +54,7 @@ public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
      */
     private List<LayerInfo> retreiveLayerInfo(String wmsURL) throws URISyntaxException, Exception {
         if (direktLink) {
-            List<LayerInfo> layerInfo = new ArrayList<LayerInfo>();
+            List<LayerInfo> layerInfo = new ArrayList<>();
             layerInfo.add(WMSUtils.parseWMSRequest(wmsURL));
             return layerInfo;
         } else {

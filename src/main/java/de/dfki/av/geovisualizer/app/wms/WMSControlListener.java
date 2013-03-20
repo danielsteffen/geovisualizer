@@ -162,7 +162,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      * on the {@link WMSControlLayer}
      */
     private void change(final ElevatedRenderableLayer layer) {
-        List<ElevatedRenderableLayer> oldLayers = new ArrayList<ElevatedRenderableLayer>();
+        List<ElevatedRenderableLayer> oldLayers = new ArrayList<>();
         for (ElevatedRenderableLayer l : layers) {
             if (l.getOpacity() > 0.0d && !l.equals(layer)) {
                 oldLayers.add(l);

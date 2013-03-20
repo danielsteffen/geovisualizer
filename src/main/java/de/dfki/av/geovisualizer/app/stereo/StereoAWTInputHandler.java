@@ -49,7 +49,7 @@ public class StereoAWTInputHandler extends AWTInputHandler {
      */
     public StereoAWTInputHandler() {
         super();
-        selectListeners = new ArrayList<SelectListener>();
+        selectListeners = new ArrayList<>();
         hoverTimer = new javax.swing.Timer(600, new ActionListener() {
 
             @Override
