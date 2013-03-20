@@ -40,7 +40,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <compileSource>1.6</compileSource>
+        <source.format>1.6</source.format>
         <main-class>de.dfki.av.geovisualizer.app.ui.MainFrame</main-class>
         <worldwind.version>1.4.0-without-jackson</worldwind.version>
         <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
@@ -633,8 +633,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${source.format}</source>
+                    <target>${source.format}</target>
                 </configuration>
             </plugin>
             <plugin>
