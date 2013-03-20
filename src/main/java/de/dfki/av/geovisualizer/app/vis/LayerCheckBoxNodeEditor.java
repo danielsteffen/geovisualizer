@@ -1,5 +1,5 @@
 /*
- *  LayerCheckBoxNodeEditor.java 
+ *  LayerCheckBoxNodeEditor.java
  *
  *  Created by DFKI AV on 20.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -35,7 +35,7 @@ public class LayerCheckBoxNodeEditor extends AbstractCellEditor implements TreeC
      */
     private JTree jTree;
     /*
-     * set to null.??? 
+     * set to null.???
      */
     ChangeEvent changeEvent = null;
 

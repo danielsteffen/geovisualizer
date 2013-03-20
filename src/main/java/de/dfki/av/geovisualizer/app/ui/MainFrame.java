@@ -964,7 +964,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         initLogging();
         printSystemSettings();

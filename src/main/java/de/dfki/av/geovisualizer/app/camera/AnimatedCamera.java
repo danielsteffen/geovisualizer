@@ -7,7 +7,6 @@
  */
 package de.dfki.av.geovisualizer.app.camera;
 
-import de.dfki.av.geovisualizer.app.vis.VisualizationComponent;
 import gov.nasa.worldwind.geom.Position;
 
 /**

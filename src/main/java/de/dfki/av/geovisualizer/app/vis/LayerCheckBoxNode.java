@@ -7,8 +7,6 @@
  */
 package de.dfki.av.geovisualizer.app.vis;
 
-import gov.nasa.worldwind.layers.Layer;
-
 /**
  * The class covering the {@link Layer} object.
  *

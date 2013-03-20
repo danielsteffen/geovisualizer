@@ -90,7 +90,7 @@ public final class ParameterMappingPanel extends JPanel {
                         VisParameterPanel.class.getSimpleName());
             }
         }
-        return this.attributes;
+        return this.attributes.clone();
     }
 
     /**

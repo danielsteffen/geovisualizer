@@ -10,7 +10,6 @@ package de.dfki.av.geovisualizer.app.vis;
 import de.dfki.av.geovisualizer.app.camera.BoundingVolume;
 import de.dfki.av.geovisualizer.app.camera.Camera;
 import de.dfki.av.geovisualizer.app.camera.CameraListener;
-import de.dfki.av.geovisualizer.core.IVisAlgorithm;
 import java.beans.PropertyChangeListener;
 
 /**

@@ -1,5 +1,5 @@
 /*
- *  ElevatedTileImage.java 
+ *  ElevatedTileImage.java
  *
  *  Created by DFKI AV on 15.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -420,9 +420,9 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
 
             this.frameTimestamp = dc.getFrameTimeStamp();
         }
-        // Add the cube to the ordered renderable list. 
+        // Add the cube to the ordered renderable list.
         // The SceneController sorts the ordered renderables by eye
-        // distance, and then renders them back to front. 
+        // distance, and then renders them back to front.
         // Render will be called again in ordered rendering mode, and at
         // that point we will actually draw the cube.
         dc.addOrderedRenderable(this);

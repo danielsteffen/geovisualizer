@@ -18,7 +18,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.text.Position;
 import javax.swing.tree.*;

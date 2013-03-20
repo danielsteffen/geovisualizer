@@ -1,5 +1,5 @@
 /*
- *  SnapshotAction.java 
+ *  SnapshotAction.java
  *
  *  Created by DFKI AV on 23.11.2012.
  *  Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.

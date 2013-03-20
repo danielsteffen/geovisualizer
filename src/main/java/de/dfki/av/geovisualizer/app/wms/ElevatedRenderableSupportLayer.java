@@ -1,5 +1,5 @@
 /*
- *  ElevatedRenderableSupportLayer.java 
+ *  ElevatedRenderableSupportLayer.java
  *
  *  Created by DFKI AV on 01.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -19,7 +19,7 @@ import javax.media.opengl.GL;
 /**
  * Support layer for a {@link ElevatedRenderableLayer} which provides the wms
  * data.
- * 
+ *
 * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {

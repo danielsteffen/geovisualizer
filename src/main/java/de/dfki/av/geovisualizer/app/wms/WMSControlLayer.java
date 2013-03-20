@@ -396,7 +396,7 @@ public class WMSControlLayer extends RenderableLayer {
                 x = 0d + this.borderWidth;
                 y = viewport.getHeight() - controls.height - this.borderWidth;
                 break;
-            case AVKey.SOUTHWEST: 
+            case AVKey.SOUTHWEST:
             default:
                 x = 0d + this.borderWidth;
                 y = 0d + this.borderWidth;
@@ -547,7 +547,7 @@ public class WMSControlLayer extends RenderableLayer {
                     }
                 }
             }
-            this.currentControl.getAttributes().setImageOpacity(-1); // use default opacity     
+            this.currentControl.getAttributes().setImageOpacity(-1); // use default opacity
             if (index != -1 && !getValSelected()[index]) {
                 Font font = currentControl.getAttributes().getFont();
                 font = font.deriveFont(FONT_SIZE);
@@ -623,7 +623,7 @@ public class WMSControlLayer extends RenderableLayer {
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2],
                         (double) backColor.getAlpha() / 255d
                         * this.getOpacity());
-                
+
                 colorRGB = this.color.getRGBColorComponents(null);
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2],
                         this.getOpacity());
