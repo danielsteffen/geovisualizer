@@ -55,7 +55,7 @@ public final class VisWiz {
      * will be added automatically to the {@link WorldWindow} instance. The
      * {@link PropertyChangeListener} can be used to monitor the progress of the
      * visualization creation process. The name of the
-     * {@link PropertyChangeEvent} event is
+     * {@link java.beans.PropertyChangeEvent} event is
      * {@link IVisAlgorithm#PROGRESS_PROPERTY}.
      *
      * @param worldWindow the {@link WorldWindow} where to add the
@@ -73,7 +73,7 @@ public final class VisWiz {
      * will be added automatically to the {@link WorldWindow} instance. The
      * {@link PropertyChangeListener} can be used to monitor the progress of the
      * visualization creation process. The name of the
-     * {@link PropertyChangeEvent} event is
+     * {@link java.beans.PropertyChangeEvent} event is
      * {@link IVisAlgorithm#PROGRESS_PROPERTY}. If {@code data != null} the
      * visualization wizard {@link VisWiz} starts with the
      * {@link AttributeSelectionPanel} as first panel. Otherwise with the

@@ -68,7 +68,7 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
     /**
      *
      * @param parentFrame
-     * @return
+     * @return {@link File}
      */
     private File chooseFile(Component parentFrame) {
         File outFile = null;
@@ -139,7 +139,8 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
 
     /**
      *
-     * @return
+     *
+     * @return Composed suggested name as {@link String}
      */
     private String composeSuggestedName() {
         String baseName = "GeoVisualizer-SnapShot";

@@ -1,5 +1,5 @@
 /*
- *  LayerCheckBoxNode.java 
+ *  LayerCheckBoxNode.java
  *
  *  Created by DFKI AV on 20.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -8,7 +8,7 @@
 package de.dfki.av.geovisualizer.app.vis;
 
 /**
- * The class covering the {@link Layer} object.
+ * The class covering the {@link gov.nasa.worldwind.layers.Layer} object.
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */

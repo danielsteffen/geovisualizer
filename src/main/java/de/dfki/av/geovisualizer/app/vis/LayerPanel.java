@@ -1,5 +1,5 @@
 /*
- *  LayerPanel.java 
+ *  LayerPanel.java
  *
  *  Created by DFKI AV on 15.06.2012.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -25,7 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link JPanel} holding all available {@link Layer}.
+ * A {@link javax.swing.JPanel} holding all available
+ * {@link gov.nasa.worldwind.layers.Layer}.
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */

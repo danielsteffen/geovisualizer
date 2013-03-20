@@ -1,5 +1,5 @@
 /*
- *  VisualizationComponent.java 
+ *  VisualizationComponent.java
  *
  *  Created by DFKI AV on 15.09.2011.
  *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -80,7 +80,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
 
     /**
      * Add a listener for changes of type
-     * {@link IVisAlgorithm#PROGRESS_PROPERTY}
+     * {@link de.dfki.av.geovisualizer.core.IVisAlgorithm#PROGRESS_PROPERTY}
      *
      * @param listener the {@link PropertyChangeListener} to add.
      */
@@ -88,7 +88,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
 
     /**
      * Remove a {@link PropertyChangeListener} for property
-     * {@link IVisAlgorithm#PROGRESS_PROPERTY}.
+     * {@link de.dfki.av.geovisualizer.core.IVisAlgorithm#PROGRESS_PROPERTY}.
      *
      * @param listener the {@link PropertyChangeListener} to remove.
      */
