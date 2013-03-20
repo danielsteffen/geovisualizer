@@ -40,7 +40,7 @@ public class BoundingBox implements BoundingVolume {
      * <code>BoundingBox</code>.
      *
      * @param s the {@link Sector} of the {@link BoundingBox} to set.
-     * @throws IllegalArgumentException if <code>s</code> is set *      * to <code>null</code>
+     * @throws IllegalArgumentException if <code>s</code> is set * *      * to <code>null</code>
      */
     public BoundingBox(Sector s) {
         if (s == null) {
