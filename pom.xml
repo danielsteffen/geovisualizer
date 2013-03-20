@@ -40,7 +40,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.format>1.6</source.format>
+        <source.format>1.7</source.format>
         <main-class>de.dfki.av.geovisualizer.app.ui.MainFrame</main-class>
         <worldwind.version>1.4.0-without-jackson</worldwind.version>
         <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
