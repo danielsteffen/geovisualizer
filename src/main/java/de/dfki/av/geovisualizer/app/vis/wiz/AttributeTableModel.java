@@ -1,5 +1,5 @@
 /*
- * AttributeTableModel.java 
+ * AttributeTableModel.java
  *
  * Created by DFKI AV on 14.10.2011.
  * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.

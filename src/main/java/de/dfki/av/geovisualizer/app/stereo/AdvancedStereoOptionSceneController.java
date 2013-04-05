@@ -1,9 +1,9 @@
 /*
- *  AdvancedStereoOptionSceneController.java 
+ * AdvancedStereoOptionSceneController.java
  *
- *  Created by DFKI AV on 01.08.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 01.08.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.stereo;
 
@@ -104,7 +104,7 @@ public class AdvancedStereoOptionSceneController
     /**
      * Intra ocular distance. (Eye separation length).
      */
-    private double IOD;
+    private double iod;
     /**
      * Indicates the first time to enter the side by side mode when its value is
      * true.
@@ -123,7 +123,7 @@ public class AdvancedStereoOptionSceneController
      */
     public AdvancedStereoOptionSceneController() {
         super();
-        IOD = 0.5;
+        iod = 0.5;
         screenZ = 150;
         sideBySide = false;
         firstTime = true;
@@ -397,7 +397,7 @@ public class AdvancedStereoOptionSceneController
      * @return IOD Intra ocular distance (eye separation distance).
      */
     public double getIOD() {
-        return IOD;
+        return iod;
     }
 
     /**
@@ -406,7 +406,7 @@ public class AdvancedStereoOptionSceneController
      * @param IOD Eye separation distance.
      */
     public void setIOD(double IOD) {
-        this.IOD = IOD;
+        this.iod = IOD;
     }
 
     /**

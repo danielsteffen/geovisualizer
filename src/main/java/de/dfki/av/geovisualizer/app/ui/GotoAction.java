@@ -1,9 +1,9 @@
 /*
- *  GotoAction.java 
+ * GotoAction.java
  *
- *  Created by DFKI AV on 29.11.2012.
- *  Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 29.11.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.ui;
 
@@ -25,6 +25,9 @@ public class GotoAction extends AbstractAction {
 
     /**
      * Constructor for the {@link GotoAction}.
+     *
+     * @param frame
+     * @param worldWindow
      */
     public GotoAction(final JFrame frame, final WorldWindow worldWindow) {
         super("Goto");

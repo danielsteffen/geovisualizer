@@ -1,9 +1,9 @@
 /*
- *  LayerInfoRetreiver.java 
+ * LayerInfoRetreiver.java
  *
- *  Created by DFKI AV on 15.06.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 15.06.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.wms;
 
@@ -16,7 +16,7 @@ import javax.swing.SwingWorker;
 import org.openide.util.Exceptions;
 
 /**
- * SwingWorker for the retreival of {@link LayerInfo} for a given wms request
+ * SwingWorker for the retrieval of {@link LayerInfo} for a given wms request
  * url
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
@@ -43,7 +43,7 @@ public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
     }
 
     /**
-     * Retreives a {@link LayerInfo} from the defined wms source ({@link String}
+     * Retrieves a {@link LayerInfo} from the defined wms source ({@link String}
      * wmsURL})
      *
      * @param wmsURL
@@ -73,11 +73,7 @@ public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
         List<LayerInfo> li;
         try {
             li = get();
-        } catch (InterruptedException ex) {
-            firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
-            Exceptions.printStackTrace(ex);
-            return;
-        } catch (ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             firePropertyChange(EventHolder.LAYERINFO_RETREIVAL_FAILED, this, wmsURL);
             Exceptions.printStackTrace(ex);
             return;

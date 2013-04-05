@@ -1,9 +1,9 @@
 /*
- *  VisualizationComponent.java
+ * VisualizationComponent.java
  *
- *  Created by DFKI AV on 15.09.2011.
- *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 15.09.2011.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis;
 
@@ -26,7 +26,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * @param layer the layer to add.
      * @throws IllegalArgumentException If <code>layer</code> is null.
      */
-    public void addLayer(final Object layer);
+    void addLayer(final Object layer);
 
     /**
      * Removes a layer from the visualization component. Depending on the
@@ -36,14 +36,14 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * @param layer the layer to remove.
      * @throws IllegalArgumentException If <code>layer</code> is null.
      */
-    public void removeLayer(final Object layer);
+    void removeLayer(final Object layer);
 
     /**
      * Removes all layers from the visualization component. Depending on the
      * implementation. <p> Note: May be it is important to keep the basic
      * layers.
      */
-    public void removeAllLayers();
+    void removeAllLayers();
 
     /**
      * Returns an object of type {@link Camera} containing necessary information
@@ -51,7 +51,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      *
      * @return the camera to return.
      */
-    public Camera getCamera();
+    Camera getCamera();
 
     /**
      * Sets the camera view of the 3-D visualization component.
@@ -59,7 +59,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * @param c the camera to set.
      * @throws IllegalArgumentException If <code>c</code> is null.
      */
-    public void setCamera(Camera c);
+    void setCamera(Camera c);
 
     /**
      * Adds a {@link CameraListener} to the visualization component. <p> Note:
@@ -68,7 +68,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * @param cl the {@link CameraListener} to add.
      * @throws IllegalArgumentException If <code>cl</code> is null.
      */
-    public void addCameraListener(CameraListener cl);
+    void addCameraListener(CameraListener cl);
 
     /**
      * Removes the {@link CameraListener}.
@@ -76,15 +76,15 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * @param cl the {@link CameraListener} to remove.
      * @throws IllegalArgumentException If <code>cl</code> is null.
      */
-    public void removeCameraListener(CameraListener cl);
+    void removeCameraListener(CameraListener cl);
 
     /**
-     * Add a listener for changes of type
+     * Add a listener for changes of type.
      * {@link de.dfki.av.geovisualizer.core.IVisAlgorithm#PROGRESS_PROPERTY}
      *
      * @param listener the {@link PropertyChangeListener} to add.
      */
-    public void addProgressListener(PropertyChangeListener listener);
+    void addProgressListener(PropertyChangeListener listener);
 
     /**
      * Remove a {@link PropertyChangeListener} for property
@@ -92,7 +92,7 @@ public interface VisualizationComponent extends PropertyChangeListener {
      *
      * @param listener the {@link PropertyChangeListener} to remove.
      */
-    public void removeProgressListener(PropertyChangeListener listener);
+    void removeProgressListener(PropertyChangeListener listener);
 
     /**
      * Sets the bounding volume that should be contained in the camera view and
@@ -101,12 +101,12 @@ public interface VisualizationComponent extends PropertyChangeListener {
      * @param bv the {@link BoundingVolume} to set.
      * @throws IllegalArgumentException If <code>bv</code> is null.
      */
-    public void setBoundingVolume(BoundingVolume bv);
+    void setBoundingVolume(BoundingVolume bv);
 
     /**
      * Returns the {@link BoundingVolume} contained by the camera view.
      *
      * @return the bounding volume to return.
      */
-    public BoundingVolume getBoundingVolume();
+    BoundingVolume getBoundingVolume();
 }

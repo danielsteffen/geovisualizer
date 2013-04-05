@@ -1,9 +1,9 @@
 /*
- *  ElevationsLoader.java 
+ * ElevationsLoader.java
  *
- *  Created by DFKI AV on 24.09.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 24.09.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis;
 
@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory;
  */
 public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
 
-    /*
+    /**
      * Logger.
      */
-    private final Logger log = LoggerFactory.getLogger(ElevationsLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ElevationsLoader.class);
     /**
      * The {@link Globe} where to add the {@link LocalElevationModel}.
      */
@@ -50,17 +50,17 @@ public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
     public ElevationsLoader(final Globe globe, String filename) {
         if (globe == null) {
             String msg = "globe == null";
-            log.error(msg);
+            LOG.error(msg);
             throw new IllegalArgumentException(msg);
         }
         if (filename == null) {
             String msg = "filename == null";
-            log.error(msg);
+            LOG.error(msg);
             throw new IllegalArgumentException(msg);
         }
         if (filename.isEmpty()) {
             String msg = "filename is empty";
-            log.error(msg);
+            LOG.error(msg);
             throw new IllegalArgumentException(msg);
         }
         this.globe = globe;
@@ -69,7 +69,7 @@ public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
 
     @Override
     protected ElevationModel doInBackground() throws Exception {
-        log.debug("Loading elevation {}.", this.filename);
+        LOG.debug("Loading elevation {}.", this.filename);
         File file = new File(filename);
         final LocalElevationModel elevationModel = new LocalElevationModel();
         elevationModel.addElevations(file);
@@ -83,21 +83,21 @@ public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
             if (elevationModel != null) {
                 ElevationModel currentElevationModel = globe.getElevationModel();
                 if (currentElevationModel instanceof CompoundElevationModel) {
-                    log.debug("Current elevation model instance of CompoundElevationModel.");
+                    LOG.debug("Current elevation model instance of CompoundElevationModel.");
                     CompoundElevationModel cem = (CompoundElevationModel) currentElevationModel;
                     cem.addElevationModel(elevationModel);
                 } else {
-                    log.debug("Current elevation model no instance of CompoundElevationModel.");
+                    LOG.debug("Current elevation model no instance of CompoundElevationModel.");
                     globe.setElevationModel(elevationModel);
                 }
             } else {
                 String msg = "elevationModel == null";
-                log.error(msg);
+                LOG.error(msg);
             }
         } catch (InterruptedException ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         } catch (ExecutionException ex) {
-            log.error(ex.toString());
+            LOG.error(ex.toString());
         }
     }
 }

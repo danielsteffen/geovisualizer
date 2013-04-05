@@ -1,9 +1,9 @@
 /*
- *  PropertyChangeEventHolder.java 
+ * PropertyChangeEventHolder.java
  *
- *  Created by DFKI AV on 12.07.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 12.07.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.wms;
 
@@ -18,35 +18,35 @@ public interface EventHolder {
     /**
      * Name of the event which is fired when a WMS download is active.
      */
-    public static final String WMS_DOWNLOAD_ACTIVE = "wms_download_active";
+    String WMS_DOWNLOAD_ACTIVE = "wms_download_active";
     /**
      * Name of the event which is fired when a WMS download is finished.
      */
-    public static final String WMS_DOWNLAOD_COMPLETE = "wms_download_complete";
+    String WMS_DOWNLAOD_COMPLETE = "wms_download_complete";
     /**
      * Name of the event which is fired when an image creation is finished.
      */
-    public static final String IMAGE_CREATION_COMPLETE = "image_creation_complete";
+    String IMAGE_CREATION_COMPLETE = "image_creation_complete";
     /**
      * Name of the event which is fired when a check is needed if images must be
      * removed.
      */
-    public static final String IMAGE_REMOVAL = "image_removal";
+    String IMAGE_REMOVAL = "image_removal";
     /**
      * Name of the event which is fired when all images should be removed.
      */
-    public static final String IMAGE_REMOVAL_COMPLETE = "image_removal_complete";
+    String IMAGE_REMOVAL_COMPLETE = "image_removal_complete";
     /**
-     * Name of the event which is fired if the layer info retreival is
+     * Name of the event which is fired if the layer info retrieval is
      * completed.
      */
-    public static final String LAYERINFO_RETREIVAL_COMPLETE = "layerinfo_retreival_complete";
+    String LAYERINFO_RETREIVAL_COMPLETE = "layerinfo_retreival_complete";
     /**
      * Name of the event which is fired if the layer info retreival has failed.
      */
-    public static final String LAYERINFO_RETREIVAL_FAILED = "layerinfo_retreival_failed";
+    String LAYERINFO_RETREIVAL_FAILED = "layerinfo_retreival_failed";
     /**
      * Name of the event which is fired if a wwd redraw is needed.
      */
-    public static final String WWD_REDRAW = "wwd_redraw";
+    String WWD_REDRAW = "wwd_redraw";
 }

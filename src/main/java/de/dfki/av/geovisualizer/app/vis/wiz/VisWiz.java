@@ -1,5 +1,5 @@
 /*
- * VisWiz.java 
+ * VisWiz.java
  *
  * Created by DFKI AV on 15.09.2011.
  * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.

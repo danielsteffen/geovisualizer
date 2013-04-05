@@ -1,9 +1,9 @@
 /*
- *  CameraListener.java 
+ * CameraListener.java
  *
- *  Created by DFKI AV on 19.09.2011.
- *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 19.09.2011.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.camera;
 

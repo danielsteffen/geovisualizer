@@ -1,9 +1,9 @@
 /*
- *  LayerAction.java 
+ * LayerAction.java
  *
- *  Created by DFKI AV on 15.09.2011.
- *  Copyright (c) 2011 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 15.09.2011.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.vis;
 
@@ -20,11 +20,11 @@ import javax.swing.JCheckBoxMenuItem;
 public class LayerAction extends AbstractAction {
 
     /**
-     * The {@link WorldWindow}
+     * The {@link WorldWindow}.
      */
     private WorldWindow wwd;
     /**
-     * The {@link Layer}
+     * The {@link Layer}.
      */
     private Layer layer;
     /**

@@ -1,9 +1,9 @@
 /*
- *  ElevatedTileImage.java
+ * ElevatedTileImage.java
  *
- *  Created by DFKI AV on 15.06.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 15.06.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.wms;
 

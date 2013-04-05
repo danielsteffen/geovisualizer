@@ -1,9 +1,9 @@
 /*
- *  LayerInfo.java 
+ * LayerInfo.java
  *
- *  Created by DFKI AV on 15.04.2012.
- *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
- *  Use is subject to license terms.
+ * Created by DFKI AV on 15.04.2012.
+ * Copyright (c) 2011-2013 DFKI GmbH, Kaiserslautern. All rights reserved.
+ * Use is subject to license terms.
  */
 package de.dfki.av.geovisualizer.app.wms;
 
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class for handling the LayerInfo for the ElevatedSurfaceLayer
+ * Class for handling the LayerInfo for the ElevatedSurfaceLayer.
  *
  * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
