@@ -42,8 +42,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.format>1.7</source.format>
         <main-class>de.dfki.av.geovisualizer.app.ui.MainFrame</main-class>
-        <worldwind.version>1.4.0-without-jackson</worldwind.version>
-        <worldwind.3rdparty.version>1.4.0</worldwind.3rdparty.version>
+        <worldwind.version>1.5.0</worldwind.version>
+        <worldwind.3rdparty.version>1.5.0</worldwind.3rdparty.version>
         <repository.id>dfki-artifactory</repository.id>
         <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
         <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
