@@ -17,7 +17,7 @@ on the links below to reach the software.
 
   * {{{./installer/geovisualizer-${project.version}-linux-x64.zip}geovisualizer-${project.version}-linux-x64.zip}} 
 
-  * {{{./installer/geovisualizer-${project.version}-maxosx-x64.zip}geovisualizer-${project.version}-macosx-x64.zip}} 
+  * {{{./installer/geovisualizer-${project.version}-macosx-x64.zip}geovisualizer-${project.version}-macosx-x64.zip}} 
 
   []
 
