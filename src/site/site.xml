@@ -2,9 +2,9 @@
     <publishDate position="navigation-bottom"/>
     <version position="left"/>
     <bannerLeft>
-        <name> </name>
-        <!--src>images/avdfkilogo.png</src>
-        <href>http://www.geovisualizer.de</href-->
+        <name>GeoVisualizer</name>
+        <src>images/geovisualizerlogo.png</src>
+        <href>http://www.geovisualizer.de</href>
     </bannerLeft>
     <bannerRight>
         <name>Augemented Vision</name>
