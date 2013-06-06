@@ -7,3 +7,42 @@ var url = dir + "jnlp/geovisualizer.jnlp";
 deployJava.createWebStartLaunchButton(url, '1.6.0');
 </script>
 <!-- END SNIPPET: launch-button -->
+
+<!-- START SNIPPET: publications -->
+<dl>
+<dt><i>GeoVisualizer - Ein neuer Ansatz zur Visualisierung von Sensordaten im raumplanerischen Kontext</i></dt>
+<dd>Steffen, D., Michel, F., Bergner, B., Exner, J.-P. and Zeile, P.</dd>
+<dd>Angewandte Geoinformatik 2013 - Beitr&auml;ge zum 25.AGIT-Symposium (AGIT)</dd>
+<dd> Wichmann Verlag , <b>2013</b></dd>
+</dl>
+
+<dl>
+<dt><i>VISWIZ - A Visualization Toolkit for 3-D / 4-D Geospatioal Data Representation</i></dt>
+<dd>Steffen, D. and Michel, F.</dd>
+<dd>GeoViz Hamburg Workshop</dd>
+<dd><b>2013</b></dd>
+</dl>
+
+<dl>
+<dt><i>A new Approach in the Visualization of Georeferenced Sensor Data in Spatial Planning</i></dt>
+<dd>Michel, F., Steffen, D., Bergner, B., Exner, J.-P. and Zeile, P.</dd>
+<dd>Schrenk, M., Popovich, V., Zeile, P. &amp; Elisei, P. <i>(ed.)</i></dd>
+<dd>Proceedings REAL CORP 2013 Tagungsband</dd>
+<dd>Eigenverlag des Vereins CORP, <b>2013</b></dd>
+</dl>
+
+<dl>
+<dt><i>Considering the Impact of Future Climate Change on the Resilience of a City - Surface Run-Off due to Heavy Storm Events in the City of Wuppertal</i></dt>
+<dd>Michel, F., Steffen, D., Schlobinski, S. and Sander, S.</dd>
+<dd>17th International Conference on Urban Planning and Regional Development in the Information Society, GeoMultimedia 2012, "RE-MIXING THE CITY TOWARDS SUSTAINABILITY AND RESILIENCE?". International Conference on Urban Planning, Regional Development and Information Society (REAL CORP-2012), 17th Conference; GeoMultimedia 2012, May 14-16, Schwechat, Austria</dd>
+</dl>
+
+<dl>
+<dt><i>Visualization for Climate Change Adaptation in SUDPLAN</i></dt>
+<dd>Michel, F. and Steffen, D.</dd>
+<dd>Greve, K. &amp; Cremers, A. B. <i>(ed.)</i></dd>
+<dd>Proceedings of the 24th International Conference on Informatics for Environmental Protection. International Conference on Informatics for Environmental Protection (EnviroInfo-2010), October 6-8, Bonn, Germany</dd>
+<dd>Shaker Verlag, <b>2010</b>, pp. 165-168</dd>
+</dl>
+
+<!-- END SNIPPET: publications -->

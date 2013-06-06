@@ -180,6 +180,10 @@ dl dd p {
     color:white;
 }	
 
+dt {
+    color:#8FD2E4;
+}
+
 div#lastPublished{
     margin-top:20px;
     color:grey;}
