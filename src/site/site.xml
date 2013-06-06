@@ -15,6 +15,7 @@
         <menu name="GeoVisualizer">
             <item name="About" href="index.html"/>
             <item name="Demo" href="demo.html"/>
+            <item name="Downloads" href="downloads.html"/>
             <!--item name="Releases" href="releases.html"/-->
             <!--item name="Videos" href="videos.html"/-->
             <!--item name="Snapshots" href="snapshots.html"/-->

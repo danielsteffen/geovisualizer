@@ -1,0 +1,39 @@
+                 ----
+		 Demo
+		 ----
+		 Daniel Steffen
+		 ----
+		 2013-06-06
+		 ----
+
+Downloads
+
+  The software releases of GeoVisualizer can be downloaded here. Please click 
+on the links below to reach the software.
+
+  * {{{./installer/geovisualizer-${project.version}-windows-x64.zip}geovisualizer-${project.version}-windows-x64.zip}} 
+
+  * {{{./installer/geovisualizer-${project.version}-windows-x86.zip}geovisualizer-${project.version}-windows-x86.zip}} 
+
+  * {{{./installer/geovisualizer-${project.version}-linux-x64.zip}geovisualizer-${project.version}-linux-x64.zip}} 
+
+  * {{{./installer/geovisualizer-${project.version}-maxosx-x64.zip}geovisualizer-${project.version}-macosx-x64.zip}} 
+
+  []
+
+  ~~If you are interested in the nightly build versions of GeoVisualizer, please 
+~~click on the links below!
+ 
+  ~~* geovisualizer-2.0.2-SNAPSHOT-windows-x64.zip
+  
+  ~~* geovisualizer-2.0.2-SNAPSHOT-windows-x86.zip
+
+  ~~* geovisualizer-2.0.2-SNAPSHOT-linux-x64.zip
+  
+  ~~* geovisualizer-2.0.2-SNAPSHOT-macosx-x64.zip
+  
+  ~~[]
+
+  To test the GeoVisualizer application unzip the downloaded file and run
+the relevant file in the bin folder.
+  
