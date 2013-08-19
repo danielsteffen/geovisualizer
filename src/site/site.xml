@@ -1,6 +1,11 @@
 <project name="GeoVisualizer">
     <publishDate position="navigation-bottom"/>
     <version position="left"/>
+    <skin>
+        <groupId>de.dfki.av</groupId>
+        <artifactId>av-site-skin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </skin>    
     <bannerLeft>
         <name>GeoVisualizer</name>
         <src>images/geovisualizerlogo.png</src>
