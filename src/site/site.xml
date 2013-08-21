@@ -4,7 +4,7 @@
     <skin>
         <groupId>de.dfki.av</groupId>
         <artifactId>av-site-skin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </skin>    
     <bannerLeft>
         <name>GeoVisualizer</name>
