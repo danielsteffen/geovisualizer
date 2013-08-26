@@ -18,6 +18,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 
 /**
  * ControlLayer that controls which WMS layer should be displayed.
@@ -591,14 +592,14 @@ public class WMSControlLayer extends RenderableLayer {
      * @param dc Draw context used.
      */
     public void draw(DrawContext dc) {
-        GL gl = dc.getGL();
+        GL2 gl = dc.getGL().getGL2();
 
         OGLStackHandler ogsh = new OGLStackHandler();
 
         try {
-            ogsh.pushAttrib(gl, GL.GL_TRANSFORM_BIT);
+            ogsh.pushAttrib(gl, GL2.GL_TRANSFORM_BIT);
 
-            gl.glDisable(GL.GL_DEPTH_TEST);
+            gl.glDisable(GL2.GL_DEPTH_TEST);
 
             double width = this.size.width;
             double height = this.size.height;
@@ -614,8 +615,8 @@ public class WMSControlLayer extends RenderableLayer {
             Position referencePosition = dc.getViewportCenterPosition();
             if (referencePosition != null) {
                 // Draw scale
-                gl.glEnable(GL.GL_BLEND);
-                gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+                gl.glEnable(GL2.GL_BLEND);
+                gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
                 // Set color using current layer opacity
                 Color backColor = this.getBackgroundColor(this.color);
@@ -630,15 +631,15 @@ public class WMSControlLayer extends RenderableLayer {
 
                 // Draw label
                 gl.glLoadIdentity();
-                gl.glDisable(GL.GL_CULL_FACE);
+                gl.glDisable(GL2.GL_CULL_FACE);
 
             }
         } finally {
             gl.glColor4d(1d, 1d, 1d, 1d); // restore the default OpenGL color
-            gl.glEnable(GL.GL_DEPTH_TEST);
+            gl.glEnable(GL2.GL_DEPTH_TEST);
 
-            gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO); // restore to default blend function
-            gl.glDisable(GL.GL_BLEND); // restore to default blend state
+            gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ZERO); // restore to default blend function
+            gl.glDisable(GL2.GL_BLEND); // restore to default blend state
 
             ogsh.pop(gl);
         }

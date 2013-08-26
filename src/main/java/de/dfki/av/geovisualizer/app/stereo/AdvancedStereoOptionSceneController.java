@@ -17,6 +17,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,126 +182,126 @@ public class AdvancedStereoOptionSceneController
             LOG.error(msg);
             throw new NullPointerException(msg);
         }
-        GL gl = dc.getGL();
+        GL2 gl = dc.getGL().getGL2();
         if (firstTime) {
-            gl.glEnable(GL.GL_DEPTH_TEST);
-            gl.glDepthFunc(GL.GL_LEQUAL);
+            gl.glEnable(GL2.GL_DEPTH_TEST);
+            gl.glDepthFunc(GL2.GL_LEQUAL);
 
             // Enable smooth shading.
-            gl.glShadeModel(GL.GL_SMOOTH);
+            gl.glShadeModel(GL2.GL_SMOOTH);
 
             // Define "clear" color.
             gl.glClearColor(0f, 0f, 0f, 0f);
 
             // Nice perspective.
-            gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+            gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
             // Create texture for left eye
             final int[] tmpLeft = new int[1];
             gl.glGenTextures(1, tmpLeft, 0);
             texLeftEye = tmpLeft[0];
-            gl.glBindTexture(GL.GL_TEXTURE_2D, tmpLeft[0]);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                    GL.GL_NEAREST);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                    GL.GL_NEAREST);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S,
-                    GL.GL_CLAMP_TO_EDGE);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T,
-                    GL.GL_CLAMP_TO_EDGE);
-            gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, (int) getWidth(),
-                    (int) getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, tmpLeft[0]);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER,
+                    GL2.GL_NEAREST);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER,
+                    GL2.GL_NEAREST);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S,
+                    GL2.GL_CLAMP_TO_EDGE);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T,
+                    GL2.GL_CLAMP_TO_EDGE);
+            gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGBA8, (int) getWidth(),
+                    (int) getHeight(), 0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, null);
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 
             // Create texture for right eye
             final int[] tmpRight = new int[1];
             gl.glGenTextures(1, tmpRight, 0);
             texRightEye = tmpRight[0];
-            gl.glBindTexture(GL.GL_TEXTURE_2D, tmpRight[0]);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                    GL.GL_NEAREST);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                    GL.GL_NEAREST);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S,
-                    GL.GL_CLAMP_TO_EDGE);
-            gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T,
-                    GL.GL_CLAMP_TO_EDGE);
-            gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, (int) getWidth(),
-                    (int) getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, tmpRight[0]);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER,
+                    GL2.GL_NEAREST);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER,
+                    GL2.GL_NEAREST);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S,
+                    GL2.GL_CLAMP_TO_EDGE);
+            gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T,
+                    GL2.GL_CLAMP_TO_EDGE);
+            gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGBA8, (int) getWidth(),
+                    (int) getHeight(), 0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, null);
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 
             // Create a framebufferobject
             int[] array = new int[1];
             IntBuffer ib = IntBuffer.wrap(array);
-            gl.glGenFramebuffersEXT(1, ib);
-            this.fbo = ib.get(0);
+            gl.glGenFramebuffers(1, ib);
+            this.fbo = ib.get(0);  
 
-            gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, fbo);
+            gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fbo);
 
             int[] array1 = new int[1];
             IntBuffer ib1 = IntBuffer.wrap(array1);
-            gl.glGenRenderbuffersEXT(1, ib1);
+            gl.glGenRenderbuffers(1, ib1);
             this.depthBuffer = ib.get(0);
 
-            gl.glBindRenderbufferEXT(GL.GL_RENDERBUFFER_EXT, depthBuffer);
-            gl.glRenderbufferStorageEXT(GL.GL_RENDERBUFFER_EXT,
-                    GL.GL_DEPTH_STENCIL_NV, getWidth(), getHeight());
+            gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, depthBuffer);
+            gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER,
+                    GL2.GL_DEPTH_STENCIL, getWidth(), getHeight());
 
-            gl.glFramebufferTexture2DEXT(GL.GL_FRAMEBUFFER_EXT,
-                    GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D, texLeftEye, 0);
-            gl.glFramebufferTexture2DEXT(GL.GL_FRAMEBUFFER_EXT,
-                    GL.GL_COLOR_ATTACHMENT1_EXT, GL.GL_TEXTURE_2D, texRightEye, 0);
-            gl.glFramebufferRenderbufferEXT(GL.GL_FRAMEBUFFER_EXT,
-                    GL.GL_DEPTH_ATTACHMENT_EXT, GL.GL_RENDERBUFFER_EXT,
+            gl.glFramebufferTexture2D(GL2.GL_FRAMEBUFFER,
+                    GL2.GL_COLOR_ATTACHMENT0, GL2.GL_TEXTURE_2D, texLeftEye, 0);
+            gl.glFramebufferTexture2D(GL2.GL_FRAMEBUFFER,
+                    GL2.GL_COLOR_ATTACHMENT1, GL2.GL_TEXTURE_2D, texRightEye, 0);
+            gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER,
+                    GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER,
                     depthBuffer);
-            gl.glFramebufferRenderbufferEXT(GL.GL_FRAMEBUFFER_EXT,
-                    GL.GL_STENCIL_ATTACHMENT_EXT, GL.GL_RENDERBUFFER_EXT,
+            gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER,
+                    GL2.GL_STENCIL_ATTACHMENT, GL2.GL_RENDERBUFFER,
                     depthBuffer);
             // Reset framebuffer.
-            gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
+            gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 
         }
 
-        gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, fbo);
+        gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fbo);
 
-        gl.glPushAttrib(GL.GL_VIEWPORT_BIT);
+        gl.glPushAttrib(GL2.GL_VIEWPORT_BIT);
         gl.glViewport(0, 0, getWidth(), getHeight());
         gl.glPushMatrix();
-        gl.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0_EXT);
+        gl.glDrawBuffer(GL2.GL_COLOR_ATTACHMENT0);
         renderScene(gl, !isSwapEyes());
         gl.glPopMatrix();
         gl.glPopAttrib();
 
-        gl.glPushAttrib(GL.GL_VIEWPORT_BIT);
+        gl.glPushAttrib(GL2.GL_VIEWPORT_BIT);
         gl.glViewport(0, 0, getWidth(), getHeight());
         gl.glPushMatrix();
-        gl.glDrawBuffer(GL.GL_COLOR_ATTACHMENT1_EXT);
+        gl.glDrawBuffer(GL2.GL_COLOR_ATTACHMENT1);
         renderScene(gl, isSwapEyes());
         gl.glPopMatrix();
         gl.glPopAttrib();
 
-        gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
+        gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 
 
         // Clear screen.
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
         // Set camera.
         // Change to projection matrix.
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
         // Ortho.
         gl.glOrtho(0.0, getWidth() * 2, 0.0, getHeight(), -1.0, 1.0);
 
         // Change back to model view matrix.
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, texLeftEye);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, texLeftEye);
         // Write triangle.
-        gl.glBegin(GL.GL_TRIANGLE_FAN);
+        gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex2f(0.0f, 0.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
@@ -310,12 +311,12 @@ public class AdvancedStereoOptionSceneController
         gl.glTexCoord2f(0.0f, 1.0f);
         gl.glVertex2f(0.0f, getHeight());
         gl.glEnd();
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
 
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, texRightEye);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, texRightEye);
         // Write triangle.
-        gl.glBegin(GL.GL_TRIANGLE_FAN);
+        gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex2f(getWidth(), 0.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
@@ -325,7 +326,7 @@ public class AdvancedStereoOptionSceneController
         gl.glTexCoord2f(0.0f, 1.0f);
         gl.glVertex2f(getWidth(), getHeight());
         gl.glEnd();
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
     }
 
     /**
@@ -337,7 +338,7 @@ public class AdvancedStereoOptionSceneController
      * left eye and{@code false} for the right eye.
      * @throws NullPointerException if gl == null
      */
-    private void renderScene(GL gl, boolean flag) {
+    private void renderScene(GL2 gl, boolean flag) {
 
         if (gl == null) {
             String msg = "GL == null";
@@ -376,13 +377,13 @@ public class AdvancedStereoOptionSceneController
                 rightfrustum = (right - frustumShift) / 2.0;
                 modeltranslation = (float) (-getIOD() / 2.0);
             }
-            gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-            gl.glMatrixMode(GL.GL_PROJECTION);
+            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+            gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glLoadIdentity();
             gl.glFrustum(leftfrustum, rightfrustum, bottomfrustum,
                     topfrustum, nearZ, farZ);
             gl.glTranslatef(modeltranslation, 0f, 0f);
-            gl.glMatrixMode(GL.GL_MODELVIEW);
+            gl.glMatrixMode(GL2.GL_MODELVIEW);
 
             super.draw(dc);
 

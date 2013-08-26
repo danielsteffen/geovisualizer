@@ -7,9 +7,9 @@
  */
 package de.dfki.av.geovisualizer.app.wms;
 
-import com.sun.opengl.util.BufferUtil;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.TextureTile;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 
 /**
  * Extended {@link SurfaceImage} with the possibility to change the elevation of
@@ -198,19 +199,19 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         if (!getSector().equals(this.geometrySector)) {
             buildGeometry(dc);
         }
-        GL gl = dc.getGL();
+        GL2 gl = dc.getGL().getGL2().getGL2();
         // Save
         dc.getView().pushReferenceCenter(dc, this.referenceCenter);
-        gl.glPushClientAttrib(GL.GL_CLIENT_VERTEX_ARRAY_BIT);
+        gl.glPushClientAttrib(GL2.GL_CLIENT_VERTEX_ARRAY_BIT);
         // Setup
-        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-        gl.glVertexPointer(3, GL.GL_DOUBLE, 0, this.vertices.rewind());
-        gl.glClientActiveTexture(GL.GL_TEXTURE0);
-        gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);
-        gl.glTexCoordPointer(2, GL.GL_DOUBLE, 0, this.texCoords.rewind());
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+        gl.glVertexPointer(3, GL2.GL_DOUBLE, 0, this.vertices.rewind());
+        gl.glClientActiveTexture(GL2.GL_TEXTURE0);
+        gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+        gl.glTexCoordPointer(2, GL2.GL_DOUBLE, 0, this.texCoords.rewind());
         // Draw
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, this.indices.limit(),
-                GL.GL_UNSIGNED_INT, this.indices.rewind());
+        gl.glDrawElements(GL2.GL_TRIANGLE_STRIP, this.indices.limit(),
+                GL2.GL_UNSIGNED_INT, this.indices.rewind());
         // Restore
         gl.glPopClientAttrib();
         dc.getView().popReferenceCenter(dc);
@@ -231,7 +232,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         Angle dLon = sector.getDeltaLon().divide(quality);
         // Compute vertices
         int numVertices = (quality + 1) * (quality + 1);
-        this.vertices = BufferUtil.newDoubleBuffer(numVertices * 3);
+        this.vertices = Buffers.newDirectDoubleBuffer(numVertices * 3);
         int iv = 0;
         Angle lat = sector.getMinLatitude();
         for (int j = 0; j <= quality; j++) {
@@ -268,7 +269,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
             quality = 1;
         }
         int coordCount = (quality + 1) * (quality + 1);
-        DoubleBuffer p = BufferUtil.newDoubleBuffer(2 * coordCount);
+        DoubleBuffer p = Buffers.newDirectDoubleBuffer(2 * coordCount);
         double delta = 1d / quality;
         int k = 0;
         for (int j = 0; j <= quality; j++) {
@@ -293,7 +294,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
         }
         int sideSize = quality;
         int indexCount = 2 * sideSize * sideSize + 4 * sideSize - 2;
-        IntBuffer buffer = BufferUtil.newIntBuffer(indexCount);
+        IntBuffer buffer = Buffers.newDirectIntBuffer(indexCount);
         int k = 0;
         for (int i = 0; i < sideSize; i++) {
             buffer.put(k);
@@ -346,58 +347,58 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
             if (texture == null) {
                 return;
             }
-            GL gl = dc.getGL();
-            gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT // for alpha func
-                    | GL.GL_ENABLE_BIT
-                    | GL.GL_CURRENT_BIT
-                    | GL.GL_DEPTH_BUFFER_BIT // for depth func
-                    | GL.GL_TEXTURE_BIT // for texture env
-                    | GL.GL_TRANSFORM_BIT
-                    | GL.GL_POLYGON_BIT);
+            GL2 gl = dc.getGL().getGL2();
+            gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT // for alpha func
+                    | GL2.GL_ENABLE_BIT
+                    | GL2.GL_CURRENT_BIT
+                    | GL2.GL_DEPTH_BUFFER_BIT // for depth func
+                    | GL2.GL_TEXTURE_BIT // for texture env
+                    | GL2.GL_TRANSFORM_BIT
+                    | GL2.GL_POLYGON_BIT);
             try {
                 if (!dc.isPickingMode()) {
                     double opacity = this.getOpacity();
                     gl.glColor4d(1d, 1d, 1d, opacity);
-                    gl.glEnable(GL.GL_BLEND);
-                    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+                    gl.glEnable(GL2.GL_BLEND);
+                    gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
                 }
-                gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
-                gl.glEnable(GL.GL_DEPTH_TEST);
-                gl.glDepthFunc(GL.GL_LEQUAL);
-                gl.glEnable(GL.GL_ALPHA_TEST);
-                gl.glAlphaFunc(GL.GL_GREATER, 0.01f);
-                gl.glActiveTexture(GL.GL_TEXTURE0);
-                gl.glEnable(GL.GL_TEXTURE_2D);
-                gl.glMatrixMode(GL.GL_TEXTURE);
+                gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
+                gl.glEnable(GL2.GL_DEPTH_TEST);
+                gl.glDepthFunc(GL2.GL_LEQUAL);
+                gl.glEnable(GL2.GL_ALPHA_TEST);
+                gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
+                gl.glActiveTexture(GL2.GL_TEXTURE0);
+                gl.glEnable(GL2.GL_TEXTURE_2D);
+                gl.glMatrixMode(GL2.GL_TEXTURE);
                 gl.glPushMatrix();
                 if (!dc.isPickingMode()) {
-                    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-                            GL.GL_MODULATE);
+                    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE,
+                            GL2.GL_MODULATE);
                 } else {
-                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-                            GL.GL_COMBINE);
-                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_SRC0_RGB, GL.GL_PREVIOUS);
-                    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB,
-                            GL.GL_REPLACE);
+                    gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE,
+                            GL2.GL_COMBINE);
+                    gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
+                    gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB,
+                            GL2.GL_REPLACE);
                 }
                 // Texture transforms
                 super.applyInternalTransform(dc, true);
                 if (imageRepeat) {
-                    texture.setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+                    texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
                 } else {
-                    texture.setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
+                    texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
                 }
                 if (imageRepeat) {
-                    texture.setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+                    texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
                 } else {
-                    texture.setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+                    texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
                 }
                 // Draw
                 renderSurface(dc);
-                gl.glActiveTexture(GL.GL_TEXTURE0);
-                gl.glMatrixMode(GL.GL_TEXTURE);
+                gl.glActiveTexture(GL2.GL_TEXTURE0);
+                gl.glMatrixMode(GL2.GL_TEXTURE);
                 gl.glPopMatrix();
-                gl.glDisable(GL.GL_TEXTURE_2D);
+                gl.glDisable(GL2.GL_TEXTURE_2D);
             } finally {
                 gl.glPopAttrib();
             }
@@ -618,6 +619,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
     @Override
     public boolean bind(DrawContext dc) {
         boolean returnValue = false;
+        GL gl = dc.getGL().getGL2();
         if (this.generatedTexture != null) {
             if (generatedTexture instanceof LazilyLoadedTexture) {
                 LazilyLoadedTexture tex = (LazilyLoadedTexture) generatedTexture;
@@ -656,7 +658,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
                         tile.getFallbackTile().getTexture(dc.getTextureCache());
                     }
                     if (texture != null) {
-                        texture.bind();
+                        texture.bind(gl);
                         returnValue = true;
                     } else {
                         returnValue = false;
@@ -668,11 +670,10 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
                 returnValue = generatedTexture.bind(dc);
             }
         }
-        GL gl = dc.getGL();
-        gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                GL.GL_NEAREST);
-        gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                GL.GL_NEAREST);
+        gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER,
+                GL2.GL_NEAREST);
+        gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER,
+                GL2.GL_NEAREST);
         return returnValue;
     }
 

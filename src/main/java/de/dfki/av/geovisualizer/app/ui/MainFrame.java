@@ -573,6 +573,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mWMS.add(miAddWMS);
 
         miAddWMSHeight.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miAddWMSHeight.text")); // NOI18N
+        miAddWMSHeight.setEnabled(false);
         miAddWMSHeight.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miAddWMSHeightActionPerformed(evt);

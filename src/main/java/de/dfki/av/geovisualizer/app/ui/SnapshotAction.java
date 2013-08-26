@@ -7,7 +7,7 @@
  */
 package de.dfki.av.geovisualizer.app.ui;
 
-import com.sun.opengl.util.Screenshot;
+import com.jogamp.opengl.util.awt.Screenshot;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.event.RenderingListener;

@@ -15,6 +15,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.PerformanceStatistic;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 
 /**
  * Support layer for a {@link ElevatedRenderableLayer} which provides the wms
@@ -59,16 +60,16 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
             if (this.getScreenCredit() != null) {
                 dc.addScreenCredit(this.getScreenCredit());
             }
-            GL gl = dc.getGL();
+            GL2 gl = dc.getGL().getGL2();
             if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
-                gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT | GL.GL_CURRENT_BIT);
+                gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_CURRENT_BIT);
                 this.setBlendingFunction(dc);
             } else {
-                gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT);
+                gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
             }
-            gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
-            gl.glEnable(GL.GL_CULL_FACE);
-            gl.glCullFace(GL.GL_BACK);
+            gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
+            gl.glEnable(GL2.GL_CULL_FACE);
+            gl.glCullFace(GL2.GL_BACK);
             dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, this.tileCountName,
                     this.currentTiles.size());
             gl.glPopAttrib();
