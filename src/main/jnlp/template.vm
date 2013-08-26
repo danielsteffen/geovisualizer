@@ -23,8 +23,8 @@
         <property name="jnlp.versionEnabled" value="true"/>
         <property name="sun.java2d.noddraw" value="true"/>
         $dependencies
-        <extension name="worldwindx" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/worldwindx.jnlp"/>
-        <extension name="gdal" href="http://sudplan.kl.dfki.de/worldwind/1.4.0-custom/gdal.jnlp"/>
+        <extension name="worldwindx" href="http://www.geovisualizer.de/webstart/worldwind/2.0.0-20130815/worldwindx.jnlp"/>
+        <extension name="gdal" href="http://www.geovisualizer.de/webstart/worldwind/2.0.0-20130815/gdal.jnlp"/>
     </resources>
     <application-desc main-class="$mainClass">
     </application-desc>
