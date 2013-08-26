@@ -12,7 +12,7 @@
             <outputDirectory>bin</outputDirectory>
         </fileSet>	
         <fileSet>
-            <directory>natives/macosx-x64</directory>
+            <directory>natives/macosx-x64/2.0.0-20130815</directory>
             <outputDirectory>bin</outputDirectory>
         </fileSet> 		
         <fileSet>

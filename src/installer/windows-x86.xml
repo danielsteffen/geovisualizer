@@ -12,7 +12,7 @@
             <outputDirectory>bin</outputDirectory>
         </fileSet>	
         <fileSet>
-            <directory>natives/windows-x86</directory>
+            <directory>natives/windows-x86/2.0.0-20130815</directory>
             <outputDirectory>bin</outputDirectory>
         </fileSet> 		
         <fileSet>
