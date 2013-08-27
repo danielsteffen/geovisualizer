@@ -61,6 +61,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.format>1.7</source.format>
         <main-class>de.dfki.av.geovisualizer.app.ui.MainFrame</main-class>
+        <WorldWindVersion>2.0.0-20130815</WorldWindVersion>
         <worldwind.version>2.0.0-20130815</worldwind.version>
         <worldwind.3rdparty.version>2.0.0-20130815</worldwind.3rdparty.version>
         <repository.id>dfki-artifactory</repository.id>
