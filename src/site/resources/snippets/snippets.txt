@@ -46,3 +46,21 @@ deployJava.createWebStartLaunchButton(url, '1.6.0');
 </dl>
 
 <!-- END SNIPPET: publications -->
+
+<!-- START SNIPPET: contact -->
+<table cellpadding="10">
+<tr>
+<td valign="top">
+German Research Center for Artificial Intelligence <br /> 
+Research Department Augmented Vision<br/> 
+<br/>
+Dipl.-Inf. Daniel Steffen <br /> 
+Trippstadter Str. 122 <br /> 
+D-67663 Kaiserslautern <br />
+<br /> 
+Tel.: +49 631 20575 2080<br /> 
+Email: <a href="mailto:daniel.steffen@dfki.de?subject=GeoVisualizer">daniel.steffen@dfki.de</a>
+</td>
+</tr>
+</table>
+<!-- END SNIPPET: contact -->
