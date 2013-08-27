@@ -15,28 +15,47 @@
         <url>http://www.dfki.de</url>
     </organization>
     
+    <inceptionYear>2010</inceptionYear>
+    
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL) 3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <developers>
         <developer>
+            <id>dast00</id>
             <name>Daniel Steffen</name>
             <email>daniel.steffen@dfki.de</email>
+            <url>http://av.dfki.de/steffen</url>
             <roles>
                 <role>Project leader</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>            
             <organization>DFKI GmbH</organization>
+            <organizationUrl>http://av.dfki.de</organizationUrl>
             <timezone>+2</timezone>
         </developer>
         <developer>
+            <id>tozi02</id>
             <name>Tobias Zimmermann</name>
             <email>tobias.zimmermann@dfki.de</email>
             <roles>
                 <role>Developer</role>
             </roles>            
             <organization>DFKI GmbH</organization>
+            <organizationUrl>http://av.dfki.de</organizationUrl>
             <timezone>+2</timezone>
         </developer>
     </developers>
+    
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
