@@ -1,0 +1,39 @@
+         ----
+		 Demo
+		 ----
+		 Daniel Steffen
+		 ----
+		  2011-09-19
+		 ----
+		 
+GeoVisualizer Java Web Start Application
+
+[images/geovisualizer_002.jpg] The demo application of GeoVisualizer.  
+
+  The following Java Web Start application demonstrates the GeoVisualizer version ${project.version}.
+  
+%{snippet|id=launch-button|file=src/site/resources/snippets/snippets.txt|verbatim=false} 
+
+Shortcuts
+  
+  For the quick interaction with the demo application you can use the following short cuts.
+  
+*----------------------+---------------------------------------+
+| <F1>                 | Help                                  |
+*----------------------+---------------------------------------+
+| <ALT> + <W>          | Start VizWiz                          |
+*----------------------+---------------------------------------+
+| <CTRL> + <G>         | Dialog to enter lat/lon coordinates   |
+*----------------------+---------------------------------------+
+| <CTRL> + <O>         | Open...                               |
+*----------------------+---------------------------------------+
+| <CTRL> + <K>         | Goto Kaiserslautern                   |
+*----------------------+---------------------------------------+
+| <CTRL> + <SPACE>     | Save viewpoint                        |
+*----------------------+---------------------------------------+
+<<Key / key combinations and what they do>>
+
+  Additionally, you can have a look at the performance monitoring panel 
+(WWJ Dashboard). Simply press <CTRL> + <SHIFT> + <ALT> while clicking the 
+left mouse button into the world wind canvas.
+ 
