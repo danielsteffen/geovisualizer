@@ -536,6 +536,7 @@
                                     <url>scp://serv-2100/</url>
                                     <fromDir>${project.build.directory}/jnlp</fromDir>
                                     <includes>*</includes>
+                                    <excludes>*.jks</excludes>
                                     <toDir>${webstart.dir}</toDir>
                                 </configuration>
                             </execution>
