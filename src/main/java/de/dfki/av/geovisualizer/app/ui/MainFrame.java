@@ -19,6 +19,7 @@ import de.dfki.av.geovisualizer.core.spi.VisAlgorithmFactory;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwindx.applications.worldwindow.core.AppConfiguration;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -654,8 +657,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
     private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
         ImageIcon icon = new ImageIcon(Configuration.GEOVISUALIZER_ICON);
+        ResourceBundle bundle = ResourceBundle.getBundle("project");
+        String version = bundle.getString("project.version");
         JOptionPane.showMessageDialog(this, "This is the GeoVisualizer application."
-                + "\nDFKI (c) 2011-2013",
+                + "\nDFKI (c) 2011-2013\nVersion "+version,
                 "About GeoVisualizer",
                 JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
