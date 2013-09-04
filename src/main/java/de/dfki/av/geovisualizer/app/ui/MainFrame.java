@@ -22,6 +22,7 @@ import gov.nasa.worldwind.geom.Position;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -852,9 +853,9 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         final Position eyePosition = view.getEyePosition();
         final Position centerPosition = view.getGlobe().computePositionFromPoint(view.getCenterPoint());
-        LOG.info("Saving view: eye({}), center({})", eyePosition.toString(), centerPosition.toString());
+        LOG.debug("Saving view: eye({}), center({})", eyePosition.toString(), centerPosition.toString());
 
-        JMenuItem menuItem = new JMenuItem(new AbstractAction() {
+        Action changeView = new AbstractAction(name) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 WorldWindowGLCanvas canvas = wwPanel.getWwd();
@@ -862,9 +863,18 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
                 view.setOrientation(eyePosition, centerPosition);
                 canvas.redraw();
             }
-        });
-        menuItem.setText(name);
-        mCustomViewPoints.add(menuItem);
+        };
+        if (0 <= viewID && viewID <= 9) {
+            KeyStroke keyStroke = KeyStroke.getKeyStroke("ctrl " + viewID);
+            if(keyStroke != null){
+                changeView.putValue(Action.ACCELERATOR_KEY, keyStroke);
+            } else {
+                LOG.warn("keyStroke == null");
+            }
+        } else {
+            LOG.debug("Short cut keys already exhausted.");
+        }
+        mCustomViewPoints.add(changeView);
         viewID++;
     }//GEN-LAST:event_miSaveViewActionPerformed
 
