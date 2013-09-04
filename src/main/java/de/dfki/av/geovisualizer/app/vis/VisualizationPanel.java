@@ -148,10 +148,12 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
                         ElevationsLoader loader = new ElevationsLoader(globe, path);
                         loader.execute();
                     } else {
-                        log.debug("Path tag empty or null.");
+                        log.warn("<path> tag empty or null. "
+                                + "Check custom elevation model in config file.");
                     }
                 } else {
-                    log.debug("Objects not instance of String.");
+                    log.warn("No valid input for <path> tag. "
+                            + "Check custom elevation model in config file.");
                 }
             }
         } else {
