@@ -604,6 +604,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         mView.add(mToolbars);
 
         mWindowMode.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mWindowMode.text")); // NOI18N
+        mWindowMode.setEnabled(false);
 
         miSideBySide.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.miSideBySide.text")); // NOI18N
         miSideBySide.setEnabled(false);
