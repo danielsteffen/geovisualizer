@@ -18,6 +18,13 @@ deployJava.createWebStartLaunchButton(url, '1.6.0');
 </dl>
 
 <dl>
+<dt><i>Visualization of Human Sensory Assessment Methods</i></dt>
+<dd>Exner, J.-P., Zeile, P., Bergner, B., Taha, D., Memmel, M., Raslan, R., Talal, M. and Broschart, D.</dd>
+<dd>Geoinformatik 2013, Heidelberg</dd>
+<dd><b>2013</b></dd>
+</dl>
+
+<dl>
 <dt><i>GeoVisualizer - Ein neuer Ansatz zur Visualisierung von Sensordaten im raumplanerischen Kontext</i></dt>
 <dd>Steffen, D., Michel, F., Bergner, B., Exner, J.-P. and Zeile, P.</dd>
 <dd>Angewandte Geoinformatik 2013 - Beitr&auml;ge zum 25.AGIT-Symposium (AGIT)</dd>
