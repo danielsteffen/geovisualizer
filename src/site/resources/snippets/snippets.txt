@@ -42,7 +42,7 @@ deployJava.createWebStartLaunchButton(url, '1.6.0');
 <dl>
 <dt><i>Considering the Impact of Future Climate Change on the Resilience of a City - Surface Run-Off due to Heavy Storm Events in the City of Wuppertal</i></dt>
 <dd>Michel, F., Steffen, D., Schlobinski, S. and Sander, S.</dd>
-<dd>17th International Conference on Urban Planning and Regional Development in the Information Society, GeoMultimedia 2012, "RE-MIXING THE CITY TOWARDS SUSTAINABILITY AND RESILIENCE?". International Conference on Urban Planning, Regional Development and Information Society (REAL CORP-2012), 17th Conference; GeoMultimedia 2012, May 14-16, Schwechat, Austria</dd>
+<dd>International Conference on Urban Planning, Regional Development and Information Society (REAL CORP-2012), 17th Conference; GeoMultimedia 2012, May 14-16, Schwechat, Austria</dd>
 </dl>
 
 <dl>
