@@ -10,6 +10,14 @@ deployJava.createWebStartLaunchButton(url, '1.6.0');
 
 <!-- START SNIPPET: publications -->
 <dl>
+<dt><i>Air Quality Projections and Scenarios for the Prague Metropolitan Area</i></dt>
+<dd>Mertl, J.</dd>
+<dd>Hrebcek, J., Schimak, G., Kub&aacute;sek, M. &amp; Rizzoli, A. E. <i>(ed.)</i></dd>
+<dd>ISESS</dd>
+<dd>Springer, <b>2013</b>, Vol. 413</dd>
+</dl>
+
+<dl>
 <dt><i>GeoVisualizer - Ein neuer Ansatz zur Visualisierung von Sensordaten im raumplanerischen Kontext</i></dt>
 <dd>Steffen, D., Michel, F., Bergner, B., Exner, J.-P. and Zeile, P.</dd>
 <dd>Angewandte Geoinformatik 2013 - Beitr&auml;ge zum 25.AGIT-Symposium (AGIT)</dd>
