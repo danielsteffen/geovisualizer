@@ -4,14 +4,14 @@
 
     <groupId>de.dfki.av.geovisualizer</groupId>
     <artifactId>geovisualizer</artifactId>
-    <version>3.2.1-SNAPSHOT</version>
+    <version>3.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>geovisualizer</name>
     <description>The GeoVisualizer was developed within the sudplan3D (http://sudplan.kl.dfki.de) component.</description>
     <url>http://www.geovisualizer.de</url>
     
     <organization>
-        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -519,7 +519,7 @@
                                         <storepass>dFki+122</storepass>
                                         <alias>dfki</alias>
                                         <validity>3650</validity>
-                                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                                        <dnameCn>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</dnameCn>
                                         <dnameOu>AV</dnameOu>
                                         <dnameO>DFKI</dnameO>
                                         <dnameL>KL</dnameL>
