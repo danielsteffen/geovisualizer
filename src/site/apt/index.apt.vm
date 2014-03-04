@@ -5,6 +5,8 @@
 		 ----
 		 2011-09-19
 		 ----
+
+%{snippet|file=src/site/resources/snippets/cebit2014.html|verbatim=false}
 		 
 Welcome to GeoVisualizer
 
