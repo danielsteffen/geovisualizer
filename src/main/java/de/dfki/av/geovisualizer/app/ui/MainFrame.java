@@ -660,7 +660,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         ResourceBundle bundle = ResourceBundle.getBundle("project");
         String version = bundle.getString("project.version");
         JOptionPane.showMessageDialog(this, "This is the GeoVisualizer application."
-                + "\nDFKI (c) 2011-2013\nVersion "+version,
+                + "\nDFKI (c) 2011-2014\nVersion "+version,
                 "About GeoVisualizer",
                 JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
