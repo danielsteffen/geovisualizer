@@ -11,7 +11,7 @@
     <url>http://www.geovisualizer.de</url>
     
     <organization>
-        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum f?r K?nstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -519,7 +519,7 @@
                                         <storepass>dFki+122</storepass>
                                         <alias>dfki</alias>
                                         <validity>3650</validity>
-                                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                                        <dnameCn>Deutsches Forschungszentrum f?r K?nstliche Intelligenz (DFKI) GmbH</dnameCn>
                                         <dnameOu>AV</dnameOu>
                                         <dnameO>DFKI</dnameO>
                                         <dnameL>KL</dnameL>
@@ -597,6 +597,21 @@
             <groupId>de.dfki.av.geovisualizer</groupId>
             <artifactId>geovisualizer-core</artifactId>
             <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-basic</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-sensor</artifactId>
+            <version>1.4.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.dfki.av.geovisualizer</groupId>
+            <artifactId>geovisualizer-vis-heatmap</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
