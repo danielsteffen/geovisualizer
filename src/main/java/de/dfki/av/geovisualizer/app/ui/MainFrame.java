@@ -9,6 +9,9 @@ package de.dfki.av.geovisualizer.app.ui;
 
 import de.dfki.av.geovisualizer.app.Configuration;
 import de.dfki.av.geovisualizer.app.camera.AnimatedCamera;
+import de.dfki.av.geovisualizer.app.plugins.IPlugin;
+import de.dfki.av.geovisualizer.app.plugins.PluginFactory;
+import de.dfki.av.geovisualizer.app.plugins.PluginListener;
 import de.dfki.av.geovisualizer.app.vis.VisualizationPanel;
 import de.dfki.av.geovisualizer.app.wms.EventHolder;
 import de.dfki.av.geovisualizer.app.wms.LayerInfo;
@@ -29,6 +32,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -68,7 +73,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
      * The counter of saved views.
      */
     private int viewID = 0;
-
+    /**
+     * The {@link List} of {@IPlugin} instances.
+     */
+    private List<IPlugin> plugins; 
     /**
      * Creates new form MainFrame
      */
@@ -82,7 +90,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
 
         initComponents();
         initActions();
-
+        initPlugins();
+        
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
         if (layerTreeComponent != null) {
@@ -95,7 +104,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }
 
     /**
-     * Init all needed actions.
+     * Initialize all needed actions.
      */
     private void initActions() {
         SnapshotAction takeSnaphot = new SnapshotAction(wwPanel.getWwd());
@@ -122,6 +131,33 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         GotoAction gotoAction = new GotoAction(this, wwPanel.getWwd());
         miGoto.addActionListener(gotoAction);
         btnJumpTo.addActionListener(gotoAction);
+    }
+    
+    /**
+     * Initialize all available plug-ins of type {@link IPlugin}.‚ 
+     */
+    private void initPlugins(){
+        List<String> pluginNames = PluginFactory.getNames();
+        plugins = new ArrayList<>();
+        for (Iterator<String> it = pluginNames.iterator(); it.hasNext();) {
+            String string = it.next();
+            IPlugin plugin = PluginFactory.newInstance(string);
+            plugins.add(plugin);
+        }
+        
+        LOG.debug("Found {} application plugins.", plugins.size());
+        
+        if(plugins.size() > 0){
+            mPlugins.setEnabled(true);
+            PluginListener listener = new PluginListener();
+            for (Iterator<IPlugin> it = plugins.iterator(); it.hasNext();) {
+                IPlugin plugin = it.next();
+                plugin.addPropertyChangeListener(listener);
+                JMenuItem miPlugin = new JMenuItem(plugin.getName());
+                miPlugin.addActionListener(plugin.getAbstractAction());
+                mPlugins.add(miPlugin);
+            }
+        }
     }
 
     /**
@@ -190,6 +226,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miAddWMSHeight = new javax.swing.JMenuItem();
         mTools = new javax.swing.JMenu();
         miWizard = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        mPlugins = new javax.swing.JMenu();
         mView = new javax.swing.JMenu();
         mToolbars = new javax.swing.JMenu();
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
@@ -593,6 +631,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miWizard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/png/16x16/actions/tools-wizard-3.png"))); // NOI18N
         miWizard.setText(bundle.getString("MainFrame.miWizard.text")); // NOI18N
         mTools.add(miWizard);
+        mTools.add(jSeparator7);
+
+        mPlugins.setText(org.openide.util.NbBundle.getMessage(MainFrame.class, "MainFrame.mPlugins.text")); // NOI18N
+        mPlugins.setEnabled(false);
+        mTools.add(mPlugins);
 
         mbMain.add(mTools);
 
@@ -1043,6 +1086,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lHeight;
     private javax.swing.JLabel lMaxEle;
@@ -1054,6 +1098,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     private javax.swing.JMenuItem mFullScreen;
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mNavi;
+    private javax.swing.JMenu mPlugins;
     private javax.swing.JMenu mToolbars;
     private javax.swing.JMenu mTools;
     private javax.swing.JMenu mView;
