@@ -1,5 +1,5 @@
 /*
- *  MainFrame.java 
+ *  MainFrame.java
  *
  *  Created by DFKI AV on 14.09.2011.
  *  Copyright (c) 2011-2012 DFKI GmbH, Kaiserslautern. All rights reserved.
@@ -22,11 +22,9 @@ import de.dfki.av.geovisualizer.core.spi.VisAlgorithmFactory;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwindx.applications.worldwindow.core.AppConfiguration;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -35,7 +33,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -74,9 +71,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
      */
     private int viewID = 0;
     /**
-     * The {@link List} of {@IPlugin} instances.
+     * The {@link List} of {@link IPlugin} instances.
      */
-    private List<IPlugin> plugins; 
+    private List<IPlugin> plugins;
+
     /**
      * Creates new form MainFrame
      */
@@ -91,7 +89,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         initComponents();
         initActions();
         initPlugins();
-        
+
         // Add LayerTreeComponent to the left split panel.
         JPanel layerTreeComponent = wwPanel.getLayerPanel();
         if (layerTreeComponent != null) {
@@ -132,11 +130,11 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         miGoto.addActionListener(gotoAction);
         btnJumpTo.addActionListener(gotoAction);
     }
-    
+
     /**
-     * Initialize all available plug-ins of type {@link IPlugin}.‚ 
+     * Initialize all available plug-ins of type {@link IPlugin}.‚
      */
-    private void initPlugins(){
+    private void initPlugins() {
         List<String> pluginNames = PluginFactory.getNames();
         plugins = new ArrayList<>();
         for (Iterator<String> it = pluginNames.iterator(); it.hasNext();) {
@@ -144,10 +142,10 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             IPlugin plugin = PluginFactory.newInstance(string);
             plugins.add(plugin);
         }
-        
+
         LOG.debug("Found {} application plugins.", plugins.size());
-        
-        if(plugins.size() > 0){
+
+        if (plugins.size() > 0) {
             mPlugins.setEnabled(true);
             PluginListener listener = new PluginListener();
             for (Iterator<IPlugin> it = plugins.iterator(); it.hasNext();) {
@@ -703,7 +701,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         ResourceBundle bundle = ResourceBundle.getBundle("project");
         String version = bundle.getString("project.version");
         JOptionPane.showMessageDialog(this, "This is the GeoVisualizer application."
-                + "\nDFKI (c) 2011-2014\nVersion "+version,
+                + "\nDFKI (c) 2011-2014\nVersion " + version,
                 "About GeoVisualizer",
                 JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_miAboutActionPerformed
@@ -914,7 +912,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
         };
         if (0 <= viewID && viewID <= 9) {
             KeyStroke keyStroke = KeyStroke.getKeyStroke("ctrl " + viewID);
-            if(keyStroke != null){
+            if (keyStroke != null) {
                 changeView.putValue(Action.ACCELERATOR_KEY, keyStroke);
             } else {
                 LOG.warn("keyStroke == null");
@@ -990,23 +988,62 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
     }
 
     /**
-     * Init logging to logs/GeoVisualizer.log.
+     * Set up logging for application. Choose {@code basePath} as directory to
+     * store the log files.
+     *
+     * @param basePath path to the log files.
      */
-    private static void initLogging() {
+    private static void setupLogging(String basePath) {
         try {
             String pattern = "%5p %d{ISO8601} %c{1} - %m%n";
             PatternLayout layout = new PatternLayout(pattern);
-            XMLConfiguration xmlConfig = Configuration.getXMLConfiguration();
-            String path = xmlConfig.getString("geovisualizer.user.dir");
-            String logFile = path + "/logs/GeoVisualizer.log";
+            ResourceBundle bundle = ResourceBundle.getBundle("project");
+            String version = bundle.getString("project.version");
+
+            String logFile = basePath + "/logs/GeoVisualizer-" + version + ".log";
+
             RollingFileAppender appender = new RollingFileAppender(layout, logFile, false);
-            appender.setMaxBackupIndex(2);
-            appender.setMaxFileSize("1MB");
+            appender.setMaxBackupIndex(10);
+            appender.setMaxFileSize("2MB");
             rootLog.addAppender(appender);
             rootLog.setLevel(Level.ALL);
         } catch (Exception ex) {
             LOG.error(ex.toString());
         }
+    }
+
+    /**
+     * Set up the home directory for the GeoVisualizer application, i.e. in the
+     * {@code user.home} directory the directory {@code .geovisualizer} will be
+     * created if not already existing.
+     *
+     * In case the {@code user.home} property is not available the
+     * {@code .geovisualizer} directory will be created in the root folder of
+     * the application.
+     *
+     * @return the home directory of the GeoVisualizer application.
+     */
+    private static String setupGeoVisualizerHomeDir() {
+        String seperator = System.getProperty("file.separator");
+        String userHome = System.getProperty("user.home", ".");
+        if (userHome == null) {
+            LOG.warn("userHome == null. Using application folder.");
+        }
+
+        LOG.info("user.home: {}", userHome);
+
+        String gvHomePath = userHome + seperator + ".geovisualizer";
+        File gvHomeDir = new File(gvHomePath);
+        if (gvHomeDir.exists()) {
+            LOG.debug("Directory already existing.");
+        } else {
+            if (gvHomeDir.mkdir()) {
+                LOG.debug("Directory: {} created.", gvHomePath);
+            } else {
+                LOG.warn("Could not create directory {}.", gvHomePath);
+            }
+        }
+        return gvHomePath;
     }
 
     /**
@@ -1026,7 +1063,8 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
      */
     public static void main(String[] args) {
 
-        initLogging();
+        String path = setupGeoVisualizerHomeDir();
+        setupLogging(path);
         printSystemSettings();
 
         /*
@@ -1058,7 +1096,7 @@ public class MainFrame extends javax.swing.JFrame implements PropertyChangeListe
             @Override
             public void run() {
                 MainFrame mf = new MainFrame();
-                mf.setIconImage(Configuration.GEOVISUALIZER_ICON);
+                //mf.setIconImage(Configuration.GEOVISUALIZER_ICON);
                 mf.setVisible(true);
             }
         });
