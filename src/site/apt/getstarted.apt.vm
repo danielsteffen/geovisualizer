@@ -1,0 +1,55 @@
+         ----
+		 Get Started
+		 ----
+		 Daniel Steffen
+		 ----
+		  2014-09-23
+		 ----
+		 
+The GeoVisualizer Application
+
+[images/geovisualizer_002.jpg] The demo application of GeoVisualizer.  
+
+  The latest software release of GeoVisualizer can be downloaded here. 
+
+  * {{{./installer/geovisualizer-${project.version}-windows-x64.zip}geovisualizer-${project.version}-windows-x64.zip}} 
+
+  * {{{./installer/geovisualizer-${project.version}-windows-x86.zip}geovisualizer-${project.version}-windows-x86.zip}} 
+
+  * {{{./installer/geovisualizer-${project.version}-linux-x64.zip}geovisualizer-${project.version}-linux-x64.zip}} 
+
+  * {{{./installer/geovisualizer-${project.version}-macosx-x64.zip}geovisualizer-${project.version}-macosx-x64.zip}} 
+
+  []
+
+  Previous release can be found {{{./installer/}here}}.
+
+  ~~The following Java Web Start application demonstrates the GeoVisualizer version ${project.version}.
+  
+~~%{snippet|id=launch-button|file=src/site/resources/snippets/snippets.txt|verbatim=false} 
+
+Shortcuts
+  
+  For the quick interaction with the demo application you can use the following short cuts.
+  
+*----------------------+---------------------------------------+
+| <F1>                 | Help                                  |
+*----------------------+---------------------------------------+
+| <ALT> + <W>          | Start VizWiz                          |
+*----------------------+---------------------------------------+
+| <CTRL> + <G>         | Dialog to enter lat/lon coordinates   |
+*----------------------+---------------------------------------+
+| <CTRL> + <O>         | Open...                               |
+*----------------------+---------------------------------------+
+| <CTRL> + <K>         | Move camera to Kaiserslautern         |
+*----------------------+---------------------------------------+
+| <CTRL> + <SPACE>     | Save viewpoint                        |
+*----------------------+---------------------------------------+
+| <CTRL> + <0>...<9>   | Set camera to custom viewpoint        |
+*----------------------+---------------------------------------+
+<<Key / key combinations and what they do>>
+
+  Additionally, you can have a look at the performance monitoring panel 
+(WWJ Dashboard). Simply press <CTRL> + <SHIFT> + <ALT> while clicking the 
+left mouse button into the world wind canvas.
+ 
