@@ -596,7 +596,7 @@
         <dependency>
             <groupId>de.dfki.av.geovisualizer</groupId>
             <artifactId>geovisualizer-core</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
