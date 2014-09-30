@@ -10,6 +10,10 @@
         <fileSet>
             <directory>target/appassembler/bin</directory>
             <outputDirectory>bin</outputDirectory>
+			<excludes>
+				<exclude>*.bat</exclude>
+				<exclude>*-macosx*</exclude>
+			</excludes>
         </fileSet>	
         <fileSet>
             <directory>natives/linux-x64/2.0.0</directory>
