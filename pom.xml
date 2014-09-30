@@ -82,7 +82,7 @@
             </properties>
         </profile>
         <profile>
-            <id>geovisualizer-app-windows</id>
+            <id>geovisualizer-deploy</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -111,15 +111,30 @@
                                     <repositoryName>lib</repositoryName>
                                     <showConsoleWindow>false</showConsoleWindow>
                                     <useWildcardClassPath>true</useWildcardClassPath>
-                                    <platforms>
-                                        <platform>windows</platform>
-                                    </platforms>
                                     <programs>
                                         <program>
                                             <mainClass>${main-class}</mainClass>
-                                            <name>${project.build.finalName}</name>
+                                            <name>${project.build.finalName}-windows</name>
+                                            <platforms>
+                                                <platform>windows</platform>
+                                            </platforms>
+                                        </program>
+                                        <program>
+                                            <mainClass>${main-class}</mainClass>
+                                            <name>${project.build.finalName}-unix</name>
+                                            <platforms>
+                                                <platform>unix</platform>
+                                            </platforms>
+                                        </program>
+                                        <program>
+                                            <mainClass>${main-class}</mainClass>
+                                            <name>${project.build.finalName}-macosx</name>
+                                            <platforms>
+                                                <platform>unix</platform>
+                                            </platforms>
                                         </program>
                                     </programs>
+                                    <extraJvmArguments>-Djava.library.path=@BASEDIR@/bin</extraJvmArguments>
                                 </configuration>
                             </execution>                        
                         </executions>
@@ -152,167 +167,6 @@
                                     </descriptors>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>wagon-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>upload-binary-zips</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>upload</goal>
-                                </goals>
-                                <configuration>
-                                    <serverId>geovisualizer.website</serverId>
-                                    <fromDir>${project.build.directory}</fromDir>
-                                    <includes>*.zip</includes>
-                                    <excludes>*.exe</excludes>
-                                    <excludes>*.jar</excludes>
-                                    <url>scp://serv-2100/</url>
-                                    <toDir>project/av/etc/www/geovisualizer.de/installer</toDir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin> 
-                </plugins>
-            </build>
-        </profile>        
-        <profile>
-            <id>geovisualizer-app-macosx</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
-                <WorldWindScope>compile</WorldWindScope>
-                <webstart.dir>./jnlp</webstart.dir>
-                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>appassembler-maven-plugin</artifactId>
-                        <version>1.3</version>
-                        <executions>
-                            <execution>
-                                <id>appassembler</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>assemble</goal>
-                                </goals>
-                                <configuration>
-                                    <binFolder>bin</binFolder>
-                                    <repositoryLayout>flat</repositoryLayout>
-                                    <repositoryName>lib</repositoryName>
-                                    <showConsoleWindow>false</showConsoleWindow>
-                                    <useWildcardClassPath>true</useWildcardClassPath>
-                                    <platforms>
-                                        <platform>unix</platform>
-                                    </platforms>
-                                    <programs>
-                                        <program>
-                                            <mainClass>${main-class}</mainClass>
-                                            <name>${project.build.finalName}</name>
-                                        </program>
-                                    </programs>
-                                </configuration>
-                            </execution>                        
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <executions>
-                            <execution>
-                                <id>macosx-x64</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/installer/macosx-x64.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>wagon-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>upload-binary-zips</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>upload</goal>
-                                </goals>
-                                <configuration>
-                                    <serverId>geovisualizer.website</serverId>
-                                    <fromDir>${project.build.directory}</fromDir>
-                                    <includes>*.zip</includes>
-                                    <excludes>*.exe</excludes>
-                                    <excludes>*.jar</excludes>
-                                    <url>scp://serv-2100/</url>
-                                    <toDir>project/av/etc/www/geovisualizer.de/installer</toDir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin> 
-                </plugins>
-            </build>
-        </profile>        
-        <profile>
-            <id>geovisualizer-app-linux</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
-                <WorldWindScope>compile</WorldWindScope>
-                <webstart.dir>./jnlp</webstart.dir>
-                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>appassembler-maven-plugin</artifactId>
-                        <version>1.3</version>
-                        <executions>
-                            <execution>
-                                <id>appassembler</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>assemble</goal>
-                                </goals>
-                                <configuration>
-                                    <binFolder>bin</binFolder>
-                                    <repositoryLayout>flat</repositoryLayout>
-                                    <repositoryName>lib</repositoryName>
-                                    <showConsoleWindow>false</showConsoleWindow>
-                                    <useWildcardClassPath>true</useWildcardClassPath>
-                                    <platforms>
-                                        <platform>unix</platform>
-                                    </platforms>
-                                    <programs>
-                                        <program>
-                                            <mainClass>${main-class}</mainClass>
-                                            <name>${project.build.finalName}</name>
-                                        </program>
-                                    </programs>
-                                    <extraJvmArguments>-Djava.library.path=@BASEDIR@/bin</extraJvmArguments>
-                                </configuration>
-                            </execution>                        
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <executions>
                             <execution>
                                 <id>linux-x64</id>
                                 <phase>package</phase>
@@ -324,7 +178,19 @@
                                         <descriptor>src/installer/linux-x64.xml</descriptor>
                                     </descriptors>
                                 </configuration>
-                            </execution>
+                            </execution>        
+                            <execution>
+                                <id>macosx-x64</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/installer/macosx-x64.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>                    
                         </executions>
                     </plugin>
                     <plugin>
@@ -351,7 +217,7 @@
                     </plugin> 
                 </plugins>
             </build>
-        </profile>
+        </profile>        
         <profile>
             <id>geovisualizer-webstart</id>
             <activation>
@@ -666,7 +532,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <releaseProfiles>geovisualizer-webstart</releaseProfiles>
+                    <releaseProfiles>geovisualizer-deploy</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>

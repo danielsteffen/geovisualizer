@@ -10,6 +10,10 @@
         <fileSet>
             <directory>target/appassembler/bin</directory>
             <outputDirectory>bin</outputDirectory>
+			<excludes>
+				<exclude>*-unix*</exclude>
+				<exclude>*-macosx*</exclude>
+			</excludes>
         </fileSet>	
         <fileSet>
             <directory>natives/windows-x64/2.0.0</directory>
