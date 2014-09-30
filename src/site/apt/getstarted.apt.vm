@@ -10,7 +10,7 @@ The GeoVisualizer Application
 
 [images/geovisualizer_002.jpg] The demo application of GeoVisualizer.  
 
-  The latest software release of GeoVisualizer can be downloaded here. 
+  The latest build of GeoVisualizer can be downloaded here. 
 
   * {{{./installer/geovisualizer-${project.version}-windows-x64.zip}geovisualizer-${project.version}-windows-x64.zip}} 
 
@@ -22,7 +22,9 @@ The GeoVisualizer Application
 
   []
 
-  Previous release can be found {{{./installer/}here}}.
+  Previous releases of the GeoVisualizer application can be found in our  
+{{{https://artifactory-av.kl.dfki.de}Artifactory}}. The credentials for the
+Artifactory login are (username/password): <<geovisualizer/geovisualizer>>.
 
   ~~The following Java Web Start application demonstrates the GeoVisualizer version ${project.version}.
   
