@@ -603,6 +603,6 @@
   
     <issueManagement>
         <system>Bugzilla</system>
-        <url>https://av.kl.dfke.de/bugzilla</url>
+        <url>https://bugzilla-av.kl.dfki.de</url>
     </issueManagement>    
 </project>
