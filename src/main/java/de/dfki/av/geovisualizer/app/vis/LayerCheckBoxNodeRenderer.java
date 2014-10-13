@@ -7,6 +7,7 @@
  */
 package de.dfki.av.geovisualizer.app.vis;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JCheckBox;
 import javax.swing.JTree;
@@ -41,6 +42,8 @@ public class LayerCheckBoxNodeRenderer implements TreeCellRenderer {
      */
     public LayerCheckBoxNodeRenderer() {
         this.leafRenderer = new JCheckBox();
+        Color c = new Color(255, 255, 255, 0);
+        this.leafRenderer.setBackground(c);
         this.nonLeafRenderer = new DefaultTreeCellRenderer();
     }
 
