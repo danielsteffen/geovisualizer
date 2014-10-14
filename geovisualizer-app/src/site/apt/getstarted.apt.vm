@@ -12,13 +12,13 @@ The GeoVisualizer Application
 
   The latest build of GeoVisualizer application can be downloaded from our {{{https://artifactory-av.kl.dfki.de}Artifactory}} using the following links:
 
-  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/geovisualizer/${project.version}/geovisualizer-${project.version}-windows-x64.zip}geovisualizer-${project.version}-windows-x64.zip}} 
+  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/${project.name}/${project.version}/${project.name}-${project.version}-windows-x64.zip}${project.name}-${project.version}-windows-x64.zip}} 
 
-  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/geovisualizer/${project.version}/geovisualizer-${project.version}-windows-x86.zip}geovisualizer-${project.version}-windows-x86.zip}} 
+  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/${project.name}/${project.version}/${project.name}-${project.version}-windows-x86.zip}${project.name}-${project.version}-windows-x86.zip}} 
 
-  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/geovisualizer/${project.version}/geovisualizer-${project.version}-linux-x64.zip}geovisualizer-${project.version}-linux-x64.zip}} 
+  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/${project.name}/${project.version}/${project.name}-${project.version}-linux-x64.zip}${project.name}-${project.version}-linux-x64.zip}} 
 
-  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/geovisualizer/${project.version}/geovisualizer-${project.version}-macosx-x64.zip}geovisualizer-${project.version}-macosx-x64.zip}} 
+  * {{{http://artifactory-av.kl.dfki.de/artifactory/simple/private-internal-repository/de/dfki/av/geovisualizer/${project.name}/${project.version}/${project.name}-${project.version}-macosx-x64.zip}${project.name}-${project.version}-macosx-x64.zip}} 
 
   []
  
