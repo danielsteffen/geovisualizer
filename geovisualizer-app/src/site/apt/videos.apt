@@ -1,0 +1,16 @@
+         ----
+		 Videos
+		 ----
+		 Daniel Steffen
+		 ----
+		  2012-02-26
+		 ----
+		 
+GeoVisualizer Videos
+
+  The following page lists some videos (HTML5) showing the features of the 
+GeoVisualizer application. Currently, only Firefox (>10.0) has the possibility 
+to switch to <<fullscreen mode>>. However, you should be able to download the 
+video and watch it with your favorite media player.
+
+%{snippet|file=src/site/resources/snippets/videos.html|verbatim=false}
