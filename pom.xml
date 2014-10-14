@@ -58,6 +58,7 @@
     <modules>
         <module>geovisualizer-core</module>
         <module>geovisualizer-app</module>
+        <module>geovisualizer-vis-basic</module>
     </modules>
     
     <dependencies>
