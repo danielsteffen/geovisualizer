@@ -146,28 +146,6 @@
                             </execution>                    
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>wagon-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>upload-binary-zips</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>upload</goal>
-                                </goals>
-                                <configuration>
-                                    <serverId>geovisualizer.website</serverId>
-                                    <fromDir>${project.build.directory}</fromDir>
-                                    <includes>*.zip</includes>
-                                    <excludes>*.exe</excludes>
-                                    <excludes>*.jar</excludes>
-                                    <url>scp://serv-2100/</url>
-                                    <toDir>project/av/etc/www/geovisualizer.de/installer</toDir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin> 
                 </plugins>
             </build>
         </profile>        
