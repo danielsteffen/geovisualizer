@@ -1,0 +1,11 @@
+         ----
+		 Contact
+		 ----
+		 Daniel Steffen
+		 ----
+		 2013-08-27
+		 ----
+
+Contact
+
+%{snippet|id=contact|file=${project.basedir}/src/site/resources/snippets/snippets.txt|verbatim=false} 

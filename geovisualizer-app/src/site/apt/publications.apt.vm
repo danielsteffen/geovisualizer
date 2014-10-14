@@ -10,4 +10,4 @@ Publications
 
   The publications related to GeoVisualizer can be found here.
 
-%{snippet|id=publications|file=src/site/resources/snippets/snippets.txt|verbatim=false}
+%{snippet|id=publications|file=${project.basedir}/src/site/resources/snippets/snippets.txt|verbatim=false}
