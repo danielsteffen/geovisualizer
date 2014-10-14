@@ -48,7 +48,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.format>1.7</source.format>
-		<WorldWindVersion>2.0.0</WorldWindVersion>
+        <WorldWindVersion>2.0.0</WorldWindVersion>
         <repository.id>dfki-artifactory</repository.id>
         <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
         <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
@@ -56,6 +56,7 @@
     </properties>	
     
     <modules>
+        <module>geovisualizer-core</module>
         <module>geovisualizer-app</module>
     </modules>
     

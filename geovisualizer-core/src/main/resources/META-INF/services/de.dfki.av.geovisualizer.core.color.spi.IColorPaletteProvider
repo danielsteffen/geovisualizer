@@ -1,0 +1,2 @@
+de.dfki.av.geovisualizer.core.color.brewer.ColorBrewerProvider # Provider for ColorBrewer palettes.
+de.dfki.av.geovisualizer.core.color.BasicColorPaletteProvider # Basic color palettes.
