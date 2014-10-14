@@ -9,7 +9,7 @@
     
     <groupId>net.graphicsmedia.geovisualizer</groupId>
     <artifactId>geovisualizer-io-mosaic2b</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>geovisualizer-io-mosaic2b</name>
     <description>ISource implementation for MOSAIC 2B.</description>
