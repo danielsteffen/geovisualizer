@@ -39,6 +39,17 @@
             <organizationUrl>http://av.dfki.de</organizationUrl>
             <timezone>+2</timezone>
         </developer>
+        <developer>
+            <id>tozi02</id>
+            <name>Tobias Zimmermann</name>
+            <email>tobias.zimmermann@dfki.de</email>
+            <roles>
+                <role>Developer</role>
+            </roles>            
+            <organization>DFKI GmbH</organization>
+            <organizationUrl>http://av.dfki.de</organizationUrl>
+            <timezone>+2</timezone>
+        </developer>
     </developers>
     
     <prerequisites>
@@ -59,7 +70,7 @@
         <module>geovisualizer-core</module>
         <module>geovisualizer-app</module>
         <module>geovisualizer-vis-basic</module>
-		<module>geovisualizer-vis-sensor</module>
+        <module>geovisualizer-vis-sensor</module>
     </modules>
     
     <dependencies>

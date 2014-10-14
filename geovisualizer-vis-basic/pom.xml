@@ -15,20 +15,6 @@
     <description>Basic visualizations for the geovisualizer application.</description>
     <url>http://av.dfki.de</url>
     
-    <developers>
-        <developer>
-            <id>tozi02</id>
-            <name>Tobias Zimmermann</name>
-            <email>tobias.zimmermann@dfki.de</email>
-            <roles>
-                <role>Developer</role>
-            </roles>            
-            <organization>DFKI GmbH</organization>
-            <organizationUrl>http://av.dfki.de</organizationUrl>
-            <timezone>+2</timezone>
-        </developer>
-    </developers>
-
     <dependencies>
         <dependency>
             <groupId>de.dfki.av.geovisualizer</groupId>
