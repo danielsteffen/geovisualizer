@@ -1,0 +1,102 @@
+[
+    {
+        "movie_id": 13,
+        "mediacast": " Bryan Cranston",
+        "certificate": " Bryan Cranston certificate",
+        "creditsprice": 2000,
+        "durationminutes": 120,
+        "movie": "The Walking Dead",
+        "movie_type": "Action",
+        "usagedurationdays": 60
+    },
+    {
+        "movie_id": 3,
+        "mediacast": " Jennifer Lawrence",
+        "certificate": "The Hunger Games&#x3a; Catching Fire  certificate",
+        "creditsprice": 30000,
+        "durationminutes": 90,
+        "movie": "The Hunger Games&#x3a; Catching Fire ",
+        "movie_type": "Action",
+        "usagedurationdays": 30
+    },
+    {
+        "movie_id": 2,
+        "mediacast": " Robert Downey Jr",
+        "certificate": " Robert Downey Jr certifcate",
+        "creditsprice": 20000,
+        "durationminutes": 180,
+        "movie": "Iron Man 3 ",
+        "movie_type": "Action",
+        "usagedurationdays": 30
+    },
+    {
+        "movie_id": 1,
+        "mediacast": " Henry Cavill",
+        "certificate": "Man of Steel certificate",
+        "creditsprice": 10000,
+        "durationminutes": 120,
+        "movie": "Man of Steel ",
+        "movie_type": "Action",
+        "usagedurationdays": 30
+    },
+    {
+        "movie_id": 6,
+        "mediacast": " Leonardo DiCaprio",
+        "certificate": " Leonardo DiCaprio certificate",
+        "creditsprice": 20000,
+        "durationminutes": 180,
+        "movie": "The Great Gatsby",
+        "movie_type": "Adventure",
+        "usagedurationdays": 60
+    },
+    {
+        "movie_id": 5,
+        "mediacast": " James Franco",
+        "certificate": "This Is the End certificate",
+        "creditsprice": 10000,
+        "durationminutes": 90,
+        "movie": "This Is the End",
+        "movie_type": "Adventure",
+        "usagedurationdays": 30
+    },
+    {
+        "movie_id": 4,
+        "mediacast": " Chris Pine",
+        "certificate": "Star Trek Into Darkness certificate",
+        "creditsprice": 5000,
+        "durationminutes": 120,
+        "movie": "Star Trek Into Darkness",
+        "movie_type": "Adventure",
+        "usagedurationdays": 60
+    },
+    {
+        "movie_id": 11,
+        "mediacast": "Lena Headey",
+        "certificate": "Lena Headey certificate",
+        "creditsprice": 10000,
+        "durationminutes": 120,
+        "movie": "Game of Thrones ",
+        "movie_type": "Comedy",
+        "usagedurationdays": 30
+    },
+    {
+        "movie_id": 8,
+        "mediacast": "Louis Leterrier",
+        "certificate": "Louis Leterrier certificate",
+        "creditsprice": 5000,
+        "durationminutes": 180,
+        "movie": "Now You See Me ",
+        "movie_type": "Comedy",
+        "usagedurationdays": 60
+    },
+    {
+        "movie_id": 7,
+        "mediacast": "Chris Hemsworth",
+        "certificate": "Thor&#x3a; The Dark World  cerificate",
+        "creditsprice": 30000,
+        "durationminutes": 120,
+        "movie": "Thor&#x3a; The Dark World ",
+        "movie_type": "Comedy",
+        "usagedurationdays": 30
+    }
+]
