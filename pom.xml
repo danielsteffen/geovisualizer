@@ -4,11 +4,10 @@
 
     <groupId>de.dfki.av.geovisualizer</groupId>
     <artifactId>geovisualizer</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <version>4.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>geovisualizer</name>
-    <description>The GeoVisualizer was developed within the sudplan3D (http://sudplan.kl.dfki.de) component.</description>
-    <url>http://www.geovisualizer.de</url>
+    <description>The GeoVisualizer project.</description>
     
     <organization>
         <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
@@ -56,297 +55,26 @@
     <prerequisites>
         <maven>3.0.4</maven>
     </prerequisites>
-
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.format>1.7</source.format>
-        <main-class>de.dfki.av.geovisualizer.app.ui.MainFrame</main-class>
         <WorldWindVersion>2.0.0</WorldWindVersion>
         <repository.id>dfki-artifactory</repository.id>
         <repository.url>http://av.kl.dfki.de/artifactory/repo</repository.url>
         <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
         <distribution.server>dfki-artifactory</distribution.server>        
-    </properties>
-
-    <profiles>
-        <profile>
-            <id>geovisualizer-dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
-                <WorldWindScope>compile</WorldWindScope>
-                <webstart.dir>./jnlp</webstart.dir>
-                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
-            </properties>
-        </profile>
-        <profile>
-            <id>geovisualizer-deploy</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
-                <WorldWindScope>compile</WorldWindScope>
-                <webstart.dir>./jnlp</webstart.dir>
-                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>appassembler-maven-plugin</artifactId>
-                        <version>1.3</version>
-                        <executions>
-                            <execution>
-                                <id>appassembler</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>assemble</goal>
-                                </goals>
-                                <configuration>
-                                    <binFolder>bin</binFolder>
-                                    <repositoryLayout>flat</repositoryLayout>
-                                    <repositoryName>lib</repositoryName>
-                                    <showConsoleWindow>false</showConsoleWindow>
-                                    <useWildcardClassPath>true</useWildcardClassPath>
-                                    <programs>
-                                        <program>
-                                            <mainClass>${main-class}</mainClass>
-                                            <name>${project.build.finalName}-windows</name>
-                                            <platforms>
-                                                <platform>windows</platform>
-                                            </platforms>
-                                        </program>
-                                        <program>
-                                            <mainClass>${main-class}</mainClass>
-                                            <name>${project.build.finalName}-unix</name>
-                                            <platforms>
-                                                <platform>unix</platform>
-                                            </platforms>
-                                        </program>
-                                        <program>
-                                            <mainClass>${main-class}</mainClass>
-                                            <name>${project.build.finalName}-macosx</name>
-                                            <platforms>
-                                                <platform>unix</platform>
-                                            </platforms>
-                                        </program>
-                                    </programs>
-                                    <extraJvmArguments>-Djava.library.path=@BASEDIR@/bin</extraJvmArguments>
-                                </configuration>
-                            </execution>                        
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <executions>
-                            <execution>
-                                <id>windows-x64</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/installer/windows-x64.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>windows-x86</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/installer/windows-x86.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>linux-x64</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/installer/linux-x64.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>        
-                            <execution>
-                                <id>macosx-x64</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/installer/macosx-x64.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>                    
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>wagon-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>upload-binary-zips</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>upload</goal>
-                                </goals>
-                                <configuration>
-                                    <serverId>geovisualizer.website</serverId>
-                                    <fromDir>${project.build.directory}</fromDir>
-                                    <includes>*.zip</includes>
-                                    <excludes>*.exe</excludes>
-                                    <excludes>*.jar</excludes>
-                                    <url>scp://serv-2100/</url>
-                                    <toDir>project/av/etc/www/geovisualizer.de/installer</toDir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin> 
-                </plugins>
-            </build>
-        </profile>        
-        <profile>
-            <id>geovisualizer-webstart</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <codebase>http://www.geovisualizer.de/jnlp</codebase>
-                <WorldWindScope>provided</WorldWindScope>
-                <webstart.dir>project/av/etc/www/geovisualizer.de/jnlp</webstart.dir>
-                <site.url>scp://serv-2100/project/av/etc/www/geovisualizer.de</site.url>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.4</version>
-                        <configuration>
-                            <archive>
-                                <addMavenDescriptor>false</addMavenDescriptor>
-                                <index>true</index>
-                                <manifestEntries>
-                                    <Permissions>all-permissions</Permissions>
-                                    <Codebase>*</Codebase>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>                    
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>webstart-maven-plugin</artifactId>
-                        <version>1.0-beta-3</version>
-                        <executions>
-                            <execution>
-                                <id>webstart-jars</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jnlp-inline</goal>
-                                </goals>
-                                <configuration>
-                                    <jnlp>
-                                        <outputFile>geovisualizer.jnlp</outputFile>
-                                        <mainClass>${main-class}</mainClass>
-                                    </jnlp>
-                                    <sign>
-                                        <keystore>dfki.jks</keystore>
-                                        <keypass>dFki+122</keypass>
-                                        <storepass>dFki+122</storepass>
-                                        <alias>dfki</alias>
-                                        <validity>3650</validity>
-                                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
-                                        <dnameOu>AV</dnameOu>
-                                        <dnameO>DFKI</dnameO>
-                                        <dnameL>KL</dnameL>
-                                        <dnameSt>RLP</dnameSt>
-                                        <dnameC>DE</dnameC>
-                                        <verify>true</verify>
-                                        <keystoreConfig>
-                                            <delete>true</delete> <!-- delete the keystore -->
-                                            <gen>true</gen>       <!-- optional shortcut to generate the store. -->
-                                        </keystoreConfig>
-                                    </sign>
-                                    <verbose>true</verbose>
-                                </configuration>                                
-                            </execution>
-                        </executions>                
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>wagon-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>upload-webstart</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>upload</goal>
-                                </goals>
-                                <configuration>
-                                    <serverId>geovisualizer.website</serverId>
-                                    <url>scp://serv-2100/</url>
-                                    <fromDir>${project.build.directory}/jnlp</fromDir>
-                                    <includes>*</includes>
-                                    <excludes>*.jks</excludes>
-                                    <toDir>${webstart.dir}</toDir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>  
+    </properties>	
+    
+    <modules>
+        <module>geovisualizer-core</module>
+        <module>geovisualizer-app</module>
+        <module>geovisualizer-io-sos</module>
+        <module>geovisualizer-vis-basic</module>
+        <module>geovisualizer-vis-sensor</module>
+    </modules>
     
     <dependencies>
-        <dependency>
-            <groupId>gov.nasa.worldwind</groupId>
-            <artifactId>worldwind</artifactId>
-            <version>${WorldWindVersion}</version>
-            <scope>${WorldWindScope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>gov.nasa.worldwind</groupId>
-            <artifactId>worldwindx</artifactId>
-            <version>${WorldWindVersion}</version>
-            <scope>${WorldWindScope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>gov.nasa.worldwind</groupId>
-            <artifactId>gdal</artifactId>
-            <version>${WorldWindVersion}</version>
-            <scope>${WorldWindScope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>gov.nasa.worldwind</groupId>
-            <artifactId>gluegen-rt</artifactId>
-            <version>${WorldWindVersion}</version>
-            <scope>${WorldWindScope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>gov.nasa.worldwind</groupId>
-            <artifactId>jogl-all</artifactId>
-            <version>${WorldWindVersion}</version>
-            <scope>${WorldWindScope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.dfki.av.geovisualizer</groupId>
-            <artifactId>geovisualizer-core</artifactId>
-            <version>3.1.0</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -363,68 +91,14 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-dialogs</artifactId>
-            <version>RELEASE72</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swing-layout</artifactId>
-            <version>1.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jdesktop</groupId>
-            <artifactId>beansbinding</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.9</version>
-        </dependency>
     </dependencies>
     
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <excludes>
-                    <exclude>**/*.xcf</exclude>
-                    <exclude>**/*.svg</exclude>
-                    <exclude>**/*.debug</exclude>
-                    <exclude>**/*.release</exclude>
-                    <exclude>tools/*</exclude>
-                </excludes>
-            </resource>
-        </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>wagon-maven-plugin</artifactId>
-                    <version>1.0-beta-4</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.wagon</groupId>
-                            <artifactId>wagon-ssh</artifactId>
-                            <version>2.2</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>3.1</version>
                 <configuration>
                     <source>${source.format}</source>
                     <target>${source.format}</target>
@@ -475,64 +149,10 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-ssh</artifactId>
-                        <version>2.2</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.7</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>summary</report>
-                                        <report>project-team</report>
-                                        <report>dependencies</report>
-                                        <report>cim</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>3.0.0</version>
-                            <configuration>
-                                <findbugsXmlOutput>true</findbugsXmlOutput>
-                                <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                                <xmlOutput>true</xmlOutput>
-                            </configuration>
-                        </plugin>  
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-pmd-plugin</artifactId>
-                            <version>3.2</version>
-                            <configuration>
-                                <targetJdk>${compileSource}</targetJdk>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>taglist-maven-plugin</artifactId>
-                            <version>2.4</version>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <releaseProfiles>geovisualizer-deploy</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
         </plugins>
@@ -584,10 +204,6 @@
             <name>${distribution.url}</name>
             <url>${distribution.url}</url>
         </repository>
-        <site>
-            <id>geovisualizer.website</id>
-            <url>${site.url}</url>
-        </site>		
     </distributionManagement>    
     
     <ciManagement>
@@ -597,7 +213,7 @@
     
     <scm>
         <connection>scm:git:git://serv-2100/geovisualizer/geovisualizer-app.git</connection>
-        <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer/geovisualizer-app.git</developerConnection>
+        <developerConnection>scm:git:ssh://steffen@serv-2100/project/av/srv/git/geovisualizer-app.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
   
