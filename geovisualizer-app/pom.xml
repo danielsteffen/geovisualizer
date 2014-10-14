@@ -17,14 +17,6 @@
     
     <inceptionYear>2010</inceptionYear>
     
-    <licenses>
-        <license>
-            <name>GNU General Public License (GPL) 3.0</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    
     <developers>
         <developer>
             <id>tozi02</id>
@@ -243,7 +235,7 @@
                                         <storepass>dFki+122</storepass>
                                         <alias>dfki</alias>
                                         <validity>3650</validity>
-                                        <dnameCn>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</dnameCn>
+                                        <dnameCn>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</dnameCn>
                                         <dnameOu>AV</dnameOu>
                                         <dnameO>DFKI</dnameO>
                                         <dnameL>KL</dnameL>
