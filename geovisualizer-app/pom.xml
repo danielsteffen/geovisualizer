@@ -40,10 +40,10 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <codebase>http://www.dfki.uni-kl.de/~steffen/geovisualizer/jnlp</codebase>
+                <codebase>http://www.geovisualizer.de/jnlp</codebase>
                 <WorldWindScope>compile</WorldWindScope>
-                <webstart.dir>./jnlp</webstart.dir>
-                <site.url>scp://serv-2100/home/steffen/etc/www/geovisualizer</site.url>
+                <webstart.dir>project/av/etc/www/geovisualizer.de/jnlp</webstart.dir>
+                <site.url>scp://serv-2100/project/av/etc/www/geovisualizer.de</site.url>
             </properties>
             <build>
                 <plugins>
