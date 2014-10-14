@@ -70,6 +70,7 @@
         <module>geovisualizer-core</module>
         <module>geovisualizer-app</module>
         <module>geovisualizer-io-sos</module>
+        <module>geovisualizer-io-mosaic2b</module>
         <module>geovisualizer-vis-basic</module>
         <module>geovisualizer-vis-sensor</module>
     </modules>

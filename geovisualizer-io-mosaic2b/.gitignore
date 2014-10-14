@@ -1,0 +1,11 @@
+# .gitignore file
+VS08/
+.metadata
+.classpath
+.path
+.settings/
+.project
+.test
+.DS_Store
+target/
+nbactions.xml
