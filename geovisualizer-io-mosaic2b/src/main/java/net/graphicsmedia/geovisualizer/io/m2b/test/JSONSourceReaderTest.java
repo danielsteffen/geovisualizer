@@ -1,4 +1,4 @@
-/**
+    /**
  * JSONSourceReaderTest.java
  *
  * Created by <a href="mailto:daniel.steffen@graphicsmedia.net">Daniel
@@ -29,6 +29,10 @@ public class JSONSourceReaderTest {
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(JSONSourceReaderTest.class);
+    
+    public static final String SOURCE_1 = "ListOfEventscreenings.json";
+    public static final String SOURCE_2 = "ListOfMedia.json";
+    public static final String SOURCE_3 = "http://193.137.8.29:9080/com.ccg.analyticsservice.rest/";
 
     /**
      * Main test method.
@@ -37,11 +41,12 @@ public class JSONSourceReaderTest {
      */
     public static void main(String[] args) {
         JSONSourceReader reader = new JSONSourceReader();
-        ISource json1 = reader.read("ListOfEventscreenings.json");
-        ISource json2 = reader.read("ListOfMedia.json");
-        ISource json3 = reader.read("ListOfEvents.json");
+        ISource json1 = reader.read(SOURCE_1);
+        ISource json2 = reader.read(SOURCE_2);
+        ISource json3 = reader.read(SOURCE_3);
+        //ISource json3 = reader.read("ListOfEvents.json");
 
-        LOG.debug("Attributes (ListOfEventscreenings.json):");
+        LOG.debug("Attributes ("+SOURCE_1+"):");
         for (String attribute : json1.getAttributes().keySet()) {
             LOG.debug("Name: " + attribute + " Type: " + json1.getAttributes().get(attribute));
         }
@@ -50,7 +55,7 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Points (ListOfEventscreenings.json):");
+        LOG.debug("Points ("+SOURCE_1+"):");
         for (double[] latLon : json1.getPoints(0).get(0)) {
             LOG.debug("Lon: " + latLon[0] + " Lat: " + latLon[1]);
         }
@@ -59,7 +64,7 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Attributes (ListOfMedia.json):");
+        LOG.debug("Attributes ("+SOURCE_2+"):");
         for (String attribute : json2.getAttributes().keySet()) {
             LOG.debug("Name: " + attribute + " Type: " + json2.getAttributes().get(attribute));
         }
@@ -68,29 +73,35 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Attributes (ListOfEvents.json):");
+        LOG.debug("Attributes ("+SOURCE_3+"):");
         for (String attribute : json3.getAttributes().keySet()) {
             LOG.debug("Name: " + attribute + " Type: " + json3.getAttributes().get(attribute));
+        }
+        
+        LOG.debug("Points ("+SOURCE_3+"):");
+        for (double[] latLon : json3.getPoints(0).get(0)) {
+            LOG.debug("Lon: " + latLon[0] + " Lat: " + latLon[1]);
         }
 
         LOG.debug("");
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Parsed Attributes (ListOfEventscreenings.json): " + json1.getFeatureCount());
-        LOG.debug("Parsed points (ListOfEventscreenings.json): " + json1.getPoints(0).get(0).size());
+        LOG.debug("Parsed Attributes ("+SOURCE_1+"): " + json1.getFeatureCount());
+        LOG.debug("Parsed points ("+SOURCE_1+"): " + json1.getPoints(0).get(0).size());
 
         LOG.debug("");
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Parsed Attributes (ListOfMedia.json): " + json2.getFeatureCount());
+        LOG.debug("Parsed Attributes ("+SOURCE_2+"): " + json2.getFeatureCount());
 
         LOG.debug("");
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Parsed Attributes (ListOfEvents.json): " + json3.getFeatureCount());
+        LOG.debug("Parsed Attributes ("+SOURCE_3+"): " + json3.getFeatureCount());
+        LOG.debug("Parsed points ("+SOURCE_3+"): " + json3.getPoints(0).get(0).size());
 
-    }
+    } 
 }

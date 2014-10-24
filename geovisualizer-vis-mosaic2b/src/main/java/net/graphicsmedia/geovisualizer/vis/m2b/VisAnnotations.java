@@ -8,10 +8,13 @@
 package net.graphicsmedia.geovisualizer.vis.m2b;
 
 import de.dfki.av.geovisualizer.core.*;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Annotation;
 import gov.nasa.worldwind.render.GlobeAnnotation;
+import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,21 +105,39 @@ public class VisAnnotations extends VisAlgorithmAbstract {
         layer.setName(iSource.getName() + " (" + uuid.toString() + ")");
 
         for (int i = 0; i < iSource.getFeatureCount(); i++) {
-
             List<List<double[]>> list = iSource.getPoints(i);
-
             for (int j = 0; j < list.size(); j++) {
                 setProgress((int) (100 * j / (float) list.size()));
                 for (double[] point : list.get(j)) {
                     Map<String, String> data = new HashMap<>();
                     Position position = Position.fromDegrees(point[1], point[0], 50);
-                    GlobeAnnotation ga = new GlobeAnnotation("\n\n\n\n\nNASA World Wind SDK Tutorial - "
-                            + "Displaying Annotations.", position, Font.decode("Arial-BOLD-13"));
+                    String aString = createString(iSource, i);
+                    GlobeAnnotation ga = new GlobeAnnotation(aString, position, 
+                            Font.decode("Arial-BOLD-13"));
+                    ga.getAttributes().setBackgroundColor(new Color(.8f, .8f, .8f, .7f));
+                    ga.getAttributes().setBorderColor(Color.BLACK);
+                    ga.setPickEnabled(false);
+                    ga.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
                     layer.addRenderable(ga);
                 }
             }
         }
 
         return layer;
+    }
+
+    private String createString(ISource iSource, int featureId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String attribute : iSource.getAttributes().keySet()){
+            stringBuilder.append(attribute);
+            stringBuilder.append(": \n");
+            Object value = iSource.getValue(featureId, attribute);
+            if(value instanceof double[]){
+                value = ((double[]) value)[0] + " " + ((double[]) value)[1];
+            }
+            stringBuilder.append(value.toString());
+            stringBuilder.append("\n\n");
+        }
+        return stringBuilder.toString();
     }
 }
