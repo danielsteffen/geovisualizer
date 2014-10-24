@@ -10,16 +10,14 @@ package net.graphicsmedia.geovisualizer.vis.m2b;
 import de.dfki.av.geovisualizer.core.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.layers.AnnotationLayer;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.Annotation;
 import gov.nasa.worldwind.render.GlobeAnnotation;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.swing.ImageIcon;
 
@@ -78,7 +76,7 @@ public class VisAnnotations extends VisAlgorithmAbstract {
         setProgress(30);
 
         // 3 - Create visualization
-        RenderableLayer layer = createPointLayer(iSource);
+        AnnotationLayer layer = createPointLayer(iSource, iSource.getAttributes().keySet());
         layers.add(layer);
         setProgress(95);
 
@@ -93,15 +91,15 @@ public class VisAnnotations extends VisAlgorithmAbstract {
     }
 
     /**
-     * Creates a {@link RenderableLayer} with all available annotations from the
+     * Creates a {@link AnnotationLayer} with all available annotations from the
      * {@link ISource}.
      *
      * @param iSource the {@link ISource} as data source
      * @param attributes the attributes to use for the visualization
      * @return the {@link RenderableLayer} with the annotations.
      */
-    private RenderableLayer createPointLayer(ISource iSource, String... attributes) {
-        RenderableLayer layer = new RenderableLayer();
+    private AnnotationLayer createPointLayer(ISource iSource, Iterable<String> attributeNames) {
+        AnnotationLayer layer = new AnnotationLayer();
         layer.setName(iSource.getName() + " (" + uuid.toString() + ")");
 
         for (int i = 0; i < iSource.getFeatureCount(); i++) {
@@ -109,26 +107,25 @@ public class VisAnnotations extends VisAlgorithmAbstract {
             for (int j = 0; j < list.size(); j++) {
                 setProgress((int) (100 * j / (float) list.size()));
                 for (double[] point : list.get(j)) {
-                    Map<String, String> data = new HashMap<>();
                     Position position = Position.fromDegrees(point[1], point[0], 50);
-                    String aString = createString(iSource, i);
+                    String aString = createString(iSource, i, attributeNames);
                     GlobeAnnotation ga = new GlobeAnnotation(aString, position, 
                             Font.decode("Arial-BOLD-13"));
                     ga.getAttributes().setBackgroundColor(new Color(.8f, .8f, .8f, .7f));
                     ga.getAttributes().setBorderColor(Color.BLACK);
                     ga.setPickEnabled(false);
                     ga.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-                    layer.addRenderable(ga);
+                    layer.addAnnotation(ga);
                 }
             }
         }
-
+        layer.setOpacity(.7f);
         return layer;
     }
 
-    private String createString(ISource iSource, int featureId) {
+    private String createString(ISource iSource, int featureId, Iterable<String> attributeNames) {
         StringBuilder stringBuilder = new StringBuilder();
-        for(String attribute : iSource.getAttributes().keySet()){
+        for(String attribute : attributeNames){
             stringBuilder.append(attribute);
             stringBuilder.append(": \n");
             Object value = iSource.getValue(featureId, attribute);
