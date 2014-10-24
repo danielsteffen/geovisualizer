@@ -15,6 +15,7 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.GlobeAnnotation;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,11 +108,12 @@ public class VisAnnotations extends VisAlgorithmAbstract {
             for (int j = 0; j < list.size(); j++) {
                 setProgress((int) (100 * j / (float) list.size()));
                 for (double[] point : list.get(j)) {
-                    Position position = Position.fromDegrees(point[1], point[0], 50);
+                    Position position = Position.fromDegrees(point[1], point[0], 0);
                     String aString = createString(iSource, i, attributeNames);
                     GlobeAnnotation ga = new GlobeAnnotation(aString, position, 
                             Font.decode("Arial-BOLD-13"));
                     ga.getAttributes().setBackgroundColor(new Color(.8f, .8f, .8f, .7f));
+                    ga.getAttributes().setSize(new Dimension(1000, 0));
                     ga.getAttributes().setBorderColor(Color.BLACK);
                     ga.setPickEnabled(false);
                     ga.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
@@ -127,13 +129,13 @@ public class VisAnnotations extends VisAlgorithmAbstract {
         StringBuilder stringBuilder = new StringBuilder();
         for(String attribute : attributeNames){
             stringBuilder.append(attribute);
-            stringBuilder.append(": \n");
+            stringBuilder.append(": ");
             Object value = iSource.getValue(featureId, attribute);
             if(value instanceof double[]){
                 value = ((double[]) value)[0] + " " + ((double[]) value)[1];
             }
             stringBuilder.append(value.toString());
-            stringBuilder.append("\n\n");
+            stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }

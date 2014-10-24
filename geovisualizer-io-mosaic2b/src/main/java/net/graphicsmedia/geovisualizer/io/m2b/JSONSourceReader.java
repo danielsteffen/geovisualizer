@@ -15,6 +15,9 @@ package net.graphicsmedia.geovisualizer.io.m2b;
 
 import de.dfki.av.geovisualizer.core.ISource;
 import de.dfki.av.geovisualizer.core.ISourceReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,30 +35,29 @@ public class JSONSourceReader implements ISourceReader {
 
     @Override
     public boolean canRead(Object input) {
-//        String url;
-//        if (input instanceof String) {
-//            url = (String) input;
-//        } else if (input instanceof URI) {
-//            URI uri = (URI) input;
-//            try {
-//                url = uri.toURL().toExternalForm();
-//            } catch (MalformedURLException ex) {
-//                log.debug("Input is no JSONSource source: ", ex);
-//                return false;
-//            }
-//        } else if (input instanceof URL) {
-//            URL uri = (URL) input;
-//            url = uri.toExternalForm();
-//        } else {
-//            log.debug("Input is no JSONSource source (No instance of String / URL / URI).");
-//            return false;
-//        }
-//        return url != null && url.contains("rest/api/v1");
-        return true;
+        String url;
+        if (input instanceof String) {
+            url = (String) input;
+        } else if (input instanceof URI) {
+            URI uri = (URI) input;
+            try {
+                url = uri.toURL().toExternalForm();
+            } catch (MalformedURLException ex) {
+                LOG.debug("Input is no JSONSource source: ", ex);
+                return false;
+            }
+        } else if (input instanceof URL) {
+            URL uri = (URL) input;
+            url = uri.toExternalForm();
+        } else {
+            LOG.debug("Input is no JSONSource source (No instance of String / URL / URI).");
+            return false;
+        }
+        return url != null && url.contains("rest");
     }
 
     @Override
     public ISource read(Object input) {
-        return new JSONSource("ListOfEventscreenings.json");
+        return new JSONSource(input);
     }
 }

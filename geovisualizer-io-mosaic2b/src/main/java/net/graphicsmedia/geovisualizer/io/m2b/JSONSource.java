@@ -15,7 +15,10 @@ package net.graphicsmedia.geovisualizer.io.m2b;
 
 import de.dfki.av.geovisualizer.core.ISource;
 import de.dfki.av.geovisualizer.core.io.GeometryType;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -63,7 +66,7 @@ public class JSONSource implements ISource {
     /**
      *
      */
-    public static final String LAT_LON = "LatLon";
+    public static final String LON_LAT = "LonLat";
     /**
      *
      */
@@ -108,6 +111,7 @@ public class JSONSource implements ISource {
      *
      */
     private HashMap<String, double[]> minMaxMap;
+    private final String USER_AGENT = "Mozilla/5.0";
 
     /**
      * Constructor for the {@link ISource} object of type {@link JSONSource}.
@@ -120,24 +124,33 @@ public class JSONSource implements ISource {
      * {@link String}, {@link URI}, or {@link URL}.
      */
     public JSONSource(final Object input) {
-        String url;
+        URL url;
         if (input == null) {
             String msg = "input == null";
             LOG.error(msg);
             throw new IllegalArgumentException(msg);
         } else if (input instanceof String) {
-            url = (String) input;
-        } else if (input instanceof URI) {
-            URI uri = (URI) input;
             try {
-                url = uri.toURL().toExternalForm();
+                URI uri = URI.create((String) input);
+                url = uri.toURL();
             } catch (MalformedURLException ex) {
-                LOG.error(ex.toString());
-                throw new IllegalArgumentException(ex.toString());
+                String msg = "No valid input. Input no instance of "
+                        + "String, URL, or URI.";
+                LOG.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
+        } else if (input instanceof URI) {
+            try {
+                URI uri = (URI) input;
+                url = uri.toURL();
+            } catch (MalformedURLException ex) {
+                String msg = "No valid input. Input no instance of "
+                        + "String, URL, or URI.";
+                LOG.error(msg);
+                throw new IllegalArgumentException(msg);
             }
         } else if (input instanceof URL) {
-            URL uri = (URL) input;
-            url = uri.toExternalForm();
+            url = (URL) input;
         } else {
             String msg = "No valid input. Input no instance of "
                     + "String, URL, or URI.";
@@ -150,27 +163,35 @@ public class JSONSource implements ISource {
             attributes = new HashMap<>();
             valuesList = new ArrayList<>();
             minMaxMap = new HashMap<>();
-            URL resUrl = JSONSource.class.getClassLoader().getResource(url);
-            jp = f.createJsonParser(resUrl);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            // optional default is GET
+            con.setRequestMethod("GET");
+            //add request header
+            con.setRequestProperty("User-Agent", USER_AGENT);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            jp = f.createJsonParser(in);
             jp.nextToken();
-            double[] latLon = new double[2];
+            double tmp = 0.0d;
             boolean lat = false;
             boolean lon = false;
-
-            HashMap<String, Object> values = new HashMap<>();
+              
             do {
+                HashMap<String, Object> values = new HashMap<>();
                 while (jp.nextToken() != JsonToken.END_OBJECT) {
                     String namefield = jp.getCurrentName();
                     if (namefield != null) {
                         switch (namefield) {
                             case LAT:
                             case LATITUDE:
-                                try {
-                                    latLon[1] = jp.getDoubleValue();
-                                    lat = true;
+                                try {                      
                                     if (lon) {
-                                        attributes.put(LAT_LON, POSITION);
-                                        values.put(LAT_LON, latLon);
+                                        attributes.put(LON_LAT, POSITION);
+                                        values.put(LON_LAT, new double[]{tmp, jp.getDoubleValue()});
+                                        lat = lon = false;
+                                    } else {
+                                        tmp = jp.getDoubleValue();
+                                        lat = true;
                                     }
                                 } catch (JsonParseException ex) {
                                 }
@@ -178,11 +199,13 @@ public class JSONSource implements ISource {
                             case LON:
                             case LONGITUDE:
                                 try {
-                                    latLon[0] = jp.getDoubleValue();
-                                    lon = true;
                                     if (lat) {
-                                        attributes.put(LAT_LON, POSITION);
-                                        values.put(LAT_LON, latLon);
+                                        attributes.put(LON_LAT, POSITION);
+                                        values.put(LON_LAT, new double[]{jp.getDoubleValue(), tmp});
+                                        lat = lon = false;
+                                    } else {
+                                        tmp = jp.getDoubleValue();
+                                        lon = true;
                                     }
                                 } catch (JsonParseException ex) {
                                 }
@@ -227,11 +250,11 @@ public class JSONSource implements ISource {
                 valuesList.add(values);
             } while (jp.nextToken() == JsonToken.START_OBJECT);
             pointsList = new ArrayList<>();
-            if (attributes.containsKey(LAT_LON)) {
+            if (attributes.containsKey(LON_LAT)) {
                 List<double[]> points = new ArrayList<>();
                 for (HashMap<String, Object> v : valuesList) {
-                    if (v.containsKey(LAT_LON)) {
-                        points.add((double[]) values.get(LAT_LON));
+                    if (v.containsKey(LON_LAT)) {
+                        points.add((double[]) v.get(LON_LAT));
                     }
                 }
                 pointsList.add(points);
