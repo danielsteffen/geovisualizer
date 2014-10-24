@@ -73,6 +73,7 @@
         <module>geovisualizer-io-mosaic2b</module>
         <module>geovisualizer-vis-basic</module>
         <module>geovisualizer-vis-sensor</module>
+        <module>geovisualizer-vis-mosaic2b</module>
     </modules>
     
     <dependencies>
