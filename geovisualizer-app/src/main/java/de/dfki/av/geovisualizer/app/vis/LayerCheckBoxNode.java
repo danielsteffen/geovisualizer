@@ -9,8 +9,6 @@ package de.dfki.av.geovisualizer.app.vis;
 
 /**
  * The class covering the {@link gov.nasa.worldwind.layers.Layer} object.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class LayerCheckBoxNode {
 

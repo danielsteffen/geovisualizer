@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisParameterPanel extends javax.swing.JPanel implements ActionListener {
 

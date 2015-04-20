@@ -18,8 +18,6 @@ import org.openide.util.Exceptions;
 /**
  * SwingWorker for the retrieval of {@link LayerInfo} for a given wms request
  * url
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
 

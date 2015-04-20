@@ -24,8 +24,6 @@ import javax.media.opengl.GL2;
  * ControlLayer that controls which WMS layer should be displayed.
  *
  * Based on {@code de.dfki.av.geovisualizer.vis.mc.ControlLayer}.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class WMSControlLayer extends RenderableLayer {
 

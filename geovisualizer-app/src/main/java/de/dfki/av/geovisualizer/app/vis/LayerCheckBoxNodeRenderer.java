@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Renderer for the checkboxes of the leaf nodes of the tree.
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class LayerCheckBoxNodeRenderer implements TreeCellRenderer {
 

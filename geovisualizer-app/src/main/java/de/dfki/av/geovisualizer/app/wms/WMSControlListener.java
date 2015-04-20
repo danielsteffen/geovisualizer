@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
  *
  * Note that this class is based on
  * {@code de.dfki.av.geovisualizer.vis.mc.ControlListener}.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class WMSControlListener extends WWObjectImpl implements SelectListener {
 

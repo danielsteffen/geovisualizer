@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for the generation of elevated WMS data handling
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class WMSUtils {
 

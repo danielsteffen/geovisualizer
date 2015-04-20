@@ -16,8 +16,6 @@ import gov.nasa.worldwind.geom.Position;
  * the camera is animated to the specified end position. Using the
  * {@link #viewingDirection} one can set the Roll-Pitch-Yaw angles in radians of
  * the camera. <p>
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class AnimatedCamera extends SimpleCamera {
 

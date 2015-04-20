@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
  * Extended {@link SurfaceImageLayer} which receives {@link PropertyChangeEvent}
  * from a {@link ElevatedRenderableSupportLayer} to add and remove
  * {@link ElevatedTileImage} if needed for the current {@link View}
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class ElevatedRenderableLayer extends RenderableLayer {
 

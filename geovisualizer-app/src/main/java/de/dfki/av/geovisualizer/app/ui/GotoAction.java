@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class GotoAction extends AbstractAction {
 

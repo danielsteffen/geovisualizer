@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
  *
  * @see IPluginProvider
  * @see IPlugin
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class PluginFactory {
 

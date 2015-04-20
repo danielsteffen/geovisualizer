@@ -9,7 +9,6 @@ package de.dfki.av.geovisualizer.app.camera;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface CameraEvent {
 }

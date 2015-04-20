@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * The class responsible for the configuration of the geovisualizer application.
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class Configuration {
 

@@ -11,8 +11,6 @@ import gov.nasa.worldwind.geom.Sector;
 
 /**
  * The bounding box to set.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class BoundingBox implements BoundingVolume {
 

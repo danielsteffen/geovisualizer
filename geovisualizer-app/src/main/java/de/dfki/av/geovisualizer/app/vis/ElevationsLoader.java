@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Loads local elevations and adds them as {@link LocalElevationModel} to the
  * {@link Globe}.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class ElevationsLoader extends SwingWorker<ElevationModel, Void> {
 

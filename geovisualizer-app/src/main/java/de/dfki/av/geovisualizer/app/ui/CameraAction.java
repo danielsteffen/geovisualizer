@@ -15,7 +15,6 @@ import javax.swing.AbstractAction;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class CameraAction extends AbstractAction {
 

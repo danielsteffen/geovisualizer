@@ -60,8 +60,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class containing the {@link WorldWindowGLCanvas} to render the virtual globe.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisualizationPanel extends JPanel implements VisualizationComponent {
 

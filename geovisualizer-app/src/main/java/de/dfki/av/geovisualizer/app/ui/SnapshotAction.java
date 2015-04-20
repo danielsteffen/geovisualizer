@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Copied from {@code gov.nasa.worldwindx.examples.util.ScreenShotAction}.
  * Changed name of initial snapshot and visibility of object members.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class SnapshotAction extends AbstractAction implements RenderingListener {
 

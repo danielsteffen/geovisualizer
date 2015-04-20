@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class GotoDialog extends javax.swing.JDialog {
 

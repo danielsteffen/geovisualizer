@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
  * Simple implementation of {@link CameraListener} using
  * {@link org.slf4j.Logger} for logging the data of the
  * {@link PropertyChangeEvent}.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class CameraListenerImpl implements CameraListener {
 

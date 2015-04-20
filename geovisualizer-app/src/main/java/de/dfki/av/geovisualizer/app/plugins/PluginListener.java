@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link PropertyChangeListener} for {@link PropertyChangeEvent} from
  * the {@link IPlugin} implementations.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class PluginListener implements PropertyChangeListener {
 

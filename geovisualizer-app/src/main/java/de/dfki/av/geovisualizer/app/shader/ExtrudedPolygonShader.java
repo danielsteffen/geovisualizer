@@ -12,7 +12,6 @@ import gov.nasa.worldwind.render.ExtrudedPolygon;
 
 /**
  *
- * @author steffen
  */
 public class ExtrudedPolygonShader extends ExtrudedPolygon {
 

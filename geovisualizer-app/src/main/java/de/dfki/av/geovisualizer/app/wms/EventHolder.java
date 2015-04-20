@@ -10,8 +10,6 @@ package de.dfki.av.geovisualizer.app.wms;
 /**
  * Interface which holds the PropertyNames for the PropertyChangeEvents of the
  * {@code de.dfki.geovisualizer.app.wms} package.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public interface EventHolder {
 

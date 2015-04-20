@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
  * take draw the scene to a texture for the left eye, apply the asymmetric
  * frustum shift, draw the scene to a texture for the right eye, and finally
  * swap both texture buffers with the frame display buffers of the 2 screens.
- *
- * @author tarek
  */
 public class AdvancedStereoOptionSceneController
         extends StereoOptionSceneController {

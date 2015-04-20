@@ -22,7 +22,6 @@ import javax.swing.tree.TreePath;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class LayerCheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 

@@ -13,8 +13,6 @@ import javax.swing.JMenuItem;
 
 /**
  * Interface definition for plugins.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface IPlugin extends PropertyChangeListener {
 
