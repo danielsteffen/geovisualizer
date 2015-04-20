@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link javax.swing.JPanel} holding all available
  * {@link gov.nasa.worldwind.layers.Layer}.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class LayerPanel extends javax.swing.JPanel implements PropertyChangeListener, MouseListener {
 
@@ -43,7 +41,9 @@ public class LayerPanel extends javax.swing.JPanel implements PropertyChangeList
     private final WorldWindow worldWindow;
 
     /**
-     * Creates new form LayerPanel
+     * Creates new form LayerPanel.
+     *
+     * @param ww the {@link WorldWindow} to set.
      */
     public LayerPanel(final WorldWindow ww) {
         this.worldWindow = ww;

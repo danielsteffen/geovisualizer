@@ -18,8 +18,6 @@ import java.awt.event.KeyListener;
  * the single one on pressing the escape button, small e 'e' increases the eye
  * separation distance, capital e 'E' decreases the eye separation distance, and
  * the space button swaps both left and right eyes with each other.
- *
- * @author tarek
  */
 public class StereoKeyListener implements KeyListener {
 

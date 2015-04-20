@@ -11,7 +11,6 @@ import java.beans.PropertyChangeListener;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface CameraListener extends PropertyChangeListener {
 }

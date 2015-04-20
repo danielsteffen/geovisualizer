@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class provides the visualization wizard VisWiz.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class VisWiz {
 

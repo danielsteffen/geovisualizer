@@ -13,18 +13,18 @@ import javax.swing.AbstractAction;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisWizAction extends AbstractAction {
 
     /**
-     *
+     * The {@link VisualizationPanel}.
      */
     private final VisualizationPanel panel;
 
     /**
+     * Constructor.
      *
-     * @param panel
+     * @param panel the {@link VisualizationPanel} to set.
      */
     public VisWizAction(VisualizationPanel panel) {
         super("Run VisWiz");

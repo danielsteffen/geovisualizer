@@ -15,7 +15,6 @@ import javax.swing.AbstractAction;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class CameraAction extends AbstractAction {
 
@@ -29,9 +28,10 @@ public class CameraAction extends AbstractAction {
     private Camera camera;
 
     /**
+     * Constructor for the {@link AbstractAction}.
      *
-     * @param panel
-     * @param camera
+     * @param panel the {@link VisualizationPanel} to set.
+     * @param camera the {@link Camera} to set.
      */
     public CameraAction(VisualizationPanel panel, Camera camera) {
         super("Camera animation");

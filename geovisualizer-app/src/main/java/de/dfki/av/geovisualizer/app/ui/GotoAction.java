@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class GotoAction extends AbstractAction {
 
@@ -26,8 +25,8 @@ public class GotoAction extends AbstractAction {
     /**
      * Constructor for the {@link GotoAction}.
      *
-     * @param frame
-     * @param worldWindow
+     * @param frame the {@link JFrame} to set.
+     * @param worldWindow the {@link WorldWindow} to set.
      */
     public GotoAction(final JFrame frame, final WorldWindow worldWindow) {
         super("Goto");

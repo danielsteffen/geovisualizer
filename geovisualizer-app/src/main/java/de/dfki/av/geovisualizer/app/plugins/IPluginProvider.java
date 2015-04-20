@@ -12,8 +12,6 @@ import java.util.List;
 
 /**
  * The interface for the SPI provider handling the {@link IPlugin}.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface IPluginProvider {
 

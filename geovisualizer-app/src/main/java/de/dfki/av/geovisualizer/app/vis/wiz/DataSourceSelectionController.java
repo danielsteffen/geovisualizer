@@ -18,7 +18,6 @@ import org.openide.util.HelpCtx;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class DataSourceSelectionController implements WizardDescriptor.ValidatingPanel {
 

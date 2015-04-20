@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class for handling the LayerInfo for the ElevatedSurfaceLayer.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class LayerInfo extends WMSLayerInfo {
 

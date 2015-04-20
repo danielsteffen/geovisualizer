@@ -13,8 +13,6 @@ import javax.swing.JMenuItem;
 
 /**
  * Interface definition for plugins.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface IPlugin extends PropertyChangeListener {
 
@@ -35,7 +33,7 @@ public interface IPlugin extends PropertyChangeListener {
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
-     * Remove a {@link PropertyChangeListener} from this {@link IVisAlgorithm}.
+     * Remove a {@link PropertyChangeListener} from this {@code IVisAlgorithm}.
      *
      * @param listener the {@link PropertyChangeListener} to remove.
      */

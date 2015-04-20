@@ -14,8 +14,6 @@ import java.beans.PropertyChangeListener;
 
 /**
  * The interface to the visualization of the 3-D globe component.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface VisualizationComponent extends PropertyChangeListener {
 

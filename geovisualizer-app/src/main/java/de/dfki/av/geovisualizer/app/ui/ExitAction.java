@@ -14,8 +14,6 @@ import org.netbeans.api.annotations.common.SuppressWarnings;
 
 /**
  * Action to shutdown the GeoVisualizer application.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class ExitAction extends AbstractAction {
 

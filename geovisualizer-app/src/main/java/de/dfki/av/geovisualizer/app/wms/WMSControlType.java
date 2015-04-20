@@ -10,9 +10,6 @@ package de.dfki.av.geovisualizer.app.wms;
 /**
  * Interface which holds the type names for the control buttons of the
  * {@code de.dfki.av.geovisualizer.wms} package.
- *
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class WMSControlType {
 

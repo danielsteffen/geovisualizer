@@ -60,8 +60,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class containing the {@link WorldWindowGLCanvas} to render the virtual globe.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisualizationPanel extends JPanel implements VisualizationComponent {
 
@@ -91,8 +89,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     private LayerPanel layerPanel;
 
     /**
-     * Constructs a visualization panel of the defined
-     * <code>Dimension</code>.
+     * Constructs a visualization panel of the defined <code>Dimension</code>.
      *
      * @param canvasSize size of the <code>WorldWindowGLCanvas</code>.
      */
@@ -213,8 +210,10 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
     }
 
     /**
-     * Removes all layers from the World Wind visualization component. <p> Note:
-     * This implementation keeps the following layers: <ul> <li>Atmosphere</li>
+     * Removes all layers from the World Wind visualization component.
+     * <p>
+     * Note: This implementation keeps the following layers: <ul>
+     * <li>Atmosphere</li>
      * <li>NASA Blue Marble Image</li> <li>Blue Marble (WMS) 2004</li>
      * <li>i-cubed Landsat</li> <li>Place Names</li> <li>Scale bar</li>
      * <li>Compass</li> <li>View Controls</li> <li>Bing Imagery</li></ul>
@@ -573,6 +572,7 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * @param elevation the elevation (meters above sea level) for the result
      * layer
      * @param opacity the opacity for the result layer (1.0 : full transparent)
+     * @return the {@link ElevatedRenderableLayer} to return.
      */
     private ElevatedRenderableLayer addWMSHeightLayer(LayerInfo layerInfo, double elevation, double opacity) {
         if (layerInfo != null) {
@@ -593,8 +593,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Adds a KML file to the world wind model.
      *
      * @param file the {@link File}
-     * @throws IllegalArgumentException if file == null
-     * @throws Exception
+     * @throws IllegalArgumentException if file is null.
+     * @throws Exception if {@link SwingWorker} is interrupted.
      */
     public void addKMLLayer(File file) throws Exception {
         if (file == null) {
@@ -634,8 +634,8 @@ public class VisualizationPanel extends JPanel implements VisualizationComponent
      * Adds a GeoTiff file to the world wind model.
      *
      * @param file the {@link File} to add.
-     * @throws IllegalArgumentException if file == null
-     * @throws IOException
+     * @throws IllegalArgumentException if file is null.
+     * @throws IOException if file can not be opened.
      */
     public void addGeoTiffLayer(File file) throws IOException {
         if (file == null) {

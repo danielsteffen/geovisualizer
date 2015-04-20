@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
  *
  * Note that this class is based on
  * {@code de.dfki.av.geovisualizer.vis.mc.ControlListener}.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class WMSControlListener extends WWObjectImpl implements SelectListener {
 
@@ -43,7 +41,7 @@ public class WMSControlListener extends WWObjectImpl implements SelectListener {
      */
     private static final int DEFAULT_TIMER_DELAY = 50;
     /**
-     * Duration of one animation frame in ms 40 ms -> 25 fps
+     * Duration of one animation frame in ms 40 ms results in 25 fps.
      */
     private final static int INTERVALL = 500;
     /**

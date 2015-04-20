@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public final class VisualizationSelectionPanel extends JPanel {
 

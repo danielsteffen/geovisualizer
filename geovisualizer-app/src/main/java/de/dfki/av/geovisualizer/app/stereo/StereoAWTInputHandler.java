@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
  * the stereo mode, and accessing the selectListeners assigned so as to add them
  * to the stereo mode providing the user the ability of using any controls from
  * stereo mode.
- *
- * @author tarek
  */
 public class StereoAWTInputHandler extends AWTInputHandler {
 

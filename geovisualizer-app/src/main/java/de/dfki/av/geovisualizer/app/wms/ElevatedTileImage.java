@@ -30,8 +30,6 @@ import javax.media.opengl.GL2;
 /**
  * Extended {@link SurfaceImage} with the possibility to change the elevation of
  * the SurfaceImage
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable {
 
@@ -99,7 +97,7 @@ public class ElevatedTileImage extends SurfaceImage implements OrderedRenderable
      * newer version is available for a given sector
      *
      * Note: the id is set by the {@link ElevatedRenderableLayer}, the default
-     * value after creation is -1 and will be set to an value >= 0.
+     * value after creation is -1 and will be set to an value greater or equal 0.
      */
     private final long updateTime;
     /**

@@ -20,8 +20,6 @@ import javax.media.opengl.GL2;
 /**
  * Support layer for a {@link ElevatedRenderableLayer} which provides the wms
  * data.
- *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
  */
 public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
 
@@ -44,6 +42,7 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      *
      * @param caps the {@link WMSCapabilities}
      * @param params the parameters as {@link AVList}
+     * @param layer  the layer to set.
      */
     public ElevatedRenderableSupportLayer(WMSCapabilities caps, AVList params,
             ElevatedRenderableLayer layer) {

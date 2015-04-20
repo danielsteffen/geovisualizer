@@ -16,7 +16,6 @@ import org.openide.util.HelpCtx;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class AttributeSelectionController implements WizardDescriptor.ValidatingPanel {
 

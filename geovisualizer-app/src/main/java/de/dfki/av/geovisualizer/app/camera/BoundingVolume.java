@@ -11,8 +11,6 @@ import gov.nasa.worldwind.geom.Sector;
 
 /**
  * The interface bounding volume.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public interface BoundingVolume {
 

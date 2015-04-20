@@ -15,8 +15,6 @@ import gov.nasa.worldwind.geom.Position;
  * angles in radians of the camera. <p> Note: If used in {@link de.dfki.av.geovisualizer.app.vis.VisualizationComponent#setCamera(de.dfki.av.geovisualizer.app.camera.Camera)
  * }
  * the movement of the camera is not animated.
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class SimpleCamera implements Camera {
 

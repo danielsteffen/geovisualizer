@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class VisParameterPanel extends javax.swing.JPanel implements ActionListener {
 
@@ -39,7 +38,10 @@ public class VisParameterPanel extends javax.swing.JPanel implements ActionListe
     private List<ITransferFunction> transferFunctions;
 
     /**
-     * Creates new form VisParameterPanel
+     * Creates new form VisParameterPanel.
+     *
+     * @param param the {@link IVisParameter} to set.
+     * @param dataAttributes the data attributes to set.
      */
     public VisParameterPanel(final IVisParameter param, final List<String[]> dataAttributes) {
         this.visParameter = param;

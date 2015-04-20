@@ -15,7 +15,6 @@ import javax.swing.JCheckBoxMenuItem;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class LayerAction extends AbstractAction {
 

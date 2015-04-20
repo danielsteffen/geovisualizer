@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  * This class needs the default InputHandler to be set to StereoAWTInputHandler
  * and the default SceneController to be set to StereoOptionSceneController in
  * the worldwind.xml file.
- *
- * @author tarek
  */
 public class SideBySideStereoSetup {
 

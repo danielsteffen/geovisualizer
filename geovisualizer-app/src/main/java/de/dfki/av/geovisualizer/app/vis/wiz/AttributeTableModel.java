@@ -11,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class AttributeTableModel extends DefaultTableModel {
 

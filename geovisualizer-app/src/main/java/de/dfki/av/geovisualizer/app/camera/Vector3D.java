@@ -11,8 +11,6 @@ import gov.nasa.worldwind.geom.Vec4;
 
 /**
  * A data structure for a 3-D vector. Another one ;)
- *
- * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
 public class Vector3D {
 
