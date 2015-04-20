@@ -30,9 +30,9 @@ public class JSONSourceReaderTest {
      */
     private static final Logger LOG = LoggerFactory.getLogger(JSONSourceReaderTest.class);
     
-    public static final String SOURCE_1 = "http://193.137.8.29:9080/com.ccg.analyticsservice.rest/api/v1/eventscreenings/list";
-    public static final String SOURCE_2 = "http://193.137.8.29:9080/com.ccg.analyticsservice.rest/api/v1/eventscreenings/list";
-    public static final String SOURCE_3 = "http://193.137.8.29:9080/com.ccg.analyticsservice.rest/api/v1/eventscreenings/list";
+    public static final String SOURCE_1 = "http://192.168.59.103:8080/com.ccg.analyticsservice.rest/api/v1/events/list";
+    public static final String SOURCE_2 = "http://192.168.59.103:8080/com.ccg.analyticsservice.rest/api/v1/events/list";
+    public static final String SOURCE_3 = "http://192.168.59.103:8080/com.ccg.analyticsservice.rest/api/v1/events/list";
 
     /**
      * Main test method.

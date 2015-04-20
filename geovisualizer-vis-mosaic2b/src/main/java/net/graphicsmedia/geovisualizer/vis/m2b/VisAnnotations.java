@@ -32,8 +32,10 @@ public class VisAnnotations extends VisAlgorithmAbstract {
     /**
      * The description for the {@link VisAnnotations} algorithm.
      */
-    public static final String DESCRIPTION = "The annotation visualization"
-            + " for visualizing semantic data of data points.";
+    public static final String DESCRIPTION = "This visualization has been"
+            + " created within the MOSAIC 2B project. It is used to "
+            + " visualize the data, received from the MOSAIC 2B REST API"
+            + " that is based on the JSON values.";
 
     /**
      * A random unique identifier for an instance of {@link VisAnnotations}.
@@ -44,7 +46,7 @@ public class VisAnnotations extends VisAlgorithmAbstract {
      * Constructor
      */
     protected VisAnnotations() {
-        super("Annotations visualization",
+        super("MOSAIC 2B Annotation Visualization",
                 VisAnnotations.DESCRIPTION,
                 new ImageIcon(VisAnnotations.class.getClassLoader().
                         getResource("icons/VisAnnotations.png")));
@@ -103,11 +105,14 @@ public class VisAnnotations extends VisAlgorithmAbstract {
         AnnotationLayer layer = new AnnotationLayer();
         layer.setName(iSource.getName() + " (" + uuid.toString() + ")");
 
-        for (int i = 0; i < iSource.getFeatureCount(); i++) {
-            List<List<double[]>> list = iSource.getPoints(i);
+        //for (int i = 0; i < iSource.getFeatureCount(); i++) {
+        
+            List<List<double[]>> list = iSource.getPoints(0);
             for (int j = 0; j < list.size(); j++) {
                 setProgress((int) (100 * j / (float) list.size()));
-                for (double[] point : list.get(j)) {
+                //for (double[] point : list.get(j)) {
+                for(int i = 0; i <list.get(j).size(); i++){
+                    double[] point = list.get(j).get(i);
                     Position position = Position.fromDegrees(point[1], point[0], 0);
                     String aString = createString(iSource, i, attributeNames);
                     GlobeAnnotation ga = new GlobeAnnotation(aString, position, 
@@ -120,11 +125,18 @@ public class VisAnnotations extends VisAlgorithmAbstract {
                     layer.addAnnotation(ga);
                 }
             }
-        }
+        //}
         layer.setOpacity(.7f);
         return layer;
     }
 
+    /**
+     * 
+     * @param iSource
+     * @param featureId
+     * @param attributeNames
+     * @return 
+     */
     private String createString(ISource iSource, int featureId, Iterable<String> attributeNames) {
         StringBuilder stringBuilder = new StringBuilder();
         for(String attribute : attributeNames){

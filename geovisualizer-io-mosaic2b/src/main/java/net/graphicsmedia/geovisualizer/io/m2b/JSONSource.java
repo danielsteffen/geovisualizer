@@ -279,6 +279,7 @@ public class JSONSource implements ISource {
 
     @Override
     public Object getValue(int id, String attributeName) {
+        LOG.debug("Valu: "+valuesList.get(id).toString());
         return valuesList.get(id).get(attributeName);
     }
 
@@ -340,6 +341,8 @@ public class JSONSource implements ISource {
 
     @Override
     public List<List<double[]>> getPoints(int featureId) {
+        LOG.debug("Num points " + pointsList.get(0).size());
+        LOG.debug("Points " + pointsList.get(0).toString());
         return pointsList;
     }
 }

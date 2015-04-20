@@ -74,6 +74,7 @@
         <module>geovisualizer-vis-basic</module>
         <module>geovisualizer-vis-sensor</module>
         <module>geovisualizer-vis-mosaic2b</module>
+        <module>geovisualizer-plugin-sensormap</module>
     </modules>
     
     <dependencies>
