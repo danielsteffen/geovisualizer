@@ -48,8 +48,9 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
     private JFileChooser fileChooser;
 
     /**
+     * Constructor for the {@link AbstractAction}.
      *
-     * @param wwd
+     * @param wwd the {@link WorldWindow} to set.
      */
     public SnapshotAction(WorldWindow wwd) {
         super("Snap Shot");
@@ -64,9 +65,10 @@ public class SnapshotAction extends AbstractAction implements RenderingListener 
     }
 
     /**
+     * Open a {@link JFileChooser} menu in order to select a file.
      *
-     * @param parentFrame
-     * @return {@link File}
+     * @param parentFrame the parent {@link Component} to set.
+     * @return {@link File} the selected file to return.
      */
     private File chooseFile(Component parentFrame) {
         File outFile = null;

@@ -39,7 +39,9 @@ public class LayerCheckBoxNodeEditor extends AbstractCellEditor implements TreeC
     ChangeEvent changeEvent = null;
 
     /**
-     * The consturctor.
+     * The constructor.
+     *
+     * @param tree the {@link JTree} to set.
      */
     public LayerCheckBoxNodeEditor(JTree tree) {
         this.jTree = tree;

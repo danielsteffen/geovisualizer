@@ -33,7 +33,7 @@ public interface IPlugin extends PropertyChangeListener {
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
-     * Remove a {@link PropertyChangeListener} from this {@link IVisAlgorithm}.
+     * Remove a {@link PropertyChangeListener} from this {@code IVisAlgorithm}.
      *
      * @param listener the {@link PropertyChangeListener} to remove.
      */

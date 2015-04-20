@@ -15,7 +15,7 @@ import gov.nasa.worldwind.geom.Position;
  * {@link de.dfki.av.geovisualizer.app.vis.VisualizationComponent#setCamera(de.dfki.av.geovisualizer.app.camera.Camera)}
  * the camera is animated to the specified end position. Using the
  * {@link #viewingDirection} one can set the Roll-Pitch-Yaw angles in radians of
- * the camera. <p>
+ * the camera.
  */
 public class AnimatedCamera extends SimpleCamera {
 

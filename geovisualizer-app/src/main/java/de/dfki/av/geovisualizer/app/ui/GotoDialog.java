@@ -11,6 +11,7 @@ import de.dfki.av.geovisualizer.app.Configuration;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Position;
+import java.awt.Frame;
 import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,10 @@ public class GotoDialog extends javax.swing.JDialog {
     private final WorldWindow worldWindow;
 
     /**
-     * Creates new form GotoDialog
+     * Creates new form GotoDialog.
+     * 
+     * @param parent the parent {@link Frame} to set.
+     * @param worldWindow  the {@link WorldWindow} to set.
      */
     public GotoDialog(java.awt.Frame parent, final WorldWindow worldWindow) {
         super(parent, false);

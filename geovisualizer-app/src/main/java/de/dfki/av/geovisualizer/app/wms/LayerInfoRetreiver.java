@@ -44,7 +44,7 @@ public class LayerInfoRetreiver extends SwingWorker<List<LayerInfo>, Void> {
      * Retrieves a {@link LayerInfo} from the defined wms source ({@link String}
      * wmsURL})
      *
-     * @param wmsURL
+     * @param wmsURL the URL to the WMS.
      * @return parsed {@link LayerInfo} of the data returned from the wms server
      * @throws URISyntaxException if the parsing of the {@link String} wmsURL to
      * URI failed.

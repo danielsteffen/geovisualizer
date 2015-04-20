@@ -193,8 +193,9 @@ public final class AttributeSelectionPanel extends JPanel {
     }
 
     /**
+     * Set the selected data source.
      *
-     * @param data
+     * @param data the data source to set.
      */
     public void setSelectedDataSource(Object data) {
         AttributeTableFiller worker = new AttributeTableFiller(data);
@@ -204,7 +205,6 @@ public final class AttributeSelectionPanel extends JPanel {
 
     /**
      *
-     * @author Daniel Steffen <daniel.steffen at dfki.de>
      */
     public class AttributeTableFiller extends SwingWorker<ISource, Void> {
 
@@ -218,8 +218,9 @@ public final class AttributeSelectionPanel extends JPanel {
         private Object dataSource;
 
         /**
+         * Constructor.
          *
-         * @param data
+         * @param data the data source to set.
          */
         public AttributeTableFiller(Object data) {
             this.dataSource = data;

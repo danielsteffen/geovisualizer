@@ -42,6 +42,7 @@ public class ElevatedRenderableSupportLayer extends WMSTiledImageLayer {
      *
      * @param caps the {@link WMSCapabilities}
      * @param params the parameters as {@link AVList}
+     * @param layer  the layer to set.
      */
     public ElevatedRenderableSupportLayer(WMSCapabilities caps, AVList params,
             ElevatedRenderableLayer layer) {

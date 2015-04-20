@@ -47,8 +47,9 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
     }
 
     /**
+     * Constructor.
      *
-     * @param enable
+     * @param enable true if the data source selection is enabled.
      */
     public VisWizIterator(boolean enable) {
         super();
@@ -58,6 +59,8 @@ public final class VisWizIterator implements WizardDescriptor.Iterator {
     /**
      * Initialize panels representing individual wizard's steps and sets various
      * properties for them influencing wizard appearance.
+     *
+     * @return the {@link WizardDescriptor} panel array to return.
      */
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {

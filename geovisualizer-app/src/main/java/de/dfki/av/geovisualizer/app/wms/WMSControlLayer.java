@@ -165,7 +165,7 @@ public class WMSControlLayer extends RenderableLayer {
      * Creates an instance of {@link WMSControlLayer} to switch between a list
      * of {@link ElevatedRenderableLayer}.
      *
-     * @param layerList
+     * @param layerList the list of {@link ElevatedRenderableLayer} layer.
      */
     public WMSControlLayer(List<ElevatedRenderableLayer> layerList) {
         initAttributes();
