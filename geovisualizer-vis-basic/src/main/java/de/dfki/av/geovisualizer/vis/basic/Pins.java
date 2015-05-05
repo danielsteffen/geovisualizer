@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Steffen <daniel.steffen at dfki.de>
  */
-public class Pins implements Renderable, OrderedRenderable {
+public class Pins implements IGeometry, Renderable, OrderedRenderable {
 
     /**
      * The logger.
