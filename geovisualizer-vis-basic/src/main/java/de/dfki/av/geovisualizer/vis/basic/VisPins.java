@@ -9,19 +9,15 @@ package de.dfki.av.geovisualizer.vis.basic;
 
 import de.dfki.av.geovisualizer.core.*;
 import de.dfki.av.geovisualizer.core.functions.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.media.opengl.GL;
 import javax.swing.ImageIcon;
-import javax.swing.Timer;
 
 /**
  * The pins visualization. Useful for large data sets. Additionally, to the
@@ -76,7 +72,7 @@ public class VisPins extends VisAlgorithmAbstract {
     protected VisPins() {
         super("Pins visualization", VisPins.DESCRIPTION,
                 new ImageIcon(VisExtrudePolygon.class.getClassLoader().
-                getResource("icons/VisPins.png")));
+                        getResource("icons/VisPins.png")));
 
         uuid = UUID.randomUUID();
 
@@ -216,18 +212,15 @@ public class VisPins extends VisAlgorithmAbstract {
 
             log.debug("Number of geometries per feature: {}", list.size());
 
-
-
             for (int j = 0; j < list.size(); j++) {
 
                 List<double[]> featurePoints = list.get(j);
                 log.debug("# feature points: {}", featurePoints.size());
 
                 if (ARITHMETIC_MEAN_ENABLED) {
-
                     // Add one one pin per feature. The position of the pin is
                     // calculate with the arithmetic mean.
-                    double[] mean = calcGeometricMean(featurePoints);
+                    double[] mean = MathUtils.calcGeometricMean(featurePoints);
                     Position pos = Position.fromDegrees(mean[1], mean[0],
                             height.doubleValue());
                     pins.add(pos, color);
@@ -244,104 +237,13 @@ public class VisPins extends VisAlgorithmAbstract {
 
         if (pins.size() > 0) {
             log.debug("Adding {} pins.", pins.size());
-            initAnimation(layer, pins);
+            LayerUpdateTimer timer = new LayerUpdateTimer(layer, pins);
+            timer.start();
             layer.addRenderable(pins);
         } else {
             log.debug("No pins added. Point list is empty.");
         }
 
         return layer;
-    }
-
-    /**
-     * Calculates the arithmetic mean of the {@code points}.
-     *
-     * @param points the list of points.
-     * @return the arithmetic mean to calculate.
-     */
-    private double[] calcArithmeticMean(List<double[]> points) {
-
-        if (points.size() < 1) {
-            String msg = "Size of points < 1.";
-            throw new RuntimeException(msg);
-        }
-
-        double[] mean = new double[2];
-        mean[1] = 0.0;
-        mean[0] = 0.0;
-
-        for (int t = 0; t < points.size(); t++) {
-            double point[] = points.get(t);
-            mean[0] += point[0];
-            mean[1] += point[1];
-        }
-        mean[0] = mean[0] / points.size();
-        mean[1] = mean[1] / points.size();
-
-        return mean;
-    }
-
-    /**
-     * Calculates the geometric mean of the {@code points}.
-     *
-     * @param points the list of points.
-     * @return the arithmetic mean to calculate.
-     */
-    private double[] calcGeometricMean(List<double[]> points) {
-
-        if (points.size() < 1) {
-            String msg = "Size of points < 1.";
-            throw new RuntimeException(msg);
-        }
-
-        double[] mean = new double[2];
-        mean[1] = 1.0;
-        mean[0] = 1.0;
-
-        for (int t = 0; t < points.size(); t++) {
-            double point[] = points.get(t);
-            double x_t = point[0] + 180;
-            double y_t = point[1] + 90;
-            mean[0] *= x_t;
-            mean[1] *= y_t;
-        }
-
-        double root = 1.0 / (double) points.size();
-        mean[0] = Math.pow(mean[0], root);
-        mean[1] = Math.pow(mean[1], root);
-
-        mean[0] -= 180;
-        mean[1] -= 90;
-
-        return mean;
-    }
-
-    /**
-     * Initialize animation.
-     */
-    private void initAnimation(final RenderableLayer layer, final Pins pins) {
-        Timer timer;
-        timer = new Timer(10000, new AnimationListener(layer, pins));
-        timer.start();
-    }
-
-    /**
-     * {@link ActionListener} for the VisPoleAnimation.
-     */
-    static class AnimationListener implements ActionListener {
-
-        final RenderableLayer layer;
-        final Pins pins;
-
-        public AnimationListener(final RenderableLayer layer, final Pins pins) {
-            this.layer = layer;
-            this.pins = pins;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            pins.update();
-            layer.firePropertyChange(AVKey.LAYER, null, null);
-        }
     }
 }
