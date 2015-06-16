@@ -141,6 +141,7 @@
                     <show>private</show>
                     <nohelp>true</nohelp>
                     <additionalparam>-Xdoclint:none</additionalparam>
+                    <failOnError>false</failOnError>
                 </configuration>
                 <executions>
                     <execution>
