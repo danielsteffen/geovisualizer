@@ -28,15 +28,15 @@
         <developer>
             <id>dast00</id>
             <name>Daniel Steffen</name>
-            <email>daniel.steffen@dfki.de</email>
-            <url>http://av.dfki.de/steffen</url>
+            <email>steffen@cs.uni-kl.de</email>
+            <url>http://agw.cs.uni-kl.de/team/daniel-steffen/</url>
             <roles>
                 <role>Project leader</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>            
-            <organization>DFKI GmbH</organization>
-            <organizationUrl>http://av.dfki.de</organizationUrl>
+            <organization>TU Kaiserslautern, AG wearHEALTH</organization>
+            <organizationUrl>http://agw.cs.uni-kl.de</organizationUrl>
             <timezone>+2</timezone>
         </developer>
         <developer>
