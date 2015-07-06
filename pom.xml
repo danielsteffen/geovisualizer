@@ -69,8 +69,6 @@
     <modules>
         <module>geovisualizer-core</module>
         <module>geovisualizer-app</module>
-        <module>geovisualizer-io-mosaic2b</module>
-        <module>geovisualizer-vis-mosaic2b</module>
     </modules>
     
     <dependencies>
