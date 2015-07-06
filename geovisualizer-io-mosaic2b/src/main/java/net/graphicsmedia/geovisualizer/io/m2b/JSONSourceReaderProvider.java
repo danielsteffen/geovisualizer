@@ -23,7 +23,7 @@ import java.util.List;
  * {@link ISourceReaderProvider} to provide the {@link ISourceReader} for JSON
  * sources.
  *
- * @author Daniel Steffen <daniel.steffen at graphicsmedia.net>
+ * @author Daniel Steffen
  */
 public class JSONSourceReaderProvider implements ISourceReaderProvider {
 

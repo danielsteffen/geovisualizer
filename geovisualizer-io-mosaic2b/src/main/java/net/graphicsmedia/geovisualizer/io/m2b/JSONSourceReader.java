@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link ISourceReader} to read a JSONSource source.
  *
- * @author Daniel Steffen <daniel.steffen at graphicsmedia.net>
+ * @author Daniel Steffen
  */
 public class JSONSourceReader implements ISourceReader {
 

@@ -1,9 +1,15 @@
-/*
+/**
  * M2bVisualizationProvider.java
  *
- * Created by DFKI AV on 24.10.2014.
- * Copyright (c) 2011-2014 DFKI GmbH, Kaiserslautern. All rights reserved.
- * Use is subject to license terms.
+ * Created by <a href="mailto:daniel.steffen@graphicsmedia.net">Daniel
+ * Steffen</a> on 01.08.2014.
+ *
+ * Copyright (c) 2014 MOSAIC 2B Consortium Members. All rights reserved.
+ *
+ * This software is developed as part of the project MOSAIC 2B
+ * (http://www.mobile-empowerment.org) and has received funding from the
+ * European Union’s Seventh Framework Programme for research, technological
+ * development and demonstration under grant agreement no 611796.
  */
 package net.graphicsmedia.geovisualizer.vis.m2b;
 
@@ -15,7 +21,7 @@ import java.util.List;
 
 /**
  *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
+ * @author Daniel Steffen
  */
 public class M2bVisualizationProvider implements IVisAlgorithmProvider {
 

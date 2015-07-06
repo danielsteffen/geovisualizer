@@ -1,9 +1,15 @@
-/*
+/**
  * VisAnnotations.java
  *
- * Created by DFKI AV on 24.10.2014.
- * Copyright (c) 2011-2014 DFKI GmbH, Kaiserslautern. All rights reserved.
- * Use is subject to license terms.
+ * Created by <a href="mailto:daniel.steffen@graphicsmedia.net">Daniel
+ * Steffen</a> on 01.08.2014.
+ *
+ * Copyright (c) 2014 MOSAIC 2B Consortium Members. All rights reserved.
+ *
+ * This software is developed as part of the project MOSAIC 2B
+ * (http://www.mobile-empowerment.org) and has received funding from the
+ * European Union’s Seventh Framework Programme for research, technological
+ * development and demonstration under grant agreement no 611796.
  */
 package net.graphicsmedia.geovisualizer.vis.m2b;
 
@@ -25,7 +31,7 @@ import javax.swing.ImageIcon;
 /**
  * The annotations visualization.
  *
- * @author Tobias Zimmermann <tobias.zimmermann at dfki.de>
+ * @author Daniel Steffen
  */
 public class VisAnnotations extends VisAlgorithmAbstract {
 
@@ -106,44 +112,43 @@ public class VisAnnotations extends VisAlgorithmAbstract {
         layer.setName(iSource.getName() + " (" + uuid.toString() + ")");
 
         //for (int i = 0; i < iSource.getFeatureCount(); i++) {
-        
-            List<List<double[]>> list = iSource.getPoints(0);
-            for (int j = 0; j < list.size(); j++) {
-                setProgress((int) (100 * j / (float) list.size()));
-                //for (double[] point : list.get(j)) {
-                for(int i = 0; i <list.get(j).size(); i++){
-                    double[] point = list.get(j).get(i);
-                    Position position = Position.fromDegrees(point[1], point[0], 0);
-                    String aString = createString(iSource, i, attributeNames);
-                    GlobeAnnotation ga = new GlobeAnnotation(aString, position, 
-                            Font.decode("Arial-BOLD-13"));
-                    ga.getAttributes().setBackgroundColor(new Color(.8f, .8f, .8f, .7f));
-                    ga.getAttributes().setSize(new Dimension(1000, 0));
-                    ga.getAttributes().setBorderColor(Color.BLACK);
-                    ga.setPickEnabled(false);
-                    ga.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-                    layer.addAnnotation(ga);
-                }
+        List<List<double[]>> list = iSource.getPoints(0);
+        for (int j = 0; j < list.size(); j++) {
+            setProgress((int) (100 * j / (float) list.size()));
+            //for (double[] point : list.get(j)) {
+            for (int i = 0; i < list.get(j).size(); i++) {
+                double[] point = list.get(j).get(i);
+                Position position = Position.fromDegrees(point[1], point[0], 0);
+                String aString = createString(iSource, i, attributeNames);
+                GlobeAnnotation ga = new GlobeAnnotation(aString, position,
+                        Font.decode("Arial-BOLD-13"));
+                ga.getAttributes().setBackgroundColor(new Color(.8f, .8f, .8f, .7f));
+                ga.getAttributes().setSize(new Dimension(1000, 0));
+                ga.getAttributes().setBorderColor(Color.BLACK);
+                ga.setPickEnabled(false);
+                ga.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+                layer.addAnnotation(ga);
             }
+        }
         //}
         layer.setOpacity(.7f);
         return layer;
     }
 
     /**
-     * 
+     *
      * @param iSource
      * @param featureId
      * @param attributeNames
-     * @return 
+     * @return
      */
     private String createString(ISource iSource, int featureId, Iterable<String> attributeNames) {
         StringBuilder stringBuilder = new StringBuilder();
-        for(String attribute : attributeNames){
+        for (String attribute : attributeNames) {
             stringBuilder.append(attribute);
             stringBuilder.append(": ");
             Object value = iSource.getValue(featureId, attribute);
-            if(value instanceof double[]){
+            if (value instanceof double[]) {
                 value = ((double[]) value)[0] + " " + ((double[]) value)[1];
             }
             stringBuilder.append(value.toString());

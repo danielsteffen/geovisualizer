@@ -1,4 +1,4 @@
-    /**
+/**
  * JSONSourceReaderTest.java
  *
  * Created by <a href="mailto:daniel.steffen@graphicsmedia.net">Daniel
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Test class for the {@link JSONSourceReader}.
  *
- * @author Daniel Steffen <daniel.steffen at graphicsmedia.net>
+ * @author Daniel Steffen
  */
 public class JSONSourceReaderTest {
 
@@ -29,7 +29,7 @@ public class JSONSourceReaderTest {
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(JSONSourceReaderTest.class);
-    
+
     public static final String SOURCE_1 = "http://192.168.59.103:8080/com.ccg.analyticsservice.rest/api/v1/events/list";
     public static final String SOURCE_2 = "http://192.168.59.103:8080/com.ccg.analyticsservice.rest/api/v1/events/list";
     public static final String SOURCE_3 = "http://192.168.59.103:8080/com.ccg.analyticsservice.rest/api/v1/events/list";
@@ -45,7 +45,7 @@ public class JSONSourceReaderTest {
         ISource json2 = reader.read(SOURCE_2);
         ISource json3 = reader.read(SOURCE_3);
 
-        LOG.debug("Attributes ("+SOURCE_1+"):");
+        LOG.debug("Attributes (" + SOURCE_1 + "):");
         for (String attribute : json1.getAttributes().keySet()) {
             LOG.debug("Name: " + attribute + " Type: " + json1.getAttributes().get(attribute));
         }
@@ -54,7 +54,7 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Points ("+SOURCE_1+"):");
+        LOG.debug("Points (" + SOURCE_1 + "):");
         for (double[] latLon : json1.getPoints(0).get(0)) {
             LOG.debug("Lon: " + latLon[0] + " Lat: " + latLon[1]);
         }
@@ -63,7 +63,7 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Attributes ("+SOURCE_2+"):");
+        LOG.debug("Attributes (" + SOURCE_2 + "):");
         for (String attribute : json2.getAttributes().keySet()) {
             LOG.debug("Name: " + attribute + " Type: " + json2.getAttributes().get(attribute));
         }
@@ -72,12 +72,12 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Attributes ("+SOURCE_3+"):");
+        LOG.debug("Attributes (" + SOURCE_3 + "):");
         for (String attribute : json3.getAttributes().keySet()) {
             LOG.debug("Name: " + attribute + " Type: " + json3.getAttributes().get(attribute));
         }
-        
-        LOG.debug("Points ("+SOURCE_3+"):");
+
+        LOG.debug("Points (" + SOURCE_3 + "):");
         for (double[] latLon : json3.getPoints(0).get(0)) {
             LOG.debug("Lon: " + latLon[0] + " Lat: " + latLon[1]);
         }
@@ -86,21 +86,21 @@ public class JSONSourceReaderTest {
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Parsed Attributes ("+SOURCE_1+"): " + json1.getFeatureCount());
-        LOG.debug("Parsed points ("+SOURCE_1+"): " + json1.getPoints(0).get(0).size());
+        LOG.debug("Parsed Attributes (" + SOURCE_1 + "): " + json1.getFeatureCount());
+        LOG.debug("Parsed points (" + SOURCE_1 + "): " + json1.getPoints(0).get(0).size());
 
         LOG.debug("");
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Parsed Attributes ("+SOURCE_2+"): " + json2.getFeatureCount());
+        LOG.debug("Parsed Attributes (" + SOURCE_2 + "): " + json2.getFeatureCount());
 
         LOG.debug("");
         LOG.debug("-------------------------------");
         LOG.debug("");
 
-        LOG.debug("Parsed Attributes ("+SOURCE_3+"): " + json3.getFeatureCount());
-        LOG.debug("Parsed points ("+SOURCE_3+"): " + json3.getPoints(0).get(0).size());
+        LOG.debug("Parsed Attributes (" + SOURCE_3 + "): " + json3.getFeatureCount());
+        LOG.debug("Parsed points (" + SOURCE_3 + "): " + json3.getPoints(0).get(0).size());
 
-    } 
+    }
 }

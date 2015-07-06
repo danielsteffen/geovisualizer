@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link ISource} to read data from an JSONSource source.
  *
- * @author Daniel Steffen <daniel.steffen at graphicsmedia.net>
+ * @author Daniel Steffen
  */
 public class JSONSource implements ISource {
 
@@ -175,7 +175,7 @@ public class JSONSource implements ISource {
             double tmp = 0.0d;
             boolean lat = false;
             boolean lon = false;
-              
+
             do {
                 HashMap<String, Object> values = new HashMap<>();
                 while (jp.nextToken() != JsonToken.END_OBJECT) {
@@ -184,7 +184,7 @@ public class JSONSource implements ISource {
                         switch (namefield) {
                             case LAT:
                             case LATITUDE:
-                                try {                      
+                                try {
                                     if (lon) {
                                         attributes.put(LON_LAT, POSITION);
                                         values.put(LON_LAT, new double[]{tmp, jp.getDoubleValue()});
@@ -279,7 +279,7 @@ public class JSONSource implements ISource {
 
     @Override
     public Object getValue(int id, String attributeName) {
-        LOG.debug("Valu: "+valuesList.get(id).toString());
+        LOG.debug("Valu: " + valuesList.get(id).toString());
         return valuesList.get(id).get(attributeName);
     }
 
