@@ -11,7 +11,7 @@
     <version>4.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>geovisualizer-vis-mosaic2b</name>
-    <description>Basic visualizations for the geovisualizer application.</description>
+    <description>Visualizations for the MOSAIC 2B visual analytics application.</description>
     <url>http://www.graphicsmedia.net</url>
     
     <dependencies>
