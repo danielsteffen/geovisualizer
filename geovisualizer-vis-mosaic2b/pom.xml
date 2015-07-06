@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <name>geovisualizer-vis-mosaic2b</name>
     <description>Basic visualizations for the geovisualizer application.</description>
-    <url>http://av.dfki.de</url>
+    <url>http://www.graphicsmedia.net</url>
     
     <dependencies>
         <dependency>
