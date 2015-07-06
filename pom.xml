@@ -10,7 +10,7 @@
     <description>The GeoVisualizer project.</description>
     
     <organization>
-        <name>Deutsches Forschungszentrum fÃ¼r KÃ¼nstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -28,15 +28,15 @@
         <developer>
             <id>dast00</id>
             <name>Daniel Steffen</name>
-            <email>daniel.steffen@dfki.de</email>
-            <url>http://av.dfki.de/steffen</url>
+            <email>steffen@cs.uni-kl.de</email>
+            <url>http://agw.cs.uni-kl.de/team/daniel-steffen/</url>
             <roles>
                 <role>Project leader</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>            
-            <organization>DFKI GmbH</organization>
-            <organizationUrl>http://av.dfki.de</organizationUrl>
+            <organization>TU Kaiserslautern, AG wearHEALTH</organization>
+            <organizationUrl>http://agw.cs.uni-kl.de</organizationUrl>
             <timezone>+2</timezone>
         </developer>
         <developer>
@@ -61,8 +61,8 @@
         <source.format>1.7</source.format>
         <WorldWindVersion>2.0.0</WorldWindVersion>
         <repository.id>dfki-artifactory</repository.id>
-        <repository.url>http://artifactory-av.kl.dfki.de/artifactory/repo</repository.url>
-        <distribution.url>http://av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
+        <repository.url>https://artifactory-av.kl.dfki.de/artifactory/repo</repository.url>
+        <distribution.url>https://artifactory-av.kl.dfki.de/artifactory/private-internal-repository</distribution.url>
         <distribution.server>dfki-artifactory</distribution.server>        
     </properties>	
     
