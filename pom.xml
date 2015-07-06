@@ -10,7 +10,7 @@
     <description>The GeoVisualizer project.</description>
     
     <organization>
-        <name>Deutsches Forschungszentrum für Künstliche Intelligenz (DFKI) GmbH</name>
+        <name>Deutsches Forschungszentrum fï¿½r Kï¿½nstliche Intelligenz (DFKI) GmbH</name>
         <url>http://www.dfki.de</url>
     </organization>
     
@@ -69,12 +69,8 @@
     <modules>
         <module>geovisualizer-core</module>
         <module>geovisualizer-app</module>
-        <module>geovisualizer-io-sos</module>
         <module>geovisualizer-io-mosaic2b</module>
-        <module>geovisualizer-vis-basic</module>
-        <module>geovisualizer-vis-sensor</module>
         <module>geovisualizer-vis-mosaic2b</module>
-        <module>geovisualizer-plugin-sensormap</module>
     </modules>
     
     <dependencies>
